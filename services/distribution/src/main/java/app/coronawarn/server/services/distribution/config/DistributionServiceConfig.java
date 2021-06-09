@@ -1557,6 +1557,18 @@ public class DistributionServiceConfig {
     @Pattern(regexp = RESOURCE_OR_EMPTY_REGEX)
     private String medicinalProductsJsonPath;
 
+    @Pattern(regexp = RESOURCE_OR_EMPTY_REGEX)
+    private String diseaseAgentTargetedJsonPath;
+
+    @Pattern(regexp = RESOURCE_OR_EMPTY_REGEX)
+    private String testManfJsonPath;
+
+    @Pattern(regexp = RESOURCE_OR_EMPTY_REGEX)
+    private String testResultJsonPath;
+
+    @Pattern(regexp = RESOURCE_OR_EMPTY_REGEX)
+    private String testTypeJsonPath;
+
     @NotNull
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String dgcDirectory;
@@ -1589,6 +1601,38 @@ public class DistributionServiceConfig {
 
     public void setMedicinalProductsJsonPath(String medicinalProductsJsonPath) {
       this.medicinalProductsJsonPath = medicinalProductsJsonPath;
+    }
+
+    public String getDiseaseAgentTargetedJsonPath() {
+      return diseaseAgentTargetedJsonPath;
+    }
+
+    public void setDiseaseAgentTargetedJsonPath(String diseaseAgentTargetedJsonPath) {
+      this.diseaseAgentTargetedJsonPath = diseaseAgentTargetedJsonPath;
+    }
+
+    public String getTestManfJsonPath() {
+      return testManfJsonPath;
+    }
+
+    public void setTestManfJsonPath(String testManfJsonPath) {
+      this.testManfJsonPath = testManfJsonPath;
+    }
+
+    public String getTestResultJsonPath() {
+      return testResultJsonPath;
+    }
+
+    public void setTestResultJsonPath(String testResultJsonPath) {
+      this.testResultJsonPath = testResultJsonPath;
+    }
+
+    public String getTestTypeJsonPath() {
+      return testTypeJsonPath;
+    }
+
+    public void setTestTypeJsonPath(String testTypeJsonPath) {
+      this.testTypeJsonPath = testTypeJsonPath;
     }
 
     public String getDgcDirectory() {

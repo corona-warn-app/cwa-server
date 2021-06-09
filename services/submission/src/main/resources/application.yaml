@@ -39,6 +39,8 @@ services:
     maximum-request-size: ${MAXIMUM_REQUEST_SIZE:100KB}
     # The maximum rolling period accepted by the SubmissionController (e.g. 144 (24 hours))
     max-rolling-period: ${MAX_ROLLING_PERIOD:144}
+    # The minimum rolling period accepted by the SubmissionController (e.g. 1 (10 minutes))
+    min-rolling-period: ${MIN_ROLLING_PERIOD:1}
     payload:
       # The maximum number of keys accepted for any submission.
       max-number-of-keys: ${MAX_NUMBER_OF_KEYS:14}
@@ -74,6 +76,7 @@ spring:
     default-timeout: 20
   flyway:
     enabled: true
+    url: ${spring.datasource.url}
     locations: classpath:/db/migration, classpath:/db/specific/{vendor}
     password: ${POSTGRESQL_PASSWORD_FLYWAY:local_setup_flyway}
     user: ${POSTGRESQL_USER_FLYWAY:local_setup_flyway}
