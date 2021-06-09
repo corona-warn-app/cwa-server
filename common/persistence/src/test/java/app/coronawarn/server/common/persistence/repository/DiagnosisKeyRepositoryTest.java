@@ -1,12 +1,14 @@
 package app.coronawarn.server.common.persistence.repository;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import java.util.Random;
 import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
@@ -29,7 +31,7 @@ public class DiagnosisKeyRepositoryTest {
     byte[] id = new byte[16];
     new Random().nextBytes(id);
 
-    Assertions.assertFalse(repository.exists(id, type.name()));
+    assertFalse(repository.exists(id, type.name()));
 
     DiagnosisKey key = DiagnosisKey.builder()
         .withKeyDataAndSubmissionType(id, type)
@@ -48,6 +50,6 @@ public class DiagnosisKeyRepositoryTest {
         key.getReportType().name(), key.getDaysSinceOnsetOfSymptoms(),
         key.isConsentToFederation(), key.getSubmissionType().name());
 
-    Assertions.assertTrue(repository.exists(id, type.name()));
+    assertTrue(repository.exists(id, type.name()));
   }
 }
