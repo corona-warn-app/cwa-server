@@ -229,9 +229,9 @@ public @interface ValidSubmissionPayload {
 
     private boolean checkRollingPeriodIsInRange(List<TemporaryExposureKey> exposureKeys,
         ConstraintValidatorContext validatorContext) {
-      for (int i = 0; i < exposureKeys.size(); i++) {
-        if (exposureKeys.get(i).getRollingPeriod() < minRollingPeriod
-            || exposureKeys.get(i).getRollingPeriod() > maxRollingPeriod) {
+      for (TemporaryExposureKey exposureKey : exposureKeys) {
+        if (exposureKey.getRollingPeriod() < minRollingPeriod
+            || exposureKey.getRollingPeriod() > maxRollingPeriod) {
           addViolation(validatorContext, "The rolling period is not in range.");
           return false;
         }
