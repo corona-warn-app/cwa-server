@@ -20,7 +20,10 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
+import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -378,6 +381,27 @@ class DiagnosisKeyBuilderTest {
     DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
         .fromFederationDiagnosisKey(federationKey).build();
     assertDiagnosisKeyEquals(actDiagnosisKey);
+  }
+
+  @Test
+  void shouldNotAddAnInvalidDiagnosisKey() {
+
+    SubmissionType type = SubmissionType.SUBMISSION_TYPE_PCR_TEST;
+    byte[] id = new byte[16];
+    new Random().nextBytes(id);
+
+    Exception exception = Assert.assertThrows(InvalidDiagnosisKeyException.class, () -> DiagnosisKey.builder()
+        .withKeyDataAndSubmissionType(id, type)
+        .withRollingStartIntervalNumber(600)
+        .withTransmissionRiskLevel(2)
+        .withRollingPeriod(0)
+        .withCountryCode("DE")
+        .withVisitedCountries(Set.of("DE"))
+        .withSubmissionTimestamp(0L)
+        .withReportType(ReportType.CONFIRMED_TEST).build());
+
+    String actualMessage = exception.getMessage();
+    Assertions.assertEquals("[Rolling period must be between 1 and 144. Invalid Value: 0]", actualMessage);
   }
 
   private DiagnosisKey keyWithKeyData(byte[] expKeyData) {

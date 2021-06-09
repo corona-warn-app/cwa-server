@@ -1,7 +1,7 @@
 package app.coronawarn.server.services.submission.integration;
 
-import static app.coronawarn.server.services.submission.SubmissionPayloadGenerator.buildTemporaryExposureKeys;
 import static app.coronawarn.server.services.submission.SubmissionPayloadGenerator.buildTemporaryExposureKeyWithoutMultiplying;
+import static app.coronawarn.server.services.submission.SubmissionPayloadGenerator.buildTemporaryExposureKeys;
 import static app.coronawarn.server.services.submission.assertions.SubmissionAssertions.assertElementsCorrespondToEachOther;
 import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -116,11 +116,16 @@ class SubmissionPersistenceIT {
     SubmissionPayload validSubmissionPayload = buildSubmissionPayload(List.of("DE"), "DE", true,
         validKeys, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
 
-    testRestTemplate.postForEntity("/version/v1/diagnosis-keys", new HttpEntity<>(invalidSubmissionPayload, headers), Void.class);
+    testRestTemplate
+        .postForEntity("/version/v1/diagnosis-keys", new HttpEntity<>(invalidSubmissionPayload, headers), Void.class);
     assertEquals(0, diagnosisKeyRepository.count());
 
-    testRestTemplate.postForEntity("/version/v1/diagnosis-keys", new HttpEntity<>(validSubmissionPayload, headers), Void.class);
-    assertEquals(100, diagnosisKeyRepository.count());
+    testRestTemplate
+        .postForEntity("/version/v1/diagnosis-keys", new HttpEntity<>(validSubmissionPayload, headers), Void.class);
+
+    final int expectedNumberOfKeys =
+        validSubmissionPayload.getKeysList().size() * config.getRandomKeyPaddingMultiplier();
+    assertEquals(expectedNumberOfKeys, diagnosisKeyRepository.count());
   }
 
 
