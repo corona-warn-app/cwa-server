@@ -1,13 +1,14 @@
 package app.coronawarn.server.common.persistence.repository;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
-import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
+import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
-import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
@@ -19,10 +20,10 @@ import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 public class DiagnosisKeyRepositoryTest {
 
   @Autowired
-  private DiagnosisKeyService service;
-
-  @Autowired
   private DiagnosisKeyRepository repository;
+
+  private byte[] id = new byte[16];
+  private SubmissionType type = SubmissionType.SUBMISSION_TYPE_PCR_TEST;
 
   @AfterEach
   void tearDown() {
@@ -32,9 +33,7 @@ public class DiagnosisKeyRepositoryTest {
   @Test
   void shouldCheckExistence() {
 
-    byte[] id = new byte[16];
     new Random().nextBytes(id);
-    SubmissionType type = SubmissionType.SUBMISSION_TYPE_PCR_TEST;
 
     assertFalse(repository.exists(id, type.name()));
 
@@ -42,18 +41,38 @@ public class DiagnosisKeyRepositoryTest {
         .withKeyDataAndSubmissionType(id, type)
         .withRollingStartIntervalNumber(600)
         .withTransmissionRiskLevel(2)
+        .withRollingPeriod(1)
         .withCountryCode("DE")
         .withVisitedCountries(Set.of("DE"))
         .withSubmissionTimestamp(0L)
         .withReportType(ReportType.CONFIRMED_TEST)
         .build();
-    service.saveDiagnosisKeys(List.of(key));
+    repository.saveDoNothingOnConflict(
+        key.getKeyData(), key.getRollingStartIntervalNumber(), key.getRollingPeriod(),
+        key.getSubmissionTimestamp(), key.getTransmissionRiskLevel(),
+        key.getOriginCountry(), key.getVisitedCountries().toArray(new String[0]),
+        key.getReportType().name(), key.getDaysSinceOnsetOfSymptoms(),
+        key.isConsentToFederation(), key.getSubmissionType().name());
 
     assertTrue(repository.exists(id, type.name()));
   }
+
+  @Test
+  void shouldNotAddAnInvalidDiagnosisKey() {
+
+    Exception exception = assertThrows(InvalidDiagnosisKeyException.class, () -> {
+      DiagnosisKey.builder()
+          .withKeyDataAndSubmissionType(id, type)
+          .withRollingStartIntervalNumber(600)
+          .withTransmissionRiskLevel(2)
+          .withRollingPeriod(0)
+          .withCountryCode("DE")
+          .withVisitedCountries(Set.of("DE"))
+          .withSubmissionTimestamp(0L)
+          .withReportType(ReportType.CONFIRMED_TEST).build();
+    });
+
+    String actualMessage = exception.getMessage();
+    assertEquals("[Rolling period must be between 1 and 144. Invalid Value: 0]", actualMessage);
+  }
 }
-
-
-// additional checks -> when inserting zero rolling period is not working properly
-// try to insert a diagn key
-// expectation: you can not insert
