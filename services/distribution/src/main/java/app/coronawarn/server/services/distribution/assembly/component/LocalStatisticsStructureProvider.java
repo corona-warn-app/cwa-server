@@ -5,6 +5,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.statistics.directory.LocalStatisticsDirectory;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -47,6 +48,6 @@ public class LocalStatisticsStructureProvider {
           .collect(Collectors.toList());
     }
 
-    return null;
+    return Collections.emptyList();
   }
 }
