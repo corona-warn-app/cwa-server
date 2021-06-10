@@ -110,18 +110,19 @@ public class BuildLocalStatisticsHelper {
    * @param provinceCode - province code.
    * @return - federal state code.
    */
-  public static Optional<String> findFederalStateByProvinceCode(String provinceCode) {
-    switch (provinceCode.length()) {
-      case 1:
-      case 2:
-        return Optional.of(provinceCode);
-      case 4:
-        return Optional.of(provinceCode.substring(0, 1));
-      case 5:
-        return Optional.of(provinceCode.substring(0, 2));
-      default:
-        return Optional.empty();
-    }
+  public static int findFederalStateByProvinceCode(int provinceCode) {
+    return provinceCode / 1000;
+//    switch (provinceCode.length()) {
+//      case 1:
+//      case 2:
+//        return Optional.of(provinceCode);
+//      case 4:
+//        return Optional.of(provinceCode.substring(0, 1));
+//      case 5:
+//        return Optional.of(provinceCode.substring(0, 2));
+//      default:
+//        return Optional.empty();
+//    }
   }
 
   /**

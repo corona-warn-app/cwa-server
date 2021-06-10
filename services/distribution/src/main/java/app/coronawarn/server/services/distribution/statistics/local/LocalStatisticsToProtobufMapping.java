@@ -84,7 +84,7 @@ public class LocalStatisticsToProtobufMapping {
           if (localStatisticsJsonStringObject.getProvinceCode() != null) {
             int provinceCode = Integer.parseInt(localStatisticsJsonStringObject.getProvinceCode());
 
-            if (isFederalState(localStatisticsJsonStringObject.getProvinceCode())) {
+            if (isFederalState(provinceCode)) {
               fillLocalStatisticsFederalStatesGroupMap(
                   localStatisticsMap,
                   provinceCode,
@@ -92,18 +92,13 @@ public class LocalStatisticsToProtobufMapping {
                   federalStateEnhancer(provinceCode, localStatisticsJsonStringObject)
               );
             } else {
-
-              Optional<String> federalStateCodeOptional = findFederalStateByProvinceCode(
-                  localStatisticsJsonStringObject.getProvinceCode());
-
-              federalStateCodeOptional.ifPresent(code -> {
-                fillLocalStatisticsFederalStatesGroupMap(
-                    localStatisticsMap,
-                    Integer.parseInt(federalStateCodeOptional.get()),
-                    administrativeUnitSupplier(provinceCode, localStatisticsJsonStringObject),
-                    administrativeUnitEnhancer(localStatisticsJsonStringObject)
-                );
-              });
+              int federalStateCode = findFederalStateByProvinceCode(provinceCode);
+              fillLocalStatisticsFederalStatesGroupMap(
+                  localStatisticsMap,
+                  federalStateCode,
+                  administrativeUnitSupplier(provinceCode, localStatisticsJsonStringObject),
+                  administrativeUnitEnhancer(localStatisticsJsonStringObject)
+              );
             }
           }
         });
@@ -220,9 +215,8 @@ public class LocalStatisticsToProtobufMapping {
     return filterOncePerProvinceStatistics(jsonStringObjects);
   }
 
-  private boolean isFederalState(String provinceCode) {
-    return provinceCode.length() >= 1 && provinceCode.length() <= 2;
+  private boolean isFederalState(int provinceCode) {
+    return provinceCode < 100;
   }
-
 
 }
