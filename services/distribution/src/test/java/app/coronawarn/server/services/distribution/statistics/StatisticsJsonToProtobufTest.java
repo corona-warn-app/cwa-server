@@ -120,7 +120,7 @@ class StatisticsJsonToProtobufTest {
     void testKeyFigureCardContainsHeader() throws IOException {
       Statistics stats = statisticsToProtobufMapping.constructProtobufStatistics();
 
-      assertThat(stats.getKeyFigureCardsCount()).isEqualTo(4);
+      assertThat(stats.getKeyFigureCardsCount()).isEqualTo(7);
       stats.getKeyFigureCardsList().forEach(keyFigureCard -> {
             assertThat(keyFigureCard.getHeader()).isNotNull();
             assertThat(keyFigureCard.getHeader().getUpdatedAt()).isPositive();
