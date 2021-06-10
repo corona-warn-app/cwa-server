@@ -77,7 +77,6 @@ public class LocalStatisticsToProtobufMapping {
         return Collections.emptyMap();
       } else {
         JsonFile file = optionalFile.get();
-        this.updateETag(optionalFile.get().getETag());
 
         List<LocalStatisticsJsonStringObject> onePerProvinceStatistics = deserializeAndValidate(file);
 
@@ -108,6 +107,7 @@ public class LocalStatisticsToProtobufMapping {
             }
           }
         });
+        this.updateETag(optionalFile.get().getETag());
       }
     } catch (BucketNotFoundException | ConnectionException | FilePathNotFoundException | IOException ex) {
       logger.error("Local statistics file not generated!", ex);
