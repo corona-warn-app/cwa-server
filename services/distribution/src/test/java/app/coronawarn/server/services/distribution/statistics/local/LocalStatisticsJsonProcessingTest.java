@@ -6,7 +6,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import app.coronawarn.server.common.persistence.domain.LocalStatisticsDownload;
+import app.coronawarn.server.common.persistence.domain.LocalStatisticsDownloaded;
 import app.coronawarn.server.common.persistence.service.LocalStatisticsDownloadService;
 import app.coronawarn.server.common.shared.util.SerializationUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
@@ -53,7 +53,7 @@ class LocalStatisticsJsonProcessingTest {
 
     @Test
     void shouldNotGenerateStatisticsIfEtagNotUpdated() {
-      when(service.getMostRecentDownload()).thenReturn(Optional.of(new LocalStatisticsDownload(1, 1234, "latest-etag")));
+      when(service.getMostRecentDownload()).thenReturn(Optional.of(new LocalStatisticsDownloaded(1, 1234, "latest-etag")));
       when(mockLoader.getFileIfUpdated(eq(StatisticType.LOCAL), eq("latest-etag"))).thenReturn(Optional.empty());
       var statisticsToProtobufMapping = new LocalStatisticsToProtobufMapping(mockLoader, service, regionMappingConfig);
       var statistics = statisticsToProtobufMapping.constructProtobufLocalStatistics();

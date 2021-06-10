@@ -1,6 +1,6 @@
 package app.coronawarn.server.common.persistence.service;
 
-import app.coronawarn.server.common.persistence.domain.StatisticsDownload;
+import app.coronawarn.server.common.persistence.domain.StatisticsDownloaded;
 import app.coronawarn.server.common.persistence.repository.StatisticsDownloadRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @DataJdbcTest
-public class StatisticsDownloadServiceTest {
+public class StatisticsDownloadedServiceTest {
 
   @Autowired
   private StatisticsDownloadService statisticsDownloadService;
@@ -29,7 +29,7 @@ public class StatisticsDownloadServiceTest {
 
   @Test
   void shouldReturnDownloadRecordIfStored() {
-    when(statisticsDownloadRepository.getWithLatestETag()).thenReturn(new StatisticsDownload(1, 1, "a"));
+    when(statisticsDownloadRepository.getWithLatestETag()).thenReturn(new StatisticsDownloaded(1, 1, "a"));
     assertThat(statisticsDownloadService.getMostRecentDownload()).isNotEmpty();
   }
 

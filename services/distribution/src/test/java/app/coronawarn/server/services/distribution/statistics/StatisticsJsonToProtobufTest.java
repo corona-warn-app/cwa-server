@@ -9,7 +9,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import app.coronawarn.server.common.persistence.domain.StatisticsDownload;
+import app.coronawarn.server.common.persistence.domain.StatisticsDownloaded;
 import app.coronawarn.server.common.persistence.service.StatisticsDownloadService;
 import app.coronawarn.server.common.protocols.internal.stats.CardHeader;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure;
@@ -70,7 +70,7 @@ class StatisticsJsonToProtobufTest {
 
     @Test
     void shouldNotGenerateStatisticsIfEtagNotUpdated() {
-      when(service.getMostRecentDownload()).thenReturn(Optional.of(new StatisticsDownload(1, 1234, "latest-etag")));
+      when(service.getMostRecentDownload()).thenReturn(Optional.of(new StatisticsDownloaded(1, 1234, "latest-etag")));
       when(mockLoader.getFileIfUpdated(eq("latest-etag"))).thenReturn(Optional.empty());
       var statisticsToProtobufMapping = new StatisticsToProtobufMapping(serviceConfig, factory, mockLoader, service);
       var statistics = statisticsToProtobufMapping.constructProtobufStatistics();

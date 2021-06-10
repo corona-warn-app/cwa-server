@@ -2,7 +2,7 @@ package app.coronawarn.server.common.persistence.domain;
 
 import org.springframework.data.annotation.Id;
 
-public class StatisticsDownload {
+public class LocalStatisticsDownloaded {
 
   @Id
   private final Integer counter;
@@ -12,12 +12,12 @@ public class StatisticsDownload {
   private final String etag;
 
   /**
-   * Statistic JSON Download record POJO.
+   * Local Statistic JSON Download record POJO.
    * @param counter file counter/version. Incremented via a postgres sequence.
    * @param downloadedTimestamp timestamp in seconds when this record was downloaded.
    * @param etag etag value of the JSON file at the downloaded time.
    */
-  public StatisticsDownload(Integer counter, long downloadedTimestamp, String etag) {
+  public LocalStatisticsDownloaded(Integer counter, long downloadedTimestamp, String etag) {
     this.counter = counter;
     this.downloadedTimestamp = downloadedTimestamp;
     this.etag = etag;
