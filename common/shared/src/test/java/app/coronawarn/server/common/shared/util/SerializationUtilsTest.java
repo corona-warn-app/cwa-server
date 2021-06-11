@@ -66,6 +66,8 @@ class SerializationUtilsTest {
 
   public static class TestObject implements Serializable {
 
+    private static final long serialVersionUID = 0L;
+
     private String testAttribute;
 
     public String getTestAttribute() {

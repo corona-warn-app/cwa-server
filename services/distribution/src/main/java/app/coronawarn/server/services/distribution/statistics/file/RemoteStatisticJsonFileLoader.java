@@ -2,6 +2,7 @@ package app.coronawarn.server.services.distribution.statistics.file;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClient;
+import app.coronawarn.server.services.distribution.statistics.StatisticType;
 import app.coronawarn.server.services.distribution.statistics.exceptions.BucketNotFoundException;
 import app.coronawarn.server.services.distribution.statistics.exceptions.ConnectionException;
 import app.coronawarn.server.services.distribution.statistics.exceptions.FilePathNotFoundException;
@@ -16,7 +17,7 @@ import software.amazon.awssdk.services.s3.model.S3Exception;
 
 @Component
 @Profile("!local-json-stats")
-public class RemoteStatisticJsonFileLoader implements JsonFileLoader {
+public class RemoteStatisticJsonFileLoader implements StatisticJsonFileLoader {
 
   ObjectStoreClient s3Stats;
   DistributionServiceConfig config;
@@ -27,8 +28,8 @@ public class RemoteStatisticJsonFileLoader implements JsonFileLoader {
   }
 
   /**
-   * Map parent retryable {@link ExhaustedRetryException} to cwa owned exceptions. The inner exception will be
-   * an S3 AwsException.
+   * Map parent retryable {@link ExhaustedRetryException} to cwa owned exceptions. The inner exception will be an S3
+   * AwsException.
    *
    * @param ex {@link software.amazon.awssdk.core.exception.SdkException} wrapped in a {@link ExhaustedRetryException}.
    * @return cwa owned RuntimeException.
@@ -50,10 +51,12 @@ public class RemoteStatisticJsonFileLoader implements JsonFileLoader {
    * @throws RuntimeException if errors found using AWS SDK.
    */
   @Override
-  public JsonFile getFile() {
+  public JsonFile getFile(StatisticType statisticType) {
+    String resourcePath = getResourcePath(statisticType);
+
     try {
       return s3Stats.getSingleObjectContent(config.getStatistics().getBucket(),
-          config.getStatistics().getStatisticPath());
+          resourcePath);
     } catch (ExhaustedRetryException ex) {
       throw mapException(ex);
     }
@@ -67,10 +70,12 @@ public class RemoteStatisticJsonFileLoader implements JsonFileLoader {
    * @throws RuntimeException if errors found using AWS SDK.
    */
   @Override
-  public Optional<JsonFile> getFileIfUpdated(String etag) {
+  public Optional<JsonFile> getFileIfUpdated(StatisticType statisticType, String etag) {
+    String resourcePath = getResourcePath(statisticType);
+
     try {
       var result = s3Stats.getSingleObjectContent(config.getStatistics().getBucket(),
-          config.getStatistics().getStatisticPath(), etag);
+          resourcePath, etag);
       return Optional.of(result);
     } catch (ExhaustedRetryException | NotModifiedException ex) {
       if (ex.getCause() instanceof NotModifiedException || ex instanceof NotModifiedException) {
@@ -80,4 +85,14 @@ public class RemoteStatisticJsonFileLoader implements JsonFileLoader {
       }
     }
   }
+
+  private String getResourcePath(StatisticType statisticType) {
+    switch (statisticType) {
+      case LOCAL:
+        return config.getStatistics().getLocalStatisticPath();
+      default:
+        return config.getStatistics().getStatisticPath();
+    }
+  }
+
 }

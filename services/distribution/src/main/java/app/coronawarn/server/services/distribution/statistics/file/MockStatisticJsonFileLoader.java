@@ -1,6 +1,7 @@
 package app.coronawarn.server.services.distribution.statistics.file;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.statistics.StatisticType;
 import java.io.IOException;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Profile("local-json-stats")
-public class LocalStatisticJsonFileLoader implements JsonFileLoader {
+public class MockStatisticJsonFileLoader implements StatisticJsonFileLoader {
 
   @Autowired
   ResourceLoader resourceLoader;
@@ -23,9 +24,19 @@ public class LocalStatisticJsonFileLoader implements JsonFileLoader {
    *
    * @return String content of file
    */
-  public JsonFile getFile() {
-    var resource = resourceLoader.getResource(
-        String.format("classpath:%s", serviceConfig.getStatistics().getStatisticPath()));
+  public JsonFile getFile(StatisticType statisticType) {
+    String resourcePath;
+
+    switch (statisticType) {
+      case LOCAL:
+        resourcePath = serviceConfig.getStatistics().getLocalStatisticPath();
+        break;
+      default:
+        resourcePath = serviceConfig.getStatistics().getStatisticPath();
+    }
+
+    var resource = resourceLoader.getResource(String.format("classpath:%s", resourcePath));
+
     try {
       return new JsonFile(resource.getInputStream(), "local");
     } catch (IOException e) {
@@ -35,8 +46,8 @@ public class LocalStatisticJsonFileLoader implements JsonFileLoader {
   }
 
   @Override
-  public Optional<JsonFile> getFileIfUpdated(String etag) {
-    return Optional.of(this.getFile());
+  public Optional<JsonFile> getFileIfUpdated(StatisticType statisticType, String etag) {
+    return Optional.of(this.getFile(statisticType));
   }
 
 }

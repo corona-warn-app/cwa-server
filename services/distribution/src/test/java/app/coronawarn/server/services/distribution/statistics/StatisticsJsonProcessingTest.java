@@ -13,7 +13,7 @@ import app.coronawarn.server.common.protocols.internal.stats.KeyFigure;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.Trend;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.TrendSemantic;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import app.coronawarn.server.services.distribution.statistics.file.LocalStatisticJsonFileLoader;
+import app.coronawarn.server.services.distribution.statistics.file.MockStatisticJsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -34,7 +34,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ActiveProfiles({"local-json-stats", "processing-test", "debug"})
 @ContextConfiguration(classes = {StatisticsJsonToProtobufTest.class,
     StatisticsToProtobufMapping.class, KeyFigureCardFactory.class,
-    LocalStatisticJsonFileLoader.class
+    MockStatisticJsonFileLoader.class
 }, initializers = ConfigDataApplicationContextInitializer.class)
 class StatisticsJsonProcessingTest {
 

@@ -2,8 +2,8 @@ package app.coronawarn.server.common.persistence.service;
 
 import static java.time.ZoneOffset.UTC;
 
-import app.coronawarn.server.common.persistence.domain.StatisticsDownloaded;
-import app.coronawarn.server.common.persistence.repository.StatisticsDownloadRepository;
+import app.coronawarn.server.common.persistence.domain.LocalStatisticsDownloaded;
+import app.coronawarn.server.common.persistence.repository.LocalStatisticsDownloadRepository;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -13,12 +13,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-public class StatisticsDownloadService {
+public class LocalStatisticsDownloadService {
 
-  private final StatisticsDownloadRepository repository;
-  private static final Logger logger = LoggerFactory.getLogger(StatisticsDownloadService.class);
+  private final LocalStatisticsDownloadRepository repository;
+  private static final Logger logger = LoggerFactory.getLogger(LocalStatisticsDownloadService.class);
 
-  public StatisticsDownloadService(StatisticsDownloadRepository repository) {
+  public LocalStatisticsDownloadService(LocalStatisticsDownloadRepository repository) {
     this.repository = repository;
   }
 
@@ -33,8 +33,7 @@ public class StatisticsDownloadService {
   @Transactional
   public boolean store(long timestamp, String etag) {
     try {
-      this.repository.insertWithAutoIncrement(timestamp, etag);
-      return true;
+      return this.repository.insertWithAutoIncrement(timestamp, etag);
     } catch (Exception e) {
       logger.error("Failed to store Statistics Download entry", e);
       return false;
@@ -42,13 +41,13 @@ public class StatisticsDownloadService {
   }
 
   /**
-   * Retrieves the latest {@link StatisticsDownloaded} stored. The order is determined by the counter field, which is
-   * automatically incremented by the Database.
+   * Retrieves the latest {@link LocalStatisticsDownloaded} stored. The order is determined by the counter field,
+   * which is automatically incremented by the Database.
    *
-   * @return {@link StatisticsDownloaded} returns Optional.empty if no download entries are stored.
+   * @return {@link LocalStatisticsDownloaded} returns Optional.empty if no download entries are stored.
    */
-  public Optional<StatisticsDownloaded> getMostRecentDownload() {
-    return Optional.ofNullable(repository.getWithLatestETag());
+  public Optional<LocalStatisticsDownloaded> getMostRecentDownload() {
+    return repository.getWithLatestETag();
   }
 
   /**

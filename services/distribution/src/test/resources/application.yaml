@@ -41,6 +41,7 @@ services:
       app-config-v2-android-file-name: app_config_android
       app-config-v2-ios-file-name: app_config_ios
       statistics-file-name: stats
+      local-statistics-file-name: local-stats
     signature:
       app-bundle-id: de.rki.coronawarnapp
       verification-key-id: 262
@@ -66,6 +67,7 @@ services:
     statistics:
       trend-calculation-threshold: 0.05
       statistic-path: stats/statistic_data.json
+      local-statistic-path: stats/local_statistic_data_processing_test.json
       access-key: fakeAccessKey
       secret-key: secretKey
       endpoint: https://localhost

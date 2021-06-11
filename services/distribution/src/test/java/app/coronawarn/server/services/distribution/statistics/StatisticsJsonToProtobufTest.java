@@ -9,7 +9,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import app.coronawarn.server.common.persistence.domain.StatisticsDownload;
+import app.coronawarn.server.common.persistence.domain.StatisticsDownloaded;
 import app.coronawarn.server.common.persistence.service.StatisticsDownloadService;
 import app.coronawarn.server.common.protocols.internal.stats.CardHeader;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure;
@@ -19,8 +19,8 @@ import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.common.protocols.internal.stats.Statistics;
 import app.coronawarn.server.common.shared.util.SerializationUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import app.coronawarn.server.services.distribution.statistics.file.JsonFileLoader;
-import app.coronawarn.server.services.distribution.statistics.file.LocalStatisticJsonFileLoader;
+import app.coronawarn.server.services.distribution.statistics.file.MockStatisticJsonFileLoader;
+import app.coronawarn.server.services.distribution.statistics.file.StatisticJsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants;
 import app.coronawarn.server.services.distribution.statistics.validation.StatisticsJsonValidator;
@@ -60,7 +60,7 @@ class StatisticsJsonToProtobufTest {
     StatisticsDownloadService service;
 
     @MockBean
-    JsonFileLoader mockLoader;
+    StatisticJsonFileLoader mockLoader;
 
     @Autowired
     DistributionServiceConfig serviceConfig;
@@ -70,7 +70,7 @@ class StatisticsJsonToProtobufTest {
 
     @Test
     void shouldNotGenerateStatisticsIfEtagNotUpdated() {
-      when(service.getMostRecentDownload()).thenReturn(Optional.of(new StatisticsDownload(1, 1234, "latest-etag")));
+      when(service.getMostRecentDownload()).thenReturn(Optional.of(new StatisticsDownloaded(1, 1234, "latest-etag")));
       when(mockLoader.getFileIfUpdated(eq("latest-etag"))).thenReturn(Optional.empty());
       var statisticsToProtobufMapping = new StatisticsToProtobufMapping(serviceConfig, factory, mockLoader, service);
       var statistics = statisticsToProtobufMapping.constructProtobufStatistics();
@@ -86,7 +86,7 @@ class StatisticsJsonToProtobufTest {
   @DisplayName("General Tests")
   @ContextConfiguration(classes = {StatisticsJsonToProtobufTest.class,
       StatisticsToProtobufMapping.class, KeyFigureCardFactory.class,
-      LocalStatisticJsonFileLoader.class
+      MockStatisticJsonFileLoader.class
   }, initializers = ConfigDataApplicationContextInitializer.class)
   class StatisticsJsonParsingTest {
     @MockBean
@@ -143,7 +143,7 @@ class StatisticsJsonToProtobufTest {
 
     @Test
     void testEffectiveDateValidation() throws IOException {
-      StatisticsJsonValidator statisticsJsonValidator = new StatisticsJsonValidator();
+      StatisticsJsonValidator<StatisticsJsonStringObject> statisticsJsonValidator = new StatisticsJsonValidator<>();
 
       String content = FileUtils.readFileToString(
           new File("./src/test/resources/stats/statistic_data.json"), StandardCharsets.UTF_8);
@@ -175,7 +175,7 @@ class StatisticsJsonToProtobufTest {
   @DisplayName("Wrong JSON Properties Test")
   @ContextConfiguration(classes = {StatisticsJsonToProtobufTest.class,
       StatisticsToProtobufMapping.class, KeyFigureCardFactory.class,
-      LocalStatisticJsonFileLoader.class
+      MockStatisticJsonFileLoader.class
   }, initializers = ConfigDataApplicationContextInitializer.class)
   class StatisticsWrongJsonTest {
 
@@ -203,7 +203,7 @@ class StatisticsJsonToProtobufTest {
   @DisplayName("Value Processing Test")
   @ContextConfiguration(classes = {StatisticsJsonToProtobufTest.class,
       StatisticsToProtobufMapping.class, KeyFigureCardFactory.class,
-      LocalStatisticJsonFileLoader.class
+      MockStatisticJsonFileLoader.class
   }, initializers = ConfigDataApplicationContextInitializer.class)
 
   class StatisticsJsonProcessingTest {

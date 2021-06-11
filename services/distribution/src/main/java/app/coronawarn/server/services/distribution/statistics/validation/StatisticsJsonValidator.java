@@ -1,6 +1,7 @@
 package app.coronawarn.server.services.distribution.statistics.validation;
 
 import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStringObject;
+import app.coronawarn.server.services.distribution.statistics.StatisticsTimeJsonObject;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -10,7 +11,7 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class StatisticsJsonValidator {
+public class StatisticsJsonValidator<T extends StatisticsTimeJsonObject> {
 
   private static final Logger logger = LoggerFactory.getLogger(StatisticsJsonValidator.class);
 
@@ -20,8 +21,8 @@ public class StatisticsJsonValidator {
    * @param statisticsObjects the parsed JSON Object.
    * @return A list with only valid objects.
    */
-  public List<StatisticsJsonStringObject> validate(List<StatisticsJsonStringObject> statisticsObjects) {
-    List<StatisticsJsonStringObject> statisticsJsonStringObjects = new ArrayList<>();
+  public List<T> validate(List<T> statisticsObjects) {
+    List<T> statisticsJsonStringObjects = new ArrayList<>();
     statisticsObjects.forEach(statisticsObject -> {
       if (isValidEffectiveDate(statisticsObject)) {
         statisticsJsonStringObjects.add(statisticsObject);
@@ -30,7 +31,7 @@ public class StatisticsJsonValidator {
     return statisticsJsonStringObjects;
   }
 
-  private boolean isValidEffectiveDate(StatisticsJsonStringObject statisticsJsonStringObject) {
+  private boolean isValidEffectiveDate(T statisticsJsonStringObject) {
     String effectiveDate = statisticsJsonStringObject.getEffectiveDate();
 
     if (Objects.isNull(effectiveDate)) {

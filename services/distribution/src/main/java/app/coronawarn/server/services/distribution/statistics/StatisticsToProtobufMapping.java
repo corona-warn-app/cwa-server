@@ -22,6 +22,7 @@ import app.coronawarn.server.services.distribution.statistics.exceptions.Connect
 import app.coronawarn.server.services.distribution.statistics.exceptions.FilePathNotFoundException;
 import app.coronawarn.server.services.distribution.statistics.file.JsonFile;
 import app.coronawarn.server.services.distribution.statistics.file.JsonFileLoader;
+import app.coronawarn.server.services.distribution.statistics.file.StatisticJsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.MissingPropertyException;
 import app.coronawarn.server.services.distribution.statistics.validation.StatisticsJsonValidator;
@@ -49,7 +50,7 @@ public class StatisticsToProtobufMapping {
 
   private final DistributionServiceConfig distributionServiceConfig;
   private final KeyFigureCardFactory keyFigureCardFactory;
-  private final JsonFileLoader jsonFileLoader;
+  private final StatisticJsonFileLoader jsonFileLoader;
   private final StatisticsDownloadService statisticsDownloadService;
 
   /**
@@ -62,7 +63,7 @@ public class StatisticsToProtobufMapping {
    */
   public StatisticsToProtobufMapping(DistributionServiceConfig distributionServiceConfig,
       KeyFigureCardFactory keyFigureCardFactory,
-      JsonFileLoader jsonFileLoader,
+      StatisticJsonFileLoader jsonFileLoader,
       StatisticsDownloadService statisticsDownloadService) {
     this.distributionServiceConfig = distributionServiceConfig;
     this.keyFigureCardFactory = keyFigureCardFactory;
@@ -97,11 +98,12 @@ public class StatisticsToProtobufMapping {
         logger.warn("Stats file is already updated to the latest version. Skipping generation.");
         return Statistics.newBuilder().build();
       } else {
+        StatisticsJsonValidator<StatisticsJsonStringObject> validator = new StatisticsJsonValidator<>();
+
         List<StatisticsJsonStringObject> jsonStringObjects = SerializationUtils
             .deserializeJson(file.get().getContent(), typeFactory -> typeFactory
                 .constructCollectionType(List.class, StatisticsJsonStringObject.class));
 
-        StatisticsJsonValidator validator = new StatisticsJsonValidator();
         jsonStringObjects = new ArrayList<>(validator.validate(jsonStringObjects));
 
         this.updateETag(file.get().getETag());

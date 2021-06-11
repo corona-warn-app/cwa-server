@@ -1,0 +1,25 @@
+# Mapping of the federal state index to federal state group
+# federal state index = federal state code - 1
+# federal state group = archive group in which the federal state data will be uploaded on CDN.
+# Example: 0: 4 means federal state with id 1 will go in local_stats_4 archive
+#
+# https://github.com/corona-warn-app/cwa-app-tech-spec/blob/42e9e4f3c588cd2fd283f904e9f0ccd53a2b83d0/
+# docs/spec/statistics.md#populate-local-statistical-data
+region-mapping:
+  federal-states-groups:
+    0: 4
+    1: 4
+    2: 4
+    3: 4
+    4: 5
+    5: 7
+    6: 7
+    7: 1
+    8: 2
+    9: 7
+    10: 3
+    11: 3
+    12: 3
+    13: 6
+    14: 6
+    15: 6

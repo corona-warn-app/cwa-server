@@ -2,10 +2,11 @@
 
 package app.coronawarn.server.common.shared.util;
 
+import static java.time.ZoneOffset.UTC;
+
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 
 public class TimeUtils {
@@ -21,7 +22,7 @@ public class TimeUtils {
    * @return LocalDateTime of current UTC hour
    */
   public static LocalDateTime getCurrentUtcHour() {
-    return LocalDateTime.ofInstant(getNow().truncatedTo(ChronoUnit.HOURS), ZoneOffset.UTC);
+    return LocalDateTime.ofInstant(getNow().truncatedTo(ChronoUnit.HOURS), UTC);
   }
 
   /**
@@ -53,4 +54,14 @@ public class TimeUtils {
   public static void setNow(Instant instant) {
     now = instant;
   }
+
+  /**
+   * Derive local date at UTC zone to epoch seconds.
+   *
+   * @return - to epoch seconds
+   */
+  public static long toEpochSecondsUtc(LocalDate localDate) {
+    return localDate.atStartOfDay(UTC).toEpochSecond();
+  }
+
 }

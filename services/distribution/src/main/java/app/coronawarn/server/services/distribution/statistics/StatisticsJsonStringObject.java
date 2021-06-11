@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class StatisticsJsonStringObject {
+public class StatisticsJsonStringObject extends StatisticsTimeJsonObject {
 
   @JsonProperty("app_downloads_7days_avg")
   private String appDownloads7DaysAvg;
@@ -21,8 +21,6 @@ public class StatisticsJsonStringObject {
   private Integer appDownloadsCumulated;
   @JsonProperty("app_downloads_daily")
   private Integer appDownloadsDaily;
-  @JsonProperty("effective_date")
-  private String effectiveDate;
   @JsonProperty("infections_effective_7days_avg")
   private Double infectionsReported7daysAvg;
   @JsonProperty("infections_effective_7days_avg_growthrate")
@@ -116,10 +114,6 @@ public class StatisticsJsonStringObject {
 
   public Integer getAppDownloadsDaily() {
     return appDownloadsDaily;
-  }
-
-  public String getEffectiveDate() {
-    return effectiveDate;
   }
 
   public Double getInfectionsReported7daysAvg() {
@@ -284,10 +278,6 @@ public class StatisticsJsonStringObject {
 
   public void setAppDownloadsDaily(Integer appDownloadsDaily) {
     this.appDownloadsDaily = appDownloadsDaily;
-  }
-
-  public void setEffectiveDate(String effectiveDate) {
-    this.effectiveDate = effectiveDate;
   }
 
   public void setInfectionsReported7daysAvg(Double infectionsReported7daysAvg) {
