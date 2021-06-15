@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.federation.upload.runner;
 
+import static app.coronawarn.server.services.federation.upload.utils.MockData.generateRandomUploadKey;
 import static org.assertj.core.util.Lists.emptyList;
 import static org.assertj.core.util.Lists.list;
 import static org.mockito.ArgumentMatchers.any;
@@ -24,7 +25,6 @@ import app.coronawarn.server.services.federation.upload.payload.DiagnosisKeyBatc
 import app.coronawarn.server.services.federation.upload.payload.PayloadFactory;
 import app.coronawarn.server.services.federation.upload.payload.signing.BatchSigner;
 import app.coronawarn.server.services.federation.upload.payload.signing.CryptoProvider;
-import app.coronawarn.server.services.federation.upload.utils.MockData;
 import com.google.protobuf.ByteString;
 import java.util.Comparator;
 import java.util.List;
@@ -44,10 +44,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @EnableConfigurationProperties(value = UploadServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {Upload.class, PayloadFactory.class, DiagnosisKeyBatchAssembler.class,
+@ContextConfiguration(classes = { Upload.class, PayloadFactory.class, DiagnosisKeyBatchAssembler.class,
     BatchSigner.class, CryptoProvider.class, FederationUploadKeyService.class, ValidDiagnosisKeyFilter.class,
-    KeySharingPoliciesChecker.class, AllowedPropertiesMap.class},
-    initializers = ConfigDataApplicationContextInitializer.class)
+    KeySharingPoliciesChecker.class,
+    AllowedPropertiesMap.class }, initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles("connect-efgs")
 class UploadResponseTest {
 
@@ -81,95 +81,89 @@ class UploadResponseTest {
 
   @Test
   void check201UploadResponseStatus() throws Exception {
-    var testKey1 = MockData.generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
-    var testKey2 = MockData.generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
+    var testKey1 = generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
+    var testKey2 = generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
 
     when(mockDiagnosisKeyLoader.loadDiagnosisKeys()).thenReturn(List.of(testKey1, testKey2));
     returnEmptyFromUpload();
     upload.run(null);
-    verify(mockUploadKeyRepository, times(1))
-        .updateBatchTag(eq(testKey1.getKeyData()), any());
-    verify(mockUploadKeyRepository, times(1))
-        .updateBatchTag(eq(testKey2.getKeyData()), any());
+    verify(mockUploadKeyRepository, times(1)).updateBatchTag(eq(testKey1.getKeyData()), any());
+    verify(mockUploadKeyRepository, times(1)).updateBatchTag(eq(testKey2.getKeyData()), any());
   }
 
   @Test
   void check409UploadResponseStatus() throws Exception {
-    var testKey1 = MockData.generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
-    var testKey2 = MockData.generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
+    var testKey1 = generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
+    var testKey2 = generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
 
     when(mockDiagnosisKeyLoader.loadDiagnosisKeys()).thenReturn(List.of(testKey1, testKey2));
     returnFromUpload(createFake409Response());
     upload.run(null);
-    verify(mockUploadKeyRepository, times(1))
-        .updateBatchTag(eq(testKey1.getKeyData()), any());
-    verify(mockUploadKeyRepository, times(1))
-        .updateBatchTag(eq(testKey2.getKeyData()), any());
+    verify(mockUploadKeyRepository, times(1)).updateBatchTag(eq(testKey1.getKeyData()), any());
+    verify(mockUploadKeyRepository, times(1)).updateBatchTag(eq(testKey2.getKeyData()), any());
   }
 
   @Test
   void check500UploadResponseStatus() throws Exception {
-    var testKey1 = MockData.generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
-    var testKey2 = MockData.generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
+    var testKey1 = generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
+    var testKey2 = generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
 
     when(uploadServiceConfig.getMinBatchKeyCount()).thenReturn(2);
     when(mockDiagnosisKeyLoader.loadDiagnosisKeys()).thenReturn(List.of(testKey1, testKey2));
     returnFromUpload(createFake500Response());
     upload.run(null);
-    verify(mockUploadKeyRepository, never())
-        .updateBatchTag(eq(testKey1.getKeyData()), any());
-    verify(mockUploadKeyRepository, never())
-        .updateBatchTag(eq(testKey2.getKeyData()), any());
+    verify(mockUploadKeyRepository, never()).updateBatchTag(eq(testKey1.getKeyData()), any());
+    verify(mockUploadKeyRepository, never()).updateBatchTag(eq(testKey2.getKeyData()), any());
   }
 
   @Test
   void check201And409UploadResponseStatus() throws Exception {
-    var testKey1 = MockData.generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
-    var testKey2 = MockData.generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
-
     when(uploadServiceConfig.getMinBatchKeyCount()).thenReturn(2);
-    when(mockDiagnosisKeyLoader.loadDiagnosisKeys()).thenReturn(List.of(testKey1, testKey2));
+    final List<FederationUploadKey> orderedKeys = list(
+        generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST)).stream()
+            .sorted(Comparator.comparing(diagnosisKey -> ByteString.copyFrom(diagnosisKey.getKeyData()).toStringUtf8()))
+            .collect(Collectors.toList());
+    when(mockDiagnosisKeyLoader.loadDiagnosisKeys()).thenReturn(orderedKeys);
+
     returnFromUpload(createFake409And201Response());
+    var conflictKey = orderedKeys.get(0);
+    var testKey1 = orderedKeys.get(1);
+
     upload.run(null);
-    verify(mockUploadKeyRepository, times(1))
-        .updateBatchTag(eq(testKey1.getKeyData()), any());
-    verify(mockUploadKeyRepository, times(1))
-        .updateBatchTag(eq(testKey2.getKeyData()), any());
+    // success keys, have to be re-send and should not get updated
+    verify(mockUploadKeyRepository, never()).updateBatchTag(eq(testKey1.getKeyData()), any());
+    // conflicting keys will be updated with batchtag
+    verify(mockUploadKeyRepository, times(1)).updateBatchTag(eq(conflictKey.getKeyData()), any());
   }
 
   @Test
   void check201And500UploadResponseStatus() throws Exception {
-    List<FederationUploadKey> orderedKeys = list(MockData.generateRandomUploadKey(true,
-        SubmissionType.SUBMISSION_TYPE_PCR_TEST),
-        MockData.generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST)).stream()
-        .sorted(Comparator.comparing(diagnosisKey ->
-            ByteString.copyFrom(diagnosisKey.getKeyData()).toStringUtf8())).collect(Collectors.toList());
+    List<FederationUploadKey> orderedKeys = list(generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST)).stream()
+            .sorted(Comparator.comparing(diagnosisKey -> ByteString.copyFrom(diagnosisKey.getKeyData()).toStringUtf8()))
+            .collect(Collectors.toList());
     when(uploadServiceConfig.getMinBatchKeyCount()).thenReturn(2);
     when(mockDiagnosisKeyLoader.loadDiagnosisKeys()).thenReturn(orderedKeys);
     returnFromUpload(createFake500And201Response());
     upload.run(null);
-    verify(mockUploadKeyRepository, never())
-        .updateBatchTag(eq(orderedKeys.get(0).getKeyData()), any());
-      verify(mockUploadKeyRepository, times(1))
-          .updateBatchTag(eq(orderedKeys.get(1).getKeyData()), any());
+    verify(mockUploadKeyRepository, never()).updateBatchTag(eq(orderedKeys.get(0).getKeyData()), any());
+    verify(mockUploadKeyRepository, times(0)).updateBatchTag(eq(orderedKeys.get(1).getKeyData()), any());
   }
 
   @Test
   void check409And500UploadResponseStatus() throws Exception {
-    List<FederationUploadKey> orderedKeys = list(MockData.generateRandomUploadKey(true,
-        SubmissionType.SUBMISSION_TYPE_PCR_TEST),
-        MockData.generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST)).stream()
-        .sorted(Comparator.comparing(diagnosisKey ->
-            ByteString.copyFrom(diagnosisKey.getKeyData()).toStringUtf8())).collect(Collectors.toList());
+    List<FederationUploadKey> orderedKeys = list(generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST)).stream()
+            .sorted(Comparator.comparing(diagnosisKey -> ByteString.copyFrom(diagnosisKey.getKeyData()).toStringUtf8()))
+            .collect(Collectors.toList());
 
     when(uploadServiceConfig.getMinBatchKeyCount()).thenReturn(2);
     when(mockDiagnosisKeyLoader.loadDiagnosisKeys()).thenReturn(orderedKeys);
     returnFromUpload(createFake409And500Response());
     upload.run(null);
-    verify(mockUploadKeyRepository, times(1))
-        .updateBatchTag(eq(orderedKeys.get(0).getKeyData()), any());
-    verify(mockUploadKeyRepository, never())
-        .updateBatchTag(eq(orderedKeys.get(1).getKeyData()), any());
+    verify(mockUploadKeyRepository, times(1)).updateBatchTag(eq(orderedKeys.get(0).getKeyData()), any());
+    verify(mockUploadKeyRepository, never()).updateBatchTag(eq(orderedKeys.get(1).getKeyData()), any());
   }
 
   private BatchUploadResponse createFake409And500Response() {

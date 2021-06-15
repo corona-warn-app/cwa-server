@@ -4,14 +4,13 @@ import app.coronawarn.server.common.federation.client.upload.BatchUploadResponse
 import app.coronawarn.server.common.persistence.domain.FederationBatchSourceSystem;
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.persistence.service.FederationUploadKeyService;
-import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
-import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.services.federation.upload.Application;
 import app.coronawarn.server.services.federation.upload.client.FederationUploadClient;
 import app.coronawarn.server.services.federation.upload.keys.DiagnosisKeyLoader;
 import app.coronawarn.server.services.federation.upload.payload.PayloadFactory;
 import app.coronawarn.server.services.federation.upload.payload.UploadPayload;
 import com.google.protobuf.ByteString;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -62,12 +61,24 @@ public class Upload implements ApplicationRunner {
   }
 
   private List<FederationUploadKey> getRetryKeysFromResponseBody(BatchUploadResponse body, UploadPayload payload) {
-    List<FederationUploadKey> sortedOriginalList = sortByKeyData(payload.getOriginalKeys());
-    return body.getStatus500()
+    final List<FederationUploadKey> sortedOriginalList = sortByKeyData(payload.getOriginalKeys());
+    final List<FederationUploadKey> collectAllBatchKeys = new ArrayList<>();
+
+    final List<FederationUploadKey> errorKeys = body.getStatus500()
         .stream()
         .map(Integer::parseInt)
         .map(index -> sortedOriginalList.get(index))
         .collect(Collectors.toList());
+
+    if (!errorKeys.isEmpty() || !body.getStatus409().isEmpty()) {
+      collectAllBatchKeys.addAll(errorKeys);
+      collectAllBatchKeys.addAll(body.getStatus201()
+          .stream()
+          .map(Integer::parseInt)
+          .map(index -> sortedOriginalList.get(index))
+          .collect(Collectors.toList()));
+    }
+    return collectAllBatchKeys;
   }
 
   private List<FederationUploadKey> executeUploadAndCollectErrors(UploadPayload payload) {

@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.federation.client.FederationGatewayClient;
 import app.coronawarn.server.common.federation.client.callback.RegistrationResponse;
-import app.coronawarn.server.common.persistence.utils.hash.HashUtils;
+import app.coronawarn.server.common.shared.util.HashUtils;
 import app.coronawarn.server.services.callback.config.CallbackServiceConfig;
 import java.util.List;
 import org.junit.jupiter.api.Test;

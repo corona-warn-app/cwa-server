@@ -1,18 +1,18 @@
 package app.coronawarn.server.services.submission.checkins;
 
-import app.coronawarn.server.common.persistence.utils.hash.HashUtils;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
+import app.coronawarn.server.common.shared.util.HashUtils;
 import com.google.protobuf.ByteString;
-import org.junit.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils;
 
 public class FakeCheckinsGeneratorTest {
 

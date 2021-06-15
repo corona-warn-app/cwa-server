@@ -1,8 +1,7 @@
 package app.coronawarn.server.services.distribution.config;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
-import app.coronawarn.server.services.distribution.utils.SerializationUtils;
-import java.io.File;
+import app.coronawarn.server.common.shared.util.SerializationUtils;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.constraints.Max;
@@ -20,6 +19,8 @@ import org.springframework.validation.annotation.Validated;
 public class DistributionServiceConfig {
 
   private static final String PATH_REGEX = "^[/]?[a-zA-Z0-9_]{1,1024}(/[a-zA-Z0-9_]{1,1024}){0,256}[/]?$";
+  private static final String RESOURCE_REGEX = "^(classpath:|file:[/]{1,3})?([a-zA-Z0-9_/\\.]{1,1010})$";
+  private static final String RESOURCE_OR_EMPTY_REGEX = "(" + RESOURCE_REGEX + ")?";
   private static final String FILE_NAME_REGEX = "^[a-zA-Z0-9_-]{1,1024}$";
   private static final String FILE_NAME_WITH_TYPE_REGEX = "^[a-zA-Z0-9_-]{1,1024}\\.[a-z]{1,64}$";
   private static final String CHAR_AND_NUMBER_REGEX = "^[a-zA-Z0-9_-]{1,1024}$";
@@ -69,6 +70,7 @@ public class DistributionServiceConfig {
   private QrCodePosterTemplate iosQrCodePosterTemplate;
   private QrCodePosterTemplate androidQrCodePosterTemplate;
   private PresenceTracingParameters presenceTracingParameters;
+  private DigitalGreenCertificate digitalGreenCertificate;
 
   public Paths getPaths() {
     return paths;
@@ -282,6 +284,8 @@ public class DistributionServiceConfig {
 
     private String statisticPath;
 
+    private String localStatisticPath;
+
     private String accessKey;
 
     private String secretKey;
@@ -289,6 +293,14 @@ public class DistributionServiceConfig {
     private String endpoint;
 
     private String bucket;
+
+    public String getLocalStatisticPath() {
+      return localStatisticPath;
+    }
+
+    public void setLocalStatisticPath(String localStatisticPath) {
+      this.localStatisticPath = localStatisticPath;
+    }
 
     public String getStatisticPath() {
       return statisticPath;
@@ -458,6 +470,8 @@ public class DistributionServiceConfig {
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String statisticsFileName;
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
+    private String localStatisticsFileName;
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String traceWarningsPath;
 
     public String getStatisticsFileName() {
@@ -466,6 +480,14 @@ public class DistributionServiceConfig {
 
     public void setStatisticsFileName(String statisticsFileName) {
       this.statisticsFileName = statisticsFileName;
+    }
+
+    public String getLocalStatisticsFileName() {
+      return localStatisticsFileName;
+    }
+
+    public void setLocalStatisticsFileName(String localStatisticsFileName) {
+      this.localStatisticsFileName = localStatisticsFileName;
     }
 
     public String getAppConfigV2IosFileName() {
@@ -859,6 +881,13 @@ public class DistributionServiceConfig {
     this.presenceTracingParameters = presenceTracingParameters;
   }
 
+  public DigitalGreenCertificate getDigitalGreenCertificate() {
+    return digitalGreenCertificate;
+  }
+
+  public void setDigitalGreenCertificate(DigitalGreenCertificate digitalGreenCertificate) {
+    this.digitalGreenCertificate = digitalGreenCertificate;
+  }
 
   public static class ObjectStore {
 
@@ -1057,6 +1086,7 @@ public class DistributionServiceConfig {
     private AndroidEventDrivenUserSurveyParameters androidEventDrivenUserSurveyParameters;
     private IosPrivacyPreservingAnalyticsParameters iosPrivacyPreservingAnalyticsParameters;
     private AndroidPrivacyPreservingAnalyticsParameters androidPrivacyPreservingAnalyticsParameters;
+    private DgcParameters dgcParameters;
 
     public IosEventDrivenUserSurveyParameters getIosEventDrivenUserSurveyParameters() {
       return iosEventDrivenUserSurveyParameters;
@@ -1125,6 +1155,14 @@ public class DistributionServiceConfig {
     public void setAndroidExposureDetectionParameters(
         AndroidExposureDetectionParameters androidExposureDetectionParameters) {
       this.androidExposureDetectionParameters = androidExposureDetectionParameters;
+    }
+
+    public DgcParameters getDgcParameters() {
+      return dgcParameters;
+    }
+
+    public void setDgcParameters(DgcParameters dgcParameters) {
+      this.dgcParameters = dgcParameters;
     }
 
     public static class AndroidKeyDownloadParameters extends CommonKeyDownloadParameters {
@@ -1464,6 +1502,161 @@ public class DistributionServiceConfig {
       public void setRequireEvaluationTypeHardwareBacked(Boolean requireEvaluationTypeHardwareBacked) {
         this.requireEvaluationTypeHardwareBacked = requireEvaluationTypeHardwareBacked;
       }
+    }
+
+    public static class DgcParameters {
+
+      private DgcTestCertificateParameters dgcTestCertificateParameters;
+
+      public DgcTestCertificateParameters getTestCertificateParameters() {
+        return dgcTestCertificateParameters;
+      }
+
+      public void setTestCertificateParameters(DgcTestCertificateParameters dgcTestCertificateParameters) {
+        this.dgcTestCertificateParameters = dgcTestCertificateParameters;
+      }
+
+      public static class DgcTestCertificateParameters {
+
+        @Min(0)
+        @Max(60)
+        private Integer waitAfterPublicKeyRegistrationInSeconds;
+
+        @Min(0)
+        @Max(60)
+        private Integer waitForRetryInSeconds;
+
+        public Integer getWaitAfterPublicKeyRegistrationInSeconds() {
+          return waitAfterPublicKeyRegistrationInSeconds;
+        }
+
+        public void setWaitAfterPublicKeyRegistrationInSeconds(Integer waitAfterPublicKeyRegistrationInSeconds) {
+          this.waitAfterPublicKeyRegistrationInSeconds = waitAfterPublicKeyRegistrationInSeconds;
+        }
+
+        public Integer getWaitForRetryInSeconds() {
+          return waitForRetryInSeconds;
+        }
+
+        public void setWaitForRetryInSeconds(Integer waitForRetryInSeconds) {
+          this.waitForRetryInSeconds = waitForRetryInSeconds;
+        }
+      }
+
+    }
+  }
+
+  public static class DigitalGreenCertificate {
+
+    @Pattern(regexp = RESOURCE_OR_EMPTY_REGEX)
+    private String mahJsonPath;
+
+    @Pattern(regexp = RESOURCE_OR_EMPTY_REGEX)
+    private String prophylaxisJsonPath;
+
+    @Pattern(regexp = RESOURCE_OR_EMPTY_REGEX)
+    private String medicinalProductsJsonPath;
+
+    @Pattern(regexp = RESOURCE_OR_EMPTY_REGEX)
+    private String diseaseAgentTargetedJsonPath;
+
+    @Pattern(regexp = RESOURCE_OR_EMPTY_REGEX)
+    private String testManfJsonPath;
+
+    @Pattern(regexp = RESOURCE_OR_EMPTY_REGEX)
+    private String testResultJsonPath;
+
+    @Pattern(regexp = RESOURCE_OR_EMPTY_REGEX)
+    private String testTypeJsonPath;
+
+    @NotNull
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
+    private String dgcDirectory;
+
+    @NotNull
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
+    private String valuesetsFileName;
+
+    private String[] supportedLanguages;
+
+    public String getMahJsonPath() {
+      return mahJsonPath;
+    }
+
+    public void setMahJsonPath(String mahJsonPath) {
+      this.mahJsonPath = mahJsonPath;
+    }
+
+    public String getProphylaxisJsonPath() {
+      return prophylaxisJsonPath;
+    }
+
+    public void setProphylaxisJsonPath(String prophylaxisJsonPath) {
+      this.prophylaxisJsonPath = prophylaxisJsonPath;
+    }
+
+    public String getMedicinalProductsJsonPath() {
+      return medicinalProductsJsonPath;
+    }
+
+    public void setMedicinalProductsJsonPath(String medicinalProductsJsonPath) {
+      this.medicinalProductsJsonPath = medicinalProductsJsonPath;
+    }
+
+    public String getDiseaseAgentTargetedJsonPath() {
+      return diseaseAgentTargetedJsonPath;
+    }
+
+    public void setDiseaseAgentTargetedJsonPath(String diseaseAgentTargetedJsonPath) {
+      this.diseaseAgentTargetedJsonPath = diseaseAgentTargetedJsonPath;
+    }
+
+    public String getTestManfJsonPath() {
+      return testManfJsonPath;
+    }
+
+    public void setTestManfJsonPath(String testManfJsonPath) {
+      this.testManfJsonPath = testManfJsonPath;
+    }
+
+    public String getTestResultJsonPath() {
+      return testResultJsonPath;
+    }
+
+    public void setTestResultJsonPath(String testResultJsonPath) {
+      this.testResultJsonPath = testResultJsonPath;
+    }
+
+    public String getTestTypeJsonPath() {
+      return testTypeJsonPath;
+    }
+
+    public void setTestTypeJsonPath(String testTypeJsonPath) {
+      this.testTypeJsonPath = testTypeJsonPath;
+    }
+
+    public String getDgcDirectory() {
+      return dgcDirectory;
+    }
+
+    public void setDgcDirectory(String dgcDirectory) {
+      this.dgcDirectory = dgcDirectory;
+    }
+
+    public String getValuesetsFileName() {
+      return valuesetsFileName;
+    }
+
+    public void setValuesetsFileName(String valuesetsFileName) {
+      this.valuesetsFileName = valuesetsFileName;
+    }
+
+    public String[] getSupportedLanguages() {
+      return supportedLanguages;
+    }
+
+    public void setSupportedLanguages(String[] supportedLanguages) {
+      this.supportedLanguages = supportedLanguages;
     }
   }
 }

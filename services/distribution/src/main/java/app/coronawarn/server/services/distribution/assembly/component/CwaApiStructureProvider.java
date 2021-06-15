@@ -20,10 +20,12 @@ public class CwaApiStructureProvider {
   private final AppConfigurationStructureProvider appConfigurationStructureProvider;
   private final AppConfigurationV2StructureProvider appConfigurationV2StructureProvider;
   private final StatisticsStructureProvider statisticsStructureProvider;
+  private final LocalStatisticsStructureProvider localStatisticsStructureProvider;
   private final DiagnosisKeysStructureProvider diagnosisKeysStructureProvider;
   private final DistributionServiceConfig distributionServiceConfig;
   private final TraceTimeIntervalWarningsStructureProvider traceWarningsStructureProvider;
   private final QrCodePosterTemplateStructureProvider qrCodeTemplateStructureProvider;
+  private final DigitalGreenCertificateStructureProvider dgcStructureProvider;
 
   /**
    * Creates a new CwaApiStructureProvider.
@@ -32,17 +34,21 @@ public class CwaApiStructureProvider {
       AppConfigurationStructureProvider appConfigurationStructureProvider,
       AppConfigurationV2StructureProvider appConfigurationV2StructureProvider,
       StatisticsStructureProvider statisticsStructureProvider,
+      LocalStatisticsStructureProvider localStatisticsStructureProvider,
       DiagnosisKeysStructureProvider diagnosisKeysStructureProvider,
       TraceTimeIntervalWarningsStructureProvider traceWarningsStructureProvider,
       QrCodePosterTemplateStructureProvider qrCodeTemplateStructureProvider,
+      DigitalGreenCertificateStructureProvider dgcStructureProvider,
       DistributionServiceConfig distributionServiceConfig) {
     this.appConfigurationStructureProvider = appConfigurationStructureProvider;
     this.appConfigurationV2StructureProvider = appConfigurationV2StructureProvider;
     this.statisticsStructureProvider = statisticsStructureProvider;
+    this.localStatisticsStructureProvider = localStatisticsStructureProvider;
     this.diagnosisKeysStructureProvider = diagnosisKeysStructureProvider;
     this.distributionServiceConfig = distributionServiceConfig;
     this.traceWarningsStructureProvider = traceWarningsStructureProvider;
     this.qrCodeTemplateStructureProvider = qrCodeTemplateStructureProvider;
+    this.dgcStructureProvider = dgcStructureProvider;
   }
 
   /**
@@ -67,11 +73,17 @@ public class CwaApiStructureProvider {
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.ofNullable(qrCodeTemplateStructureProvider.getQrCodeTemplateForIos()));
     versionDirectory.addWritableToAll(
+        ignoredValue -> Optional.ofNullable(dgcStructureProvider.getDigitalGreenCertificates()));
+    versionDirectory.addWritableToAll(
         ignoredValue -> Optional.of(diagnosisKeysStructureProvider.getDiagnosisKeys()));
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.of(traceWarningsStructureProvider.getTraceWarningsDirectory()));
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.ofNullable(statisticsStructureProvider.getStatistics()));
+
+    localStatisticsStructureProvider.getLocalStatisticsList().forEach(archive -> {
+      versionDirectory.addWritableToAll(ignoredValue -> Optional.ofNullable(archive));
+    });
 
     return new IndexingDecoratorOnDisk<>(versionDirectory, distributionServiceConfig.getOutputFileName());
   }

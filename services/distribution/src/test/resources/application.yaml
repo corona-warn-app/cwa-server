@@ -17,7 +17,7 @@ services:
     include-incomplete-hours: false
     eu-package-name: EUR
     apply-policies-for-all-countries: false
-    card-id-sequence: ${STATS_CARD_ID_SEQUENCE:[1,3,2,4]}
+    card-id-sequence: ${STATS_CARD_ID_SEQUENCE:[1,3,2,4,5,6,7]}
     paths:
       output: out
       privatekey: classpath:keys/private.pem
@@ -41,6 +41,7 @@ services:
       app-config-v2-android-file-name: app_config_android
       app-config-v2-ios-file-name: app_config_ios
       statistics-file-name: stats
+      local-statistics-file-name: local-stats
     signature:
       app-bundle-id: de.rki.coronawarnapp
       verification-key-id: 262
@@ -66,6 +67,7 @@ services:
     statistics:
       trend-calculation-threshold: 0.05
       statistic-path: stats/statistic_data.json
+      local-statistic-path: stats/local_statistic_data_processing_test.json
       access-key: fakeAccessKey
       secret-key: secretKey
       endpoint: https://localhost
@@ -83,6 +85,18 @@ services:
       min-android-version-code: ${ANDROID_MIN_VERSION_CODE:48}
       latest-android-version-code: ${ANDROID_LATEST_VERSION_CODE:48}
     app-config-parameters:
+      dgcParameters:
+        testCertificateParameters:
+          # validation rule for waitAfterPublicKeyRegistrationInSeconds:
+          #   * must be a number
+          #   * >= 0
+          #   * <= 60
+          waitAfterPublicKeyRegistrationInSeconds: ${DGC_TC_WAIT_AFTER_PUBLIC_KEY_REGISTRATION_IN_SECONDS:10}
+          # validation rule for waitForRetryInSeconds:
+          #   * must be a number
+          #   * >= 0
+          #   * <= 60
+          waitForRetryInSeconds: ${DGC_TC_WAIT_FOR_RETRY_IN_SECONDS:10}
       ios-key-download-parameters:
         revoked-day-packages: "[]"
         revoked-hour-packages: "[]"
@@ -126,41 +140,46 @@ services:
     ios-qr-code-poster-template:
       published-archive-name: qr_code_poster_template_ios
       template:
-      offsetX: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_OFFSET_X:97}
-      offsetY: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_OFFSET_Y:82}
-      qr-code-side-length: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_QR_CODE_SIDE_LENGTH:400}
+      offsetX: 97
+      offsetY: 82
+      qr-code-side-length: 400
       description-text-box:
-        offsetX: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_DESCRIPTION_OFFSET_X:80}
-        offsetY: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_DESCRIPTION_OFFSET_Y:510}
-        width: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_DESCRIPTION_WIDTH:420}
-        height: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_DESCRIPTION_HEIGHT:20}
-        fontSize: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_DESCRIPTION_FONT_SIZE:14}
-        fontColor: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_DESCRIPTION_FONT_COLOR:black}
+        offsetX: 80
+        offsetY: 510
+        width: 420
+        height: 20
+        fontSize: 14
+        fontColor: black
       address-text-box:
-        offsetX: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_ADDRESS_OFFSET_X:80}
-        offsetY: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_ADDRESS_OFFSET_Y:525}
-        width: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_ADDRESS_WIDTH:420}
-        height: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_ADDRESS_HEIGHT:15}
-        fontSize: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_ADDRESS_FONT_SIZE:10}
-        fontColor: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_ADDRESS_FONT_COLOR:#000000}
+        offsetX: 80
+        offsetY: 525
+        width: 420
+        height: 15
+        fontSize: 10
+        fontColor: #000000
     android-qr-code-poster-template:
       published-archive-name: qr_code_poster_template_android
       template:
-      offsetX: ${EVREG_QR_CODE_POSTER_TEMPLATE_ANDROID_OFFSET_X:10}
-      offsetY: ${EVREG_QR_CODE_POSTER_TEMPLATE_ANDROID_OFFSET_Y:10}
-      qr-code-side-length: ${EVREG_QR_CODE_POSTER_TEMPLATE_ANDROID_QR_CODE_SIDE_LENGTH:100}
+      offsetX: 10
+      offsetY: 10
+      qr-code-side-length: 100
       description-text-box:
-        offsetX: ${EVREG_QR_CODE_POSTER_TEMPLATE_ANDROID_DESCRIPTION_OFFSET_X:10}
-        offsetY: ${EVREG_QR_CODE_POSTER_TEMPLATE_ANDROID_DESCRIPTION_OFFSET_Y:50}
-        width: ${EVREG_QR_CODE_POSTER_TEMPLATE_ANDROID_DESCRIPTION_WIDTH:100}
-        height: ${EVREG_QR_CODE_POSTER_TEMPLATE_ANDROID_DESCRIPTION_HEIGHT:20}
-        font-size: ${EVREG_QR_CODE_POSTER_TEMPLATE_ANDROID_DESCRIPTION_FONT_SIZE:10}
-        font-color: ${EVREG_QR_CODE_POSTER_TEMPLATE_ANDROID_DESCRIPTION_FONT_COLOR:#000000}
+        offsetX: 10
+        offsetY: 50
+        width: 100
+        height: 20
+        font-size: 10
+        font-color: #000000
     presence-tracing-parameters:
-      qr-code-error-correction-level: ${EVREG_QR_CODE_ERROR_CORRECTION_LEVEL:0}
+      qr-code-error-correction-level: 0
       plausible-deniability-parameters:
-        probability-to-fake-check-ins-if-no-check-ins: ${EVREG_PROBABILITY_TO_FAKE_CHECK_INS_IF_NO_CHECK_INS:0}
-        probability-to-fake-check-ins-if-some-check-ins: ${EVREG_PROBABILITY_TO_FAKE_CHECK_INS_IF_SOME_CHECK_INS:0.005}
+        probability-to-fake-check-ins-if-no-check-ins: 0
+        probability-to-fake-check-ins-if-some-check-ins: 0.005
+    digital-green-certificate:
+      dgc-directory: ehn-dgc
+      valuesets-file-name: value-sets
+      supported-languages: DE, EN, BG, PL, RO, TR
+
 spring:
   main:
     banner-mode: off

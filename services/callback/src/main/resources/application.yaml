@@ -40,7 +40,7 @@ spring:
   # Postgres configuration
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://${POSTGRESQL_SERVICE_HOST}:${POSTGRESQL_SERVICE_PORT}/${POSTGRESQL_DATABASE}?ssl=true&sslmode=verify-full&sslrootcert=${SSL_POSTGRES_CERTIFICATE_PATH}&sslcert=${SSL_DISTRIBUTION_CERTIFICATE_PATH}&sslkey=${SSL_DISTRIBUTION_PRIVATE_KEY_PATH}
+    url: jdbc:postgresql://${POSTGRESQL_SERVICE_HOST}:${POSTGRESQL_SERVICE_PORT}/${POSTGRESQL_DATABASE}?ssl=true&sslmode=verify-full&sslrootcert=${SSL_POSTGRES_CERTIFICATE_PATH}&sslcert=${SSL_CALLBACK_CERTIFICATE_PATH}&sslkey=${SSL_CALLBACK_PRIVATE_KEY_PATH}
     username: ${POSTGRESQL_USER_CALLBACK:local_setup_callback}
     password: ${POSTGRESQL_PASSWORD_CALLBACK:local_setup_callback}
 
@@ -50,7 +50,7 @@ management:
     port: 8081
     ssl:
       enabled: true
-      enabled-protocols: TLSv1.2,TLSv1.3
+      enabled-protocols: TLSv1.2+TLSv1.3
       protocol: TLS
       ciphers: >-
         TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256

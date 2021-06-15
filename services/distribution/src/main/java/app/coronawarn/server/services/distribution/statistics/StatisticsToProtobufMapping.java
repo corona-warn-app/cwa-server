@@ -1,21 +1,31 @@
 package app.coronawarn.server.services.distribution.statistics;
 
-import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.*;
+
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.EMPTY_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.FIRST_VACCINATION_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.FULLY_VACCINATED_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.INCIDENCE_CARD_ID;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.INFECTIONS_CARD_ID;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.KEY_SUBMISSION_CARD_ID;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.REPRODUCTION_NUMBER_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.VACCINATION_DOSES_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.toCardName;
 
 import app.coronawarn.server.common.persistence.service.StatisticsDownloadService;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.common.protocols.internal.stats.Statistics;
-import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
+import app.coronawarn.server.common.shared.util.SerializationUtils;
+import app.coronawarn.server.common.shared.util.TimeUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.statistics.exceptions.BucketNotFoundException;
 import app.coronawarn.server.services.distribution.statistics.exceptions.ConnectionException;
 import app.coronawarn.server.services.distribution.statistics.exceptions.FilePathNotFoundException;
 import app.coronawarn.server.services.distribution.statistics.file.JsonFile;
 import app.coronawarn.server.services.distribution.statistics.file.JsonFileLoader;
+import app.coronawarn.server.services.distribution.statistics.file.StatisticJsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.MissingPropertyException;
 import app.coronawarn.server.services.distribution.statistics.validation.StatisticsJsonValidator;
-import app.coronawarn.server.services.distribution.utils.SerializationUtils;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
@@ -40,11 +50,12 @@ public class StatisticsToProtobufMapping {
 
   private final DistributionServiceConfig distributionServiceConfig;
   private final KeyFigureCardFactory keyFigureCardFactory;
-  private final JsonFileLoader jsonFileLoader;
+  private final StatisticJsonFileLoader jsonFileLoader;
   private final StatisticsDownloadService statisticsDownloadService;
 
   /**
    * Process the JSON file provided by TSI and map the it to Statistics protobuf object.
+   *
    * @param distributionServiceConfig The config properties
    * @param keyFigureCardFactory      KeyFigureCard structure provider
    * @param jsonFileLoader            Loader of the file from the system
@@ -52,7 +63,7 @@ public class StatisticsToProtobufMapping {
    */
   public StatisticsToProtobufMapping(DistributionServiceConfig distributionServiceConfig,
       KeyFigureCardFactory keyFigureCardFactory,
-      JsonFileLoader jsonFileLoader,
+      StatisticJsonFileLoader jsonFileLoader,
       StatisticsDownloadService statisticsDownloadService) {
     this.distributionServiceConfig = distributionServiceConfig;
     this.keyFigureCardFactory = keyFigureCardFactory;
@@ -87,11 +98,12 @@ public class StatisticsToProtobufMapping {
         logger.warn("Stats file is already updated to the latest version. Skipping generation.");
         return Statistics.newBuilder().build();
       } else {
+        StatisticsJsonValidator<StatisticsJsonStringObject> validator = new StatisticsJsonValidator<>();
+
         List<StatisticsJsonStringObject> jsonStringObjects = SerializationUtils
             .deserializeJson(file.get().getContent(), typeFactory -> typeFactory
                 .constructCollectionType(List.class, StatisticsJsonStringObject.class));
 
-        StatisticsJsonValidator validator = new StatisticsJsonValidator();
         jsonStringObjects = new ArrayList<>(validator.validate(jsonStringObjects));
 
         this.updateETag(file.get().getETag());
@@ -130,6 +142,9 @@ public class StatisticsToProtobufMapping {
     figureCardMap.put(INCIDENCE_CARD_ID, Optional.empty());
     figureCardMap.put(KEY_SUBMISSION_CARD_ID, Optional.empty());
     figureCardMap.put(REPRODUCTION_NUMBER_CARD, Optional.empty());
+    figureCardMap.put(FIRST_VACCINATION_CARD, Optional.empty());
+    figureCardMap.put(FULLY_VACCINATED_CARD, Optional.empty());
+    figureCardMap.put(VACCINATION_DOSES_CARD, Optional.empty());
 
     List<StatisticsJsonStringObject> orderedList = jsonStringObjects.stream()
         .sorted(Comparator.comparing(a -> effectiveDateStringToLocalDate(a.getEffectiveDate())))
@@ -160,7 +175,7 @@ public class StatisticsToProtobufMapping {
 
     if (logger.isDebugEnabled()) {
       logger.debug("The following statistics JSON entries were used to create the cards. Null values are omitted.");
-      for (var stat: collectedJsonObjects) {
+      for (var stat : collectedJsonObjects) {
         var jsonString = SerializationUtils.stringifyObject(stat);
         logger.debug("[{}] {}", stat.getEffectiveDate(), jsonString);
       }
@@ -171,7 +186,10 @@ public class StatisticsToProtobufMapping {
         figureCardMap.get(INFECTIONS_CARD_ID).orElse(emptyCard),
         figureCardMap.get(INCIDENCE_CARD_ID).orElse(emptyCard),
         figureCardMap.get(KEY_SUBMISSION_CARD_ID).orElse(emptyCard),
-        figureCardMap.get(REPRODUCTION_NUMBER_CARD).orElse(emptyCard)
+        figureCardMap.get(REPRODUCTION_NUMBER_CARD).orElse(emptyCard),
+        figureCardMap.get(FIRST_VACCINATION_CARD).orElse(emptyCard),
+        figureCardMap.get(FULLY_VACCINATED_CARD).orElse(emptyCard),
+        figureCardMap.get(VACCINATION_DOSES_CARD).orElse(emptyCard)
     );
   }
 }

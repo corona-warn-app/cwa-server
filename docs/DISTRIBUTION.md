@@ -257,3 +257,39 @@ adding the rolling period of the key to its start interval number).
 140 Temporary Exposure Keys (configurable by the `shifting-policy-threshold` property). Where there are less
 keys available to distribute in a specific distribution run, these keys are shifted to a succeeding export,
 until the threshold minimum is fulfilled.
+
+## Digital Green Certificate
+
+A Digital Green Certificate is a digital proof that a person has either been vaccinated against COVID-19, received a negative test result or recovered from COVID-19.
+
+There are three different value sets to consume:
+
+- vaccine-prophylaxis.json - Vaccine or prophylaxis
+- vaccine-medicinal-product.json - Vaccine medicinal product
+- vaccine-mah-manf.json - Marketing Authorization Holder
+- disease-agent-targeted.json - Disease or Agent Targeted
+- test-manf.json - Rapid Antigen Test name and manufacturer
+- test-result.json - Test Result
+- test-type.json - Type of Test
+
+All the above files are being encoded in Base64 and used in Vault as environment variables.
+The following secret names should be added for each environment with the corresponding values:
+
+- vaccine_mah_json
+- vaccine_medicinal_product_json
+- vaccine_prophylaxis_json
+- disease_agent_targeted_json
+- test_manf_json
+- test_result_json
+- test_type_json
+
+They can be found in the [dgc folder](https://github.com/corona-warn-app/cwa-server/tree/5e47a2e485585043a05ec4173204dd020c757585/services/distribution/src/main/resources/dgc)
+
+The [`DigitalGreenCertificateToProtobufMapping`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/dgc/DigitalGreenCertificateToProtobufMapping.java)
+is responsible for reading the values, using the [`DistributionServiceConfig`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/config/DistributionServiceConfig.java) and transforming the files into protobuffs.
+
+At the end of the process these URLs are created to allow retrieving the protobuf files: `ehn-dgc/{supportedLanguage}/value-sets`.
+
+The supported languages are [configurable](https://github.com/corona-warn-app/cwa-server/blob/5e47a2e485585043a05ec4173204dd020c757585/services/distribution/src/main/resources/application.yaml#L208), for now they are: DE, EN, BG, PL, RO, TR.
+
+The path of the JSONS can be taken from Vault, but there is a default path set as well.

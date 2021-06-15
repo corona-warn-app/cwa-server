@@ -34,7 +34,7 @@ services:
     eu-package-name: EUR
     # Indicates whether the shifting and expiry policies are applied to all supported countries during distribution.
     apply-policies-for-all-countries: false
-    card-id-sequence: ${STATS_CARD_ID_SEQUENCE:[1,3,2,4]}
+    card-id-sequence: ${STATS_CARD_ID_SEQUENCE:[1,3,2,4,5,6,7]}
     # Local paths, that are used during the export creation.
     paths:
       # The output path.
@@ -65,6 +65,7 @@ services:
       app-config-v2-android-file-name: app_config_android
       app-config-v2-ios-file-name: app_config_ios
       statistics-file-name: stats
+      local-statistics-file-name: local-stats
     # Signature configuration, used for signing the exports.
     signature:
       # The alias with which to identify public key to be used for verification.
@@ -104,6 +105,7 @@ services:
     statistics:
       trend-calculation-threshold: 0.05
       statistic-path: ${STATISTICS_FILE_NAME:json/v1/cwa_reporting_public_data.json}
+      local-statistic-path: ${LOCAL_STATISTICS_FILE_NAME:json/v1/cwa_reporting_public_data_region.json}
       access-key: ${STATISTICS_FILE_ACCESS_KEY_ID:}
       secret-key: ${STATISTICS_FILE_SECRET_ACCESS_KEY:}
       endpoint: ${STATISTICS_FILE_S3_ENDPOINT:}
@@ -122,6 +124,18 @@ services:
       min-android-version-code: ${ANDROID_MIN_VERSION_CODE:48}
       latest-android-version-code: ${ANDROID_LATEST_VERSION_CODE:48}
     app-config-parameters:
+      dgcParameters:
+        testCertificateParameters:
+          # validation rule for waitAfterPublicKeyRegistrationInSeconds:
+          #   * must be a number
+          #   * >= 0
+          #   * <= 60
+          waitAfterPublicKeyRegistrationInSeconds: ${DGC_TC_WAIT_AFTER_PUBLIC_KEY_REGISTRATION_IN_SECONDS:10}
+          # validation rule for waitForRetryInSeconds:
+          #   * must be a number
+          #   * >= 0
+          #   * <= 60
+          waitForRetryInSeconds: ${DGC_TC_WAIT_FOR_RETRY_IN_SECONDS:10}
       ios-key-download-parameters:
         revoked-day-packages: ${KEY_DOWNLOAD_REVOKED_DAY_PACKAGES:[]}
         revoked-hour-packages: ${KEY_DOWNLOAD_REVOKED_HOUR_PACKAGES:[]}
@@ -199,6 +213,17 @@ services:
       plausible-deniability-parameters:
         probability-to-fake-check-ins-if-no-check-ins: ${EVREG_PROBABILITY_TO_FAKE_CHECK_INS_IF_NO_CHECK_INS:0}
         probability-to-fake-check-ins-if-some-check-ins: ${EVREG_PROBABILITY_TO_FAKE_CHECK_INS_IF_SOME_CHECK_INS:0.005}
+    digital-green-certificate:
+      mah-json-path: ${DIGITAL_GREEN_CERTIFICATE_MAH_JSON_PATH:}
+      prophylaxis-json-path: ${DIGITAL_GREEN_CERTIFICATE_PROPHYLAXIS_JSON_PATH:}
+      medicinal-products-json-path: ${DIGITAL_GREEN_CERTIFICATE_MEDICINAL_PRODUCTS_JSON_PATH:}
+      disease-agent-targeted-path: ${DIGITAL_GREEN_CERTIFICATE_DISEASE_AGENT_TARGETED_JSON_PATH:}
+      test-manf-path: ${DIGITAL_GREEN_CERTIFICATE_TEST_MANF_JSON_PATH:}
+      test-result-path: ${DIGITAL_GREEN_CERTIFICATE_TEST_RESULT_JSON_PATH:}
+      test-type-path: ${DIGITAL_GREEN_CERTIFICATE_TEST_TYPE_JSON_PATH:}
+      dgc-directory: ${DIGITAL_GREEN_CERTIFICATE_DIRECTORY:ehn-dgc}
+      valuesets-file-name: ${DIGITAL_GREEN_CERTIFICATE_VALUESETS_FILE_NAME:value-sets}
+      supported-languages: ${DIGITAL_GREEN_CERTIFICATE_SUPPORTED_LANGUAGES:DE, EN, BG, PL, RO, TR}
 
 spring:
   main:
@@ -212,7 +237,6 @@ spring:
 
   datasource:
     driver-class-name: org.postgresql.Driver
-
     url: jdbc:postgresql://${POSTGRESQL_SERVICE_HOST}:${POSTGRESQL_SERVICE_PORT}/${POSTGRESQL_DATABASE}?ssl=true&sslmode=verify-full&sslrootcert=${SSL_POSTGRES_CERTIFICATE_PATH}&sslcert=${SSL_DISTRIBUTION_CERTIFICATE_PATH}&sslkey=${SSL_DISTRIBUTION_PRIVATE_KEY_PATH}
     username: ${POSTGRESQL_USER_DISTRIBUTION:local_setup_distribution}
     password: ${POSTGRESQL_PASSWORD_DISTRIBUTION:local_setup_distribution}

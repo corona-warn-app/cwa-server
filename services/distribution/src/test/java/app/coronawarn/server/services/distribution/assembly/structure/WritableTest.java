@@ -5,8 +5,9 @@ package app.coronawarn.server.services.distribution.assembly.structure;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
+import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+
 import java.io.File;
 import org.junit.jupiter.api.Test;
 

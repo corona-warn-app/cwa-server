@@ -5,10 +5,10 @@ package app.coronawarn.server.services.distribution.assembly.structure.directory
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import org.junit.jupiter.api.Test;
 
 class DirectoryDecoratorTest {

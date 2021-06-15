@@ -1,13 +1,11 @@
-
-
 package app.coronawarn.server.services.distribution.runner;
 
+import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import app.coronawarn.server.services.distribution.Application;
 import app.coronawarn.server.services.distribution.assembly.component.CwaApiStructureProvider;
 import app.coronawarn.server.services.distribution.assembly.component.OutputDirectoryProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
-import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
@@ -54,11 +52,10 @@ public class Assembly implements ApplicationRunner {
       outputDirectory.prepare(new ImmutableStack<>());
       logger.debug("Writing files...");
       outputDirectory.write();
+      logger.debug("Distribution data assembled successfully.");
     } catch (Exception e) {
       logger.error("Distribution data assembly failed.", e);
       Application.killApplication(applicationContext);
     }
-
-    logger.debug("Distribution data assembled successfully.");
   }
 }
