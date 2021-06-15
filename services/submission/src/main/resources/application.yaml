@@ -76,7 +76,6 @@ spring:
     default-timeout: 20
   flyway:
     enabled: true
-    url: ${spring.datasource.url}
     locations: classpath:/db/migration, classpath:/db/specific/{vendor}
     password: ${POSTGRESQL_PASSWORD_FLYWAY:local_setup_flyway}
     user: ${POSTGRESQL_USER_FLYWAY:local_setup_flyway}
