@@ -41,7 +41,7 @@ services:
       app-config-v2-android-file-name: app_config_android
       app-config-v2-ios-file-name: app_config_ios
       statistics-file-name: stats
-      local-statistics-file-name: local-stats
+      local-statistics-file-name: local_stats
     signature:
       app-bundle-id: de.rki.coronawarnapp
       verification-key-id: 262
