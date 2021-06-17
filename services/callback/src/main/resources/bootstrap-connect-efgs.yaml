@@ -1,0 +1,6 @@
+---
+spring:
+  cloud:
+    vault:
+      kv:
+        application-name: 'callback'

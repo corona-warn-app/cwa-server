@@ -23,5 +23,5 @@ public interface VerificationServerClient {
    */
   @Timed
   @PostMapping(value = "${services.submission.verification.path}", consumes = MediaType.APPLICATION_JSON_VALUE)
-  String verifyTan(Tan tan);
+  String  verifyTan(Tan tan);
 }
