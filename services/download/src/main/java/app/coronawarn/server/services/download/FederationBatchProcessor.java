@@ -101,7 +101,7 @@ public class FederationBatchProcessor {
    * Stores the batch info for the specified date. Its status is set to {@link FederationBatchStatus#UNPROCESSED}.
    *
    * @param date The date for which the first batch info is stored.
-   * @throws FatalFederationGatewayException triggers if error occurs in the federation gateway
+   * @throws FatalFederationGatewayException triggers if error occurs in the federation gateway.
    */
   protected void saveFirstBatchInfoForDate(LocalDate date) throws FatalFederationGatewayException {
     try {
@@ -156,7 +156,7 @@ public class FederationBatchProcessor {
       seenBatches.add(currentBatchInfo.getBatchTag());
       processBatchAndReturnNextBatchId(currentBatchInfo, ERROR)
           .ifPresent(nextBatchTag -> {
-            if (isEfgsEnforceDateBasedDownloadAndNotSeen(nextBatchTag)) {
+            if (!seenBatches.contains(nextBatchTag)) {
               unprocessedBatches.add(new FederationBatchInfo(nextBatchTag, currentBatchInfo.getDate(), this.config
                   .getSourceSystem()));
             }
