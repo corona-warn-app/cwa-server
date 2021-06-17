@@ -9,7 +9,8 @@ logging:
 
 services:
   callback:
-    efgs-cert-cn: ${EFGS_CERT_CN}
+    source-system: EFGS
+    cert-cn: ${EFGS_CERT_CN}
     register-on-startup: ${CALLBACK_REGISTER_ON_STARTUP:false}
     endpoint-url: ${CALLBACK_ENDPOINT_URL}
 

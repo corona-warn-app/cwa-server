@@ -2,6 +2,7 @@ package app.coronawarn.server.services.callback.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.lenient;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
@@ -34,7 +35,7 @@ class ApiExceptionHandlerTest {
 
   @Test
   void testUnexpectedExceptionsTriggersStatusCode500() throws Exception {
-    doThrow(RuntimeException.class).when(serviceMock).save(any());
+    lenient().doThrow(RuntimeException.class).when(serviceMock).save(any());
 
     mockMvc.perform(get(ENDPOINT).param("batchTag", "batchTag").param("date", "2020-05-05"))
         .andExpect(status().isInternalServerError());
