@@ -1,7 +1,5 @@
 package app.coronawarn.server.services.callback.controller;
 
-import static app.coronawarn.server.common.persistence.domain.FederationBatchSourceSystem.EFGS;
-
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import app.coronawarn.server.services.callback.config.CallbackServiceConfig;
@@ -48,8 +46,7 @@ public class CallbackController {
   @Timed(description = "Time spent handling callback.")
   public ResponseEntity<Void> handleCallback(@RequestParam String batchTag,
       @NotNull @DateTimeFormat(iso = ISO.DATE) @RequestParam LocalDate date) {
-    logger.info("BatchInfo with tag {} and date {} received from federation gateway {}.",
-        batchTag, date, config.getSourceSystem());
+    logger.info("BatchInfo with tag {} and date {} received from federation gateway.", batchTag, date);
     FederationBatchInfo federationBatchInfo = new FederationBatchInfo(batchTag, date, config.getSourceSystem());
     boolean savedSuccessfully = federationBatchInfoService.save(federationBatchInfo);
     if (savedSuccessfully) {
