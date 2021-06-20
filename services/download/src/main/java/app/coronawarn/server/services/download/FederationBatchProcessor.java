@@ -156,7 +156,7 @@ public class FederationBatchProcessor {
       seenBatches.add(currentBatchInfo.getBatchTag());
       processBatchAndReturnNextBatchId(currentBatchInfo, ERROR)
           .ifPresent(nextBatchTag -> {
-            if (!seenBatches.contains(nextBatchTag)) {
+            if (isEfgsEnforceDateBasedDownloadAndNotSeen(nextBatchTag)) {
               unprocessedBatches.add(new FederationBatchInfo(nextBatchTag, currentBatchInfo.getDate(), this.config
                   .getSourceSystem()));
             }

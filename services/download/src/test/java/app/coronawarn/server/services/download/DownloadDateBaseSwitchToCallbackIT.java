@@ -16,6 +16,7 @@ import app.coronawarn.server.common.persistence.repository.FederationBatchInfoRe
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.services.download.config.DownloadServiceConfig;
+import app.coronawarn.server.services.download.runner.Download;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.HttpHeaders;
@@ -24,12 +25,17 @@ import java.util.List;
 import java.util.function.Predicate;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 
 /**
  * This integration test is responsible for testing the switch between date base download strategy to
@@ -39,7 +45,8 @@ import org.springframework.test.context.ActiveProfiles;
  * if an attempt to be re-inserted is made after the switch.
  */
 @SpringBootTest
-@ActiveProfiles({"connect-efgs","download-strategy-switch"})
+@TestMethodOrder(OrderAnnotation.class)
+@ActiveProfiles({"connect-efgs","download-strategy-switch", "enable-date-based-download"})
 @DirtiesContext
 class DownloadDateBaseSwitchToCallbackIT {
 
@@ -63,6 +70,7 @@ class DownloadDateBaseSwitchToCallbackIT {
   private static final String ARBITRARY_NEXT_BATCH_TAG_2 = "next_pointer_2";
 
   private static final String EMPTY_BATCH_TAG = "null";
+  public static final String BATCH_TAG = "batchTag";
 
   private static WireMockServer server;
 
@@ -70,10 +78,13 @@ class DownloadDateBaseSwitchToCallbackIT {
   private FederationBatchInfoRepository federationBatchInfoRepository;
 
   @Autowired
+  private DownloadServiceConfig downloadServiceConfig;
+
+  @Autowired
   private DiagnosisKeyRepository diagnosisKeyRepository;
 
   @Autowired
-  private DownloadServiceConfig downloadServiceConfig;
+  private Download download;
 
   @BeforeAll
   static void setupWireMock() {
@@ -111,25 +122,6 @@ class DownloadDateBaseSwitchToCallbackIT {
 
     server.stubFor(
         get(anyUrl())
-            .withHeader("batchTag", containing(ERROR_BATCH_TAG))
-            .willReturn(
-                aResponse()
-                    .withStatus(HttpStatus.OK.value())
-                    .withHeaders(validBatchHeaders)
-                    .withBody(validBatch.toByteArray())));
-
-    server.stubFor(
-        get(anyUrl())
-            .withHeader("batchTag", containing(SWITCH_DAY_UNPROCESSED_BATCH_TAG))
-            .willReturn(
-                aResponse()
-                    .withStatus(HttpStatus.OK.value())
-                    .withHeaders(validBatchHeaders)
-                    .withBody(validBatch.toByteArray())));
-
-    server.stubFor(
-        get(anyUrl())
-            .withHeader("batchTag", equalTo(BATCH_WITH_NEXT_BATCH_TAG))
             .willReturn(
                 aResponse()
                     .withStatus(HttpStatus.OK.value())
@@ -137,17 +129,26 @@ class DownloadDateBaseSwitchToCallbackIT {
                     .withBody(batchWithNextBatchTag.toByteArray())));
 
     server.stubFor(
-        get(anyUrl())
-            .withHeader("batchTag", equalTo(ARBITRARY_NEXT_BATCH_TAG_1))
-            .willReturn(
-                aResponse()
-                    .withStatus(HttpStatus.OK.value())
-                    .withHeaders(batchWithNextBatchTagHeaders2)
-                    .withBody(batchWithNextBatchTag2.toByteArray())));
+      get(anyUrl())
+          .withHeader(BATCH_TAG, equalTo(ARBITRARY_NEXT_BATCH_TAG_1))
+          .willReturn(
+              aResponse()
+                  .withStatus(HttpStatus.OK.value())
+                  .withHeaders(batchWithNextBatchTagHeaders2)
+                  .withBody(batchWithNextBatchTag2.toByteArray())));
+
+    server.stubFor(
+      get(anyUrl())
+          .withHeader(BATCH_TAG, equalTo(ARBITRARY_NEXT_BATCH_TAG_2))
+          .willReturn(
+              aResponse()
+                  .withStatus(HttpStatus.OK.value())
+                  .withHeaders(validBatchHeaders)
+                  .withBody(validBatch.toByteArray())));
 
     server.stubFor(
         get(anyUrl())
-            .withHeader("batchTag", equalTo(ARBITRARY_NEXT_BATCH_TAG_2))
+            .withHeader(BATCH_TAG, containing(ERROR_BATCH_TAG))
             .willReturn(
                 aResponse()
                     .withStatus(HttpStatus.OK.value())
@@ -156,7 +157,7 @@ class DownloadDateBaseSwitchToCallbackIT {
 
     server.stubFor(
         get(anyUrl())
-            .withHeader("batchTag", containing(SWITCH_DAY_NEW_UNPROCESSED_BATCH_TAG))
+            .withHeader(BATCH_TAG, containing(SWITCH_DAY_UNPROCESSED_BATCH_TAG))
             .willReturn(
                 aResponse()
                     .withStatus(HttpStatus.OK.value())
@@ -165,10 +166,19 @@ class DownloadDateBaseSwitchToCallbackIT {
 
     server.stubFor(
         get(anyUrl())
-            .withHeader("batchTag", containing(SWITCH_DAY_ERROR_BATCH_TAG))
+            .withHeader(BATCH_TAG, containing(SWITCH_DAY_ERROR_BATCH_TAG))
             .willReturn(
                 aResponse()
                     .withStatus(HttpStatus.NOT_FOUND.value())));
+
+    server.stubFor(
+        get(anyUrl())
+            .withHeader(BATCH_TAG, containing(SWITCH_DAY_NEW_UNPROCESSED_BATCH_TAG))
+            .willReturn(
+                aResponse()
+                    .withStatus(HttpStatus.OK.value())
+                    .withHeaders(validBatchHeaders)
+                    .withBody(validBatch.toByteArray())));
   }
 
   private static HttpHeaders getHttpHeaders(String batchTag, String nextBatchTag) {
@@ -188,18 +198,16 @@ class DownloadDateBaseSwitchToCallbackIT {
   }
 
   @Test
-  void testCorrectBatchesAfterSwitch() {
-    assertThat(federationBatchInfoRepository.findAll()).hasSize(21);
+  @Order(1)
+  void testCorrectBatchesBeforeCallbackSwitch() {
+    assertThat(federationBatchInfoRepository.findAll()).hasSize(12);
 
     List<FederationBatchInfo> proccessed = federationBatchInfoRepository.findByStatus("PROCESSED");
-    assertThat(proccessed).hasSize(18);
+    assertThat(proccessed).hasSize(12);
 
-    assertThat(proccessed.stream().filter(containsBatchTag("switch_day_unprocessed_batch_1"))).hasSize(1);
-    assertThat(proccessed.stream().filter(containsBatchTag("switch_day_unprocessed_batch_2"))).hasSize(1);
-    assertThat(proccessed.stream().filter(containsBatchTag("switch_day_unprocessed_batch_3"))).hasSize(1);
+    assertThat(proccessed.stream().filter(containsBatchTag(ARBITRARY_NEXT_BATCH_TAG_1))).hasSize(1);
+    assertThat(proccessed.stream().filter(containsBatchTag(ARBITRARY_NEXT_BATCH_TAG_2))).hasSize(1);
 
-    assertThat(federationBatchInfoRepository.findByStatus("UNPROCESSED")).isEmpty();
-    assertThat(federationBatchInfoRepository.findByStatus("ERROR_WONT_RETRY")).hasSize(3);
 
     Iterable<DiagnosisKey> diagnosisKeys = diagnosisKeyRepository.findAll();
     assertThat(diagnosisKeys)
@@ -211,15 +219,31 @@ class DownloadDateBaseSwitchToCallbackIT {
   }
 
   @Test
-  void testNextBatchIdHandling() {
-    assertThat(federationBatchInfoRepository.findAll()).hasSize(21);
+  @Order(2)
+  @Sql(scripts = {"classpath:db/after-date-based-switch/afterSwitchToCallbackBatches.sql"},
+      executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
+  void testCorrectBatchesAfterCallbackSwitch() {
+    changeToCallbackAndRerunDownload();
+
+    assertThat(federationBatchInfoRepository.findAll()).hasSize(18);
 
     List<FederationBatchInfo> proccessed = federationBatchInfoRepository.findByStatus("PROCESSED");
-    assertThat(proccessed).hasSize(18);
+    assertThat(proccessed).hasSize(15);
 
-    // next batch is not handled for callback strategy.
+    assertThat(federationBatchInfoRepository.findByStatus("ERROR")).hasSize(3);
+
+    assertThat(proccessed.stream().filter(containsBatchTag("switch_day_new_unprocessed_batch_1"))).hasSize(1);
+    assertThat(proccessed.stream().filter(containsBatchTag("switch_day_new_unprocessed_batch_2"))).hasSize(1);
+    assertThat(proccessed.stream().filter(containsBatchTag("switch_day_new_unprocessed_batch_3"))).hasSize(1);
+
+    // these batches were downloaded on date base strategy. should not be downloaded again.
     assertThat(proccessed.stream().filter(containsBatchTag(ARBITRARY_NEXT_BATCH_TAG_1))).hasSize(1);
     assertThat(proccessed.stream().filter(containsBatchTag(ARBITRARY_NEXT_BATCH_TAG_2))).hasSize(1);
+  }
+
+  private void changeToCallbackAndRerunDownload() {
+    downloadServiceConfig.setEnforceDateBasedDownload(false);
+    download.run(null);
   }
 
 }
