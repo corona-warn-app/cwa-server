@@ -35,8 +35,6 @@ class ApiExceptionHandlerTest {
 
   @Test
   void testUnexpectedExceptionsTriggersStatusCode500() throws Exception {
-    lenient().doThrow(RuntimeException.class).when(serviceMock).save(any());
-
     mockMvc.perform(get(ENDPOINT).param("batchTag", "batchTag").param("date", "2020-05-05"))
         .andExpect(status().isInternalServerError());
   }

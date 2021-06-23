@@ -3,7 +3,7 @@ services:
   callback:
     source-system: CHGS
     cert-cn: ${CHGS_CERT_CN}
-    register-on-startup: ${CALLBACK_REGISTER_ON_STARTUP:false}
+    register-on-startup: ${CALLBACK_REGISTER_ON_STARTUP:true}
     endpoint-url: ${CALLBACK_ENDPOINT_URL}
 
 federation-gateway:
