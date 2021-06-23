@@ -1,5 +1,7 @@
 package app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory;
 
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.INFECTIONS_CARD;
+
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.Rank;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.Trend;
@@ -7,7 +9,6 @@ import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.TrendSema
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard.Builder;
 import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStringObject;
-import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.ValueTrendCalculator;
 import java.util.List;
 import java.util.Optional;
@@ -15,8 +16,8 @@ import java.util.Optional;
 public class InfectionsCardFactory extends HeaderCardFactory {
 
   @Override
-  protected Integer getCardId() {
-    return KeyFigureCardSequenceConstants.INFECTIONS_CARD_ID;
+  protected int getCardId() {
+    return INFECTIONS_CARD.ordinal();
   }
 
   private KeyFigure getInfectionsReported(StatisticsJsonStringObject stats) {
