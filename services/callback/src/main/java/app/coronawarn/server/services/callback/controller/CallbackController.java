@@ -46,14 +46,17 @@ public class CallbackController {
   @Timed(description = "Time spent handling callback.")
   public ResponseEntity<Void> handleCallback(@RequestParam String batchTag,
       @NotNull @DateTimeFormat(iso = ISO.DATE) @RequestParam LocalDate date) {
-    logger.info("BatchInfo with tag {} and date {} received from federation gateway.", batchTag, date);
+    logger.info("BatchInfo with tag {} and date {} received from federation gateway {}.",
+        batchTag, date, config.getSourceSystem());
     FederationBatchInfo federationBatchInfo = new FederationBatchInfo(batchTag, date, config.getSourceSystem());
     boolean savedSuccessfully = federationBatchInfoService.save(federationBatchInfo);
     if (savedSuccessfully) {
-      logger.info("BatchInfo with tag {} and date {} was persisted successfully with status {}.",
-          federationBatchInfo.getBatchTag(), federationBatchInfo.getDate(), federationBatchInfo.getStatus());
+      logger.info("BatchInfo with tag {} and date {} was persisted successfully with status {} in system {}.",
+          federationBatchInfo.getBatchTag(), federationBatchInfo.getDate(), federationBatchInfo.getStatus(),
+          config.getSourceSystem());
     } else {
-      logger.warn("BatchInfo with tag {} already existed and was not persisted.", federationBatchInfo.getBatchTag());
+      logger.warn("BatchInfo with tag {} already existed in system {} and was not persisted.",
+          federationBatchInfo.getBatchTag(), config.getSourceSystem());
     }
     return ResponseEntity.ok().build();
   }
