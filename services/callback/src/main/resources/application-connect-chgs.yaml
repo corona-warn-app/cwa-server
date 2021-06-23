@@ -1,0 +1,19 @@
+---
+services:
+  callback:
+    source-system: CHGS
+    cert-cn: ${CHGS_CERT_CN}
+    register-on-startup: ${CALLBACK_REGISTER_ON_STARTUP:true}
+    endpoint-url: ${CALLBACK_ENDPOINT_URL}
+
+federation-gateway:
+  base-url: ${FEDERATION_GATEWAY_BASE_URL:http://localhost:8005}
+  connection-pool-size: 200
+  ssl:
+    key-store: ${FEDERATION_GATEWAY_KEYSTORE_PATH}
+    key-store-password: ${FEDERATION_GATEWAY_KEYSTORE_PASS}
+    certificate-type: PKCS12
+    certificate-dn: ${FEDERATION_CERTIFICATE_DN}
+    certificate-sha: ${FEDERATION_CERTIFICATE_SHA}
+    trust-store: ${SSL_FEDERATION_TRUSTSTORE_PATH}
+    trust-store-password: ${SSL_FEDERATION_TRUSTSTORE_PASSWORD}
