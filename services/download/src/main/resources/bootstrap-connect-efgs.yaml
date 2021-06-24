@@ -4,3 +4,4 @@ spring:
     vault:
       kv:
         application-name: 'download'
+        profiles: cloud,connect-efgs
