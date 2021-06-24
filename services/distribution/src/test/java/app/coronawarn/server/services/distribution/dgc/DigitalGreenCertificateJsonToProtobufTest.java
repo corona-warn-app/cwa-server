@@ -2,6 +2,7 @@ package app.coronawarn.server.services.distribution.dgc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import app.coronawarn.server.common.shared.exception.DefaultValueSetsMissingException;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

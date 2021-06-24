@@ -1,28 +1,26 @@
 {
-  // Unique identifier of the rule
+
   "Identifier": "GR-CZ-0001",
 
-  // Type of the rule (Acceptance, Invalidation)
+
   "Type": "Acceptance",
 
-  // Version of the rule
+
   "Version": "1.0.0",
 
-  // Version of the DGC Schema that this rule applies to
+
   "SchemaVersion": "1.0.0",
 
-  // Rule engine and version
+
   "Engine": "CERTLOGIC",
   "EngineVersion": "1.0.0",
 
-  // DCC type (Vac, Test, Rec)
+
   "CertificateType": "Test",
 
-  // Country code of the country that created the rule
-  // ISO 3166 two-letter country code
   "CountryCode": "CZ",
 
-  // Description by language
+
   "Description": [
     {
       "lang": "en",
@@ -30,17 +28,16 @@
     }
   ],
 
-  // Start and end of validity period
-  // ISO 8106 date-time
+
   "ValidFrom": "2021-05-27T07:46:40Z",
   "ValidTo": "2021-06-01T07:46:40Z",
 
-  // Fields affected by the rule
+
   "AffectedFields": [
     "dn",
     "sd"
   ],
 
-  // CertLogic rule as serialized JSON string
+
   "Logic": "{\"and\":[{\">\":[{\"var\":\"hcert.v.0.dn\"},0]},{\">=\":[{\"var\":\"hcert.v.0.dn\"},{\"var\":\"hcert.v.0.sd\"}]}]}"
 }

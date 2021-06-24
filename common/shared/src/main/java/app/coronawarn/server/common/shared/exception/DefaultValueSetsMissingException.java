@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.distribution.dgc;
+package app.coronawarn.server.common.shared.exception;
 
 import java.io.IOException;
 

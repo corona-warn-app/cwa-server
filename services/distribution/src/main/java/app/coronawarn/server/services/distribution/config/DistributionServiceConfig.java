@@ -2,6 +2,7 @@ package app.coronawarn.server.services.distribution.config;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
 import app.coronawarn.server.common.shared.util.SerializationUtils;
+import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.constraints.Max;
@@ -71,6 +72,7 @@ public class DistributionServiceConfig {
   private QrCodePosterTemplate androidQrCodePosterTemplate;
   private PresenceTracingParameters presenceTracingParameters;
   private DigitalGreenCertificate digitalGreenCertificate;
+  private Integer connectionPoolSize;
 
   public Paths getPaths() {
     return paths;
@@ -889,6 +891,14 @@ public class DistributionServiceConfig {
     this.digitalGreenCertificate = digitalGreenCertificate;
   }
 
+  public Integer getConnectionPoolSize() {
+    return connectionPoolSize;
+  }
+
+  public void setConnectionPoolSize(Integer connectionPoolSize) {
+    this.connectionPoolSize = connectionPoolSize;
+  }
+
   public static class ObjectStore {
 
     @Pattern(regexp = NO_WHITESPACE_REGEX)
@@ -991,6 +1001,88 @@ public class DistributionServiceConfig {
 
     public void setHourFileRetentionDays(Integer hourFileRetentionDays) {
       this.hourFileRetentionDays = hourFileRetentionDays;
+    }
+  }
+
+  public static class Client {
+
+    private String baseUrl;
+
+    private String countryListPath;
+
+    private Ssl ssl;
+
+    public Ssl getSsl() {
+      return ssl;
+    }
+
+    public void setSsl(Ssl ssl) {
+      this.ssl = ssl;
+    }
+
+    public String getBaseUrl() {
+      return baseUrl;
+    }
+
+    public void setBaseUrl(String baseUrl) {
+      this.baseUrl = baseUrl;
+    }
+
+    public String getCountryListPath() {
+      return countryListPath;
+    }
+
+    public void setCountryListPath(String countryListPath) {
+      this.countryListPath = countryListPath;
+    }
+
+    public static class Ssl {
+
+      private File keyStore;
+      private String keyStorePassword;
+      private String keyPassword;
+      private File trustStore;
+      private String trustStorePassword;
+
+      public File getKeyStore() {
+        return keyStore;
+      }
+
+      public void setKeyStore(File keyStore) {
+        this.keyStore = keyStore;
+      }
+
+      public String getKeyStorePassword() {
+        return keyStorePassword;
+      }
+
+      public void setKeyStorePassword(String keyStorePassword) {
+        this.keyStorePassword = keyStorePassword;
+      }
+
+      public String getKeyPassword() {
+        return keyPassword;
+      }
+
+      public void setKeyPassword(String keyPassword) {
+        this.keyPassword = keyPassword;
+      }
+
+      public File getTrustStore() {
+        return trustStore;
+      }
+
+      public void setTrustStore(File trustStore) {
+        this.trustStore = trustStore;
+      }
+
+      public String getTrustStorePassword() {
+        return trustStorePassword;
+      }
+
+      public void setTrustStorePassword(String trustStorePassword) {
+        this.trustStorePassword = trustStorePassword;
+      }
     }
   }
 
@@ -1579,6 +1671,8 @@ public class DistributionServiceConfig {
 
     private String[] supportedLanguages;
 
+    private Client client;
+
     public String getMahJsonPath() {
       return mahJsonPath;
     }
@@ -1657,6 +1751,14 @@ public class DistributionServiceConfig {
 
     public void setSupportedLanguages(String[] supportedLanguages) {
       this.supportedLanguages = supportedLanguages;
+    }
+
+    public Client getClient() {
+      return client;
+    }
+
+    public void setClient(Client client) {
+      this.client = client;
     }
   }
 }

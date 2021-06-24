@@ -6,7 +6,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.DigitalGreenCertificate;
-import app.coronawarn.server.services.distribution.dgc.DefaultValueSetsMissingException;
+import app.coronawarn.server.common.shared.exception.DefaultValueSetsMissingException;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

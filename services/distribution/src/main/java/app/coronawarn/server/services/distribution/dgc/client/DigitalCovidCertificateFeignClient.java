@@ -1,0 +1,45 @@
+
+
+package app.coronawarn.server.services.distribution.dgc.client;
+
+import app.coronawarn.server.services.distribution.dgc.Rule;
+import app.coronawarn.server.services.distribution.dgc.ValueSet;
+import io.micrometer.core.annotation.Timed;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import java.util.List;
+
+/**
+ * This is a Spring Cloud Feign based HTTP client that allows type-safe HTTP calls and abstract the implementation
+ * away.
+ */
+@FeignClient(name = "dcc-server", url = "${services.distribution.digital-green-certificate.client.base-url}")
+public interface DigitalCovidCertificateFeignClient {
+
+  /**
+   * This methods calls the verification service with the given {#link tan}.
+   *
+   * @return 404 when the tan is not valid.
+   */
+  @Timed
+  @GetMapping(value = "${services.distribution.digital-green-certificate.client.country-list-path}")
+  ResponseEntity<List<String>> getCountryList();
+
+  @Timed
+  @GetMapping(value = "${services.distribution.digital-green-certificate.client.value-sets-path}/{hash}")
+  ResponseEntity<ValueSet> getValueSet(@PathVariable String hash);
+
+  @Timed
+  @GetMapping(value = "${services.distribution.digital-green-certificate.client..value-sets-path}")
+  ResponseEntity<List<ValueSet>> getValueSets();
+
+  @Timed
+  @GetMapping(value = "${services.distribution.digital-green-certificate.client.rules-path}")
+  ResponseEntity<List<Rule>> getRules();
+
+  @Timed
+  @GetMapping(value = "${services.distribution.digital-green-certificate.client.rules-path}/{country}/{hash}")
+  ResponseEntity<Rule> getCountryRule(@PathVariable String country, @PathVariable String hash);
+}

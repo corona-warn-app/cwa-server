@@ -1,9 +1,11 @@
 package app.coronawarn.server.services.distribution.dgc;
 
 import static app.coronawarn.server.common.shared.util.SerializationUtils.deserializeJsonToSimpleType;
+import static app.coronawarn.server.common.shared.util.SerializationUtils.readConfiguredJsonOrDefault;
 
 import app.coronawarn.server.common.protocols.internal.dgc.ValueSetItem;
 import app.coronawarn.server.common.protocols.internal.dgc.ValueSets;
+import app.coronawarn.server.common.shared.exception.DefaultValueSetsMissingException;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,7 +38,7 @@ public class DigitalGreenCertificateToProtobufMapping {
    */
   ValueSet readMahJson() throws DefaultValueSetsMissingException {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getMahJsonPath();
-    return readConfiguredJsonOrDefault(path, "dgc/vaccine-mah.json",
+    return readConfiguredJsonOrDefault(resourceLoader, path, "dgc/vaccine-mah.json",
         ValueSet.class);
   }
 
@@ -47,7 +49,7 @@ public class DigitalGreenCertificateToProtobufMapping {
    */
   ValueSet readMedicinalProductJson() throws DefaultValueSetsMissingException {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getMedicinalProductsJsonPath();
-    return readConfiguredJsonOrDefault(path, "dgc/vaccine-medicinal-product.json",
+    return readConfiguredJsonOrDefault(resourceLoader, path, "dgc/vaccine-medicinal-product.json",
         ValueSet.class);
   }
 
@@ -58,7 +60,7 @@ public class DigitalGreenCertificateToProtobufMapping {
    */
   ValueSet readProphylaxisJson() throws DefaultValueSetsMissingException {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getProphylaxisJsonPath();
-    return readConfiguredJsonOrDefault(path, "dgc/vaccine-prophylaxis.json",
+    return readConfiguredJsonOrDefault(resourceLoader, path, "dgc/vaccine-prophylaxis.json",
         ValueSet.class);
   }
 
@@ -69,7 +71,7 @@ public class DigitalGreenCertificateToProtobufMapping {
    */
   ValueSet readDiseaseAgentTargetedJson() throws DefaultValueSetsMissingException {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getDiseaseAgentTargetedJsonPath();
-    return readConfiguredJsonOrDefault(path, "dgc/disease-agent-targeted.json",
+    return readConfiguredJsonOrDefault(resourceLoader, path, "dgc/disease-agent-targeted.json",
         ValueSet.class);
   }
 
@@ -80,7 +82,7 @@ public class DigitalGreenCertificateToProtobufMapping {
    */
   ValueSet readTestManfJson() throws DefaultValueSetsMissingException {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getTestManfJsonPath();
-    return readConfiguredJsonOrDefault(path, "dgc/test-manf.json",
+    return readConfiguredJsonOrDefault(resourceLoader, path, "dgc/test-manf.json",
         ValueSet.class);
   }
 
@@ -91,7 +93,7 @@ public class DigitalGreenCertificateToProtobufMapping {
    */
   ValueSet readTestResultJson() throws DefaultValueSetsMissingException {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getTestResultJsonPath();
-    return readConfiguredJsonOrDefault(path, "dgc/test-result.json",
+    return readConfiguredJsonOrDefault(resourceLoader, path, "dgc/test-result.json",
         ValueSet.class);
   }
 
@@ -102,7 +104,7 @@ public class DigitalGreenCertificateToProtobufMapping {
    */
   ValueSet readTestTypeJson() throws DefaultValueSetsMissingException {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getTestTypeJsonPath();
-    return readConfiguredJsonOrDefault(path, "dgc/test-type.json",
+    return readConfiguredJsonOrDefault(resourceLoader, path, "dgc/test-type.json",
         ValueSet.class);
   }
 
@@ -145,25 +147,25 @@ public class DigitalGreenCertificateToProtobufMapping {
         .collect(Collectors.toList());
   }
 
-  private <T> T readConfiguredJsonOrDefault(String path, String defaultPath, Class<T> rawType)
-      throws DefaultValueSetsMissingException {
-    if (!ObjectUtils.isEmpty(path)) {
-      try (InputStream jsonStream = resourceLoader.getResource(path).getInputStream()) {
-        logger.debug("Loading JSON from {}.", path);
-        return deserializeJsonToSimpleType(jsonStream, rawType);
-      } catch (IOException e) {
-        logger.error("Error reading {} from json {}.", rawType.getSimpleName(), path, e);
-      }
-    }
-    try (InputStream jsonStream = resourceLoader.getResource(defaultPath).getInputStream()) {
-      // fallback to default
-      logger.debug("JSON to load was empty or invalid, falling back to loading from {}.", defaultPath);
-      return deserializeJsonToSimpleType(jsonStream, rawType);
-    } catch (IOException e) {
-      logger.error("We could not load the default {}. This shouldn't happen!", defaultPath, e);
-      throw new DefaultValueSetsMissingException("Default valuesets is missing from the path " + defaultPath
-          + ". This shouldn't happen!", e);
-    }
-  }
+//  private <T> T readConfiguredJsonOrDefault(String path, String defaultPath, Class<T> rawType)
+//      throws DefaultValueSetsMissingException {
+//    if (!ObjectUtils.isEmpty(path)) {
+//      try (InputStream jsonStream = resourceLoader.getResource(path).getInputStream()) {
+//        logger.debug("Loading JSON from {}.", path);
+//        return deserializeJsonToSimpleType(jsonStream, rawType);
+//      } catch (IOException e) {
+//        logger.error("Error reading {} from json {}.", rawType.getSimpleName(), path, e);
+//      }
+//    }
+//    try (InputStream jsonStream = resourceLoader.getResource(defaultPath).getInputStream()) {
+//      // fallback to default
+//      logger.debug("JSON to load was empty or invalid, falling back to loading from {}.", defaultPath);
+//      return deserializeJsonToSimpleType(jsonStream, rawType);
+//    } catch (IOException e) {
+//      logger.error("We could not load the default {}. This shouldn't happen!", defaultPath, e);
+//      throw new DefaultValueSetsMissingException("Default valuesets is missing from the path " + defaultPath
+//          + ". This shouldn't happen!", e);
+//    }
+//  }
 }
 
