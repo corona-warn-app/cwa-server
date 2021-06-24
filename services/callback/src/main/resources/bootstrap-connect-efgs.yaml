@@ -4,3 +4,4 @@ spring:
     vault:
       kv:
         application-name: 'callback'
+        profiles: cloud,connect-efgs
