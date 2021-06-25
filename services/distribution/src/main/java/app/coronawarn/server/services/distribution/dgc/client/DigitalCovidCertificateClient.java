@@ -4,6 +4,7 @@ package app.coronawarn.server.services.distribution.dgc.client;
 
 import app.coronawarn.server.services.distribution.dgc.Rule;
 import app.coronawarn.server.services.distribution.dgc.ValueSet;
+import app.coronawarn.server.services.distribution.dgc.ValueSetMetadata;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,18 +14,15 @@ import java.util.Optional;
  */
 public interface DigitalCovidCertificateClient {
 
-  /**
-   * This methods calls the verification service with the given {#link tan}.
-   *
-   * @return 404 when the tan is not valid.
-   */
   List<String> getCountryList();
 
-  List<ValueSet> getValueSets();
+  List<ValueSetMetadata> getValueSets();
 
   Optional<ValueSet> getValueSet(String hash);
 
   List<Rule> getRules();
 
-  Optional<Rule> getCountryRule(String country, String hash);
+  Optional<Rule> getCountryRuleByHash(String country, String hash);
+
+  List<Rule> getCountryRules(String country);
 }

@@ -33,7 +33,12 @@ class DigitalCovidCertificateClientTest {
   }
 
   @Test
+  public void testValueSets() {
+    digitalCovidCertificateClient.getValueSets().forEach(valueSetV2 -> System.out.println(valueSetV2.getId()));
+  }
+
+  @Test
   public void testCountryRule() {
-    System.out.println(digitalCovidCertificateClient.getCountryRule("test", "test"));
+    System.out.println(digitalCovidCertificateClient.getCountryRuleByHash("test", "test"));
   }
 }

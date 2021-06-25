@@ -3,6 +3,7 @@ package app.coronawarn.server.services.distribution.dgc.client;
 
 import app.coronawarn.server.services.distribution.dgc.Rule;
 import app.coronawarn.server.services.distribution.dgc.ValueSet;
+import app.coronawarn.server.services.distribution.dgc.ValueSetMetadata;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import java.util.List;
@@ -24,7 +25,7 @@ public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificat
   }
 
   @Override
-  public List<ValueSet> getValueSets() {
+  public List<ValueSetMetadata> getValueSets() {
     return digitalCovidCertificateClient.getValueSets().getBody();
   }
 
@@ -39,8 +40,13 @@ public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificat
   }
 
   @Override
-  public Optional<Rule> getCountryRule(String country, String hash) {
+  public Optional<Rule> getCountryRuleByHash(String country, String hash) {
     return Optional.ofNullable(digitalCovidCertificateClient.getCountryRule(country, hash).getBody());
+  }
+
+  @Override
+  public List<Rule> getCountryRules(String country) {
+    throw new UnsupportedOperationException("Not yet implemented");
   }
 
 }

@@ -4,6 +4,7 @@ package app.coronawarn.server.services.distribution.dgc.client;
 import app.coronawarn.server.common.shared.exception.DefaultValueSetsMissingException;
 import app.coronawarn.server.services.distribution.dgc.Rule;
 import app.coronawarn.server.services.distribution.dgc.ValueSet;
+import app.coronawarn.server.services.distribution.dgc.ValueSetMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ResourceLoader;
@@ -20,6 +21,9 @@ import static app.coronawarn.server.common.shared.util.SerializationUtils.readCo
 @Profile("fake-dcc-client")
 public class TestDigitalCovidCertificateClient implements DigitalCovidCertificateClient {
 
+  public static final String TEST_TYPE_HASH = "50ba87d7c774cd9d77e4d82f6ab34871119bc4ad51b5b6fa1100efa687be0094";
+  public static final String AGENT_TARGETED_HASH = "d4bfba1fd9f2eb29dfb2938220468ccb0b481d348f192e6015d36da4b911a83a";
+
   @Autowired
   ResourceLoader resourceLoader;
 
@@ -35,14 +39,31 @@ public class TestDigitalCovidCertificateClient implements DigitalCovidCertificat
   }
 
   @Override
-  public List<ValueSet> getValueSets() {
+  public List<ValueSetMetadata> getValueSets() {
+    try {
+      return Arrays.asList(readConfiguredJsonOrDefault(resourceLoader, null, "dgc/valuesets.json", ValueSetMetadata[].class));
+    } catch (DefaultValueSetsMissingException e) {
+      e.printStackTrace();
+    }
+
     return Collections.emptyList();
   }
 
   @Override
   public Optional<ValueSet> getValueSet(String hash) {
     try {
-      return Optional.ofNullable(readConfiguredJsonOrDefault(resourceLoader, null, "dgc/vaccine-mah.json", ValueSet.class));
+      switch(hash){
+        case TEST_TYPE_HASH:
+          return Optional.ofNullable(readConfiguredJsonOrDefault(resourceLoader, null,
+              "dgc/test-type.json", ValueSet.class));
+        case AGENT_TARGETED_HASH:
+          return Optional.ofNullable(readConfiguredJsonOrDefault(resourceLoader, null,
+              "dgc/agent-targeted.json", ValueSet.class));
+        default:
+          return Optional.ofNullable(readConfiguredJsonOrDefault(resourceLoader, null,
+              "dgc/vaccine-mah.json", ValueSet.class));
+      }
+
     } catch (DefaultValueSetsMissingException e) {
       e.printStackTrace();
     }
@@ -56,7 +77,7 @@ public class TestDigitalCovidCertificateClient implements DigitalCovidCertificat
   }
 
   @Override
-  public Optional<Rule> getCountryRule(String country, String hash) {
+  public Optional<Rule> getCountryRuleByHash(String country, String hash) {
     try {
       return Optional.ofNullable(readConfiguredJsonOrDefault(resourceLoader, null, "dgc/rule.json", Rule.class));
     } catch (DefaultValueSetsMissingException e) {
@@ -64,6 +85,11 @@ public class TestDigitalCovidCertificateClient implements DigitalCovidCertificat
     }
 
     return Optional.empty();
+  }
+
+  @Override
+  public List<Rule> getCountryRules(String country) {
+    throw new UnsupportedOperationException("Not yet implemented");
   }
 
 }
