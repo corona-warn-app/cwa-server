@@ -1,8 +1,11 @@
 package app.coronawarn.server.services.distribution.statistics;
 
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.FIRST_VACCINATION_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.FULLY_VACCINATED_CARD;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.INCIDENCE_CARD_ID;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.INFECTIONS_CARD_ID;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.KEY_SUBMISSION_CARD_ID;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.VACCINATION_DOSES_CARD;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -215,7 +218,7 @@ class StatisticsJsonToProtobufTest {
     StatisticsToProtobufMapping statisticsToProtobufMapping;
 
     Statistics result;
-    KeyFigureCard infections, incidence, keySubmission;
+    KeyFigureCard infections, incidence, keySubmission, reproduction ,vaccinatedDoses, fullyVaccinated, firstVaccination;
 
     @BeforeEach
     void setup() throws IOException {
@@ -223,6 +226,10 @@ class StatisticsJsonToProtobufTest {
       infections = result.getKeyFigureCards(0);
       incidence = result.getKeyFigureCards(1);
       keySubmission = result.getKeyFigureCards(2);
+      reproduction = result.getKeyFigureCards(3);
+      firstVaccination = result.getKeyFigureCards(4);
+      fullyVaccinated = result.getKeyFigureCards(5);
+      vaccinatedDoses = result.getKeyFigureCards(6);
     }
 
     private long dateToTimestamp(LocalDate date) {
@@ -254,10 +261,39 @@ class StatisticsJsonToProtobufTest {
       assertThat(keySubmission.getHeader())
           .extracting(CardHeader::getCardId, CardHeader::getUpdatedAt)
           .containsExactly(KEY_SUBMISSION_CARD_ID, dateToTimestamp(LocalDate.of(2020, 11, 6)));
-      assertThat(keySubmission.getKeyFigures(1))
+      assertThat(keySubmission.getKeyFigures(0))
           .extracting(KeyFigure::getValue, KeyFigure::getTrend, KeyFigure::getTrendSemantic)
-          .containsExactly(11.428571428571429, Trend.STABLE, TrendSemantic.NEUTRAL);
+          .containsExactly(2717.0, Trend.UNSPECIFIED_TREND, TrendSemantic.UNSPECIFIED_TREND_SEMANTIC);
     }
 
+    @Test
+    void testFirstVaccinationCard() {
+      assertThat(firstVaccination.getHeader())
+          .extracting(CardHeader::getCardId, CardHeader::getUpdatedAt)
+          .containsExactly(FIRST_VACCINATION_CARD, dateToTimestamp(LocalDate.of(2021, 06, 24)));
+      assertThat(firstVaccination.getKeyFigures(1))
+          .extracting(KeyFigure::getValue, KeyFigure::getTrend, KeyFigure::getTrendSemantic)
+          .containsExactly(4.3958788E7, Trend.UNSPECIFIED_TREND, TrendSemantic.UNSPECIFIED_TREND_SEMANTIC);
+    }
+
+    @Test
+    void testFullyVaccinationCard() {
+      assertThat(fullyVaccinated.getHeader())
+          .extracting(CardHeader::getCardId, CardHeader::getUpdatedAt)
+          .containsExactly(FULLY_VACCINATED_CARD, dateToTimestamp(LocalDate.of(2021, 06, 24)));
+      assertThat(fullyVaccinated.getKeyFigures(1))
+          .extracting(KeyFigure::getValue, KeyFigure::getTrend, KeyFigure::getTrendSemantic)
+          .containsExactly(2.8383081E7, Trend.UNSPECIFIED_TREND, TrendSemantic.UNSPECIFIED_TREND_SEMANTIC);
+    }
+
+    @Test
+    void testVaccinationDosesCard() {
+      assertThat(vaccinatedDoses.getHeader())
+          .extracting(CardHeader::getCardId, CardHeader::getUpdatedAt)
+          .containsExactly(VACCINATION_DOSES_CARD, dateToTimestamp(LocalDate.of(2021, 06, 24)));
+      assertThat(vaccinatedDoses.getKeyFigures(0))
+          .extracting(KeyFigure::getValue, KeyFigure::getTrend, KeyFigure::getTrendSemantic)
+          .containsExactly(969028.0, Trend.UNSPECIFIED_TREND, TrendSemantic.UNSPECIFIED_TREND_SEMANTIC);
+    }
   }
 }
