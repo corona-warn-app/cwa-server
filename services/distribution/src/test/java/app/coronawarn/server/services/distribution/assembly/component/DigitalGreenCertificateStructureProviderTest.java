@@ -11,6 +11,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.archive.de
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToCborMapping;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
 import java.io.File;
 import java.io.IOException;
@@ -50,6 +51,9 @@ class DigitalGreenCertificateStructureProviderTest {
   DigitalGreenCertificateToProtobufMapping dgcToProtobufMapping;
 
   @MockBean
+  DigitalGreenCertificateToCborMapping dgcToCborMappingMock;
+
+  @MockBean
   OutputDirectoryProvider outputDirectoryProvider;
 
   @Rule
@@ -67,7 +71,7 @@ class DigitalGreenCertificateStructureProviderTest {
   @Test
   void should_create_correct_file_structure() {
     DigitalGreenCertificateStructureProvider underTest = new DigitalGreenCertificateStructureProvider(
-        distributionServiceConfig, cryptoProvider, dgcToProtobufMapping);
+        distributionServiceConfig, cryptoProvider, dgcToProtobufMapping, dgcToCborMappingMock);
     DirectoryOnDisk digitalGreenCertificates = underTest.getDigitalGreenCertificates();
     digitalGreenCertificates.prepare(new ImmutableStack<>());
 

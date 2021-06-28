@@ -1,43 +1,23 @@
 {
-
   "Identifier": "GR-CZ-0001",
-
-
   "Type": "Acceptance",
-
-
   "Version": "1.0.0",
-
-
   "SchemaVersion": "1.0.0",
-
-
   "Engine": "CERTLOGIC",
   "EngineVersion": "1.0.0",
-
-
   "CertificateType": "Test",
-
   "CountryCode": "CZ",
-
-
   "Description": [
     {
       "lang": "en",
       "desc": "The Field “Doses” MUST contain number 2 OR 2/2."
     }
   ],
-
-
   "ValidFrom": "2021-05-27T07:46:40Z",
   "ValidTo": "2021-06-01T07:46:40Z",
-
-
   "AffectedFields": [
     "dn",
     "sd"
   ],
-
-
   "Logic": "{\"and\":[{\">\":[{\"var\":\"hcert.v.0.dn\"},0]},{\">=\":[{\"var\":\"hcert.v.0.dn\"},{\"var\":\"hcert.v.0.sd\"}]}]}"
 }

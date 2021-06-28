@@ -7,6 +7,10 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.Client.Ssl;
 import feign.Client;
 import feign.httpclient.ApacheHttpClient;
+import java.io.File;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import javax.net.ssl.SSLContext;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.springframework.cloud.commons.httpclient.ApacheHttpClientConnectionManagerFactory;
@@ -14,13 +18,11 @@ import org.springframework.cloud.commons.httpclient.ApacheHttpClientFactory;
 import org.springframework.cloud.commons.httpclient.DefaultApacheHttpClientConnectionManagerFactory;
 import org.springframework.cloud.commons.httpclient.DefaultApacheHttpClientFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
-import javax.net.ssl.SSLContext;
-import java.io.File;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 
 @Component
+@Profile("!fake-dcc-client")
 public class CloudFeignBusinessRulesClientProvider {
 
   private final Integer connectionPoolSize;
@@ -33,12 +35,14 @@ public class CloudFeignBusinessRulesClientProvider {
   private final HostnameVerifierProvider hostnameVerifierProvider;
 
   /**
-   * Creates a {@link CloudFeignBusinessRulesClientProvider} that provides feign clients with fixed key and trust material.
+   * Creates a {@link CloudFeignBusinessRulesClientProvider} that provides feign clients with fixed key
+   * and trust material.
    *
    * @param config config attributes of {@link DistributionServiceConfig}
    * @param hostnameVerifierProvider provider {@link DistributionServiceConfig}
    */
-  public CloudFeignBusinessRulesClientProvider(DistributionServiceConfig config, HostnameVerifierProvider hostnameVerifierProvider) {
+  public CloudFeignBusinessRulesClientProvider(DistributionServiceConfig config,
+      HostnameVerifierProvider hostnameVerifierProvider) {
     Ssl sslConfig = config.getDigitalGreenCertificate().getClient().getSsl();
     this.keyStore = sslConfig.getKeyStore();
     this.keyStorePassword = sslConfig.getKeyStorePassword();

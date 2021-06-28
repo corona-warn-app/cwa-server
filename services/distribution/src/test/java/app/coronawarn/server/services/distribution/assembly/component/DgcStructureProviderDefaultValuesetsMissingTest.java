@@ -7,6 +7,7 @@ import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.common.shared.exception.DefaultValueSetsMissingException;
+import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToCborMapping;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,10 +35,13 @@ class DgcStructureProviderDefaultValuesetsMissingTest {
   @MockBean
   DigitalGreenCertificateToProtobufMapping dgcToProtobufMappingMock;
 
+  @MockBean
+  DigitalGreenCertificateToCborMapping dgcToCborMappingMock;
+
   @Test
   void default_value_missing_should_result_in_empty_dir() throws DefaultValueSetsMissingException {
     DigitalGreenCertificateStructureProvider underTest = new DigitalGreenCertificateStructureProvider(
-        distributionServiceConfig, cryptoProvider, dgcToProtobufMappingMock);
+        distributionServiceConfig, cryptoProvider, dgcToProtobufMappingMock, dgcToCborMappingMock);
     when(dgcToProtobufMappingMock.constructProtobufMapping())
         .thenThrow(new DefaultValueSetsMissingException("", null));
     DirectoryOnDisk digitalGreenCertificates = underTest.getDigitalGreenCertificates();

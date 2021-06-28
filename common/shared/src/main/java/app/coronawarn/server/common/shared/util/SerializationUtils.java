@@ -2,21 +2,19 @@ package app.coronawarn.server.common.shared.util;
 
 
 import app.coronawarn.server.common.shared.exception.DefaultValueSetsMissingException;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.asm.TypeReference;
-import org.springframework.core.io.ResourceLoader;
-import org.springframework.util.ObjectUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.function.Function;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.util.ObjectUtils;
 
 public final class SerializationUtils {
 
@@ -80,6 +78,16 @@ public final class SerializationUtils {
         typeFactory -> typeFactory.constructSimpleType(rawType, new JavaType[0]));
   }
 
+  /**
+   * TODO: write this.
+   * @param resourceLoader test
+   * @param path test
+   * @param defaultPath test
+   * @param rawType test
+   * @param <T> test
+   * @return test
+   * @throws DefaultValueSetsMissingException test
+   */
   public static <T> T readConfiguredJsonOrDefault(ResourceLoader resourceLoader,
       String path,
       String defaultPath,

@@ -146,26 +146,5 @@ public class DigitalGreenCertificateToProtobufMapping {
             .setDisplayText(entry.getValue().getDisplay())).build())
         .collect(Collectors.toList());
   }
-
-//  private <T> T readConfiguredJsonOrDefault(String path, String defaultPath, Class<T> rawType)
-//      throws DefaultValueSetsMissingException {
-//    if (!ObjectUtils.isEmpty(path)) {
-//      try (InputStream jsonStream = resourceLoader.getResource(path).getInputStream()) {
-//        logger.debug("Loading JSON from {}.", path);
-//        return deserializeJsonToSimpleType(jsonStream, rawType);
-//      } catch (IOException e) {
-//        logger.error("Error reading {} from json {}.", rawType.getSimpleName(), path, e);
-//      }
-//    }
-//    try (InputStream jsonStream = resourceLoader.getResource(defaultPath).getInputStream()) {
-//      // fallback to default
-//      logger.debug("JSON to load was empty or invalid, falling back to loading from {}.", defaultPath);
-//      return deserializeJsonToSimpleType(jsonStream, rawType);
-//    } catch (IOException e) {
-//      logger.error("We could not load the default {}. This shouldn't happen!", defaultPath, e);
-//      throw new DefaultValueSetsMissingException("Default valuesets is missing from the path " + defaultPath
-//          + ". This shouldn't happen!", e);
-//    }
-//  }
 }
 

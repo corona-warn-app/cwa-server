@@ -1,21 +1,22 @@
 
 package app.coronawarn.server.services.distribution.dgc.client;
 
+import static app.coronawarn.server.common.shared.util.SerializationUtils.readConfiguredJsonOrDefault;
+
 import app.coronawarn.server.common.shared.exception.DefaultValueSetsMissingException;
-import app.coronawarn.server.services.distribution.dgc.Rule;
+import app.coronawarn.server.services.distribution.dgc.BusinessRule;
+import app.coronawarn.server.services.distribution.dgc.BusinessRuleItem;
 import app.coronawarn.server.services.distribution.dgc.ValueSet;
 import app.coronawarn.server.services.distribution.dgc.ValueSetMetadata;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import static app.coronawarn.server.common.shared.util.SerializationUtils.readConfiguredJsonOrDefault;
 
 @Component
 @Profile("fake-dcc-client")
@@ -41,7 +42,8 @@ public class TestDigitalCovidCertificateClient implements DigitalCovidCertificat
   @Override
   public List<ValueSetMetadata> getValueSets() {
     try {
-      return Arrays.asList(readConfiguredJsonOrDefault(resourceLoader, null, "dgc/valuesets.json", ValueSetMetadata[].class));
+      return Arrays.asList(readConfiguredJsonOrDefault(resourceLoader, null,
+          "dgc/valuesets.json", ValueSetMetadata[].class));
     } catch (DefaultValueSetsMissingException e) {
       e.printStackTrace();
     }
@@ -52,7 +54,7 @@ public class TestDigitalCovidCertificateClient implements DigitalCovidCertificat
   @Override
   public Optional<ValueSet> getValueSet(String hash) {
     try {
-      switch(hash){
+      switch (hash) {
         case TEST_TYPE_HASH:
           return Optional.ofNullable(readConfiguredJsonOrDefault(resourceLoader, null,
               "dgc/test-type.json", ValueSet.class));
@@ -72,14 +74,22 @@ public class TestDigitalCovidCertificateClient implements DigitalCovidCertificat
   }
 
   @Override
-  public List<Rule> getRules() {
+  public List<BusinessRuleItem> getRules() {
+    try {
+      return Arrays.asList(readConfiguredJsonOrDefault(resourceLoader, null,
+          "dgc/rules.json", BusinessRuleItem[].class));
+    } catch (DefaultValueSetsMissingException e) {
+      e.printStackTrace();
+    }
+
     return Collections.emptyList();
   }
 
   @Override
-  public Optional<Rule> getCountryRuleByHash(String country, String hash) {
+  public Optional<BusinessRule> getCountryRuleByHash(String country, String hash) {
     try {
-      return Optional.ofNullable(readConfiguredJsonOrDefault(resourceLoader, null, "dgc/rule.json", Rule.class));
+      return Optional.ofNullable(readConfiguredJsonOrDefault(resourceLoader, null,
+          "dgc/rule.json", BusinessRule.class));
     } catch (DefaultValueSetsMissingException e) {
       e.printStackTrace();
     }
@@ -88,7 +98,7 @@ public class TestDigitalCovidCertificateClient implements DigitalCovidCertificat
   }
 
   @Override
-  public List<Rule> getCountryRules(String country) {
+  public List<BusinessRule> getCountryRules(String country) {
     throw new UnsupportedOperationException("Not yet implemented");
   }
 

@@ -7,28 +7,18 @@ import java.util.List;
 
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Rule {
-  private String identifier;
+public class BusinessRule extends BusinessRuleItem {
+
   private String type;
-  private String version;
   private String schemaVersion;
   private String engine;
   private String engineVersion;
   private String certificateType;
-  private String countryCode;
   private Description description;
   private String validFrom;
   private String validTo;
   private List<String> affectedFields;
   private String logic;
-
-  public String getIdentifier() {
-    return identifier;
-  }
-
-  public void setIdentifier(String identifier) {
-    this.identifier = identifier;
-  }
 
   public String getType() {
     return type;
@@ -36,14 +26,6 @@ public class Rule {
 
   public void setType(String type) {
     this.type = type;
-  }
-
-  public String getVersion() {
-    return version;
-  }
-
-  public void setVersion(String version) {
-    this.version = version;
   }
 
   public String getSchemaVersion() {
@@ -76,14 +58,6 @@ public class Rule {
 
   public void setCertificateType(String certificateType) {
     this.certificateType = certificateType;
-  }
-
-  public String getCountryCode() {
-    return countryCode;
-  }
-
-  public void setCountryCode(String countryCode) {
-    this.countryCode = countryCode;
   }
 
   public Description getDescription() {
@@ -130,7 +104,5 @@ public class Rule {
     private String lang;
     private String desc;
   }
-
-
 
 }

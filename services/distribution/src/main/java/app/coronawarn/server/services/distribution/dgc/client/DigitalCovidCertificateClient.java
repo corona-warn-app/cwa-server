@@ -2,7 +2,8 @@
 
 package app.coronawarn.server.services.distribution.dgc.client;
 
-import app.coronawarn.server.services.distribution.dgc.Rule;
+import app.coronawarn.server.services.distribution.dgc.BusinessRule;
+import app.coronawarn.server.services.distribution.dgc.BusinessRuleItem;
 import app.coronawarn.server.services.distribution.dgc.ValueSet;
 import app.coronawarn.server.services.distribution.dgc.ValueSetMetadata;
 import java.util.List;
@@ -20,9 +21,9 @@ public interface DigitalCovidCertificateClient {
 
   Optional<ValueSet> getValueSet(String hash);
 
-  List<Rule> getRules();
+  List<BusinessRuleItem> getRules();
 
-  Optional<Rule> getCountryRuleByHash(String country, String hash);
+  Optional<BusinessRule> getCountryRuleByHash(String country, String hash);
 
-  List<Rule> getCountryRules(String country);
+  List<BusinessRule> getCountryRules(String country);
 }

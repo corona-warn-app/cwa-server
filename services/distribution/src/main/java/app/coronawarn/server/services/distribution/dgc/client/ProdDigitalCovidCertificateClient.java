@@ -1,13 +1,14 @@
 
 package app.coronawarn.server.services.distribution.dgc.client;
 
-import app.coronawarn.server.services.distribution.dgc.Rule;
+import app.coronawarn.server.services.distribution.dgc.BusinessRule;
+import app.coronawarn.server.services.distribution.dgc.BusinessRuleItem;
 import app.coronawarn.server.services.distribution.dgc.ValueSet;
 import app.coronawarn.server.services.distribution.dgc.ValueSetMetadata;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 @Component
 @Profile("!fake-dcc-client")
@@ -35,17 +36,17 @@ public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificat
   }
 
   @Override
-  public List<Rule> getRules() {
+  public List<BusinessRuleItem> getRules() {
     return digitalCovidCertificateClient.getRules().getBody();
   }
 
   @Override
-  public Optional<Rule> getCountryRuleByHash(String country, String hash) {
+  public Optional<BusinessRule> getCountryRuleByHash(String country, String hash) {
     return Optional.ofNullable(digitalCovidCertificateClient.getCountryRule(country, hash).getBody());
   }
 
   @Override
-  public List<Rule> getCountryRules(String country) {
+  public List<BusinessRule> getCountryRules(String country) {
     throw new UnsupportedOperationException("Not yet implemented");
   }
 
