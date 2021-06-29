@@ -2,6 +2,7 @@ package app.coronawarn.server.services.distribution.dgc;
 
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient;
+import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
 import org.junit.jupiter.api.Test;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,7 +24,7 @@ class DigitalCovidCertificateClientTest {
   private DigitalCovidCertificateClient digitalCovidCertificateClient;
 
   @Test
-  public void testCountryList() {
+  public void testCountryList() throws DigitalCovidCertificateException {
     System.out.println(digitalCovidCertificateClient.getCountryList());
   }
 
@@ -38,7 +39,7 @@ class DigitalCovidCertificateClientTest {
   }
 
   @Test
-  public void testCountryRule() {
+  public void testCountryRule() throws DigitalCovidCertificateException {
     System.out.println(digitalCovidCertificateClient.getCountryRuleByHash("test", "test"));
   }
 }

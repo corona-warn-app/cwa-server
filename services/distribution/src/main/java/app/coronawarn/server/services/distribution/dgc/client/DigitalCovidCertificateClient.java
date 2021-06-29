@@ -6,6 +6,7 @@ import app.coronawarn.server.services.distribution.dgc.BusinessRule;
 import app.coronawarn.server.services.distribution.dgc.BusinessRuleItem;
 import app.coronawarn.server.services.distribution.dgc.ValueSet;
 import app.coronawarn.server.services.distribution.dgc.ValueSetMetadata;
+import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,15 +16,15 @@ import java.util.Optional;
  */
 public interface DigitalCovidCertificateClient {
 
-  List<String> getCountryList();
+  List<String> getCountryList() throws DigitalCovidCertificateException;
 
   List<ValueSetMetadata> getValueSets();
 
   Optional<ValueSet> getValueSet(String hash);
 
-  List<BusinessRuleItem> getRules();
+  List<BusinessRuleItem> getRules() throws DigitalCovidCertificateException;
 
-  Optional<BusinessRule> getCountryRuleByHash(String country, String hash);
+  Optional<BusinessRule> getCountryRuleByHash(String country, String hash) throws DigitalCovidCertificateException;
 
   List<BusinessRule> getCountryRules(String country);
 }

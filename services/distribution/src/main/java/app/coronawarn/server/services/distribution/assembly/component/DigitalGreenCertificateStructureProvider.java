@@ -1,6 +1,6 @@
 package app.coronawarn.server.services.distribution.assembly.component;
 
-import app.coronawarn.server.common.shared.exception.DefaultValueSetsMissingException;
+import app.coronawarn.server.common.shared.exception.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
@@ -9,8 +9,11 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.DigitalGreenCertificate;
+import app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleType;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToCborMapping;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
+import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
+import org.apache.commons.logging.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -23,6 +26,9 @@ import org.springframework.stereotype.Component;
 public class DigitalGreenCertificateStructureProvider {
 
   private static final Logger logger = LoggerFactory.getLogger(DigitalGreenCertificateStructureProvider.class);
+
+  public static final String ACCEPTANCE_RULES = "acceptance-rules";
+  public static final String INVALIDATION_RULES = "invalidation-rules";
 
   private final DistributionServiceConfig distributionServiceConfig;
   private final CryptoProvider cryptoProvider;
@@ -47,14 +53,14 @@ public class DigitalGreenCertificateStructureProvider {
   public DirectoryOnDisk getDigitalGreenCertificates() {
     try {
       return constructArchiveToPublish(distributionServiceConfig.getDigitalGreenCertificate());
-    } catch (DefaultValueSetsMissingException e) {
+    } catch (UnableToLoadFileException e) {
       logger.error("We don't generate a value-sets file and this shouldn't override existing ones.", e);
       return new DirectoryOnDisk("");
     }
   }
 
   private DirectoryOnDisk constructArchiveToPublish(DigitalGreenCertificate dgcConfig)
-      throws DefaultValueSetsMissingException {
+      throws UnableToLoadFileException {
     DirectoryOnDisk dgcDirectory = new DirectoryOnDisk(dgcConfig.getDgcDirectory());
     for (String currentLanguage: dgcConfig.getSupportedLanguages()) {
       ArchiveOnDisk archiveToPublish = new ArchiveOnDisk(dgcConfig.getValuesetsFileName());
@@ -68,21 +74,39 @@ public class DigitalGreenCertificateStructureProvider {
           archiveToPublish.getName());
     }
 
-    ArchiveOnDisk onboardedCountries = new ArchiveOnDisk("onboarded-countries");
-    onboardedCountries
-        .addWritable(new FileOnDisk("export.bin", dgcToCborMapping.constructCountryList()));
-    dgcDirectory.addWritable(new DistributionArchiveSigningDecorator(onboardedCountries, cryptoProvider,
-        distributionServiceConfig));
+    dgcDirectory.addWritable(getOnboardedCountriesArchive());
+    dgcDirectory.addWritable(getRulesArchive(RuleType.Acceptance, ACCEPTANCE_RULES));
+    dgcDirectory.addWritable(getRulesArchive(RuleType.Invalidation, INVALIDATION_RULES));
 
     return dgcDirectory;
   }
 
   private Writable<WritableOnDisk> getOnboardedCountriesArchive() {
     ArchiveOnDisk onboardedCountries = new ArchiveOnDisk("onboarded-countries");
-    onboardedCountries
-        .addWritable(new FileOnDisk("export.bin", dgcToCborMapping.constructCountryList()));
+    try {
+      onboardedCountries
+          .addWritable(new FileOnDisk("export.bin", dgcToCborMapping.constructCountryList()));
+    } catch (DigitalCovidCertificateException e) {
+      logger.error("Onboarded countries archive was not overwritten because of:", e);
+      return new ArchiveOnDisk("");
+    }
 
     return new DistributionArchiveSigningDecorator(onboardedCountries, cryptoProvider,
+        distributionServiceConfig);
+  }
+
+  private Writable<WritableOnDisk> getRulesArchive(RuleType ruleType, String archiveName) {
+    ArchiveOnDisk acceptanceRules = new ArchiveOnDisk(archiveName);
+
+    try {
+      acceptanceRules
+          .addWritable(new FileOnDisk("export.bin", dgcToCborMapping.constructCborRules(ruleType)));
+    } catch (DigitalCovidCertificateException e) {
+      logger.error("Acceptance rules archive was not overwritten because of:", e);
+      return new ArchiveOnDisk("");
+    }
+
+    return new DistributionArchiveSigningDecorator(acceptanceRules, cryptoProvider,
         distributionServiceConfig);
   }
 }

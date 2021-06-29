@@ -1,14 +1,11 @@
 package app.coronawarn.server.services.distribution.dgc;
 
-import static app.coronawarn.server.common.shared.util.SerializationUtils.deserializeJsonToSimpleType;
 import static app.coronawarn.server.common.shared.util.SerializationUtils.readConfiguredJsonOrDefault;
 
 import app.coronawarn.server.common.protocols.internal.dgc.ValueSetItem;
 import app.coronawarn.server.common.protocols.internal.dgc.ValueSets;
-import app.coronawarn.server.common.shared.exception.DefaultValueSetsMissingException;
+import app.coronawarn.server.common.shared.exception.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -17,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ObjectUtils;
 
 
 @Component
@@ -36,7 +32,7 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  ValueSet readMahJson() throws DefaultValueSetsMissingException {
+  ValueSet readMahJson() throws UnableToLoadFileException {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getMahJsonPath();
     return readConfiguredJsonOrDefault(resourceLoader, path, "dgc/vaccine-mah.json",
         ValueSet.class);
@@ -47,7 +43,7 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  ValueSet readMedicinalProductJson() throws DefaultValueSetsMissingException {
+  ValueSet readMedicinalProductJson() throws UnableToLoadFileException {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getMedicinalProductsJsonPath();
     return readConfiguredJsonOrDefault(resourceLoader, path, "dgc/vaccine-medicinal-product.json",
         ValueSet.class);
@@ -58,7 +54,7 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  ValueSet readProphylaxisJson() throws DefaultValueSetsMissingException {
+  ValueSet readProphylaxisJson() throws UnableToLoadFileException {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getProphylaxisJsonPath();
     return readConfiguredJsonOrDefault(resourceLoader, path, "dgc/vaccine-prophylaxis.json",
         ValueSet.class);
@@ -69,7 +65,7 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  ValueSet readDiseaseAgentTargetedJson() throws DefaultValueSetsMissingException {
+  ValueSet readDiseaseAgentTargetedJson() throws UnableToLoadFileException {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getDiseaseAgentTargetedJsonPath();
     return readConfiguredJsonOrDefault(resourceLoader, path, "dgc/disease-agent-targeted.json",
         ValueSet.class);
@@ -80,7 +76,7 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  ValueSet readTestManfJson() throws DefaultValueSetsMissingException {
+  ValueSet readTestManfJson() throws UnableToLoadFileException {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getTestManfJsonPath();
     return readConfiguredJsonOrDefault(resourceLoader, path, "dgc/test-manf.json",
         ValueSet.class);
@@ -91,7 +87,7 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  ValueSet readTestResultJson() throws DefaultValueSetsMissingException {
+  ValueSet readTestResultJson() throws UnableToLoadFileException {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getTestResultJsonPath();
     return readConfiguredJsonOrDefault(resourceLoader, path, "dgc/test-result.json",
         ValueSet.class);
@@ -102,7 +98,7 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  ValueSet readTestTypeJson() throws DefaultValueSetsMissingException {
+  ValueSet readTestTypeJson() throws UnableToLoadFileException {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getTestTypeJsonPath();
     return readConfiguredJsonOrDefault(resourceLoader, path, "dgc/test-type.json",
         ValueSet.class);
@@ -113,7 +109,7 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return the protobuf filled with values from JSON.
    */
-  public ValueSets constructProtobufMapping() throws DefaultValueSetsMissingException {
+  public ValueSets constructProtobufMapping() throws UnableToLoadFileException {
     List<ValueSetItem> mahItems = toValueSetItems(readMahJson().getValueSetValues());
     List<ValueSetItem> productItems = toValueSetItems(readMedicinalProductJson().getValueSetValues());
     List<ValueSetItem> prophylaxisItems = toValueSetItems(readProphylaxisJson().getValueSetValues());

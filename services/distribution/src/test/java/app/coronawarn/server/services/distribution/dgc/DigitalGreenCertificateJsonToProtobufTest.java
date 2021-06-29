@@ -2,7 +2,7 @@ package app.coronawarn.server.services.distribution.dgc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import app.coronawarn.server.common.shared.exception.DefaultValueSetsMissingException;
+import app.coronawarn.server.common.shared.exception.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +26,7 @@ class DigitalGreenCertificateJsonToProtobufTest {
   DigitalGreenCertificateToProtobufMapping dgcToProtobufMapping;
 
   @Test
-  void shouldReadDefaultMahJsonIfNotConfigured() throws DefaultValueSetsMissingException {
+  void shouldReadDefaultMahJsonIfNotConfigured() throws UnableToLoadFileException {
     var result = dgcToProtobufMapping.readMahJson();
 
     assertThat(result.getValueSetId()).isEqualTo("vaccines-covid-19-auth-holders");
@@ -44,7 +44,7 @@ class DigitalGreenCertificateJsonToProtobufTest {
 
 
   @Test
-  void shouldReadDefaultMProductJsonIfNotConfigured() throws DefaultValueSetsMissingException {
+  void shouldReadDefaultMProductJsonIfNotConfigured() throws UnableToLoadFileException {
     var result = dgcToProtobufMapping.readMedicinalProductJson();
 
     assertThat(result.getValueSetId()).isEqualTo("vaccines-covid-19-names");
@@ -61,7 +61,7 @@ class DigitalGreenCertificateJsonToProtobufTest {
   }
 
   @Test
-  void shouldReadDefaultProphylaxisJsonIfNotConfigured() throws DefaultValueSetsMissingException {
+  void shouldReadDefaultProphylaxisJsonIfNotConfigured() throws UnableToLoadFileException {
     var result = dgcToProtobufMapping.readProphylaxisJson();
 
     assertThat(result.getValueSetId()).isEqualTo("sct-vaccines-covid-19");
@@ -79,7 +79,7 @@ class DigitalGreenCertificateJsonToProtobufTest {
 
   @Test
   @DirtiesContext
-  void shouldReadConfiguredProphylaxisJson() throws DefaultValueSetsMissingException {
+  void shouldReadConfiguredProphylaxisJson() throws UnableToLoadFileException {
     distributionServiceConfig.getDigitalGreenCertificate().setProphylaxisJsonPath("dgc/vaccine-prophylaxis-test.json");
     var result = dgcToProtobufMapping.readProphylaxisJson();
 
@@ -97,7 +97,7 @@ class DigitalGreenCertificateJsonToProtobufTest {
   }
 
   @Test
-  void shouldReadDefaultTestManfJsonIfNotConfigured() throws DefaultValueSetsMissingException {
+  void shouldReadDefaultTestManfJsonIfNotConfigured() throws UnableToLoadFileException {
     var result = dgcToProtobufMapping.readTestManfJson();
 
     assertThat(result.getValueSetId()).isEqualTo("covid-19-lab-test-manufacturer-and-name");
@@ -114,7 +114,7 @@ class DigitalGreenCertificateJsonToProtobufTest {
   }
 
   @Test
-  void shouldReadDefaultTestResultIfNotConfigured() throws DefaultValueSetsMissingException {
+  void shouldReadDefaultTestResultIfNotConfigured() throws UnableToLoadFileException {
     var result = dgcToProtobufMapping.readTestResultJson();
 
     assertThat(result.getValueSetId()).isEqualTo("covid-19-lab-result");
@@ -131,7 +131,7 @@ class DigitalGreenCertificateJsonToProtobufTest {
   }
 
   @Test
-  void shouldReadDefaultTestTypeIfNotConfigured() throws DefaultValueSetsMissingException {
+  void shouldReadDefaultTestTypeIfNotConfigured() throws UnableToLoadFileException {
     var result = dgcToProtobufMapping.readTestTypeJson();
 
     assertThat(result.getValueSetId()).isEqualTo("covid-19-lab-test-type");
@@ -148,7 +148,7 @@ class DigitalGreenCertificateJsonToProtobufTest {
   }
 
   @Test
-  void shouldReadDefaultDiseaseAgentTargetedIfNotConfigured() throws DefaultValueSetsMissingException {
+  void shouldReadDefaultDiseaseAgentTargetedIfNotConfigured() throws UnableToLoadFileException {
     var result = dgcToProtobufMapping.readDiseaseAgentTargetedJson();
 
     assertThat(result.getValueSetId()).isEqualTo("disease-agent-targeted");

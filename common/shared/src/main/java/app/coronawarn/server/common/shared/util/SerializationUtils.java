@@ -1,7 +1,7 @@
 package app.coronawarn.server.common.shared.util;
 
 
-import app.coronawarn.server.common.shared.exception.DefaultValueSetsMissingException;
+import app.coronawarn.server.common.shared.exception.UnableToLoadFileException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.JavaType;
@@ -86,13 +86,13 @@ public final class SerializationUtils {
    * @param rawType test
    * @param <T> test
    * @return test
-   * @throws DefaultValueSetsMissingException test
+   * @throws UnableToLoadFileException test
    */
   public static <T> T readConfiguredJsonOrDefault(ResourceLoader resourceLoader,
       String path,
       String defaultPath,
       Class<T> rawType)
-      throws DefaultValueSetsMissingException {
+      throws UnableToLoadFileException {
     if (!ObjectUtils.isEmpty(path)) {
       try (InputStream jsonStream = resourceLoader.getResource(path).getInputStream()) {
         logger.debug("Loading JSON from {}.", path);
@@ -107,7 +107,7 @@ public final class SerializationUtils {
       return deserializeJsonToSimpleType(jsonStream, rawType);
     } catch (IOException e) {
       logger.error("We could not load the default {}. This shouldn't happen!", defaultPath, e);
-      throw new DefaultValueSetsMissingException("Default valuesets is missing from the path " + defaultPath
+      throw new UnableToLoadFileException("Default valuesets is missing from the path " + defaultPath
           + ". This shouldn't happen!", e);
     }
   }
