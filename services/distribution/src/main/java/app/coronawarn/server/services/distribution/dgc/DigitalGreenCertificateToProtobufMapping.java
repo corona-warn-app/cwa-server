@@ -6,8 +6,10 @@ import app.coronawarn.server.common.protocols.internal.dgc.ValueSetItem;
 import app.coronawarn.server.common.protocols.internal.dgc.ValueSets;
 import app.coronawarn.server.common.shared.exception.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +21,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class DigitalGreenCertificateToProtobufMapping {
 
-  private static final String TEST_RESULT_DEFAULT_PATH = "dgc/test-result.json";
-  private static final String TEST_MANF_DEFAULT_PATH = "dgc/test-manf.json";
+  private static final String TEST_RESULT_ID = "covid-19-lab-result";
+  private static final String TEST_MANF_ID = "covid-19-lab-test-manufacturer-and-name";
+  private static final String TEST_TYPE_ID = "covid-19-lab-test-type";
+  private static final String DISEASE_AGENT_TARGETED_ID = "disease-agent-targeted";
+  private static final String VACCINE_PROPHYLAXIS_ID = "sct-vaccines-covid-19";
+  private static final String VACCINE_MAH_ID = "vaccines-covid-19-auth-holders";
+  private static final String VACCINE_MEDICINAL_PRODUCT_ID = "vaccines-covid-19-names";
+
   private static final String DISEASE_AGENT_TARGETED_DEFAULT_PATH = "dgc/disease-agent-targeted.json";
   private static final String VACCINE_MAH_DEFAULT_PATH = "dgc/vaccine-mah.json";
   private static final String VACCINE_MEDICINAL_PRODUCT_DEFAULT_PATH = "dgc/vaccine-medicinal-product.json";
@@ -32,10 +40,15 @@ public class DigitalGreenCertificateToProtobufMapping {
   private static final Logger logger = LoggerFactory.getLogger(DigitalGreenCertificateToProtobufMapping.class);
 
   @Autowired
+  DigitalCovidCertificateClient dccClient;
+
+  @Autowired
   DistributionServiceConfig distributionServiceConfig;
 
   @Autowired
   ResourceLoader resourceLoader;
+
+  private List<ValueSetMetadata> metadata;
 
   /**
    * Read the JSON for the marketing authorization holders.
@@ -43,9 +56,12 @@ public class DigitalGreenCertificateToProtobufMapping {
    * @return The corresponding JSON object.
    */
   ValueSet readMahJson() throws UnableToLoadFileException {
-    String path = distributionServiceConfig.getDigitalGreenCertificate().getMahJsonPath();
-    return readConfiguredJsonOrDefault(resourceLoader, path, VACCINE_MAH_DEFAULT_PATH,
-        ValueSet.class);
+    Optional<ValueSet> result = Optional.ofNullable(getValueSet(VACCINE_MAH_ID).or(() -> {
+      String path = distributionServiceConfig.getDigitalGreenCertificate().getMahJsonPath();
+      return readConfiguredJsonOrDefault(resourceLoader, path, VACCINE_MAH_DEFAULT_PATH,
+          ValueSet.class);
+    }).orElseThrow(() -> new UnableToLoadFileException(VACCINE_MAH_DEFAULT_PATH)));
+    return result.get();
   }
 
   /**
@@ -54,9 +70,12 @@ public class DigitalGreenCertificateToProtobufMapping {
    * @return The corresponding JSON object.
    */
   ValueSet readMedicinalProductJson() throws UnableToLoadFileException {
-    String path = distributionServiceConfig.getDigitalGreenCertificate().getMedicinalProductsJsonPath();
-    return readConfiguredJsonOrDefault(resourceLoader, path, VACCINE_MEDICINAL_PRODUCT_DEFAULT_PATH,
-        ValueSet.class);
+    Optional<ValueSet> result = Optional.ofNullable(getValueSet(VACCINE_MEDICINAL_PRODUCT_ID).or(() -> {
+      String path = distributionServiceConfig.getDigitalGreenCertificate().getMedicinalProductsJsonPath();
+      return readConfiguredJsonOrDefault(resourceLoader, path, VACCINE_MEDICINAL_PRODUCT_DEFAULT_PATH,
+          ValueSet.class);
+    }).orElseThrow(() -> new UnableToLoadFileException(VACCINE_MEDICINAL_PRODUCT_DEFAULT_PATH)));
+    return result.get();
   }
 
   /**
@@ -65,9 +84,12 @@ public class DigitalGreenCertificateToProtobufMapping {
    * @return The corresponding JSON object.
    */
   ValueSet readProphylaxisJson() throws UnableToLoadFileException {
-    String path = distributionServiceConfig.getDigitalGreenCertificate().getProphylaxisJsonPath();
-    return readConfiguredJsonOrDefault(resourceLoader, path, VACCINE_PROPHYLAXIS_DEFAULT_PATH,
-        ValueSet.class);
+    Optional<ValueSet> result = Optional.ofNullable(getValueSet(VACCINE_PROPHYLAXIS_ID).or(() -> {
+      String path = distributionServiceConfig.getDigitalGreenCertificate().getProphylaxisJsonPath();
+      return readConfiguredJsonOrDefault(resourceLoader, path, VACCINE_PROPHYLAXIS_DEFAULT_PATH,
+          ValueSet.class);
+    }).orElseThrow(() -> new UnableToLoadFileException(VACCINE_PROPHYLAXIS_DEFAULT_PATH)));
+    return result.get();
   }
 
   /**
@@ -76,9 +98,12 @@ public class DigitalGreenCertificateToProtobufMapping {
    * @return The corresponding JSON object.
    */
   ValueSet readDiseaseAgentTargetedJson() throws UnableToLoadFileException {
-    String path = distributionServiceConfig.getDigitalGreenCertificate().getDiseaseAgentTargetedJsonPath();
-    return readConfiguredJsonOrDefault(resourceLoader, path, DISEASE_AGENT_TARGETED_DEFAULT_PATH,
-        ValueSet.class);
+    Optional<ValueSet> result = Optional.ofNullable(getValueSet(DISEASE_AGENT_TARGETED_ID).or(() -> {
+      String path = distributionServiceConfig.getDigitalGreenCertificate().getDiseaseAgentTargetedJsonPath();
+      return readConfiguredJsonOrDefault(resourceLoader, path, DISEASE_AGENT_TARGETED_DEFAULT_PATH,
+          ValueSet.class);
+    }).orElseThrow(() -> new UnableToLoadFileException(DISEASE_AGENT_TARGETED_DEFAULT_PATH)));
+    return result.get();
   }
 
   /**
@@ -87,9 +112,12 @@ public class DigitalGreenCertificateToProtobufMapping {
    * @return The corresponding JSON object.
    */
   ValueSet readTestManfJson() throws UnableToLoadFileException {
-    String path = distributionServiceConfig.getDigitalGreenCertificate().getTestManfJsonPath();
-    return readConfiguredJsonOrDefault(resourceLoader, path, TEST_MANF_DEFAULT_PATH,
-        ValueSet.class);
+    Optional<ValueSet> result = Optional.ofNullable(getValueSet(TEST_MANF_ID).or(() -> {
+      String path = distributionServiceConfig.getDigitalGreenCertificate().getTestManfJsonPath();
+      return readConfiguredJsonOrDefault(resourceLoader, path, TEST_MANF_DEFAULT_PATH,
+          ValueSet.class);
+    }).orElseThrow(() -> new UnableToLoadFileException(TEST_MANF_DEFAULT_PATH)));
+    return result.get();
   }
 
   /**
@@ -98,9 +126,12 @@ public class DigitalGreenCertificateToProtobufMapping {
    * @return The corresponding JSON object.
    */
   ValueSet readTestResultJson() throws UnableToLoadFileException {
-    String path = distributionServiceConfig.getDigitalGreenCertificate().getTestResultJsonPath();
-    return readConfiguredJsonOrDefault(resourceLoader, path, TEST_RESULT_DEFAULT_PATH,
-        ValueSet.class);
+    Optional<ValueSet> result = Optional.ofNullable(getValueSet(TEST_RESULT_ID).or(() -> {
+      String path = distributionServiceConfig.getDigitalGreenCertificate().getTestResultJsonPath();
+      return readConfiguredJsonOrDefault(resourceLoader, path, TEST_RESULT_DEFAULT_PATH,
+          ValueSet.class);
+    }).orElseThrow(() -> new UnableToLoadFileException(TEST_RESULT_DEFAULT_PATH)));
+    return result.get();
   }
 
   /**
@@ -109,9 +140,12 @@ public class DigitalGreenCertificateToProtobufMapping {
    * @return The corresponding JSON object.
    */
   ValueSet readTestTypeJson() throws UnableToLoadFileException {
-    String path = distributionServiceConfig.getDigitalGreenCertificate().getTestTypeJsonPath();
-    return readConfiguredJsonOrDefault(resourceLoader, path, TEST_TYPE_DEFAULT_PATH,
-        ValueSet.class);
+    Optional<ValueSet> result = Optional.ofNullable(getValueSet(TEST_TYPE_ID).or(() -> {
+      String path = distributionServiceConfig.getDigitalGreenCertificate().getTestTypeJsonPath();
+      return readConfiguredJsonOrDefault(resourceLoader, path, TEST_TYPE_DEFAULT_PATH,
+          ValueSet.class);
+    }).orElseThrow(() -> new UnableToLoadFileException(TEST_TYPE_DEFAULT_PATH)));
+    return result.get();
   }
 
   /**
@@ -151,6 +185,31 @@ public class DigitalGreenCertificateToProtobufMapping {
             .setKey(entry.getKey())
             .setDisplayText(entry.getValue().getDisplay())).build())
         .collect(Collectors.toList());
+  }
+
+  private Optional<ValueSet> getValueSet(String valueSetId) {
+    Optional<String> hash = getValueSetHash(valueSetId);
+    if (hash.isPresent()) {
+      return dccClient.getValueSet(hash.get());
+    }
+    return Optional.empty();
+  }
+
+  private Optional<String> getValueSetHash(String valueSetId) {
+    if (metadata == null) {
+      metadata = dccClient.getValueSets();
+      if (metadata == null) {
+        logger.error("Tried to retrieve ValueSets metadata from {}, but received null!", dccClient);
+        return Optional.empty();
+      }
+    }
+    for (ValueSetMetadata metadataItem : metadata) {
+      if (metadataItem.getId().equals(valueSetId)) {
+        return Optional.of(metadataItem.getHash());
+      }
+    }
+    logger.error("Didn't find the ValueSets for valueSetId {}.", valueSetId);
+    return Optional.empty();
   }
 }
 
