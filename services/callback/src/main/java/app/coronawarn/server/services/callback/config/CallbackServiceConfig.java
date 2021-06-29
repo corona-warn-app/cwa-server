@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.callback.config;
 
+import app.coronawarn.server.common.persistence.domain.FederationBatchSourceSystem;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
@@ -9,18 +10,28 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public class CallbackServiceConfig {
 
-  private String efgsCertCn;
+  private String certCn;
 
   private boolean registerOnStartup;
 
   private String endpointUrl;
 
-  public String getEfgsCertCn() {
-    return efgsCertCn;
+  private FederationBatchSourceSystem sourceSystem;
+
+  public FederationBatchSourceSystem getSourceSystem() {
+    return sourceSystem;
   }
 
-  public void setEfgsCertCn(String efgsCertCn) {
-    this.efgsCertCn = efgsCertCn;
+  public void setSourceSystem(FederationBatchSourceSystem sourceSystem) {
+    this.sourceSystem = sourceSystem;
+  }
+
+  public String getCertCn() {
+    return certCn;
+  }
+
+  public void setCertCn(String certCn) {
+    this.certCn = certCn;
   }
 
   public boolean isRegisterOnStartup() {
