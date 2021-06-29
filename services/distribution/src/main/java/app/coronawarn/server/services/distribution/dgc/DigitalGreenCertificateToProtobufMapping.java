@@ -19,6 +19,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class DigitalGreenCertificateToProtobufMapping {
 
+  private static final String TEST_RESULT_DEFAULT_PATH = "dgc/test-result.json";
+  private static final String TEST_MANF_DEFAULT_PATH = "dgc/test-manf.json";
+  private static final String DISEASE_AGENT_TARGETED_DEFAULT_PATH = "dgc/disease-agent-targeted.json";
+  private static final String VACCINE_MAH_DEFAULT_PATH = "dgc/vaccine-mah.json";
+  private static final String VACCINE_MEDICINAL_PRODUCT_DEFAULT_PATH = "dgc/vaccine-medicinal-product.json";
+  private static final String VACCINE_PROPHYLAXIS_DEFAULT_PATH = "dgc/vaccine-prophylaxis.json";
+  private static final String TEST_MANF_DEFAULT_PATH = "dgc/test-manf.json";
+  private static final String TEST_RESULT_DEFAULT_PATH = "dgc/test-result.json";
+  private static final String TEST_TYPE_DEFAULT_PATH = "dgc/test-type.json";
+
   private static final Logger logger = LoggerFactory.getLogger(DigitalGreenCertificateToProtobufMapping.class);
 
   @Autowired
@@ -34,7 +44,7 @@ public class DigitalGreenCertificateToProtobufMapping {
    */
   ValueSet readMahJson() throws UnableToLoadFileException {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getMahJsonPath();
-    return readConfiguredJsonOrDefault(resourceLoader, path, "dgc/vaccine-mah.json",
+    return readConfiguredJsonOrDefault(resourceLoader, path, VACCINE_MAH_DEFAULT_PATH,
         ValueSet.class);
   }
 
@@ -45,7 +55,7 @@ public class DigitalGreenCertificateToProtobufMapping {
    */
   ValueSet readMedicinalProductJson() throws UnableToLoadFileException {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getMedicinalProductsJsonPath();
-    return readConfiguredJsonOrDefault(resourceLoader, path, "dgc/vaccine-medicinal-product.json",
+    return readConfiguredJsonOrDefault(resourceLoader, path, VACCINE_MEDICINAL_PRODUCT_DEFAULT_PATH,
         ValueSet.class);
   }
 
@@ -56,7 +66,7 @@ public class DigitalGreenCertificateToProtobufMapping {
    */
   ValueSet readProphylaxisJson() throws UnableToLoadFileException {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getProphylaxisJsonPath();
-    return readConfiguredJsonOrDefault(resourceLoader, path, "dgc/vaccine-prophylaxis.json",
+    return readConfiguredJsonOrDefault(resourceLoader, path, VACCINE_PROPHYLAXIS_DEFAULT_PATH,
         ValueSet.class);
   }
 
@@ -67,7 +77,7 @@ public class DigitalGreenCertificateToProtobufMapping {
    */
   ValueSet readDiseaseAgentTargetedJson() throws UnableToLoadFileException {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getDiseaseAgentTargetedJsonPath();
-    return readConfiguredJsonOrDefault(resourceLoader, path, "dgc/disease-agent-targeted.json",
+    return readConfiguredJsonOrDefault(resourceLoader, path, DISEASE_AGENT_TARGETED_DEFAULT_PATH,
         ValueSet.class);
   }
 
@@ -78,7 +88,7 @@ public class DigitalGreenCertificateToProtobufMapping {
    */
   ValueSet readTestManfJson() throws UnableToLoadFileException {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getTestManfJsonPath();
-    return readConfiguredJsonOrDefault(resourceLoader, path, "dgc/test-manf.json",
+    return readConfiguredJsonOrDefault(resourceLoader, path, TEST_MANF_DEFAULT_PATH,
         ValueSet.class);
   }
 
@@ -89,7 +99,7 @@ public class DigitalGreenCertificateToProtobufMapping {
    */
   ValueSet readTestResultJson() throws UnableToLoadFileException {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getTestResultJsonPath();
-    return readConfiguredJsonOrDefault(resourceLoader, path, "dgc/test-result.json",
+    return readConfiguredJsonOrDefault(resourceLoader, path, TEST_RESULT_DEFAULT_PATH,
         ValueSet.class);
   }
 
@@ -100,7 +110,7 @@ public class DigitalGreenCertificateToProtobufMapping {
    */
   ValueSet readTestTypeJson() throws UnableToLoadFileException {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getTestTypeJsonPath();
-    return readConfiguredJsonOrDefault(resourceLoader, path, "dgc/test-type.json",
+    return readConfiguredJsonOrDefault(resourceLoader, path, TEST_TYPE_DEFAULT_PATH,
         ValueSet.class);
   }
 
