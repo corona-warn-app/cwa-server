@@ -1,9 +1,10 @@
 package app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory;
 
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.EMPTY_CARD;
+
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard.Builder;
 import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStringObject;
-import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -11,8 +12,8 @@ import java.util.Optional;
 public class EmptyCardFactory extends HeaderCardFactory {
 
   @Override
-  protected Integer getCardId() {
-    return KeyFigureCardSequenceConstants.EMPTY_CARD;
+  protected int getCardId() {
+    return EMPTY_CARD.ordinal();
   }
 
   @Override

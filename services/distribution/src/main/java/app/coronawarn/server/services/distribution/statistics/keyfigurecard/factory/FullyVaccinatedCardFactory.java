@@ -1,5 +1,7 @@
 package app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory;
 
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.FULLY_VACCINATED_CARD;
+
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.Rank;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.Trend;
@@ -7,15 +9,14 @@ import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.TrendSema
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard.Builder;
 import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStringObject;
-import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants;
 import java.util.List;
 import java.util.Optional;
 
 public class FullyVaccinatedCardFactory extends HeaderCardFactory {
 
   @Override
-  protected Integer getCardId() {
-    return KeyFigureCardSequenceConstants.FULLY_VACCINATED_CARD;
+  protected int getCardId() {
+    return FULLY_VACCINATED_CARD.ordinal();
   }
 
   private KeyFigure getPersonsFullyVaccinatedRatio(StatisticsJsonStringObject stats) {
