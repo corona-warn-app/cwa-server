@@ -4,4 +4,4 @@ spring:
     vault:
       kv:
         application-name: 'download-ch'
-
+        profiles: cloud,connect-chgs

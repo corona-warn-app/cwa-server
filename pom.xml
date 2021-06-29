@@ -47,7 +47,7 @@
     <sonar.projectKey>${sonar.organization}_cwa-${project.artifactId}</sonar.projectKey>
 
     <!-- https://spring.io/projects/spring-boot -->
-    <spring-boot.version>2.5.1</spring-boot.version>
+    <spring-boot.version>2.5.2</spring-boot.version>
     <!-- https://spring.io/projects/spring-cloud#release-trains -->
     <spring-cloud.version>2020.0.3</spring-cloud.version>
     <!-- If you update spring-cloud, see if it references the correct spring-vault-core version again, then remove the following: -->
@@ -69,7 +69,7 @@
     <junit.version>4.13.2</junit.version>
     <tomcat-embed-core.version>9.0.48</tomcat-embed-core.version>
     <findify-s3mock.version>0.2.6</findify-s3mock.version>
-    <checkstyle.version>8.43</checkstyle.version>
+    <checkstyle.version>8.44</checkstyle.version>
   </properties>
 
   <dependencyManagement>

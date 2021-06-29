@@ -74,14 +74,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
   public UserDetailsService userDetailsService() {
     return username -> {
-      if (username.equals(callbackServiceConfig.getEfgsCertCn())) {
+      if (username.equals(callbackServiceConfig.getCertCn())) {
         return new User(username, "", emptyList());
       }
       String exceptionMsg =
           "The client certificate CN '"
               + username
               + "' does not match the expected CN: '"
-              + callbackServiceConfig.getEfgsCertCn() + "'.";
+              + callbackServiceConfig.getCertCn() + "'.";
       logger.warn(exceptionMsg);
       throw new CertificateCnMismatchException(exceptionMsg);
     };

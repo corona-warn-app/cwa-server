@@ -1,0 +1,7 @@
+---
+spring:
+  cloud:
+    vault:
+      kv:
+        application-name: 'callback-ch'
+        profiles: cloud,connect-chgs
