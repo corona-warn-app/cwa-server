@@ -38,13 +38,8 @@ public class DigitalGreenCertificateToCborMapping {
   /**
    * TODO: write javadoc.
    */
-  public byte[] constructCountryList() throws DigitalCovidCertificateException {
-    ObjectMapper cborMapper = new CBORMapper();
-    try {
-      return cborMapper.writeValueAsBytes(digitalCovidCertificateClient.getCountryList());
-    } catch (JsonProcessingException e) {
-      throw new DigitalCovidCertificateException("Cbor encryption failed because of Json processing:", e);
-    }
+  public List<String> constructCountryList() throws DigitalCovidCertificateException {
+    return digitalCovidCertificateClient.getCountryList();
   }
 
   /**
@@ -67,18 +62,22 @@ public class DigitalGreenCertificateToCborMapping {
             validateJsonSchema(businessRule);
             businessRules.add(businessRule);
           } catch (ValidationException e) {
-            logger.error("Business rule with identifier: " + businessRule.getIdentifier()
-                + " did not pass validation schema");
+            throw new DigitalCovidCertificateException("Rule for country '"
+                + businessRuleItem.getCountryCode() + "' having hash '" + businessRuleItem.getHash()
+                + "' is not valid", e);
           }
-          businessRules.add(businessRule);
         }
+      } else {
+        throw new DigitalCovidCertificateException("Rule for country '"
+            + businessRuleItem.getCountryCode() + "' having hash '" + businessRuleItem.getHash()
+            + "' could not be retrieved");
       }
     }
 
     return businessRules;
   }
 
-  public byte[] constructCborCountries(RuleType ruleType) throws DigitalCovidCertificateException {
+  public byte[] constructCborCountries() throws DigitalCovidCertificateException {
     return cborEncode(constructCountryList());
   }
 
@@ -99,20 +98,19 @@ public class DigitalGreenCertificateToCborMapping {
     JSONObject jsonSchema = null;
     ObjectMapper objectMapper = new ObjectMapper();
 
-
     try {
       jsonSchema = new JSONObject(
           new JSONTokener(resourceLoader.getResource("dgc/dcc-validation-rule.json").getInputStream()));
       String businessRuleJson = objectMapper.writeValueAsString(businessRule);
+
       JSONObject jsonSubject = new JSONObject(businessRuleJson);
+
 
       Schema schema = SchemaLoader.load(jsonSchema);
       schema.validate(jsonSubject);
     } catch (IOException e) {
       throw new DigitalCovidCertificateException("Error occured on loading DCC validation rules", e);
     }
-
-
   }
 
 

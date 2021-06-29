@@ -25,9 +25,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("fake-dcc-client")
 class DigitalGreenCertificateJsonToCborTest {
 
-  public static final String ID_ACCEPTANCE_1 = "GR-CZ-0001";
-  public static final String ID_ACCEPTANCE_2 = "VR-RO-1";
-  public static final String ID_INVALIDATION_1 = "VR-DE-1";
+  public static final String ID_ACCEPTANCE_1 = "RR-NL-0000";
+  public static final String ID_ACCEPTANCE_2 = "TR-DE-0003";
+  public static final String ID_INVALIDATION_1 = "RR-NL-0003";
 
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
@@ -52,6 +52,13 @@ class DigitalGreenCertificateJsonToCborTest {
     assertThat(businessRules).hasSize(1);
     assertThat(businessRules.stream().filter(filterByRuleType(RuleType.Invalidation))).hasSize(1);
     assertThat(businessRules.stream().filter(filterByRuleIdentifier(ID_INVALIDATION_1)).findAny()).isPresent();
+  }
+
+  @Test
+  void shouldConstructCborAcceptanceRules() throws DigitalCovidCertificateException {
+    byte[] businessRules = digitalGreenCertificateToCborMapping.constructCborRules(RuleType.Acceptance);
+
+    assertThat(businessRules).isNotEmpty();
   }
 
   private Predicate<BusinessRule> filterByRuleType(RuleType ruleType) {

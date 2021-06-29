@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class DigitalGreenCertificateStructureProvider {
 
+  public static final String ONBOARDED_COUNTRIES = "onboarded-countries";
   private static final Logger logger = LoggerFactory.getLogger(DigitalGreenCertificateStructureProvider.class);
 
   public static final String ACCEPTANCE_RULES = "acceptance-rules";
@@ -82,10 +83,10 @@ public class DigitalGreenCertificateStructureProvider {
   }
 
   private Writable<WritableOnDisk> getOnboardedCountriesArchive() {
-    ArchiveOnDisk onboardedCountries = new ArchiveOnDisk("onboarded-countries");
+    ArchiveOnDisk onboardedCountries = new ArchiveOnDisk(ONBOARDED_COUNTRIES);
     try {
       onboardedCountries
-          .addWritable(new FileOnDisk("export.bin", dgcToCborMapping.constructCountryList()));
+          .addWritable(new FileOnDisk("export.bin", dgcToCborMapping.constructCborCountries()));
     } catch (DigitalCovidCertificateException e) {
       logger.error("Onboarded countries archive was not overwritten because of:", e);
       return new ArchiveOnDisk("");

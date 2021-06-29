@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.io.Serializable;
 import java.util.List;
 
 @JsonInclude(Include.NON_NULL)
@@ -20,10 +19,10 @@ public class BusinessRule {
   private String validFrom;
   private String validTo;
   private List<String> affectedFields;
-  private String logic;
+  private Object logic;
   private String identifier;
   private String version;
-  private String countryCode;
+  private String country;
   private String hash;
 
   public String getIdentifier() {
@@ -44,13 +43,13 @@ public class BusinessRule {
     this.version = version;
   }
 
-  public String getCountryCode() {
-    return countryCode;
+  public String getCountry() {
+    return country;
   }
 
-  @JsonProperty("CountryCode")
-  public void setCountryCode(String countryCode) {
-    this.countryCode = countryCode;
+  @JsonProperty("Country")
+  public void setCountry(String country) {
+    this.country = country;
   }
 
   public String getHash() {
@@ -143,12 +142,12 @@ public class BusinessRule {
     this.affectedFields = affectedFields;
   }
 
-  public String getLogic() {
+  @JsonProperty("Logic")
+  public Object getLogic() {
     return logic;
   }
 
-  @JsonProperty("Logic")
-  public void setLogic(String logic) {
+  public void setLogic(Object logic) {
     this.logic = logic;
   }
 
