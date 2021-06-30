@@ -250,7 +250,7 @@ public class StatisticsJsonStringObject extends StatisticsTimeJsonObject {
   }
 
   public Double getPersonsWithFirstDoseRatio() {
-    return personsWithFirstDoseRatio * PERCENT;
+    return personsWithFirstDoseRatio == null ? null : personsWithFirstDoseRatio * PERCENT;
   }
 
   public Integer getPersonsFullyVaccinatedCumulated() {
@@ -258,7 +258,7 @@ public class StatisticsJsonStringObject extends StatisticsTimeJsonObject {
   }
 
   public Double getPersonsFullyVaccinatedRatio() {
-    return personsFullyVaccinatedRatio * PERCENT;
+    return personsFullyVaccinatedRatio == null ? null : personsFullyVaccinatedRatio * PERCENT;
   }
 
   public void setAppDownloads7DaysAvg(String appDownloads7DaysAvg) {
