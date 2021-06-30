@@ -17,7 +17,8 @@ import org.springframework.web.bind.annotation.PathVariable;
  * This is a Spring Cloud Feign based HTTP client that allows type-safe HTTP calls and abstract the implementation
  * away.
  */
-@FeignClient(name = "dcc-server", url = "${services.distribution.digital-green-certificate.client.base-url}")
+@FeignClient(name = "dcc-server", configuration = CloudDccFeignClientConfiguration.class,
+    url = "${services.distribution.digital-green-certificate.client.base-url}")
 public interface DigitalCovidCertificateFeignClient {
 
   /**

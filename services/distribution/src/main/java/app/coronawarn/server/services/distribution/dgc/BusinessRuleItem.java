@@ -12,7 +12,7 @@ public class BusinessRuleItem {
 
   private String identifier;
   private String version;
-  private String countryCode;
+  private String country;
   private String hash;
 
   public String getIdentifier() {
@@ -31,12 +31,12 @@ public class BusinessRuleItem {
     this.version = version;
   }
 
-  public String getCountryCode() {
-    return countryCode;
+  public String getCountry() {
+    return country;
   }
 
-  public void setCountryCode(String countryCode) {
-    this.countryCode = countryCode;
+  public void setCountry(String country) {
+    this.country = country;
   }
 
   public String getHash() {

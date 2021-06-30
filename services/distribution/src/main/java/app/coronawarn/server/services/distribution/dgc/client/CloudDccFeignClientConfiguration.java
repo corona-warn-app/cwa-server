@@ -7,12 +7,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 @Configuration
-@Profile("!fake-dcc-client")
-public class BusinessRulesClientConfiguration {
+public class CloudDccFeignClientConfiguration {
 
-  private final CloudFeignBusinessRulesClientProvider feignClientProvider;
+  private final CloudDccFeignHttpClientProvider feignClientProvider;
 
-  public BusinessRulesClientConfiguration(CloudFeignBusinessRulesClientProvider feignClientProvider) {
+  public CloudDccFeignClientConfiguration(CloudDccFeignHttpClientProvider feignClientProvider) {
     this.feignClientProvider = feignClientProvider;
   }
 
@@ -20,5 +19,4 @@ public class BusinessRulesClientConfiguration {
   public Client feignClient() {
     return feignClientProvider.createFeignClient();
   }
-
 }

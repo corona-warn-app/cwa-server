@@ -226,16 +226,10 @@ services:
       valuesets-file-name: ${DIGITAL_GREEN_CERTIFICATE_VALUESETS_FILE_NAME:value-sets}
       supported-languages: ${DIGITAL_GREEN_CERTIFICATE_SUPPORTED_LANGUAGES:DE, EN, BG, PL, RO, TR}
       client:
-        base-url: ${BUSSINESS_RULES_BASE_PATH:http://localhost:1234}
+        base-url: ${BUSSINESS_RULES_BASE_PATH:https://dgca-businessrule-service.cfapps.eu10.hana.ondemand.com}
         country-list-path: ${BUSSINESS_RULES_COUNTRY_LIST_PATH:/countrylist}
         value-sets-path: ${BUSSINESS_RULES_VALUE_SETS_PATH:/valuesets}
         rules-path: ${BUSSINESS_RULES_RULES_PATH:/rules}
-        ssl:
-          key-password: ${SSL_DISTRIBUTION_KEYSTORE_PASSWORD}
-          key-store: ${SSL_DISTRIBUTION_KEYSTORE_PATH}
-          key-store-password: ${SSL_DISTRIBUTION_KEYSTORE_PASSWORD}
-          trust-store: ${SSL_VERIFICATION_TRUSTSTORE_PATH}
-          trust-store-password: ${SSL_VERIFICATION_TRUSTSTORE_PASSWORD}
 
 spring:
   main:

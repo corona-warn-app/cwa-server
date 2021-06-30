@@ -13,7 +13,6 @@ import app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleType;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToCborMapping;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
-import org.apache.commons.logging.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -25,9 +24,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class DigitalGreenCertificateStructureProvider {
 
-  public static final String ONBOARDED_COUNTRIES = "onboarded-countries";
   private static final Logger logger = LoggerFactory.getLogger(DigitalGreenCertificateStructureProvider.class);
 
+  public static final String ONBOARDED_COUNTRIES = "onboarded-countries";
   public static final String ACCEPTANCE_RULES = "acceptance-rules";
   public static final String INVALIDATION_RULES = "invalidation-rules";
 
@@ -87,6 +86,7 @@ public class DigitalGreenCertificateStructureProvider {
     try {
       onboardedCountries
           .addWritable(new FileOnDisk("export.bin", dgcToCborMapping.constructCborCountries()));
+      logger.info("Onboarded countries archive has been added to the DGC distribution folder");
     } catch (DigitalCovidCertificateException e) {
       logger.error("Onboarded countries archive was not overwritten because of:", e);
       return new ArchiveOnDisk("");
@@ -102,8 +102,9 @@ public class DigitalGreenCertificateStructureProvider {
     try {
       acceptanceRules
           .addWritable(new FileOnDisk("export.bin", dgcToCborMapping.constructCborRules(ruleType)));
+      logger.info(archiveName + " archive has been added to the DGC distribution folder");
     } catch (DigitalCovidCertificateException e) {
-      logger.error("Acceptance rules archive was not overwritten because of:", e);
+      logger.error(archiveName + " archive was not overwritten because of:", e);
       return new ArchiveOnDisk("");
     }
 

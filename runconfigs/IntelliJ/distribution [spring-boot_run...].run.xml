@@ -13,7 +13,7 @@
               <entry key="CWA_OBJECTSTORE_PORT" value="8003" />
               <entry key="CWA_OBJECTSTORE_SECRETKEY" value="verySecretKey1" />
               <entry key="POSTGRESQL_SERVICE_PORT" value="8001" />
-              <entry key="SPRING_PROFILES_ACTIVE" value="testdata,disable-ssl-client-postgres,signature-dev,local-json-stats,fake-dcc-client" />
+              <entry key="SPRING_PROFILES_ACTIVE" value="testdata,disable-ssl-client-postgres,signature-dev,local-json-stats" />
               <entry key="STATISTICS_FILE_ACCESS_KEY_ID" value="fakeAccessKey" />
               <entry key="STATISTICS_FILE_S3_BUCKET" value="obs-cwa-public-dev" />
               <entry key="STATISTICS_FILE_S3_ENDPOINT" value="http://localhost:8013" />

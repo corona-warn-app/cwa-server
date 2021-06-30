@@ -14,6 +14,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
@@ -30,9 +31,10 @@ import org.springframework.validation.Validator;
 @SpringBootApplication
 @EnableJdbcRepositories(basePackages = "app.coronawarn.server.common.persistence")
 @EntityScan(basePackages = "app.coronawarn.server.common.persistence")
-@ComponentScan({"app.coronawarn.server.common.persistence", "app.coronawarn.server.services.distribution", 
+@ComponentScan({"app.coronawarn.server.common.persistence", "app.coronawarn.server.services.distribution",
     "app.coronawarn.server.common.federation.client.hostname"})
 @EnableConfigurationProperties({DistributionServiceConfig.class})
+@EnableFeignClients
 public class Application implements EnvironmentAware, DisposableBean {
 
   private static final Logger logger = LoggerFactory.getLogger(Application.class);

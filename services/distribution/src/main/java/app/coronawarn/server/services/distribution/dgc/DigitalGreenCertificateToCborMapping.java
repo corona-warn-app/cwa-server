@@ -52,7 +52,7 @@ public class DigitalGreenCertificateToCborMapping {
     for (BusinessRuleItem businessRuleItem : businessRulesItems) {
       Optional<BusinessRule> businessRuleOptional =
           digitalCovidCertificateClient.getCountryRuleByHash(
-              businessRuleItem.getCountryCode(), businessRuleItem.getHash());
+              businessRuleItem.getCountry(), businessRuleItem.getHash());
 
       if (businessRuleOptional.isPresent()) {
         BusinessRule businessRule = businessRuleOptional.get();
@@ -63,13 +63,13 @@ public class DigitalGreenCertificateToCborMapping {
             businessRules.add(businessRule);
           } catch (ValidationException e) {
             throw new DigitalCovidCertificateException("Rule for country '"
-                + businessRuleItem.getCountryCode() + "' having hash '" + businessRuleItem.getHash()
+                + businessRuleItem.getCountry() + "' having hash '" + businessRuleItem.getHash()
                 + "' is not valid", e);
           }
         }
       } else {
         throw new DigitalCovidCertificateException("Rule for country '"
-            + businessRuleItem.getCountryCode() + "' having hash '" + businessRuleItem.getHash()
+            + businessRuleItem.getCountry() + "' having hash '" + businessRuleItem.getHash()
             + "' could not be retrieved");
       }
     }
