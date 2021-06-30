@@ -179,6 +179,11 @@ services:
       dgc-directory: ehn-dgc
       valuesets-file-name: value-sets
       supported-languages: DE, EN, BG, PL, RO, TR
+      client:
+        base-url: ${BUSSINESS_RULES_BASE_PATH:https://dgca-businessrule-service.cfapps.eu10.hana.ondemand.com}
+        country-list-path: ${BUSSINESS_RULES_COUNTRY_LIST_PATH:/countrylist}
+        value-sets-path: ${BUSSINESS_RULES_VALUE_SETS_PATH:/valuesets}
+        rules-path: ${BUSSINESS_RULES_RULES_PATH:/rules}
 
 spring:
   main:

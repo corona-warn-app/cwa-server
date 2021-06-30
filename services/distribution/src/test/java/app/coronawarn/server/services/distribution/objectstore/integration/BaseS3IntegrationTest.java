@@ -33,7 +33,7 @@ import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
 import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
 
 
-@ActiveProfiles("integration-test")
+@ActiveProfiles({"integration-test", "fake-dcc-client"})
 @ContextConfiguration(classes = {Application.class,
     BaseS3IntegrationTest.S3IntegrationConfiguration.class}, initializers = ConfigDataApplicationContextInitializer.class)
 @DirtiesContext
