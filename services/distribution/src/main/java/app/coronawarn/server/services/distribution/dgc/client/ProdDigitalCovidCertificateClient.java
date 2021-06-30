@@ -7,6 +7,8 @@ import app.coronawarn.server.services.distribution.dgc.ValueSet;
 import app.coronawarn.server.services.distribution.dgc.ValueSetMetadata;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -14,14 +16,18 @@ import org.springframework.stereotype.Component;
 @Profile("!fake-dcc-client")
 public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificateClient {
 
+  private static final Logger logger = LoggerFactory.getLogger(ProdDigitalCovidCertificateClient.class);
+
   private DigitalCovidCertificateFeignClient digitalCovidCertificateClient;
 
   public ProdDigitalCovidCertificateClient(DigitalCovidCertificateFeignClient digitalCovidCertificateFeignClient) {
+    logger.info("Creating Prod DCC implementation");
     this.digitalCovidCertificateClient = digitalCovidCertificateFeignClient;
   }
 
   @Override
   public List<String> getCountryList() {
+    logger.info("Get country list");
     return digitalCovidCertificateClient.getCountryList().getBody();
   }
 
