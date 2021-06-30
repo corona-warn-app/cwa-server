@@ -8,6 +8,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class StatisticsJsonStringObject extends StatisticsTimeJsonObject {
+  
+  /**
+   * *.Ratio() values should be interpreted as %, but they come as 0.42 which should be 42%.
+   */
+  public static final double PERCENT = 100.0;
 
   @JsonProperty("app_downloads_7days_avg")
   private String appDownloads7DaysAvg;
@@ -245,7 +250,7 @@ public class StatisticsJsonStringObject extends StatisticsTimeJsonObject {
   }
 
   public Double getPersonsWithFirstDoseRatio() {
-    return personsWithFirstDoseRatio;
+    return personsWithFirstDoseRatio * PERCENT;
   }
 
   public Integer getPersonsFullyVaccinatedCumulated() {
@@ -253,7 +258,7 @@ public class StatisticsJsonStringObject extends StatisticsTimeJsonObject {
   }
 
   public Double getPersonsFullyVaccinatedRatio() {
-    return personsFullyVaccinatedRatio;
+    return personsFullyVaccinatedRatio * PERCENT;
   }
 
   public void setAppDownloads7DaysAvg(String appDownloads7DaysAvg) {
