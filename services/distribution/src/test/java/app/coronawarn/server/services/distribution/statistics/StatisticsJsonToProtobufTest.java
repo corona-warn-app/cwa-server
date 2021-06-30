@@ -1,8 +1,6 @@
 package app.coronawarn.server.services.distribution.statistics;
 
-import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.INCIDENCE_CARD_ID;
-import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.INFECTIONS_CARD_ID;
-import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.KEY_SUBMISSION_CARD_ID;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -22,7 +20,6 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import app.coronawarn.server.services.distribution.statistics.file.MockStatisticJsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.file.StatisticJsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
-import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants;
 import app.coronawarn.server.services.distribution.statistics.validation.StatisticsJsonValidator;
 import java.io.File;
 import java.io.IOException;
@@ -53,8 +50,8 @@ class StatisticsJsonToProtobufTest {
   @ExtendWith(SpringExtension.class)
   @Nested
   @DisplayName("Mocked Loader")
-  @ContextConfiguration(classes = {StatisticsJsonToProtobufTest.class, KeyFigureCardFactory.class
-  }, initializers = ConfigDataApplicationContextInitializer.class)
+  @ContextConfiguration(classes = { StatisticsJsonToProtobufTest.class,
+      KeyFigureCardFactory.class }, initializers = ConfigDataApplicationContextInitializer.class)
   class StatisticsJsonMockLoaderTest {
     @MockBean
     StatisticsDownloadService service;
@@ -81,13 +78,12 @@ class StatisticsJsonToProtobufTest {
 
   @EnableConfigurationProperties(value = DistributionServiceConfig.class)
   @ExtendWith(SpringExtension.class)
-  @ActiveProfiles({"local-json-stats"})
+  @ActiveProfiles({ "local-json-stats" })
   @Nested
   @DisplayName("General Tests")
-  @ContextConfiguration(classes = {StatisticsJsonToProtobufTest.class,
-      StatisticsToProtobufMapping.class, KeyFigureCardFactory.class,
-      MockStatisticJsonFileLoader.class
-  }, initializers = ConfigDataApplicationContextInitializer.class)
+  @ContextConfiguration(classes = { StatisticsJsonToProtobufTest.class, StatisticsToProtobufMapping.class,
+      KeyFigureCardFactory.class,
+      MockStatisticJsonFileLoader.class }, initializers = ConfigDataApplicationContextInitializer.class)
   class StatisticsJsonParsingTest {
     @MockBean
     StatisticsDownloadService service;
@@ -97,16 +93,16 @@ class StatisticsJsonToProtobufTest {
 
     @Test
     void convertFromJsonToObjectTest() throws IOException {
-      String content = FileUtils.readFileToString(
-          new File("./src/test/resources/stats/statistic_data.json"), StandardCharsets.UTF_8);
-      List<StatisticsJsonStringObject> statsDTO = SerializationUtils.deserializeJson(content, typeFactory -> typeFactory
-          .constructCollectionType(List.class, StatisticsJsonStringObject.class));
+      String content = FileUtils.readFileToString(new File("./src/test/resources/stats/statistic_data.json"),
+          StandardCharsets.UTF_8);
+      List<StatisticsJsonStringObject> statsDto = SerializationUtils.deserializeJson(content,
+          typeFactory -> typeFactory.constructCollectionType(List.class, StatisticsJsonStringObject.class));
 
-      assertThat(statisticsObjectContainsFields(statsDTO, "2020-12-04T11:13:22,588")).isTrue();
+      assertThat(statisticsObjectContainsFields(statsDto, "2020-12-04T11:13:22,588")).isTrue();
     }
 
-    private boolean statisticsObjectContainsFields(List<StatisticsJsonStringObject> statsDTO, String timestamp) {
-      return statsDTO.stream().anyMatch(stat -> stat.getUpdateTimestamp().compareTo(timestamp) == 0);
+    private boolean statisticsObjectContainsFields(List<StatisticsJsonStringObject> statsDto, String timestamp) {
+      return statsDto.stream().anyMatch(stat -> stat.getUpdateTimestamp().compareTo(timestamp) == 0);
     }
 
     @Test
@@ -122,10 +118,9 @@ class StatisticsJsonToProtobufTest {
 
       assertThat(stats.getKeyFigureCardsCount()).isEqualTo(7);
       stats.getKeyFigureCardsList().forEach(keyFigureCard -> {
-            assertThat(keyFigureCard.getHeader()).isNotNull();
-            assertThat(keyFigureCard.getHeader().getUpdatedAt()).isPositive();
-          }
-      );
+        assertThat(keyFigureCard.getHeader()).isNotNull();
+        assertThat(keyFigureCard.getHeader().getUpdatedAt()).isPositive();
+      });
     }
 
     @Test
@@ -145,38 +140,34 @@ class StatisticsJsonToProtobufTest {
     void testEffectiveDateValidation() throws IOException {
       StatisticsJsonValidator<StatisticsJsonStringObject> statisticsJsonValidator = new StatisticsJsonValidator<>();
 
-      String content = FileUtils.readFileToString(
-          new File("./src/test/resources/stats/statistic_data.json"), StandardCharsets.UTF_8);
-      List<StatisticsJsonStringObject> statsDTO = SerializationUtils.deserializeJson(content, typeFactory -> typeFactory
-          .constructCollectionType(List.class, StatisticsJsonStringObject.class));
-      statsDTO = new ArrayList<>(statisticsJsonValidator.validate(statsDTO));
+      String content = FileUtils.readFileToString(new File("./src/test/resources/stats/statistic_data.json"),
+          StandardCharsets.UTF_8);
+      List<StatisticsJsonStringObject> statsDto = SerializationUtils.deserializeJson(content,
+          typeFactory -> typeFactory.constructCollectionType(List.class, StatisticsJsonStringObject.class));
+      statsDto = new ArrayList<>(statisticsJsonValidator.validate(statsDto));
 
-      assertThat(statisticsObjectContainsFields(statsDTO, "2020-12-04T11:13:22,588")).isTrue();
-      //The json object that has the effective_date set on null should not be anymore present after the validation
-      assertThat(statisticsObjectContainsFields(statsDTO, "2020-12-04T00:00:00,000")).isFalse();
-      //The json object that has the effective_date set on invalid format date should not be anymore present after the validation
-      assertThat(statisticsObjectContainsFields(statsDTO, "2020-12-05T00:01:00,000")).isFalse();
+      assertThat(statisticsObjectContainsFields(statsDto, "2020-12-04T11:13:22,588")).isTrue();
+      // The json object that has the effective_date set on null should not be anymore present after the validation
+      assertThat(statisticsObjectContainsFields(statsDto, "2020-12-04T00:00:00,000")).isFalse();
+      // The json object that has the effective_date set on invalid format date should not be anymore present after the
+      // validation
+      assertThat(statisticsObjectContainsFields(statsDto, "2020-12-05T00:01:00,000")).isFalse();
     }
 
     private KeyFigureCard getKeyFigureCardForId(Statistics stats, Integer id) {
-      return stats.getKeyFigureCardsList()
-          .stream()
-          .filter(keyFigureCard -> keyFigureCard.getHeader().getCardId() == id)
+      return stats.getKeyFigureCardsList().stream().filter(keyFigureCard -> keyFigureCard.getHeader().getCardId() == id)
           .findFirst().get();
     }
   }
 
-
-
   @EnableConfigurationProperties(value = DistributionServiceConfig.class)
   @ExtendWith(SpringExtension.class)
-  @ActiveProfiles({"local-json-stats", "wrong-json"})
+  @ActiveProfiles({ "local-json-stats", "wrong-json" })
   @Nested
   @DisplayName("Wrong JSON Properties Test")
-  @ContextConfiguration(classes = {StatisticsJsonToProtobufTest.class,
-      StatisticsToProtobufMapping.class, KeyFigureCardFactory.class,
-      MockStatisticJsonFileLoader.class
-  }, initializers = ConfigDataApplicationContextInitializer.class)
+  @ContextConfiguration(classes = { StatisticsJsonToProtobufTest.class, StatisticsToProtobufMapping.class,
+      KeyFigureCardFactory.class,
+      MockStatisticJsonFileLoader.class }, initializers = ConfigDataApplicationContextInitializer.class)
   class StatisticsWrongJsonTest {
 
     @MockBean
@@ -186,11 +177,11 @@ class StatisticsJsonToProtobufTest {
     StatisticsToProtobufMapping statisticsToProtobufMapping;
 
     @Test
-    void testGenerateStatsWithWrongJSON() throws IOException {
+    void testGenerateStatsWithWrongJson() throws IOException {
       when(service.getMostRecentDownload()).thenReturn(Optional.empty());
       var statsObject = statisticsToProtobufMapping.constructProtobufStatistics();
       var allEmpty = statsObject.getKeyFigureCardsList().stream()
-          .allMatch(c -> c.getHeader().getCardId() == KeyFigureCardSequenceConstants.EMPTY_CARD);
+          .allMatch(c -> c.getHeader().getCardId() == EMPTY_CARD.ordinal());
       Assert.assertTrue("All key figure cards are empty: no properties in JSON to create cards", allEmpty);
     }
 
@@ -198,13 +189,12 @@ class StatisticsJsonToProtobufTest {
 
   @EnableConfigurationProperties(value = DistributionServiceConfig.class)
   @ExtendWith(SpringExtension.class)
-  @ActiveProfiles({"local-json-stats", "processing-test"})
+  @ActiveProfiles({ "local-json-stats", "processing-test" })
   @Nested
   @DisplayName("Value Processing Test")
-  @ContextConfiguration(classes = {StatisticsJsonToProtobufTest.class,
-      StatisticsToProtobufMapping.class, KeyFigureCardFactory.class,
-      MockStatisticJsonFileLoader.class
-  }, initializers = ConfigDataApplicationContextInitializer.class)
+  @ContextConfiguration(classes = { StatisticsJsonToProtobufTest.class, StatisticsToProtobufMapping.class,
+      KeyFigureCardFactory.class,
+      MockStatisticJsonFileLoader.class }, initializers = ConfigDataApplicationContextInitializer.class)
 
   class StatisticsJsonProcessingTest {
 
@@ -215,7 +205,13 @@ class StatisticsJsonToProtobufTest {
     StatisticsToProtobufMapping statisticsToProtobufMapping;
 
     Statistics result;
-    KeyFigureCard infections, incidence, keySubmission;
+    KeyFigureCard infections;
+    KeyFigureCard incidence;
+    KeyFigureCard keySubmission;
+    KeyFigureCard reproduction;
+    KeyFigureCard vaccinatedDoses;
+    KeyFigureCard fullyVaccinated;
+    KeyFigureCard firstVaccination;
 
     @BeforeEach
     void setup() throws IOException {
@@ -223,6 +219,10 @@ class StatisticsJsonToProtobufTest {
       infections = result.getKeyFigureCards(0);
       incidence = result.getKeyFigureCards(1);
       keySubmission = result.getKeyFigureCards(2);
+      reproduction = result.getKeyFigureCards(3);
+      firstVaccination = result.getKeyFigureCards(4);
+      fullyVaccinated = result.getKeyFigureCards(5);
+      vaccinatedDoses = result.getKeyFigureCards(6);
     }
 
     private long dateToTimestamp(LocalDate date) {
@@ -231,9 +231,8 @@ class StatisticsJsonToProtobufTest {
 
     @Test
     void testInfectionsCard() {
-      assertThat(infections.getHeader())
-          .extracting(CardHeader::getCardId, CardHeader::getUpdatedAt)
-          .containsExactly(INFECTIONS_CARD_ID, dateToTimestamp(LocalDate.of(2020, 11, 5)));
+      assertThat(infections.getHeader()).extracting(CardHeader::getCardId, CardHeader::getUpdatedAt)
+          .containsExactly(INFECTIONS_CARD.ordinal(), dateToTimestamp(LocalDate.of(2020, 11, 5)));
       assertThat(infections.getKeyFigures(1))
           .extracting(KeyFigure::getValue, KeyFigure::getTrend, KeyFigure::getTrendSemantic)
           .containsExactly(2895.0, Trend.INCREASING, TrendSemantic.NEGATIVE);
@@ -241,9 +240,8 @@ class StatisticsJsonToProtobufTest {
 
     @Test
     void testIncidenceCard() {
-      assertThat(incidence.getHeader())
-          .extracting(CardHeader::getCardId, CardHeader::getUpdatedAt)
-          .containsExactly(INCIDENCE_CARD_ID, dateToTimestamp(LocalDate.of(2020, 11, 7)));
+      assertThat(incidence.getHeader()).extracting(CardHeader::getCardId, CardHeader::getUpdatedAt)
+          .containsExactly(INCIDENCE_CARD.ordinal(), dateToTimestamp(LocalDate.of(2020, 11, 7)));
       assertThat(incidence.getKeyFigures(0))
           .extracting(KeyFigure::getValue, KeyFigure::getTrend, KeyFigure::getTrendSemantic)
           .containsExactly(168.5, Trend.DECREASING, TrendSemantic.POSITIVE);
@@ -251,13 +249,41 @@ class StatisticsJsonToProtobufTest {
 
     @Test
     void testKeySubmissionCard() {
-      assertThat(keySubmission.getHeader())
-          .extracting(CardHeader::getCardId, CardHeader::getUpdatedAt)
-          .containsExactly(KEY_SUBMISSION_CARD_ID, dateToTimestamp(LocalDate.of(2020, 11, 6)));
-      assertThat(keySubmission.getKeyFigures(1))
+      assertThat(keySubmission.getHeader()).extracting(CardHeader::getCardId, CardHeader::getUpdatedAt)
+          .containsExactly(KEY_SUBMISSION_CARD.ordinal(), dateToTimestamp(LocalDate.of(2020, 11, 6)));
+      assertThat(keySubmission.getKeyFigures(0))
           .extracting(KeyFigure::getValue, KeyFigure::getTrend, KeyFigure::getTrendSemantic)
-          .containsExactly(11.428571428571429, Trend.STABLE, TrendSemantic.NEUTRAL);
+          .containsExactly(2717.0, Trend.UNSPECIFIED_TREND, TrendSemantic.UNSPECIFIED_TREND_SEMANTIC);
     }
 
+    @Test
+    void testFirstVaccinationCard() {
+      assertThat(firstVaccination.getHeader())
+          .extracting(CardHeader::getCardId, CardHeader::getUpdatedAt)
+          .containsExactly(FIRST_VACCINATION_CARD.ordinal(), dateToTimestamp(LocalDate.of(2021, 06, 24)));
+      assertThat(firstVaccination.getKeyFigures(1))
+          .extracting(KeyFigure::getValue, KeyFigure::getTrend, KeyFigure::getTrendSemantic)
+          .containsExactly(4.3958788E7, Trend.UNSPECIFIED_TREND, TrendSemantic.UNSPECIFIED_TREND_SEMANTIC);
+    }
+
+    @Test
+    void testFullyVaccinationCard() {
+      assertThat(fullyVaccinated.getHeader())
+          .extracting(CardHeader::getCardId, CardHeader::getUpdatedAt)
+          .containsExactly(FULLY_VACCINATED_CARD.ordinal(), dateToTimestamp(LocalDate.of(2021, 06, 24)));
+      assertThat(fullyVaccinated.getKeyFigures(1))
+          .extracting(KeyFigure::getValue, KeyFigure::getTrend, KeyFigure::getTrendSemantic)
+          .containsExactly(2.8383081E7, Trend.UNSPECIFIED_TREND, TrendSemantic.UNSPECIFIED_TREND_SEMANTIC);
+    }
+
+    @Test
+    void testVaccinationDosesCard() {
+      assertThat(vaccinatedDoses.getHeader())
+          .extracting(CardHeader::getCardId, CardHeader::getUpdatedAt)
+          .containsExactly(VACCINATION_DOSES_CARD.ordinal(), dateToTimestamp(LocalDate.of(2021, 06, 24)));
+      assertThat(vaccinatedDoses.getKeyFigures(0))
+          .extracting(KeyFigure::getValue, KeyFigure::getTrend, KeyFigure::getTrendSemantic)
+          .containsExactly(969028.0, Trend.UNSPECIFIED_TREND, TrendSemantic.UNSPECIFIED_TREND_SEMANTIC);
+    }
   }
 }

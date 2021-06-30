@@ -1,9 +1,8 @@
 package app.coronawarn.server.services.callback.controller;
 
-import static app.coronawarn.server.common.persistence.domain.FederationBatchSourceSystem.EFGS;
-
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
+import app.coronawarn.server.services.callback.config.CallbackServiceConfig;
 import io.micrometer.core.annotation.Timed;
 import java.time.LocalDate;
 import javax.validation.constraints.NotNull;
@@ -28,10 +27,12 @@ public class CallbackController {
    */
   public static final String CALLBACK_ROUTE = "/callback";
   private final FederationBatchInfoService federationBatchInfoService;
+  private final CallbackServiceConfig config;
   private static final Logger logger = LoggerFactory.getLogger(CallbackController.class);
 
-  public CallbackController(FederationBatchInfoService federationBatchInfoService) {
+  public CallbackController(FederationBatchInfoService federationBatchInfoService, CallbackServiceConfig config) {
     this.federationBatchInfoService = federationBatchInfoService;
+    this.config = config;
   }
 
   /**
@@ -45,14 +46,17 @@ public class CallbackController {
   @Timed(description = "Time spent handling callback.")
   public ResponseEntity<Void> handleCallback(@RequestParam String batchTag,
       @NotNull @DateTimeFormat(iso = ISO.DATE) @RequestParam LocalDate date) {
-    logger.info("BatchInfo with tag {} and date {} received from federation gateway.", batchTag, date);
-    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(batchTag, date, EFGS);
+    logger.info("BatchInfo with tag {} and date {} received from federation gateway {}.",
+        batchTag, date, config.getSourceSystem());
+    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(batchTag, date, config.getSourceSystem());
     boolean savedSuccessfully = federationBatchInfoService.save(federationBatchInfo);
     if (savedSuccessfully) {
-      logger.info("BatchInfo with tag {} and date {} was persisted successfully with status {}.",
-          federationBatchInfo.getBatchTag(), federationBatchInfo.getDate(), federationBatchInfo.getStatus());
+      logger.info("BatchInfo with tag {} and date {} was persisted successfully with status {} in system {}.",
+          federationBatchInfo.getBatchTag(), federationBatchInfo.getDate(), federationBatchInfo.getStatus(),
+          config.getSourceSystem());
     } else {
-      logger.warn("BatchInfo with tag {} already existed and was not persisted.", federationBatchInfo.getBatchTag());
+      logger.warn("BatchInfo with tag {} already existed in system {} and was not persisted.",
+          federationBatchInfo.getBatchTag(), config.getSourceSystem());
     }
     return ResponseEntity.ok().build();
   }

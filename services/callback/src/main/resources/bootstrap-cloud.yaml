@@ -14,7 +14,6 @@ spring:
         enabled: true
         backend: ${VAULT_BACKEND}
         profile-separator: '/'
-        application-name: 'callback'
         default-context: ''
         profiles: cloud
       fail-fast: true

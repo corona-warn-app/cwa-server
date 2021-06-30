@@ -21,10 +21,11 @@ spring:
 
 services:
   callback:
+    source-system: EFGS
     connection-pool-size: 200
     monitoring:
       batch-size: 5
-    efgs-cert-cn: localhost
+    cert-cn: localhost
     register-on-startup: false
     endpoint-url: url
 
