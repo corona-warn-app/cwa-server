@@ -38,12 +38,14 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.vault.config.VaultAutoConfiguration;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ContextConfiguration(classes = { Application.class }, initializers = ConfigDataApplicationContextInitializer.class)
 @ExtendWith(SpringExtension.class)
 @EnableAutoConfiguration(exclude = VaultAutoConfiguration.class)
+@ActiveProfiles("fake-dcc-client")
 class TraceTimeIntervalWarningsDistributionIT {
 
   @Autowired

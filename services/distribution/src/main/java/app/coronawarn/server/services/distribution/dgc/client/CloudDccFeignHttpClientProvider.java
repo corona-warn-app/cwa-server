@@ -11,12 +11,14 @@ import org.springframework.cloud.commons.httpclient.ApacheHttpClientFactory;
 import org.springframework.cloud.commons.httpclient.DefaultApacheHttpClientConnectionManagerFactory;
 import org.springframework.cloud.commons.httpclient.DefaultApacheHttpClientFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
  * Creates a dedicated http client used by Feign when performing http calls to the Federation Gateway Service.
  */
 @Component
+@Profile("!fake-dcc-client")
 public class CloudDccFeignHttpClientProvider implements DccFeignHttpClientProvider {
 
   private final Integer connectionPoolSize;
@@ -50,14 +52,13 @@ public class CloudDccFeignHttpClientProvider implements DccFeignHttpClientProvid
   @Bean
   public Client createFeignClient() {
     return new ApacheHttpClient(
-        federationHttpClientFactory(connectionPoolSize, null, null).createBuilder().build());
+        federationHttpClientFactory(connectionPoolSize).createBuilder().build());
   }
 
   /**
    * Creates an {@link ApacheHttpClientFactory} that validates SSL certificates but no host names.
    */
-  private ApacheHttpClientFactory federationHttpClientFactory(int connectionPoolSize, File keyStorePath,
-      String keyStorePass) {
+  private ApacheHttpClientFactory federationHttpClientFactory(int connectionPoolSize) {
     return new DefaultApacheHttpClientFactory(HttpClientBuilder.create()
         .setMaxConnPerRoute(connectionPoolSize)
         .setMaxConnTotal(connectionPoolSize)

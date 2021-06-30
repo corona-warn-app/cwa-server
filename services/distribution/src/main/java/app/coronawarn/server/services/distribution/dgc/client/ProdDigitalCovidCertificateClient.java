@@ -21,7 +21,6 @@ public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificat
   private DigitalCovidCertificateFeignClient digitalCovidCertificateClient;
 
   public ProdDigitalCovidCertificateClient(DigitalCovidCertificateFeignClient digitalCovidCertificateFeignClient) {
-    logger.info("Creating Prod DCC implementation");
     this.digitalCovidCertificateClient = digitalCovidCertificateFeignClient;
   }
 
