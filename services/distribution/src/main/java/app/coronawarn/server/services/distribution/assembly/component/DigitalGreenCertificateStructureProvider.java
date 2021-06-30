@@ -97,10 +97,10 @@ public class DigitalGreenCertificateStructureProvider {
   }
 
   private Writable<WritableOnDisk> getRulesArchive(RuleType ruleType, String archiveName) {
-    ArchiveOnDisk acceptanceRules = new ArchiveOnDisk(archiveName);
+    ArchiveOnDisk rulesArchive = new ArchiveOnDisk(archiveName);
 
     try {
-      acceptanceRules
+      rulesArchive
           .addWritable(new FileOnDisk("export.bin", dgcToCborMapping.constructCborRules(ruleType)));
       logger.info(archiveName + " archive has been added to the DGC distribution folder");
     } catch (DigitalCovidCertificateException e) {
@@ -108,7 +108,7 @@ public class DigitalGreenCertificateStructureProvider {
       return new ArchiveOnDisk("");
     }
 
-    return new DistributionArchiveSigningDecorator(acceptanceRules, cryptoProvider,
+    return new DistributionArchiveSigningDecorator(rulesArchive, cryptoProvider,
         distributionServiceConfig);
   }
 }

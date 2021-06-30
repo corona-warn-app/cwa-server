@@ -30,8 +30,11 @@ public class TestDigitalCovidCertificateClient implements DigitalCovidCertificat
   public static final String RULE_2_HASH = "6821d518570fe9f4417c482ff0d2582a7b6440f243a9034f812e0d71611b611f";
   public static final String RULE_3_HASH = "7021d518570fe9f4417c482ff0d2582a7b6440f243a9034f812e0d71611b611f";
 
-  @Autowired
   ResourceLoader resourceLoader;
+
+  public TestDigitalCovidCertificateClient(ResourceLoader resourceLoader) {
+    this.resourceLoader = resourceLoader;
+  }
 
   @Override
   public List<String> getCountryList() throws DigitalCovidCertificateException {
