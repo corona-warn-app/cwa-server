@@ -1,6 +1,5 @@
 package app.coronawarn.server.services.distribution.statistics;
 
-import static app.coronawarn.server.services.distribution.statistics.StatisticsJsonStringObject.PERCENT;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.FIRST_VACCINATION_CARD;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.FULLY_VACCINATED_CARD;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.INCIDENCE_CARD_ID;
@@ -238,6 +237,7 @@ class KeyFigureCardFactoryTest {
           TrendSemantic.NEGATIVE, 2);
     }
 
+
     @ParameterizedTest
     @ValueSource(doubles = {0.0, -1.0})
     void shouldFailIfReproductionNumberCardIsNotValid(Double value) {
@@ -247,6 +247,7 @@ class KeyFigureCardFactoryTest {
           .isInstanceOf(MissingPropertyException.class);
     }
   }
+
 
   private void assertKeyFigure(KeyFigure result, double value, Rank rank, Trend trend, TrendSemantic trendSemantic,
       Integer decimals) {
@@ -313,6 +314,7 @@ class KeyFigureCardFactoryTest {
           .isInstanceOf(MissingPropertyException.class);
     }
 
+
     private void assertKeyFigure(KeyFigure result, double value, Rank rank, Trend trend, TrendSemantic trendSemantic,
         Integer decimals) {
       assertThat(result).extracting(
@@ -335,7 +337,7 @@ class KeyFigureCardFactoryTest {
     void testCardHasCorrectKeyFigures() {
       var result = figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, FULLY_VACCINATED_CARD);
 
-      assertKeyFigure(result.getKeyFigures(0), 0.11900000274181366 * PERCENT, Rank.PRIMARY, Trend.UNSPECIFIED_TREND,
+      assertKeyFigure(result.getKeyFigures(0), 0.11900000274181366, Rank.PRIMARY, Trend.UNSPECIFIED_TREND,
           TrendSemantic.UNSPECIFIED_TREND_SEMANTIC, 1);
       assertKeyFigure(result.getKeyFigures(1), 9901626, Rank.TERTIARY, Trend.UNSPECIFIED_TREND,
           TrendSemantic.UNSPECIFIED_TREND_SEMANTIC, 0);
@@ -372,7 +374,7 @@ class KeyFigureCardFactoryTest {
     void testCardHasCorrectKeyFigures() {
       var result = figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, FIRST_VACCINATION_CARD);
 
-      assertKeyFigure(result.getKeyFigures(0), 0.381 * PERCENT, Rank.PRIMARY, Trend.UNSPECIFIED_TREND,
+      assertKeyFigure(result.getKeyFigures(0), 0.381, Rank.PRIMARY, Trend.UNSPECIFIED_TREND,
           TrendSemantic.UNSPECIFIED_TREND_SEMANTIC, 1);
       assertKeyFigure(result.getKeyFigures(1), 31678786, Rank.TERTIARY, Trend.UNSPECIFIED_TREND,
           TrendSemantic.UNSPECIFIED_TREND_SEMANTIC, 0);
@@ -386,6 +388,7 @@ class KeyFigureCardFactoryTest {
           () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, FIRST_VACCINATION_CARD))
           .isInstanceOf(MissingPropertyException.class);
     }
+
 
     private void assertKeyFigure(KeyFigure result, double value, Rank rank, Trend trend, TrendSemantic trendSemantic,
         Integer decimals) {
