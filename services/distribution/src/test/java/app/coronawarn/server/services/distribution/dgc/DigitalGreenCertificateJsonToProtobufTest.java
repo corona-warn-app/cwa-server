@@ -1,11 +1,21 @@
 package app.coronawarn.server.services.distribution.dgc;
 
-import static app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping.*;
+import static app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping.DISEASE_AGENT_TARGETED_ID;
+import static app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping.TEST_MANF_ID;
+import static app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping.TEST_RESULT_ID;
+import static app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping.TEST_TYPE_ID;
+import static app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping.VACCINE_MAH_ID;
+import static app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping.VACCINE_MEDICINAL_PRODUCT_ID;
+import static app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping.VACCINE_PROPHYLAXIS_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.common.shared.exception.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +39,16 @@ class DigitalGreenCertificateJsonToProtobufTest {
 
   @Autowired
   DigitalGreenCertificateToProtobufMapping dgcToProtobufMapping;
+
+  @BeforeEach
+  void setup(){
+    dgcToProtobufMapping.dccClient = new TestDigitalCovidCertificateClient(dgcToProtobufMapping.resourceLoader) {
+      @Override
+      public List<ValueSetMetadata> getValueSets() {
+        return Collections.emptyList();
+      }
+    };
+  }
 
   @Test
   void shouldReadDefaultMahJsonIfNotConfigured() throws UnableToLoadFileException {
