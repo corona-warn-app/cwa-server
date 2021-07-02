@@ -64,4 +64,14 @@ public class LocalStatisticsJsonStringObject extends StatisticsTimeJsonObject {
   public void setSevenDayIncidence1stReportedTrend1Percent(Integer sevenDayIncidence1stReportedTrend1Percent) {
     this.sevenDayIncidence1stReportedTrend1Percent = sevenDayIncidence1stReportedTrend1Percent;
   }
+
+  /**
+   * Check if this object is valid and complete.
+   * 
+   * @return <code>true</code> if and only it {@link #sevenDayIncidence1stReportedDaily} is NOT null and
+   *         {@link #sevenDayIncidence1stReportedTrend1Percent} is NOT null.
+   */
+  public boolean isComplete() {
+    return sevenDayIncidence1stReportedDaily != null && sevenDayIncidence1stReportedTrend1Percent != null;
+  }
 }
