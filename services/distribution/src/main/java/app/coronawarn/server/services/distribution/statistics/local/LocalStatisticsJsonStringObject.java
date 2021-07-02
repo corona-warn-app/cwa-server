@@ -42,7 +42,7 @@ public class LocalStatisticsJsonStringObject extends StatisticsTimeJsonObject {
   }
 
   public Double getSevenDayIncidence1stReportedDaily() {
-    return sevenDayIncidence1stReportedDaily;
+    return sevenDayIncidence1stReportedDaily == null ? Double.valueOf(0.0) : sevenDayIncidence1stReportedDaily;
   }
 
   public void setSevenDayIncidence1stReportedDaily(Double sevenDayIncidence1stReportedDaily) {
@@ -54,7 +54,8 @@ public class LocalStatisticsJsonStringObject extends StatisticsTimeJsonObject {
   }
 
   public Integer getSevenDayIncidence1stReportedTrend1Percent() {
-    return sevenDayIncidence1stReportedTrend1Percent;
+    return sevenDayIncidence1stReportedTrend1Percent == null ? Integer.valueOf(0)
+        : sevenDayIncidence1stReportedTrend1Percent;
   }
 
   public void setSevenDayIncidence1stReportedTrend1Percent(Integer sevenDayIncidence1stReportedTrend1Percent) {
