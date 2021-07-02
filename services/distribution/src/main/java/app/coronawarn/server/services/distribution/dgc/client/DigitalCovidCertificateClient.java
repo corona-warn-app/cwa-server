@@ -11,8 +11,9 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * This is a Spring Cloud Feign based HTTP client that allows type-safe HTTP calls and abstract the implementation
- * away.
+ * This is a wrapper interface retrieving Digital Covid Certificate data.
+ * Used to make HTTP request to Digital Covid Certificate server.
+ * Used to retrieve mock sample data from classpath.
  */
 public interface DigitalCovidCertificateClient {
 
@@ -25,6 +26,4 @@ public interface DigitalCovidCertificateClient {
   List<BusinessRuleItem> getRules() throws DigitalCovidCertificateException;
 
   Optional<BusinessRule> getCountryRuleByHash(String country, String hash) throws DigitalCovidCertificateException;
-
-  List<BusinessRule> getCountryRules(String country);
 }

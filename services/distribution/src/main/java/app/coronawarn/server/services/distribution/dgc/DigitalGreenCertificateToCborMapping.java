@@ -1,49 +1,55 @@
 package app.coronawarn.server.services.distribution.dgc;
 
+import static app.coronawarn.server.common.shared.util.SerializationUtils.*;
+
 import app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleType;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
-import org.everit.json.schema.loader.SchemaLoader;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DigitalGreenCertificateToCborMapping {
 
-  private static final Logger logger = LoggerFactory.getLogger(DigitalGreenCertificateToCborMapping.class);
+  public static final String DCC_VALIDATION_RULE_JSON_CLASSPATH = "dgc/dcc-validation-rule.json";
+  private final DigitalCovidCertificateClient digitalCovidCertificateClient;
 
-  private DigitalCovidCertificateClient digitalCovidCertificateClient;
+  private final ResourceLoader resourceLoader;
 
-  @Autowired
-  ResourceLoader resourceLoader;
-
-  public DigitalGreenCertificateToCborMapping(DigitalCovidCertificateClient digitalCovidCertificateClient) {
+  public DigitalGreenCertificateToCborMapping(DigitalCovidCertificateClient digitalCovidCertificateClient,
+      ResourceLoader resourceLoader) {
     this.digitalCovidCertificateClient = digitalCovidCertificateClient;
+    this.resourceLoader = resourceLoader;
   }
 
   /**
-   * TODO: write javadoc.
+   * Construct country rules retrieved from DCC client for CBOR encoding.
+   *git s
+   * @throws DigitalCovidCertificateException - exception thrown if anything happens while executing the logic. Example:
+   *                                          countries could not be fetched from client. This exception will propagate
+   *                                          and will stop any archive to be published down in the execution.
    */
   public List<String> constructCountryList() throws DigitalCovidCertificateException {
     return digitalCovidCertificateClient.getCountryList();
   }
 
   /**
-   * TODO: write javadoc.
+   * Construct business rules retrieved from DCC client for CBOR encoding. Fetched rules are filtered by rule type
+   * parameter which could be 'Acceptance' or 'Invalidation'.
+   *
+   * @param ruleType - rule type for which the business rules will be retrieved.
+   * @return - business rules
+   * @throws DigitalCovidCertificateException - exception thrown if anything happens while executing the logic.
+   *                                          Examples: business rules could not be fetched, one specific rule could not
+   *                                          be fetched, json validation fails for a specific rule etc. This exception
+   *                                          will propagate and will stop any archive to be published down in the
+   *                                          execution.
    */
   public List<BusinessRule> constructRules(RuleType ruleType) throws DigitalCovidCertificateException {
     List<BusinessRuleItem> businessRulesItems = digitalCovidCertificateClient.getRules();
@@ -59,12 +65,16 @@ public class DigitalGreenCertificateToCborMapping {
 
         if (businessRule.getType().equalsIgnoreCase(ruleType.name())) {
           try {
-            validateJsonSchema(businessRule);
+            validateJsonSchema(businessRule,
+                resourceLoader.getResource(DCC_VALIDATION_RULE_JSON_CLASSPATH).getInputStream());
             businessRules.add(businessRule);
-          } catch (ValidationException e) {
-            throw new DigitalCovidCertificateException("Rule for country '"
-                + businessRuleItem.getCountry() + "' having hash '" + businessRuleItem.getHash()
+          } catch (JsonProcessingException | ValidationException e) {
+            throw new DigitalCovidCertificateException(
+                "Rule for country '" + businessRuleItem.getCountry() + "' having hash '" + businessRuleItem.getHash()
                 + "' is not valid", e);
+          } catch (IOException e) {
+            throw new DigitalCovidCertificateException(
+                "Validation rules schema found at: " + DCC_VALIDATION_RULE_JSON_CLASSPATH + "could not be found", e);
           }
         }
       } else {
@@ -77,41 +87,26 @@ public class DigitalGreenCertificateToCborMapping {
     return businessRules;
   }
 
+  /**
+   * CBOR encoding of {@code constructCountryList}.
+   */
   public byte[] constructCborCountries() throws DigitalCovidCertificateException {
-    return cborEncode(constructCountryList());
+    return cborEncodeOrElseThrow(constructCountryList());
   }
 
+  /**
+   * CBOR encoding of {@code constructRules}.
+   */
   public byte[] constructCborRules(RuleType ruleType) throws DigitalCovidCertificateException {
-    return cborEncode(constructRules(ruleType));
+    return cborEncodeOrElseThrow(constructRules(ruleType));
   }
 
-  private byte[] cborEncode(Object object) throws DigitalCovidCertificateException {
-    ObjectMapper cborMapper = new CBORMapper();
+  private byte[] cborEncodeOrElseThrow(Object subject) throws DigitalCovidCertificateException {
     try {
-      return cborMapper.writeValueAsBytes(object);
+      return cborEncode(subject);
     } catch (JsonProcessingException e) {
       throw new DigitalCovidCertificateException("Cbor encryption failed because of Json processing:", e);
     }
   }
-
-  private void validateJsonSchema(BusinessRule businessRule) throws DigitalCovidCertificateException {
-    JSONObject jsonSchema = null;
-    ObjectMapper objectMapper = new ObjectMapper();
-
-    try {
-      jsonSchema = new JSONObject(
-          new JSONTokener(resourceLoader.getResource("dgc/dcc-validation-rule.json").getInputStream()));
-      String businessRuleJson = objectMapper.writeValueAsString(businessRule);
-
-      JSONObject jsonSubject = new JSONObject(businessRuleJson);
-
-
-      Schema schema = SchemaLoader.load(jsonSchema);
-      schema.validate(jsonSubject);
-    } catch (IOException e) {
-      throw new DigitalCovidCertificateException("Error occured on loading DCC validation rules", e);
-    }
-  }
-
 
 }

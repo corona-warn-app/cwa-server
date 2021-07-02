@@ -17,6 +17,7 @@ public class CloudDccFeignClientConfiguration {
   private final CloudDccFeignHttpClientProvider feignClientProvider;
 
   public CloudDccFeignClientConfiguration(CloudDccFeignHttpClientProvider feignClientProvider) {
+    logger.debug("Creating Cloud DCC Feign Client Configuration");
     this.feignClientProvider = feignClientProvider;
   }
 

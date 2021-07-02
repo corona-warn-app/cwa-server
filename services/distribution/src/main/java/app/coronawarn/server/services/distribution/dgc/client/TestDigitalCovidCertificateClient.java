@@ -13,12 +13,15 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 
+/**
+ * This is an implementation with test data for interface retrieving Digital Covid Certificate data.
+ * Used to retrieve mock sample data from classpath.
+ */
 @Component
 @Profile("fake-dcc-client")
 public class TestDigitalCovidCertificateClient implements DigitalCovidCertificateClient {
@@ -30,7 +33,7 @@ public class TestDigitalCovidCertificateClient implements DigitalCovidCertificat
   public static final String RULE_2_HASH = "6821d518570fe9f4417c482ff0d2582a7b6440f243a9034f812e0d71611b611f";
   public static final String RULE_3_HASH = "7021d518570fe9f4417c482ff0d2582a7b6440f243a9034f812e0d71611b611f";
 
-  ResourceLoader resourceLoader;
+  private final ResourceLoader resourceLoader;
 
   public TestDigitalCovidCertificateClient(ResourceLoader resourceLoader) {
     this.resourceLoader = resourceLoader;
@@ -41,7 +44,7 @@ public class TestDigitalCovidCertificateClient implements DigitalCovidCertificat
     try {
       return Arrays.asList(readConfiguredJsonOrDefault(resourceLoader, null, "dgc/country-list.json", String[].class));
     } catch (UnableToLoadFileException e) {
-      throw new DigitalCovidCertificateException("Problem occured while retrieving default country list: ", e);
+      throw new DigitalCovidCertificateException("Problem occurred while retrieving default country list: ", e);
     }
   }
 
@@ -66,7 +69,7 @@ public class TestDigitalCovidCertificateClient implements DigitalCovidCertificat
               "dgc/test-type.json", ValueSet.class));
         case AGENT_TARGETED_HASH:
           return Optional.ofNullable(readConfiguredJsonOrDefault(resourceLoader, null,
-              "dgc/agent-targeted.json", ValueSet.class));
+              "dgc/disease-agent-targeted.json", ValueSet.class));
         default:
           return Optional.ofNullable(readConfiguredJsonOrDefault(resourceLoader, null,
               "dgc/vaccine-mah.json", ValueSet.class));
@@ -85,7 +88,7 @@ public class TestDigitalCovidCertificateClient implements DigitalCovidCertificat
       return Arrays.asList(readConfiguredJsonOrDefault(resourceLoader, null,
           "dgc/rules.json", BusinessRuleItem[].class));
     } catch (UnableToLoadFileException e) {
-      throw new DigitalCovidCertificateException("Problem occured while retrieving default rules list: ", e);
+      throw new DigitalCovidCertificateException("Problem occurred while retrieving default rules list: ", e);
     }
   }
 
@@ -109,11 +112,6 @@ public class TestDigitalCovidCertificateClient implements DigitalCovidCertificat
     } catch (UnableToLoadFileException e) {
       throw new DigitalCovidCertificateException("Problem finding rules JSON: ",e);
     }
-  }
-
-  @Override
-  public List<BusinessRule> getCountryRules(String country) {
-    throw new UnsupportedOperationException("Not yet implemented");
   }
 
 }
