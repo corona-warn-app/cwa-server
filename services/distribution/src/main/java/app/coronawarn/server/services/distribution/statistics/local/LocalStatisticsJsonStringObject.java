@@ -49,10 +49,6 @@ public class LocalStatisticsJsonStringObject extends StatisticsTimeJsonObject {
     this.sevenDayIncidence1stReportedDaily = sevenDayIncidence1stReportedDaily;
   }
 
-  public Double getSevenDayIncidence1stReportedGrowthrate() {
-    return sevenDayIncidence1stReportedGrowthrate;
-  }
-
   public void setSevenDayIncidence1stReportedGrowthrate(Double sevenDayIncidence1stReportedGrowthrate) {
     this.sevenDayIncidence1stReportedGrowthrate = sevenDayIncidence1stReportedGrowthrate;
   }
