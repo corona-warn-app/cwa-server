@@ -183,6 +183,7 @@ public class LocalStatisticsToProtobufMapping {
       List<LocalStatisticsJsonStringObject> jsonStringObjects) {
     List<LocalStatisticsJsonStringObject> onePerProvinceStatistics = new ArrayList<>();
     Map<String, List<LocalStatisticsJsonStringObject>> groupedByProvince = jsonStringObjects.stream()
+        .filter(LocalStatisticsJsonStringObject::isComplete)
         .collect(groupingBy(LocalStatisticsJsonStringObject::getProvinceCode, toList()));
 
     groupedByProvince.keySet().stream().forEach(key -> {
