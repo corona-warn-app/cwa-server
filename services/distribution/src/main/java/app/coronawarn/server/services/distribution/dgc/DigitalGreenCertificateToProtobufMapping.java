@@ -160,6 +160,17 @@ public class DigitalGreenCertificateToProtobufMapping {
     String getPath(DigitalGreenCertificate dgcConfig);
   }
 
+  /**
+   * First read the valueSet from the remote server using a feign client and the valueSetId.
+   * If that doesn't work, fall back to reading it from the configured source (e.g. via Vault).
+   * If that doesn't work, fall back on the version included in the sources.
+   *
+   * @param valueSetId The remote valueSetId to read.
+   * @param configGetter The local file to read as configured.
+   * @param valueSetDefaultPath The source file to read.
+   * @return The ValueSet that has been read.
+   * @throws UnableToLoadFileException If all fails.
+   */
   private ValueSet read(String valueSetId, ConfigValueProvider configGetter, String valueSetDefaultPath)
       throws UnableToLoadFileException {
     Optional<ValueSet> result = getValueSet(valueSetId).or(() -> {
@@ -170,6 +181,12 @@ public class DigitalGreenCertificateToProtobufMapping {
     return result.orElseThrow(() -> new UnableToLoadFileException(valueSetDefaultPath));
   }
 
+  /**
+   * Read the valueSetHash for the given ID from the metadata,
+   * and then the valueSet for the returned hash.
+   * @param valueSetId The ID of the valueSet to resolve.
+   * @return The ValueSet or empty.
+   */
   private Optional<ValueSet> getValueSet(String valueSetId) {
     Optional<String> hash = getValueSetHash(valueSetId);
     if (hash.isPresent()) {
@@ -178,6 +195,11 @@ public class DigitalGreenCertificateToProtobufMapping {
     return Optional.empty();
   }
 
+  /**
+   * Get the hash for the given ValueSetId from the metadata.
+   * @param valueSetId The valueSetId to get the hash for.
+   * @return The hash as contained in the metadata or empty.
+   */
   private Optional<String> getValueSetHash(String valueSetId) {
     if (metadata == null) {
       metadata = dccClient.getValueSets();
