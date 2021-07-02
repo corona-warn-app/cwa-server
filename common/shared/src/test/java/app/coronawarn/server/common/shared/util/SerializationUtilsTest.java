@@ -1,7 +1,10 @@
 package app.coronawarn.server.common.shared.util;
 
+import static app.coronawarn.server.common.shared.util.SerializationUtils.cborEncode;
 import static app.coronawarn.server.common.shared.util.SerializationUtils.deserializeJson;
 import static app.coronawarn.server.common.shared.util.SerializationUtils.stringifyObject;
+import static app.coronawarn.server.common.shared.util.SerializationUtils.validateJsonSchema;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -12,6 +15,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.dataformat.cbor.CBORFactory;
+import com.fasterxml.jackson.dataformat.cbor.CBORParser;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 
 
@@ -64,6 +71,31 @@ class SerializationUtilsTest {
         .isThrownBy(() -> stringifyObject(testObject));
   }
 
+  @Test
+  void shouldPassValidationSchema() throws JSONException, JsonProcessingException {
+    JSONObject subject = new JSONObject();
+    subject.put("id", "TEST-10");
+    subject.put("attribute", "value");
+    subject.put("testEnum", "test1");
+
+    //    InputStream validationSchema = getClass().getClassLoader().getResourceAsStream("validation_schema.json");
+    //    validateJsonSchema(subject, validationSchema);
+  }
+
+  @Test
+  void shouldNotPassValidationSchema() {
+
+  }
+
+  @Test
+  void shouldCborEncode() throws JSONException, IOException {
+    TestObject subject = new TestObject();
+    subject.setTestAttribute(TEST_ATTRIBUTE);
+
+    byte[] serialized = cborEncode(subject);
+    assertThat(serialized).isNotEmpty();
+  }
+
   public static class TestObject implements Serializable {
 
     private static final long serialVersionUID = 0L;
@@ -87,4 +119,5 @@ class SerializationUtilsTest {
       return self.getClass().getName();
     }
   }
+
 }

@@ -19,8 +19,8 @@ import org.springframework.stereotype.Component;
 
 
 /**
- * This is an implementation with test data for interface retrieving Digital Covid Certificate data.
- * Used to retrieve mock sample data from classpath.
+ * This is an implementation with test data for interface retrieving Digital Covid Certificate data. Used to retrieve
+ * mock sample data from classpath.
  */
 @Component
 @Profile("fake-dcc-client")
@@ -42,26 +42,25 @@ public class TestDigitalCovidCertificateClient implements DigitalCovidCertificat
   @Override
   public List<String> getCountryList() throws DigitalCovidCertificateException {
     try {
-      return Arrays.asList(readConfiguredJsonOrDefault(resourceLoader, null, "dgc/country-list.json", String[].class));
+      return Arrays.asList(readConfiguredJsonOrDefault(resourceLoader, null,
+          "dgc/country-list.json", String[].class));
     } catch (UnableToLoadFileException e) {
       throw new DigitalCovidCertificateException("Problem occurred while retrieving default country list: ", e);
     }
   }
 
   @Override
-  public List<ValueSetMetadata> getValueSets() {
+  public List<ValueSetMetadata> getValueSets() throws DigitalCovidCertificateException {
     try {
       return Arrays.asList(readConfiguredJsonOrDefault(resourceLoader, null,
           "dgc/valuesets.json", ValueSetMetadata[].class));
     } catch (UnableToLoadFileException e) {
-      e.printStackTrace();
+      throw new DigitalCovidCertificateException("Problem occurred while retrieving valuesets", e);
     }
-
-    return Collections.emptyList();
   }
 
   @Override
-  public Optional<ValueSet> getValueSet(String hash) {
+  public Optional<ValueSet> getValueSet(String hash) throws DigitalCovidCertificateException {
     try {
       switch (hash) {
         case TEST_TYPE_HASH:
@@ -72,14 +71,11 @@ public class TestDigitalCovidCertificateClient implements DigitalCovidCertificat
               "dgc/disease-agent-targeted.json", ValueSet.class));
         default:
           return Optional.ofNullable(readConfiguredJsonOrDefault(resourceLoader, null,
-              "dgc/vaccine-mah.json", ValueSet.class));
+              "dgc/file-does-not-exist.json", ValueSet.class));
       }
-
     } catch (UnableToLoadFileException e) {
-      e.printStackTrace();
+      throw new DigitalCovidCertificateException("Problem occurred while retrieving valueset with hash: " + hash, e);
     }
-
-    return Optional.empty();
   }
 
   @Override
@@ -110,7 +106,7 @@ public class TestDigitalCovidCertificateClient implements DigitalCovidCertificat
           throw new DigitalCovidCertificateException("No rule found for country: " + country + " and hash: " + hash);
       }
     } catch (UnableToLoadFileException e) {
-      throw new DigitalCovidCertificateException("Problem finding rules JSON: ",e);
+      throw new DigitalCovidCertificateException("Problem finding rules JSON: ", e);
     }
   }
 

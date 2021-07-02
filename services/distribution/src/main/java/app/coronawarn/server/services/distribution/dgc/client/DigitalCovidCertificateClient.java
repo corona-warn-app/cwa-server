@@ -19,9 +19,9 @@ public interface DigitalCovidCertificateClient {
 
   List<String> getCountryList() throws DigitalCovidCertificateException;
 
-  List<ValueSetMetadata> getValueSets();
+  List<ValueSetMetadata> getValueSets() throws DigitalCovidCertificateException;
 
-  Optional<ValueSet> getValueSet(String hash);
+  Optional<ValueSet> getValueSet(String hash) throws DigitalCovidCertificateException;
 
   List<BusinessRuleItem> getRules() throws DigitalCovidCertificateException;
 

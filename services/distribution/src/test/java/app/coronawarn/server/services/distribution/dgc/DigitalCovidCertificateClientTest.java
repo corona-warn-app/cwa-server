@@ -1,11 +1,16 @@
 package app.coronawarn.server.services.distribution.dgc;
 
+import static app.coronawarn.server.services.distribution.common.Helpers.loadApplicationConfiguration;
 import static app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient.AGENT_TARGETED_HASH;
 import static app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient.RULE_3_HASH;
 import static app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient.TEST_TYPE_HASH;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.util.Strings.isNullOrEmpty;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 
+import app.coronawarn.server.common.shared.exception.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient;
@@ -13,6 +18,7 @@ import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCer
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreOperationFailedException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +36,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 class DigitalCovidCertificateClientTest {
 
   public static final String DE_HASH = "6821d518570fe9f4417c482ff0d2582a7b6440f243a9034f812e0d71611b611f";
-  public static final String NL_HASH = "7221d518570fe9f4417c482ff0d2582a7b6440f243a9034f812e0d71611b611f";
+  public static final String NL_HASH = "7021d518570fe9f4417c482ff0d2582a7b6440f243a9034f812e0d71611b611f";
   public static final String CZ_HASH = "7221d518570fe9f4417c482ff0d2582a7b6440f243a9034f812e0d71611b611f";
 
   public static final String DE = "DE";
@@ -45,11 +51,6 @@ class DigitalCovidCertificateClientTest {
 
   public static final String VALUESET_2_ID = "disease-agent-targeted";
   public static final String VALUESET_2_ENTRY_1 = "840539006";
-
-  public static final String VALUESET_3_ID = "vaccines-covid-19-auth-holders";
-  public static final String VALUESET_3_ENTRY_1 = "ORG-100001699";
-  public static final String VALUESET_3_ENTRY_2 = "ORG-100030215";
-  public static final String VALUESET_3_ENTRY_3 = "Bharat-Biotech";
 
   @Autowired
   private DigitalCovidCertificateClient digitalCovidCertificateClient;
@@ -67,7 +68,7 @@ class DigitalCovidCertificateClientTest {
   }
 
   @Test
-  public void testValueSet() {
+  public void shouldReturnCorrectValueSetsByHash() throws DigitalCovidCertificateException {
     Optional<ValueSet> valueSet1 = digitalCovidCertificateClient.getValueSet(TEST_TYPE_HASH);
 
     assertThat(valueSet1).isPresent();
@@ -79,17 +80,22 @@ class DigitalCovidCertificateClientTest {
     assertThat(valueSet2).isPresent();
     assertThat(valueSet2.get().getValueSetId()).isEqualTo(VALUESET_2_ID);
     assertThat(valueSet2.get().getValueSetValues().get(VALUESET_2_ENTRY_1)).isNotNull();
-
-    Optional<ValueSet> valueSet3 = digitalCovidCertificateClient.getValueSet(RULE_3_HASH);
-    assertThat(valueSet3).isPresent();
-    assertThat(valueSet3.get().getValueSetId()).isEqualTo(VALUESET_3_ID);
-    assertThat(valueSet3.get().getValueSetValues().get(VALUESET_3_ENTRY_1)).isNotNull();
-    assertThat(valueSet3.get().getValueSetValues().get(VALUESET_3_ENTRY_2)).isNotNull();
-    assertThat(valueSet3.get().getValueSetValues().get(VALUESET_3_ENTRY_3)).isNotNull();
   }
 
   @Test
-  public void testValueSets() {
+  public void shouldThrowDccExceptionWhenTryingToRetrieveValuesetWithNonexistingHash() {
+    assertThatExceptionOfType(DigitalCovidCertificateException.class).isThrownBy(
+        () -> digitalCovidCertificateClient.getValueSet(RULE_3_HASH));
+  }
+
+  @Test
+  public void shouldThrowDccExceptionWhenTryingToRetrieveRuleWithNonexistingHash() {
+    assertThatExceptionOfType(DigitalCovidCertificateException.class).isThrownBy(
+        () -> digitalCovidCertificateClient.getCountryRuleByHash(DE, NL));
+  }
+
+  @Test
+  public void shouldReturnCorrectValueSets() throws DigitalCovidCertificateException {
     List<ValueSetMetadata> valueSets = digitalCovidCertificateClient.getValueSets();
 
     assertThat(valueSets).isNotEmpty();
@@ -99,7 +105,7 @@ class DigitalCovidCertificateClientTest {
   }
 
   @Test
-  public void testCountryRule() throws DigitalCovidCertificateException {
+  public void shouldReturnCorrectCountryRulesByHash() throws DigitalCovidCertificateException {
     assertThat(digitalCovidCertificateClient.getCountryRuleByHash(DE, DE_HASH)).isPresent();
     assertThat(digitalCovidCertificateClient.getCountryRuleByHash(NL, NL_HASH)).isPresent();
     assertThat(digitalCovidCertificateClient.getCountryRuleByHash(CZ, CZ_HASH)).isPresent();
