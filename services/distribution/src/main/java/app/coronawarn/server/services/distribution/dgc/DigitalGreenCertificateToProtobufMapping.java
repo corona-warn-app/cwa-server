@@ -21,21 +21,21 @@ import org.springframework.stereotype.Component;
 @Component
 public class DigitalGreenCertificateToProtobufMapping {
 
-  private static final String TEST_RESULT_ID = "covid-19-lab-result";
-  private static final String TEST_MANF_ID = "covid-19-lab-test-manufacturer-and-name";
-  private static final String TEST_TYPE_ID = "covid-19-lab-test-type";
-  private static final String DISEASE_AGENT_TARGETED_ID = "disease-agent-targeted";
-  private static final String VACCINE_PROPHYLAXIS_ID = "sct-vaccines-covid-19";
-  private static final String VACCINE_MAH_ID = "vaccines-covid-19-auth-holders";
-  private static final String VACCINE_MEDICINAL_PRODUCT_ID = "vaccines-covid-19-names";
+  static final String TEST_RESULT_ID = "covid-19-lab-result";
+  static final String TEST_MANF_ID = "covid-19-lab-test-manufacturer-and-name";
+  static final String TEST_TYPE_ID = "covid-19-lab-test-type";
+  static final String DISEASE_AGENT_TARGETED_ID = "disease-agent-targeted";
+  static final String VACCINE_PROPHYLAXIS_ID = "sct-vaccines-covid-19";
+  static final String VACCINE_MAH_ID = "vaccines-covid-19-auth-holders";
+  static final String VACCINE_MEDICINAL_PRODUCT_ID = "vaccines-covid-19-names";
 
-  private static final String DISEASE_AGENT_TARGETED_DEFAULT_PATH = "dgc/disease-agent-targeted.json";
-  private static final String VACCINE_MAH_DEFAULT_PATH = "dgc/vaccine-mah.json";
-  private static final String VACCINE_MEDICINAL_PRODUCT_DEFAULT_PATH = "dgc/vaccine-medicinal-product.json";
-  private static final String VACCINE_PROPHYLAXIS_DEFAULT_PATH = "dgc/vaccine-prophylaxis.json";
-  private static final String TEST_MANF_DEFAULT_PATH = "dgc/test-manf.json";
-  private static final String TEST_RESULT_DEFAULT_PATH = "dgc/test-result.json";
-  private static final String TEST_TYPE_DEFAULT_PATH = "dgc/test-type.json";
+  public static final String DISEASE_AGENT_TARGETED_DEFAULT_PATH = "dgc/disease-agent-targeted.json";
+  public static final String VACCINE_MAH_DEFAULT_PATH = "dgc/vaccine-mah.json";
+  public static final String VACCINE_MEDICINAL_PRODUCT_DEFAULT_PATH = "dgc/vaccine-medicinal-product.json";
+  public static final String VACCINE_PROPHYLAXIS_DEFAULT_PATH = "dgc/vaccine-prophylaxis.json";
+  public static final String TEST_MANF_DEFAULT_PATH = "dgc/test-manf.json";
+  public static final String TEST_RESULT_DEFAULT_PATH = "dgc/test-result.json";
+  public static final String TEST_TYPE_DEFAULT_PATH = "dgc/test-type.json";
 
   private static final Logger logger = LoggerFactory.getLogger(DigitalGreenCertificateToProtobufMapping.class);
 
