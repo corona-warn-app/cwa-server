@@ -1,6 +1,10 @@
 package app.coronawarn.server.services.distribution.statistics.local;
 
-import static app.coronawarn.server.services.distribution.statistics.local.BuildLocalStatisticsHelper.*;
+import static app.coronawarn.server.services.distribution.statistics.local.BuildLocalStatisticsHelper.administrativeUnitEnhancer;
+import static app.coronawarn.server.services.distribution.statistics.local.BuildLocalStatisticsHelper.administrativeUnitSupplier;
+import static app.coronawarn.server.services.distribution.statistics.local.BuildLocalStatisticsHelper.federalStateEnhancer;
+import static app.coronawarn.server.services.distribution.statistics.local.BuildLocalStatisticsHelper.federalStateSupplier;
+import static app.coronawarn.server.services.distribution.statistics.local.BuildLocalStatisticsHelper.findFederalStateByProvinceCode;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
