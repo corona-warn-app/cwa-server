@@ -3,22 +3,19 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <artifactId>server</artifactId>
+    <artifactId>common</artifactId>
     <groupId>app.coronawarn.server</groupId>
     <version>${revision}</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>common</artifactId>
+  <artifactId>jupiterHelpers</artifactId>
 
-  <packaging>pom</packaging>
-
-  <modules>
-    <module>jupiterHelpers</module>
-    <module>shared</module>
-    <module>protocols</module>
-    <module>persistence</module>
-    <module>federation</module>
-  </modules>
-
+  <dependencies>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
 </project>
