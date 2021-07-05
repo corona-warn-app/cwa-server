@@ -9,7 +9,6 @@ import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.Trend;
 import app.coronawarn.server.common.protocols.internal.stats.LocalStatistics;
 import app.coronawarn.server.common.protocols.internal.stats.SevenDayIncidenceData;
 import java.time.LocalDate;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import org.springframework.stereotype.Component;
