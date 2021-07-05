@@ -68,9 +68,5 @@
       <groupId>org.everit.json</groupId>
       <artifactId>org.everit.json.schema</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.json</groupId>
-      <artifactId>json</artifactId>
-    </dependency>
   </dependencies>
 </project>
