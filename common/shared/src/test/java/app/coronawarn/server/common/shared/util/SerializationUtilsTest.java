@@ -17,6 +17,7 @@ import java.io.Serializable;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.cbor.CBORFactory;
 import com.fasterxml.jackson.dataformat.cbor.CBORParser;
+import org.everit.json.schema.ValidationException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
@@ -29,34 +30,9 @@ class SerializationUtilsTest {
   public static final String TEST_OBJECT_SERIALIZED = "{\"testAttribute\":\"test-value\"}";
   public static final String TEST_OBJECT_SERIALIZED_WRONG_FORMAT = "{\"testAttribute\"\"test-value\"}";
 
-  public static final String schema = "{\n"
-      + "  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n"
-      + "  \"$id\": \"serialization_validation_test\",\n"
-      + "  \"title\": \"Validation test\",\n"
-      + "  \"type\": \"object\",\n"
-      + "  \"additionalProperties\": false,\n"
-      + "  \"required\": [\n"
-      + "    \"id\",\n"
-      + "    \"attribute\",\n"
-      + "    \"enumTest\"\n"
-      + "  ],\n"
-      + "  \"properties\": {\n"
-      + "    \"id\": {\n"
-      + "      \"type\": \"string\",\n"
-      + "      \"pattern\": \"^(TEST)-[A-Z]{2}$\"\n"
-      + "    },\n"
-      + "    \"enumTest\": {\n"
-      + "      \"type\": \"string\",\n"
-      + "      \"enum\": [\n"
-      + "        \"test1\",\n"
-      + "        \"test2\"\n"
-      + "      ]\n"
-      + "    },\n"
-      + "    \"attribute\": {\n"
-      + "      \"type\": \"string\"\n"
-      + "    }\n"
-      + "  }\n"
-      + "}";
+  public static final String VALIDATION_SCHEMA_JSON = "validation_schema.json";
+  public static final String VALIDATION_SCHEMA_OK = "TEST-OK";
+  public static final String VALIDATION_SCHEMA_NOT_OKAY = "TEST-NOTOK";
 
   @Test
   void testDeserializeJsonInputStream() throws IOException {
@@ -102,18 +78,21 @@ class SerializationUtilsTest {
 
   @Test
   void shouldPassValidationSchema() throws JSONException, JsonProcessingException {
-    JSONObject subject = new JSONObject();
-    subject.put("id", "TEST-10");
-    subject.put("attribute", "value");
-    subject.put("testEnum", "test1");
+    TestObject subject = new TestObject();
+    subject.setTestAttribute(VALIDATION_SCHEMA_OK);
 
-    //    InputStream validationSchema = getClass().getClassLoader().getResourceAsStream("validation_schema.json");
-    //    validateJsonSchema(subject, new ByteArrayInputStream(schema.getBytes()));
+    InputStream validationSchema = getClass().getClassLoader().getResourceAsStream(VALIDATION_SCHEMA_JSON);
+    validateJsonSchema(subject, validationSchema);
   }
 
   @Test
   void shouldNotPassValidationSchema() {
+    TestObject subject = new TestObject();
+    subject.setTestAttribute(VALIDATION_SCHEMA_NOT_OKAY);
 
+    InputStream validationSchema = getClass().getClassLoader().getResourceAsStream("validation_schema.json");
+    assertThatExceptionOfType(ValidationException.class)
+        .isThrownBy(() -> validateJsonSchema(subject, validationSchema));
   }
 
   @Test
