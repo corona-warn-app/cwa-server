@@ -43,7 +43,7 @@ class DgcStructureProviderDefaultValuesetsMissingTest {
     DigitalGreenCertificateStructureProvider underTest = new DigitalGreenCertificateStructureProvider(
         distributionServiceConfig, cryptoProvider, dgcToProtobufMappingMock, dgcToCborMappingMock);
     when(dgcToProtobufMappingMock.constructProtobufMapping())
-        .thenThrow(new UnableToLoadFileException("", null));
+        .thenThrow(new UnableToLoadFileException(""));
     DirectoryOnDisk digitalGreenCertificates = underTest.getDigitalGreenCertificates();
     digitalGreenCertificates.prepare(new ImmutableStack<>());
 
