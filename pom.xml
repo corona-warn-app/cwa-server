@@ -70,7 +70,7 @@
     <wiremock.version>2.28.1</wiremock.version>
     <httpclient.version>4.5.13</httpclient.version>
     <junit.version>4.13.2</junit.version>
-    <tomcat-embed-core.version>9.0.48</tomcat-embed-core.version>
+    <tomcat-embed-core.version>9.0.50</tomcat-embed-core.version>
     <findify-s3mock.version>0.2.6</findify-s3mock.version>
     <checkstyle.version>8.44</checkstyle.version>
   </properties>
