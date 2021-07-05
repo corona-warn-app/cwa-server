@@ -26,7 +26,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(classes = {DistributionServiceConfig.class, TestDigitalCovidCertificateClient.class},
     initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles("fake-dcc-client")
-class DigitalCovidCertificateClientTest {
+class DigitalCovidCertificateClientSpringTest {
 
   public static final String DE_HASH = "6821d518570fe9f4417c482ff0d2582a7b6440f243a9034f812e0d71611b611f";
   public static final String NL_HASH = "7021d518570fe9f4417c482ff0d2582a7b6440f243a9034f812e0d71611b611f";
