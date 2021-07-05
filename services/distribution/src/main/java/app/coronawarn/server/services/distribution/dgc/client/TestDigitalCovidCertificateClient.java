@@ -55,27 +55,18 @@ public class TestDigitalCovidCertificateClient implements DigitalCovidCertificat
 
   @Override
   public List<String> getCountryList() throws DigitalCovidCertificateException {
-    try {
       return Arrays.asList(readConfiguredJsonOrDefault(resourceLoader, null,
-          "dgc/country-list.json", String[].class));
-    } catch (UnableToLoadFileException e) {
-      throw new DigitalCovidCertificateException("Problem occurred while retrieving default country list: ", e);
-    }
+          "dgc/country-list.json", String[].class).get());
   }
 
   @Override
   public List<ValueSetMetadata> getValueSets() throws DigitalCovidCertificateException {
-    try {
       return Arrays.asList(readConfiguredJsonOrDefault(resourceLoader, null,
-          "dgc/valuesets.json", ValueSetMetadata[].class));
-    } catch (UnableToLoadFileException e) {
-      throw new DigitalCovidCertificateException("Problem occurred while retrieving valuesets", e);
-    }
+          "dgc/valuesets.json", ValueSetMetadata[].class).get());
   }
 
   @Override
   public Optional<ValueSet> getValueSet(String hash) throws DigitalCovidCertificateException {
-    try {
       switch (hash) {
         case DISEASE_AGENT_TARGETED_HASH:
           return readDefault(DISEASE_AGENT_TARGETED_DEFAULT_PATH);
@@ -94,9 +85,6 @@ public class TestDigitalCovidCertificateClient implements DigitalCovidCertificat
         default:
           return readDefault("dgc/file-does-not-exist.json");
       }
-    } catch (UnableToLoadFileException e) {
-      throw new DigitalCovidCertificateException("Problem occurred while retrieving valueset with hash: " + hash, e);
-    }
   }
 
   private Optional<ValueSet> readDefault(String valueSetId) {
@@ -104,35 +92,27 @@ public class TestDigitalCovidCertificateClient implements DigitalCovidCertificat
   }
 
   @Override
-  public List<BusinessRuleItem> getRules() throws DigitalCovidCertificateException {
-    try {
+  public List<BusinessRuleItem> getRules() {
       return Arrays.asList(readConfiguredJsonOrDefault(resourceLoader, null,
-          "dgc/rules.json", BusinessRuleItem[].class));
-    } catch (UnableToLoadFileException e) {
-      throw new DigitalCovidCertificateException("Problem occurred while retrieving default rules list: ", e);
-    }
+          "dgc/rules.json", BusinessRuleItem[].class).get());
   }
 
   @Override
   public Optional<BusinessRule> getCountryRuleByHash(String country, String hash)
       throws DigitalCovidCertificateException {
-    try {
       switch (hash) {
         case RULE_1_HASH:
-          return Optional.ofNullable(readConfiguredJsonOrDefault(resourceLoader, null,
-              "dgc/rule_1.json", BusinessRule.class));
+          return readConfiguredJsonOrDefault(resourceLoader, null,
+              "dgc/rule_1.json", BusinessRule.class);
         case RULE_2_HASH:
-          return Optional.ofNullable(readConfiguredJsonOrDefault(resourceLoader, null,
-              "dgc/rule_2.json", BusinessRule.class));
+          return readConfiguredJsonOrDefault(resourceLoader, null,
+              "dgc/rule_2.json", BusinessRule.class);
         case RULE_3_HASH:
-          return Optional.ofNullable(readConfiguredJsonOrDefault(resourceLoader, null,
-              "dgc/rule_3.json", BusinessRule.class));
+          return readConfiguredJsonOrDefault(resourceLoader, null,
+              "dgc/rule_3.json", BusinessRule.class);
         default:
           throw new DigitalCovidCertificateException("No rule found for country: " + country + " and hash: " + hash);
       }
-    } catch (UnableToLoadFileException e) {
-      throw new DigitalCovidCertificateException("Problem finding rules JSON: ", e);
-    }
   }
 
 }

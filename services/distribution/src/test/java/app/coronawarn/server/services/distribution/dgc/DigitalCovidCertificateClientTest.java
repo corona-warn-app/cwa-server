@@ -1,17 +1,15 @@
 package app.coronawarn.server.services.distribution.dgc;
 
-import static app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient.AGENT_TARGETED_HASH;
+import static app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient.DISEASE_AGENT_TARGETED_HASH;
 import static app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient.RULE_3_HASH;
-import static app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient.TEST_TYPE_HASH;
+import static app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient.VACCINE_MAH_HASH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.util.Strings.isNullOrEmpty;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import app.coronawarn.server.services.distribution.dgc.client.CloudDccFeignClientConfiguration;
-import app.coronawarn.server.services.distribution.dgc.client.CloudDccFeignHttpClientProvider;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
-import app.coronawarn.server.services.distribution.dgc.client.ProdDigitalCovidCertificateClient;
+import app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
 import java.util.List;
 import java.util.Optional;
@@ -19,23 +17,15 @@ import java.util.function.Predicate;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
-import org.springframework.cloud.openfeign.EnableFeignClients;
-import org.springframework.cloud.openfeign.FeignAutoConfiguration;
-import org.springframework.cloud.openfeign.clientconfig.HttpClientFeignConfiguration;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-//@EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {DistributionServiceConfig.class, ProdDigitalCovidCertificateClient.class,
-    CloudDccFeignClientConfiguration.class, CloudDccFeignHttpClientProvider.class},
+@ContextConfiguration(classes = {DistributionServiceConfig.class, TestDigitalCovidCertificateClient.class},
     initializers = ConfigDataApplicationContextInitializer.class)
-//@EnableFeignClients(defaultConfiguration = CloudDccFeignClientConfiguration.class)
-@ImportAutoConfiguration({FeignAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class})
-//@ActiveProfiles("fake-dcc-client")
+@ActiveProfiles("fake-dcc-client")
 class DigitalCovidCertificateClientTest {
 
   public static final String DE_HASH = "6821d518570fe9f4417c482ff0d2582a7b6440f243a9034f812e0d71611b611f";
@@ -72,14 +62,14 @@ class DigitalCovidCertificateClientTest {
 
   @Test
   public void shouldReturnCorrectValueSetsByHash() throws DigitalCovidCertificateException {
-    Optional<ValueSet> valueSet1 = digitalCovidCertificateClient.getValueSet(TEST_TYPE_HASH);
+    Optional<ValueSet> valueSet1 = digitalCovidCertificateClient.getValueSet(VACCINE_MAH_HASH);
 
     assertThat(valueSet1).isPresent();
     assertThat(valueSet1.get().getValueSetId()).isEqualTo(VALUESET_1_ID);
     assertThat(valueSet1.get().getValueSetValues().get(VALUESET_1_ENTRY_1)).isNotNull();
     assertThat(valueSet1.get().getValueSetValues().get(VALUESET_1_ENTRY_2)).isNotNull();
 
-    Optional<ValueSet> valueSet2 = digitalCovidCertificateClient.getValueSet(AGENT_TARGETED_HASH);
+    Optional<ValueSet> valueSet2 = digitalCovidCertificateClient.getValueSet(DISEASE_AGENT_TARGETED_HASH);
     assertThat(valueSet2).isPresent();
     assertThat(valueSet2.get().getValueSetId()).isEqualTo(VALUESET_2_ID);
     assertThat(valueSet2.get().getValueSetValues().get(VALUESET_2_ENTRY_1)).isNotNull();

@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -188,10 +189,16 @@ public class DigitalGreenCertificateToProtobufMapping {
    * @return The ValueSet or empty.
    */
   private Optional<ValueSet> getValueSet(String valueSetId) {
-    Optional<String> hash = getValueSetHash(valueSetId);
-    if (hash.isPresent()) {
-      return dccClient.getValueSet(hash.get());
+    Optional<String> hash = null;
+    try {
+      hash = getValueSetHash(valueSetId);
+      if (hash.isPresent()) {
+        return dccClient.getValueSet(hash.get());
+      }
+    } catch (DigitalCovidCertificateException e) {
+      return Optional.empty();
     }
+
     return Optional.empty();
   }
 
@@ -200,7 +207,7 @@ public class DigitalGreenCertificateToProtobufMapping {
    * @param valueSetId The valueSetId to get the hash for.
    * @return The hash as contained in the metadata or empty.
    */
-  private Optional<String> getValueSetHash(String valueSetId) {
+  private Optional<String> getValueSetHash(String valueSetId) throws DigitalCovidCertificateException {
     if (metadata == null) {
       metadata = dccClient.getValueSets();
       if (metadata == null) {
