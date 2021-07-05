@@ -38,9 +38,9 @@ class DigitalCovidCertificateClientTest {
   public static final String IT = "IT";
   public static final String CZ = "CZ";
 
-  public static final String VALUESET_1_ID = "covid-19-lab-test-type";
-  public static final String VALUESET_1_ENTRY_1 = "LP6464-4";
-  public static final String VALUESET_1_ENTRY_2 = "LP217198-3";
+  public static final String VALUESET_1_ID = "vaccines-covid-19-auth-holders";
+  public static final String VALUESET_1_ENTRY_1 = "ORG-100001699";
+  public static final String VALUESET_1_ENTRY_2 = "Bharat-Biotech";
 
   public static final String VALUESET_2_ID = "disease-agent-targeted";
   public static final String VALUESET_2_ENTRY_1 = "840539006";

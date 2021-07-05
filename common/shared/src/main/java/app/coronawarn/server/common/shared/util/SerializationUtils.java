@@ -80,10 +80,10 @@ public final class SerializationUtils {
     }
   }
 
-  public static <T> Optional<T> deserializeJsonToSimpleType(InputStream jsonStream, Class<T> rawType)
+  public static <T> T deserializeJsonToSimpleType(InputStream jsonStream, Class<T> rawType)
       throws IOException {
-    return Optional.of(deserializeJson(jsonStream,
-        typeFactory -> typeFactory.constructSimpleType(rawType, new JavaType[0])));
+    return deserializeJson(jsonStream,
+        typeFactory -> typeFactory.constructSimpleType(rawType, new JavaType[0]));
   }
 
   /**
@@ -97,10 +97,10 @@ public final class SerializationUtils {
    * @return - converted JSON to raw type instance.
    * @throws UnableToLoadFileException - if default JSON is not found.
    */
-  public static <T> Optional<T> readConfiguredJsonOrDefault(ResourceLoader resourceLoader,
+  public static <T> T readConfiguredJsonOrDefault(ResourceLoader resourceLoader,
       String path,
       String defaultPath,
-      Class<T> rawType) {
+      Class<T> rawType) throws UnableToLoadFileException {
     if (!ObjectUtils.isEmpty(path)) {
       try (InputStream jsonStream = resourceLoader.getResource(path).getInputStream()) {
         logger.debug("Loading JSON from {}.", path);
@@ -115,7 +115,8 @@ public final class SerializationUtils {
       return deserializeJsonToSimpleType(jsonStream, rawType);
     } catch (IOException e) {
       logger.error("We could not load the default {}. This shouldn't happen!", defaultPath, e);
-      return Optional.empty();
+      throw new UnableToLoadFileException("Default valuesets is missing from the path " + defaultPath
+          + ". This shouldn't happen!", e);
     }
   }
 

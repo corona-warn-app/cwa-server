@@ -8,11 +8,11 @@ import app.coronawarn.server.common.shared.exception.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.DigitalGreenCertificate;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
+import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -174,12 +174,15 @@ public class DigitalGreenCertificateToProtobufMapping {
    */
   private ValueSet read(String valueSetId, ConfigValueProvider configGetter, String valueSetDefaultPath)
       throws UnableToLoadFileException {
-    Optional<ValueSet> result = getValueSet(valueSetId).or(() -> {
+    Optional<ValueSet> result = getValueSet(valueSetId);
+
+    if (result.isEmpty()) {
       String path = configGetter.getPath(distributionServiceConfig.getDigitalGreenCertificate());
       return readConfiguredJsonOrDefault(resourceLoader, path, valueSetDefaultPath,
           ValueSet.class);
-    });
-    return result.orElseThrow(() -> new UnableToLoadFileException(valueSetDefaultPath));
+    }
+
+    return result.get();
   }
 
   /**
@@ -189,7 +192,7 @@ public class DigitalGreenCertificateToProtobufMapping {
    * @return The ValueSet or empty.
    */
   private Optional<ValueSet> getValueSet(String valueSetId) {
-    Optional<String> hash = null;
+    Optional<String> hash;
     try {
       hash = getValueSetHash(valueSetId);
       if (hash.isPresent()) {
