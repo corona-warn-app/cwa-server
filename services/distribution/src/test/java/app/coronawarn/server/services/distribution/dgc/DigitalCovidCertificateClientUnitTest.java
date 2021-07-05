@@ -31,9 +31,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class DigitalCovidCertificateClientUnitTest {
 
-  public static final String RANDOM_STRING = "random_string";
   public static final String DE = "DE";
-  public static final String BAD_IDENTIFIER = "BAD-IDENTIFIER";
 
   TestDigitalCovidCertificateClient testDigitalCovidCertificateClient;
 
