@@ -1,38 +1,41 @@
 package app.coronawarn.server.services.distribution.dgc;
 
-import static app.coronawarn.server.services.distribution.common.Helpers.loadApplicationConfiguration;
 import static app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient.AGENT_TARGETED_HASH;
 import static app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient.RULE_3_HASH;
 import static app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient.TEST_TYPE_HASH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.util.Strings.isNullOrEmpty;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
 
-import app.coronawarn.server.common.shared.exception.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.dgc.client.CloudDccFeignClientConfiguration;
+import app.coronawarn.server.services.distribution.dgc.client.CloudDccFeignHttpClientProvider;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
-import app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient;
+import app.coronawarn.server.services.distribution.dgc.client.ProdDigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
-import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreOperationFailedException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.cloud.openfeign.FeignAutoConfiguration;
+import org.springframework.cloud.openfeign.clientconfig.HttpClientFeignConfiguration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@EnableConfigurationProperties(value = DistributionServiceConfig.class)
+//@EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {DistributionServiceConfig.class, TestDigitalCovidCertificateClient.class},
+@ContextConfiguration(classes = {DistributionServiceConfig.class, ProdDigitalCovidCertificateClient.class,
+    CloudDccFeignClientConfiguration.class, CloudDccFeignHttpClientProvider.class},
     initializers = ConfigDataApplicationContextInitializer.class)
-@ActiveProfiles("fake-dcc-client")
+//@EnableFeignClients(defaultConfiguration = CloudDccFeignClientConfiguration.class)
+@ImportAutoConfiguration({FeignAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class})
+//@ActiveProfiles("fake-dcc-client")
 class DigitalCovidCertificateClientTest {
 
   public static final String DE_HASH = "6821d518570fe9f4417c482ff0d2582a7b6440f243a9034f812e0d71611b611f";

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "serialization_validation_test",
+  "title": "Validation test",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "attribute",
+    "enumTest"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^(TEST)-[A-Z]{2}$"
+    },
+    "enumTest": {
+      "type": "string",
+      "enum": [
+        "test1",
+        "test2"
+      ]
+    },
+    "attribute": {
+      "type": "string"
+    }
+  }
+}

@@ -29,6 +29,35 @@ class SerializationUtilsTest {
   public static final String TEST_OBJECT_SERIALIZED = "{\"testAttribute\":\"test-value\"}";
   public static final String TEST_OBJECT_SERIALIZED_WRONG_FORMAT = "{\"testAttribute\"\"test-value\"}";
 
+  public static final String schema = "{\n"
+      + "  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n"
+      + "  \"$id\": \"serialization_validation_test\",\n"
+      + "  \"title\": \"Validation test\",\n"
+      + "  \"type\": \"object\",\n"
+      + "  \"additionalProperties\": false,\n"
+      + "  \"required\": [\n"
+      + "    \"id\",\n"
+      + "    \"attribute\",\n"
+      + "    \"enumTest\"\n"
+      + "  ],\n"
+      + "  \"properties\": {\n"
+      + "    \"id\": {\n"
+      + "      \"type\": \"string\",\n"
+      + "      \"pattern\": \"^(TEST)-[A-Z]{2}$\"\n"
+      + "    },\n"
+      + "    \"enumTest\": {\n"
+      + "      \"type\": \"string\",\n"
+      + "      \"enum\": [\n"
+      + "        \"test1\",\n"
+      + "        \"test2\"\n"
+      + "      ]\n"
+      + "    },\n"
+      + "    \"attribute\": {\n"
+      + "      \"type\": \"string\"\n"
+      + "    }\n"
+      + "  }\n"
+      + "}";
+
   @Test
   void testDeserializeJsonInputStream() throws IOException {
     InputStream is = new ByteArrayInputStream(TEST_OBJECT_SERIALIZED.getBytes());
@@ -79,7 +108,7 @@ class SerializationUtilsTest {
     subject.put("testEnum", "test1");
 
     //    InputStream validationSchema = getClass().getClassLoader().getResourceAsStream("validation_schema.json");
-    //    validateJsonSchema(subject, validationSchema);
+    //    validateJsonSchema(subject, new ByteArrayInputStream(schema.getBytes()));
   }
 
   @Test
@@ -88,7 +117,7 @@ class SerializationUtilsTest {
   }
 
   @Test
-  void shouldCborEncode() throws JSONException, IOException {
+  void shouldCborEncode() throws IOException {
     TestObject subject = new TestObject();
     subject.setTestAttribute(TEST_ATTRIBUTE);
 

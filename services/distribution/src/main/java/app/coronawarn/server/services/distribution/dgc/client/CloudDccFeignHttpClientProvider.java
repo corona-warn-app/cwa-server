@@ -22,17 +22,13 @@ public class CloudDccFeignHttpClientProvider implements DccFeignHttpClientProvid
 
   private final Integer connectionPoolSize;
 
-  private final HostnameVerifierProvider hostnameVerifierProvider;
-
   /**
    * Construct Provider.
    *
    * @param config - distribution configuration
    */
-  public CloudDccFeignHttpClientProvider(DistributionServiceConfig config,
-      HostnameVerifierProvider hostnameVerifierProvider) {
+  public CloudDccFeignHttpClientProvider(DistributionServiceConfig config) {
     this.connectionPoolSize = config.getConnectionPoolSize();
-    this.hostnameVerifierProvider = hostnameVerifierProvider;
   }
 
   /**
@@ -42,17 +38,17 @@ public class CloudDccFeignHttpClientProvider implements DccFeignHttpClientProvid
   @Bean
   public Client createFeignClient() {
     return new ApacheHttpClient(
-        federationHttpClientFactory(connectionPoolSize).createBuilder().build());
+        federationHttpClientFactory().createBuilder().build());
   }
 
   /**
    * Creates an {@link ApacheHttpClientFactory} that with no SSL certificates and no host names.
    */
-  private ApacheHttpClientFactory federationHttpClientFactory(int connectionPoolSize) {
+  @Bean
+  private ApacheHttpClientFactory federationHttpClientFactory() {
     return new DefaultApacheHttpClientFactory(HttpClientBuilder.create()
         .setMaxConnPerRoute(connectionPoolSize)
-        .setMaxConnTotal(connectionPoolSize)
-        .setSSLHostnameVerifier(hostnameVerifierProvider.createHostnameVerifier()));
+        .setMaxConnTotal(connectionPoolSize));
   }
 
   /**
