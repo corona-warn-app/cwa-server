@@ -14,6 +14,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import static app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient.*;
+
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {DistributionServiceConfig.class, TestDigitalCovidCertificateClient.class},
@@ -34,7 +36,7 @@ class DigitalCovidCertificateClientTest {
 
   @Test
   public void testValueSet() {
-    System.out.println(digitalCovidCertificateClient.getValueSet("test"));
+    System.out.println(digitalCovidCertificateClient.getValueSet(TEST_TYPE_HASH));
   }
 
   @Test

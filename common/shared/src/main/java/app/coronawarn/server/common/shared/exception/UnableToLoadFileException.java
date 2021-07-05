@@ -7,8 +7,8 @@ package app.coronawarn.server.common.shared.exception;
  */
 public class UnableToLoadFileException extends Exception {
 
-  public UnableToLoadFileException(String message) {
-    super(message);
+  public UnableToLoadFileException(String path) {
+    super("Unable to load file from path " + path);
   }
 
   public UnableToLoadFileException(String message, Throwable cause) {
