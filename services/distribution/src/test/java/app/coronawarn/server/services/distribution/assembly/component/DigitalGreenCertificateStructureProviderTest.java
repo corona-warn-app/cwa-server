@@ -40,8 +40,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(
     classes = {DigitalGreenCertificateToProtobufMapping.class, DigitalGreenCertificateToCborMapping.class,
-        CryptoProvider.class,
-        DistributionServiceConfig.class, TestDigitalCovidCertificateClient.class},
+        CryptoProvider.class, DistributionServiceConfig.class, TestDigitalCovidCertificateClient.class},
     initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles("fake-dcc-client")
 class DigitalGreenCertificateStructureProviderTest {

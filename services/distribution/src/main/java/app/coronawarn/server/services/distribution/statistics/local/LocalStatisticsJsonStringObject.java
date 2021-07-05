@@ -42,15 +42,11 @@ public class LocalStatisticsJsonStringObject extends StatisticsTimeJsonObject {
   }
 
   public Double getSevenDayIncidence1stReportedDaily() {
-    return sevenDayIncidence1stReportedDaily;
+    return sevenDayIncidence1stReportedDaily == null ? Double.valueOf(0.0) : sevenDayIncidence1stReportedDaily;
   }
 
   public void setSevenDayIncidence1stReportedDaily(Double sevenDayIncidence1stReportedDaily) {
     this.sevenDayIncidence1stReportedDaily = sevenDayIncidence1stReportedDaily;
-  }
-
-  public Double getSevenDayIncidence1stReportedGrowthrate() {
-    return sevenDayIncidence1stReportedGrowthrate;
   }
 
   public void setSevenDayIncidence1stReportedGrowthrate(Double sevenDayIncidence1stReportedGrowthrate) {
@@ -58,10 +54,21 @@ public class LocalStatisticsJsonStringObject extends StatisticsTimeJsonObject {
   }
 
   public Integer getSevenDayIncidence1stReportedTrend1Percent() {
-    return sevenDayIncidence1stReportedTrend1Percent;
+    return sevenDayIncidence1stReportedTrend1Percent == null ? Integer.valueOf(0)
+        : sevenDayIncidence1stReportedTrend1Percent;
   }
 
   public void setSevenDayIncidence1stReportedTrend1Percent(Integer sevenDayIncidence1stReportedTrend1Percent) {
     this.sevenDayIncidence1stReportedTrend1Percent = sevenDayIncidence1stReportedTrend1Percent;
+  }
+
+  /**
+   * Check if this object is valid and complete.
+   * 
+   * @return <code>true</code> if and only it {@link #sevenDayIncidence1stReportedDaily} is NOT null and
+   *         {@link #sevenDayIncidence1stReportedTrend1Percent} is NOT null.
+   */
+  public boolean isComplete() {
+    return sevenDayIncidence1stReportedDaily != null && sevenDayIncidence1stReportedTrend1Percent != null;
   }
 }
