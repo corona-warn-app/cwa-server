@@ -30,7 +30,7 @@ public class DigitalGreenCertificateToCborMapping {
 
   /**
    * Construct country rules retrieved from DCC client for CBOR encoding.
-   *git s
+   *
    * @throws DigitalCovidCertificateException - exception thrown if anything happens while executing the logic. Example:
    *                                          countries could not be fetched from client. This exception will propagate
    *                                          and will stop any archive to be published down in the execution.
