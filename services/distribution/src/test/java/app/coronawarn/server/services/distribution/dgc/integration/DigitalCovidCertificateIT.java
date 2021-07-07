@@ -37,7 +37,7 @@ public class DigitalCovidCertificateIT {
   private DigitalCovidCertificateClient digitalCovidCertificateClient;
 
   @Test
-  public void shouldFetchAllRulesItemsAndEachRuleAfter() throws DigitalCovidCertificateException {
+  public void shouldFetchAllRulesItemsAndEachRuleAfter() {
     List<BusinessRuleItem> rules = digitalCovidCertificateClient.getRules();
     assertThat(rules).isNotEmpty();
 
@@ -52,13 +52,13 @@ public class DigitalCovidCertificateIT {
   }
 
   @Test
-  public void shouldFetchCountryList() throws DigitalCovidCertificateException {
+  public void shouldFetchCountryList() {
     List<String> countries = digitalCovidCertificateClient.getCountryList();
     assertThat(countries).isNotEmpty();
   }
 
   @Test
-  public void shouldFetchAllValuesetsMetadataAndEachValuesetAfter() throws DigitalCovidCertificateException {
+  public void shouldFetchAllValuesetsMetadataAndEachValuesetAfter() {
     List<ValueSetMetadata> valuesets = digitalCovidCertificateClient.getValueSets();
     assertThat(valuesets).isNotEmpty();
 

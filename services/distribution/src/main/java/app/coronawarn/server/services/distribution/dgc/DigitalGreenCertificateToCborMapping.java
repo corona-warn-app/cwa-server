@@ -30,12 +30,8 @@ public class DigitalGreenCertificateToCborMapping {
 
   /**
    * Construct country rules retrieved from DCC client for CBOR encoding.
-   *
-   * @throws DigitalCovidCertificateException - exception thrown if anything happens while executing the logic. Example:
-   *                                          countries could not be fetched from client. This exception will propagate
-   *                                          and will stop any archive to be published down in the execution.
    */
-  public List<String> constructCountryList() throws DigitalCovidCertificateException {
+  public List<String> constructCountryList() {
     return digitalCovidCertificateClient.getCountryList();
   }
 
@@ -82,6 +78,10 @@ public class DigitalGreenCertificateToCborMapping {
             + businessRuleItem.getCountry() + "' having hash '" + businessRuleItem.getHash()
             + "' could not be retrieved");
       }
+    }
+
+    if (businessRules.isEmpty()) {
+      throw new DigitalCovidCertificateException("No business rule present after processing");
     }
 
     return businessRules;

@@ -49,7 +49,7 @@ class DigitalCovidCertificateClientSpringTest {
   private DigitalCovidCertificateClient digitalCovidCertificateClient;
 
   @Test
-  public void testCountryList() throws DigitalCovidCertificateException {
+  public void testCountryList() {
     List<String> countries = digitalCovidCertificateClient.getCountryList();
 
     assertThat(countries).isNotEmpty();
@@ -61,7 +61,7 @@ class DigitalCovidCertificateClientSpringTest {
   }
 
   @Test
-  public void shouldReturnCorrectValueSetsByHash() throws DigitalCovidCertificateException {
+  public void shouldReturnCorrectValueSetsByHash() {
     Optional<ValueSet> valueSet1 = digitalCovidCertificateClient.getValueSet(VACCINE_MAH_HASH);
 
     assertThat(valueSet1).isPresent();
@@ -77,18 +77,16 @@ class DigitalCovidCertificateClientSpringTest {
 
   @Test
   public void shouldThrowDccExceptionWhenTryingToRetrieveValuesetWithNonexistingHash() {
-    assertThatExceptionOfType(DigitalCovidCertificateException.class).isThrownBy(
-        () -> digitalCovidCertificateClient.getValueSet(RULE_3_HASH));
+    assertThat(digitalCovidCertificateClient.getValueSet(RULE_3_HASH)).isEmpty();
   }
 
   @Test
   public void shouldThrowDccExceptionWhenTryingToRetrieveRuleWithNonexistingHash() {
-    assertThatExceptionOfType(DigitalCovidCertificateException.class).isThrownBy(
-        () -> digitalCovidCertificateClient.getCountryRuleByHash(DE, NL));
+    assertThat(digitalCovidCertificateClient.getCountryRuleByHash(DE, NL)).isEmpty();
   }
 
   @Test
-  public void shouldReturnCorrectValueSets() throws DigitalCovidCertificateException {
+  public void shouldReturnCorrectValueSets() {
     List<ValueSetMetadata> valueSets = digitalCovidCertificateClient.getValueSets();
 
     assertThat(valueSets).isNotEmpty();
@@ -98,7 +96,7 @@ class DigitalCovidCertificateClientSpringTest {
   }
 
   @Test
-  public void shouldReturnCorrectCountryRulesByHash() throws DigitalCovidCertificateException {
+  public void shouldReturnCorrectCountryRulesByHash() {
     assertThat(digitalCovidCertificateClient.getCountryRuleByHash(DE, DE_HASH)).isPresent();
     assertThat(digitalCovidCertificateClient.getCountryRuleByHash(NL, NL_HASH)).isPresent();
     assertThat(digitalCovidCertificateClient.getCountryRuleByHash(CZ, CZ_HASH)).isPresent();

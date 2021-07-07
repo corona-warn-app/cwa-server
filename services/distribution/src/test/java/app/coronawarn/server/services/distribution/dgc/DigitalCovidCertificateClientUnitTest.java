@@ -47,16 +47,12 @@ class DigitalCovidCertificateClientUnitTest {
   void shouldThrowDccExceptionWhenJsonNotFound() {
     try (MockedStatic<SerializationUtils> utilities = Mockito.mockStatic(SerializationUtils.class)) {
       utilities.when(() -> SerializationUtils.readConfiguredJsonOrDefault(any(),any(),any(),any()))
-          .thenThrow(UnableToLoadFileException.class);
+          .thenReturn(Optional.empty());
 
-      assertThatExceptionOfType(DigitalCovidCertificateException.class).isThrownBy(
-          () -> testDigitalCovidCertificateClient.getCountryList());
-      assertThatExceptionOfType(DigitalCovidCertificateException.class).isThrownBy(
-          () -> testDigitalCovidCertificateClient.getRules());
-      assertThatExceptionOfType(DigitalCovidCertificateException.class).isThrownBy(
-          () -> testDigitalCovidCertificateClient.getCountryRuleByHash(DE, RULE_1_HASH));
-      assertThatExceptionOfType(DigitalCovidCertificateException.class).isThrownBy(
-          () -> testDigitalCovidCertificateClient.getValueSet(DISEASE_AGENT_TARGETED_HASH));
+      assertThat(testDigitalCovidCertificateClient.getCountryList()).isEmpty();
+      assertThat(testDigitalCovidCertificateClient.getRules()).isEmpty();
+      assertThat(testDigitalCovidCertificateClient.getCountryRuleByHash(DE, RULE_1_HASH)).isEmpty();
+      assertThat(testDigitalCovidCertificateClient.getValueSet(DISEASE_AGENT_TARGETED_HASH)).isEmpty();
     }
   }
 

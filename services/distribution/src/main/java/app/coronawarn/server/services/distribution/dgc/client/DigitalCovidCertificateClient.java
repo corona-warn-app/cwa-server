@@ -17,13 +17,13 @@ import java.util.Optional;
  */
 public interface DigitalCovidCertificateClient {
 
-  List<String> getCountryList() throws DigitalCovidCertificateException;
+  List<String> getCountryList();
 
-  List<ValueSetMetadata> getValueSets() throws DigitalCovidCertificateException;
+  List<ValueSetMetadata> getValueSets();
 
-  Optional<ValueSet> getValueSet(String hash) throws DigitalCovidCertificateException;
+  Optional<ValueSet> getValueSet(String hash);
 
-  List<BusinessRuleItem> getRules() throws DigitalCovidCertificateException;
+  List<BusinessRuleItem> getRules();
 
-  Optional<BusinessRule> getCountryRuleByHash(String country, String hash) throws DigitalCovidCertificateException;
+  Optional<BusinessRule> getCountryRuleByHash(String country, String hash);
 }

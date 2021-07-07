@@ -174,15 +174,12 @@ public class DigitalGreenCertificateToProtobufMapping {
    */
   private ValueSet read(String valueSetId, ConfigValueProvider configGetter, String valueSetDefaultPath)
       throws UnableToLoadFileException {
-    Optional<ValueSet> result = getValueSet(valueSetId);
-
-    if (result.isEmpty()) {
+    Optional<ValueSet> result = getValueSet(valueSetId).or(() -> {
       String path = configGetter.getPath(distributionServiceConfig.getDigitalGreenCertificate());
       return readConfiguredJsonOrDefault(resourceLoader, path, valueSetDefaultPath,
           ValueSet.class);
-    }
-
-    return result.get();
+    });
+    return result.orElseThrow(() -> new UnableToLoadFileException(valueSetDefaultPath));
   }
 
   /**
