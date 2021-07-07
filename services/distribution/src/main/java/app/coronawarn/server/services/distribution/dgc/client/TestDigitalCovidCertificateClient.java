@@ -10,18 +10,24 @@ import static app.coronawarn.server.services.distribution.dgc.DigitalGreenCertif
 import static app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping.VACCINE_MEDICINAL_PRODUCT_DEFAULT_PATH;
 import static app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping.VACCINE_PROPHYLAXIS_DEFAULT_PATH;
 
+import app.coronawarn.server.common.shared.exception.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.dgc.BusinessRule;
 import app.coronawarn.server.services.distribution.dgc.BusinessRuleItem;
 import app.coronawarn.server.services.distribution.dgc.ValueSet;
 import app.coronawarn.server.services.distribution.dgc.ValueSetMetadata;
-import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
+
+/**
+ * This is an implementation with test data for interface retrieving Digital Covid Certificate data. Used to retrieve
+ * mock sample data from classpath.
+ */
 @Component
 @Profile("fake-dcc-client")
 public class TestDigitalCovidCertificateClient implements DigitalCovidCertificateClient {
@@ -40,8 +46,9 @@ public class TestDigitalCovidCertificateClient implements DigitalCovidCertificat
   public static final String RULE_1_HASH = "7221d518570fe9f4417c482ff0d2582a7b6440f243a9034f812e0d71611b611f";
   public static final String RULE_2_HASH = "6821d518570fe9f4417c482ff0d2582a7b6440f243a9034f812e0d71611b611f";
   public static final String RULE_3_HASH = "7021d518570fe9f4417c482ff0d2582a7b6440f243a9034f812e0d71611b611f";
+  public static final String DGC_FILE_DOES_NOT_EXIST_JSON = "dgc/file-does-not-exist.json";
 
-  ResourceLoader resourceLoader;
+  private final ResourceLoader resourceLoader;
 
   public TestDigitalCovidCertificateClient(ResourceLoader resourceLoader) {
     this.resourceLoader = resourceLoader;
@@ -49,51 +56,69 @@ public class TestDigitalCovidCertificateClient implements DigitalCovidCertificat
 
   @Override
   public List<String> getCountryList() {
-    return Arrays.asList(readConfiguredJsonOrDefault(resourceLoader, null,
-        "dgc/country-list.json", String[].class).get());
+    Optional<String[]> countries = readConfiguredJsonOrDefault(resourceLoader, null,
+        "dgc/country-list.json", String[].class);
+
+    if (countries.isEmpty()) {
+      return Collections.emptyList();
+    }
+    return Arrays.asList(countries.get());
   }
 
   @Override
   public List<ValueSetMetadata> getValueSets() {
-    return Arrays.asList(readConfiguredJsonOrDefault(resourceLoader, null,
-        "dgc/valuesets.json", ValueSetMetadata[].class).get());
+    Optional<ValueSetMetadata[]> valuesets = readConfiguredJsonOrDefault(resourceLoader, null,
+        "dgc/valuesets.json", ValueSetMetadata[].class);
+
+    if (valuesets.isEmpty()) {
+      return Collections.emptyList();
+    }
+    return Arrays.asList(valuesets.get());
   }
 
   @Override
   public Optional<ValueSet> getValueSet(String hash) {
-    switch (hash) {
-      case DISEASE_AGENT_TARGETED_HASH:
-        return readDefault(DISEASE_AGENT_TARGETED_DEFAULT_PATH);
-      case VACCINE_MAH_HASH:
-        return readDefault(VACCINE_MAH_DEFAULT_PATH);
-      case VACCINE_MEDICINAL_PRODUCT_HASH:
-        return readDefault(VACCINE_MEDICINAL_PRODUCT_DEFAULT_PATH);
-      case VACCINE_PROPHYLAXIS_HASH:
-        return readDefault(VACCINE_PROPHYLAXIS_DEFAULT_PATH);
-      case TEST_MANF_HASH:
-        return readDefault(TEST_MANF_DEFAULT_PATH);
-      case TEST_RESULT_HASH:
-        return readDefault(TEST_RESULT_DEFAULT_PATH);
-      case TEST_TYPE_HASH:
-        return readDefault(TEST_TYPE_DEFAULT_PATH);
-      default:
-        throw new RuntimeException("Not implemented for hash " + hash);
+    try {
+      switch (hash) {
+        case DISEASE_AGENT_TARGETED_HASH:
+          return readDefault(DISEASE_AGENT_TARGETED_DEFAULT_PATH);
+        case VACCINE_MAH_HASH:
+          return readDefault(VACCINE_MAH_DEFAULT_PATH);
+        case VACCINE_MEDICINAL_PRODUCT_HASH:
+          return readDefault(VACCINE_MEDICINAL_PRODUCT_DEFAULT_PATH);
+        case VACCINE_PROPHYLAXIS_HASH:
+          return readDefault(VACCINE_PROPHYLAXIS_DEFAULT_PATH);
+        case TEST_MANF_HASH:
+          return readDefault(TEST_MANF_DEFAULT_PATH);
+        case TEST_RESULT_HASH:
+          return readDefault(TEST_RESULT_DEFAULT_PATH);
+        case TEST_TYPE_HASH:
+          return readDefault(TEST_TYPE_DEFAULT_PATH);
+        default:
+          return readDefault(DGC_FILE_DOES_NOT_EXIST_JSON);
+      }
+    } catch (UnableToLoadFileException e) {
+      return Optional.empty();
     }
   }
 
-  private Optional<ValueSet> readDefault(String valueSetId) {
+  private Optional<ValueSet> readDefault(String valueSetId) throws UnableToLoadFileException {
     return readConfiguredJsonOrDefault(resourceLoader, null, valueSetId, ValueSet.class);
   }
 
   @Override
   public List<BusinessRuleItem> getRules() {
-    return Arrays.asList(readConfiguredJsonOrDefault(resourceLoader, null,
-        "dgc/rules.json", BusinessRuleItem[].class).get());
+    Optional<BusinessRuleItem[]> businessRuleItems = readConfiguredJsonOrDefault(resourceLoader, null,
+        "dgc/rules.json", BusinessRuleItem[].class);
+
+    if (businessRuleItems.isEmpty()) {
+      return Collections.emptyList();
+    }
+    return Arrays.asList(businessRuleItems.get());
   }
 
   @Override
-  public Optional<BusinessRule> getCountryRuleByHash(String country, String hash)
-      throws DigitalCovidCertificateException {
+  public Optional<BusinessRule> getCountryRuleByHash(String country, String hash) {
     switch (hash) {
       case RULE_1_HASH:
         return readConfiguredJsonOrDefault(resourceLoader, null,
@@ -105,13 +130,8 @@ public class TestDigitalCovidCertificateClient implements DigitalCovidCertificat
         return readConfiguredJsonOrDefault(resourceLoader, null,
             "dgc/rule_3.json", BusinessRule.class);
       default:
-        throw new DigitalCovidCertificateException("No rule found for country: " + country + " and hash: " + hash);
+        return Optional.empty();
     }
-  }
-
-  @Override
-  public List<BusinessRule> getCountryRules(String country) {
-    throw new UnsupportedOperationException("Not yet implemented");
   }
 
 }

@@ -4,7 +4,6 @@ import app.coronawarn.server.common.federation.client.hostname.HostnameVerifierP
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import feign.Client;
 import feign.httpclient.ApacheHttpClient;
-import java.io.File;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.cloud.commons.httpclient.ApacheHttpClientConnectionManagerFactory;
 import org.springframework.cloud.commons.httpclient.ApacheHttpClientFactory;
@@ -22,27 +21,14 @@ import org.springframework.stereotype.Component;
 public class CloudDccFeignHttpClientProvider implements DccFeignHttpClientProvider {
 
   private final Integer connectionPoolSize;
-  //  private final File keyStore;
-  //  private final String keyStorePassword;
-  //  private final File trustStore;
-  //  private final String trustStorePassword;
-
-  private final HostnameVerifierProvider hostnameVerifierProvider;
 
   /**
    * Construct Provider.
    *
-   * @param config .
+   * @param config - distribution configuration
    */
-  public CloudDccFeignHttpClientProvider(DistributionServiceConfig config,
-      HostnameVerifierProvider hostnameVerifierProvider) {
-    //    var ssl = config.getDigitalGreenCertificate().getClient().getSsl();
+  public CloudDccFeignHttpClientProvider(DistributionServiceConfig config) {
     this.connectionPoolSize = config.getConnectionPoolSize();
-    //    this.keyStore = ssl.getKeyStore();
-    //    this.keyStorePassword = ssl.getKeyStorePassword();
-    //    this.trustStore = ssl.getTrustStore();
-    //    this.trustStorePassword = ssl.getTrustStorePassword();
-    this.hostnameVerifierProvider = hostnameVerifierProvider;
   }
 
   /**
@@ -52,35 +38,17 @@ public class CloudDccFeignHttpClientProvider implements DccFeignHttpClientProvid
   @Bean
   public Client createFeignClient() {
     return new ApacheHttpClient(
-        federationHttpClientFactory(connectionPoolSize).createBuilder().build());
+        federationHttpClientFactory().createBuilder().build());
   }
 
   /**
-   * Creates an {@link ApacheHttpClientFactory} that validates SSL certificates but no host names.
+   * Creates an {@link ApacheHttpClientFactory} that with no SSL certificates and no host names.
    */
-  private ApacheHttpClientFactory federationHttpClientFactory(int connectionPoolSize) {
+  @Bean
+  private ApacheHttpClientFactory federationHttpClientFactory() {
     return new DefaultApacheHttpClientFactory(HttpClientBuilder.create()
         .setMaxConnPerRoute(connectionPoolSize)
-        .setMaxConnTotal(connectionPoolSize)
-        //        .setSSLContext(getSslContext(keyStorePath, keyStorePass))
-        .setSSLHostnameVerifier(hostnameVerifierProvider.createHostnameVerifier()));
-  }
-
-  //  private SSLContext getSslContext(File keyStorePath, String keyStorePass) {
-  //    try {
-  //      return SSLContextBuilder.create().loadKeyMaterial(keyStorePath,
-  //              emptyCharrArrayIfNull(keyStorePass),
-  //              emptyCharrArrayIfNull(keyStorePass))
-  //          .loadTrustMaterial(this.trustStore,
-  //              emptyCharrArrayIfNull(this.trustStorePassword))
-  //          .build();
-  //    } catch (Exception e) {
-  //      throw new RuntimeException(e);
-  //    }
-  //  }
-
-  private static char[] emptyCharrArrayIfNull(String input) {
-    return input != null ? input.toCharArray() : new char[] {};
+        .setMaxConnTotal(connectionPoolSize));
   }
 
   /**
