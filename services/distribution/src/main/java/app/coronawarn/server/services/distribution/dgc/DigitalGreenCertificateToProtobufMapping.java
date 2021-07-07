@@ -189,16 +189,10 @@ public class DigitalGreenCertificateToProtobufMapping {
    * @return The ValueSet or empty.
    */
   private Optional<ValueSet> getValueSet(String valueSetId) {
-    Optional<String> hash;
-    try {
-      hash = getValueSetHash(valueSetId);
-      if (hash.isPresent()) {
-        return dccClient.getValueSet(hash.get());
-      }
-    } catch (DigitalCovidCertificateException e) {
-      return Optional.empty();
+    Optional<String> hash = getValueSetHash(valueSetId);
+    if (hash.isPresent()) {
+      return dccClient.getValueSet(hash.get());
     }
-
     return Optional.empty();
   }
 
@@ -207,7 +201,7 @@ public class DigitalGreenCertificateToProtobufMapping {
    * @param valueSetId The valueSetId to get the hash for.
    * @return The hash as contained in the metadata or empty.
    */
-  private Optional<String> getValueSetHash(String valueSetId) throws DigitalCovidCertificateException {
+  private Optional<String> getValueSetHash(String valueSetId) {
     if (metadata == null) {
       metadata = dccClient.getValueSets();
       if (metadata == null) {
