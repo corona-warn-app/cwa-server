@@ -13,6 +13,7 @@ import app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleType;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToCborMapping;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -78,9 +79,9 @@ public class DigitalGreenCertificateStructureProvider {
           archiveToPublish.getName());
     }
 
-    dgcDirectory.addWritable(getOnboardedCountriesArchive());
-    dgcDirectory.addWritable(getRulesArchive(RuleType.Acceptance, ACCEPTANCE_RULES));
-    dgcDirectory.addWritable(getRulesArchive(RuleType.Invalidation, INVALIDATION_RULES));
+    getOnboardedCountriesArchive().ifPresent(dgcDirectory::addWritable);
+    getRulesArchive(RuleType.Acceptance, ACCEPTANCE_RULES).ifPresent(dgcDirectory::addWritable);
+    getRulesArchive(RuleType.Invalidation, INVALIDATION_RULES).ifPresent(dgcDirectory::addWritable);
 
     return dgcDirectory;
   }
@@ -90,7 +91,7 @@ public class DigitalGreenCertificateStructureProvider {
    * an empty Archive will be published in order to not override any previous archive on CDN with broken data.
    * @return - Onboarded countries archive
    */
-  private Writable<WritableOnDisk> getOnboardedCountriesArchive() {
+  private Optional<Writable<WritableOnDisk>> getOnboardedCountriesArchive() {
     ArchiveOnDisk onboardedCountries = new ArchiveOnDisk(ONBOARDED_COUNTRIES);
     try {
       onboardedCountries
@@ -98,11 +99,11 @@ public class DigitalGreenCertificateStructureProvider {
       logger.info("Onboarded countries archive has been added to the DGC distribution folder");
     } catch (DigitalCovidCertificateException e) {
       logger.error("Onboarded countries archive was not overwritten because of:", e);
-      return new ArchiveOnDisk(EMPTY_STRING);
+      return Optional.empty();
     }
 
-    return new DistributionArchiveSigningDecorator(onboardedCountries, cryptoProvider,
-        distributionServiceConfig);
+    return Optional.of(new DistributionArchiveSigningDecorator(onboardedCountries, cryptoProvider,
+        distributionServiceConfig));
   }
 
   /**
@@ -113,7 +114,7 @@ public class DigitalGreenCertificateStructureProvider {
    * @param archiveName - archive name for packaging rules
    * @return - business rules archive
    */
-  private Writable<WritableOnDisk> getRulesArchive(RuleType ruleType, String archiveName) {
+  private Optional<Writable<WritableOnDisk>> getRulesArchive(RuleType ruleType, String archiveName) {
     ArchiveOnDisk rulesArchive = new ArchiveOnDisk(archiveName);
 
     try {
@@ -122,10 +123,10 @@ public class DigitalGreenCertificateStructureProvider {
       logger.info(archiveName + " archive has been added to the DGC distribution folder");
     } catch (DigitalCovidCertificateException e) {
       logger.error(archiveName + " archive was not overwritten because of:", e);
-      return new ArchiveOnDisk(EMPTY_STRING);
+      return Optional.empty();
     }
 
-    return new DistributionArchiveSigningDecorator(rulesArchive, cryptoProvider,
-        distributionServiceConfig);
+    return Optional.of(new DistributionArchiveSigningDecorator(rulesArchive, cryptoProvider,
+        distributionServiceConfig));
   }
 }
