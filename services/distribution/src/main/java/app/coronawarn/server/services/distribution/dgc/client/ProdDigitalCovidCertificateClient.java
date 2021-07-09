@@ -12,6 +12,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+/**
+ * This is an implementation with test data for interface retrieving Digital Covid Certificate data. Used to make HTTP
+ * request to Digital Covid Certificate server.
+ */
 @Component
 @Profile("!fake-dcc-client")
 public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificateClient {
@@ -26,33 +30,32 @@ public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificat
 
   @Override
   public List<String> getCountryList() {
-    logger.info("Get country list");
+    logger.debug("Get country list from DCC");
     return digitalCovidCertificateClient.getCountryList().getBody();
   }
 
   @Override
   public List<ValueSetMetadata> getValueSets() {
+    logger.debug("Get valuesets from DCC");
     return digitalCovidCertificateClient.getValueSets().getBody();
   }
 
   @Override
   public Optional<ValueSet> getValueSet(String hash) {
+    logger.debug("Get valuesets having hash: " + hash + " from DCC");
     return Optional.ofNullable(digitalCovidCertificateClient.getValueSet(hash).getBody());
   }
 
   @Override
   public List<BusinessRuleItem> getRules() {
+    logger.debug("Get rules from DCC");
     return digitalCovidCertificateClient.getRules().getBody();
   }
 
   @Override
   public Optional<BusinessRule> getCountryRuleByHash(String country, String hash) {
+    logger.debug("Get business rule having country:" + country + " and hash: " + hash + "from DCC");
     return Optional.ofNullable(digitalCovidCertificateClient.getCountryRule(country, hash).getBody());
-  }
-
-  @Override
-  public List<BusinessRule> getCountryRules(String country) {
-    throw new UnsupportedOperationException("Not yet implemented");
   }
 
 }

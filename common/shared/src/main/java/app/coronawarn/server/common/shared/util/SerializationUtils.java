@@ -8,10 +8,16 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 import java.util.function.Function;
+import org.everit.json.schema.Schema;
+import org.everit.json.schema.ValidationException;
+import org.everit.json.schema.loader.SchemaLoader;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ResourceLoader;
@@ -81,14 +87,15 @@ public final class SerializationUtils {
   }
 
   /**
-   * TODO: write this.
-   * @param resourceLoader test
-   * @param path test
-   * @param defaultPath test
-   * @param rawType test
-   * @param <T> test
-   * @return test
-   * @throws UnableToLoadFileException test
+   * Reads and convers a JSON object from a classpath file or if it does not find it
+   * returns a default.
+   * @param resourceLoader - resource loader.
+   * @param path - JSON path.
+   * @param defaultPath - default JSON path.
+   * @param rawType - type to convert to.
+   * @param <T> - type of the method.
+   * @return - converted JSON to raw type instance.
+   * @throws UnableToLoadFileException - if default JSON is not found.
    */
   public static <T> Optional<T> readConfiguredJsonOrDefault(ResourceLoader resourceLoader,
       String path,
@@ -110,6 +117,35 @@ public final class SerializationUtils {
       logger.error("We could not load the default {}. This shouldn't happen!", defaultPath, e);
       return Optional.empty();
     }
+  }
+
+  /**
+   * Encodes an object to CBOR.
+   * @param object - object to be encoded
+   * @return - CBOR encoded byte array
+   * @throws JsonProcessingException - if JSON processing of the object fails.
+   */
+  public static byte[] cborEncode(Object object) throws JsonProcessingException {
+    ObjectMapper cborMapper = new CBORMapper();
+    return cborMapper.writeValueAsBytes(object);
+  }
+
+  /**
+   * Validates an object (JSON) based on a provided schema containing validation rules.
+   * @param validateObject - object to be validated
+   * @param schemaValidationJson - validation schema
+   * @throws JsonProcessingException - if object to be validated fails on JSON processing
+   * @throws ValidationException - if the validation of the object based on validation schema fails.
+   */
+  public static void validateJsonSchema(Object validateObject, InputStream schemaValidationJson)
+      throws JsonProcessingException, ValidationException {
+    ObjectMapper objectMapper = new ObjectMapper();
+    JSONObject jsonSchema = new JSONObject(new JSONTokener(schemaValidationJson));
+    String businessRuleJson = objectMapper.writeValueAsString(validateObject);
+
+    JSONObject jsonSubject = new JSONObject(businessRuleJson);
+    Schema schema = SchemaLoader.load(jsonSchema);
+    schema.validate(jsonSubject);
   }
 
   private SerializationUtils() {
