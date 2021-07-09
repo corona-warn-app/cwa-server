@@ -1,0 +1,82 @@
+{
+  "Identifier": "TR-DE-0003",
+  "Type": "Acceptance",
+  "Country": "DE",
+  "Version": "1.0.0",
+  "SchemaVersion": "1.0.0",
+  "Engine": "CERTLOGIC",
+  "EngineVersion": "0.7.5",
+  "CertificateType": "Test",
+  "Description": [
+    {
+      "lang": "en",
+      "desc": "The sample for an NAA test (e.g., PCR) must have been taken no longer than 72 hours ago."
+    },
+    {
+      "lang": "de",
+      "desc": "Die Probenahme für einen NAA-Test (z.B. PCR) darf maximal 72 Stunden zurückliegen."
+    },
+    {
+      "lang": "fr",
+      "desc": "Le prélèvement pour un test TAN (p. ex. PCR) ne doit pas dater de plus de 72 heures."
+    },
+    {
+      "lang": "es",
+      "desc": "Deben haber transcurrido 72 horas como máximo desde la extracción para una prueba de amplificación de ácidos nucleicos (por ejemplo, una PCR)."
+    },
+    {
+      "lang": "it",
+      "desc": "Il campione per il NAAT (test PRC) deve essere stato rilevato nelle ultime 72 ore."
+    }
+  ],
+  "ValidFrom": "2021-07-01T00:00:00Z",
+  "ValidTo": "2030-06-01T00:00:00Z",
+  "AffectedFields": [
+    "t.0",
+    "t.0.sc",
+    "t.0.tt"
+  ],
+  "Logic": {
+    "if": [
+      {
+        "var": "payload.t.0"
+      },
+      {
+        "if": [
+          {
+            "===": [
+              {
+                "var": "payload.t.0.tt"
+              },
+              "LP6464-4"
+            ]
+          },
+          {
+            "not-after": [
+              {
+                "plusTime": [
+                  {
+                    "var": "external.validationClock"
+                  },
+                  0,
+                  "day"
+                ]
+              },
+              {
+                "plusTime": [
+                  {
+                    "var": "payload.t.0.sc"
+                  },
+                  72,
+                  "hour"
+                ]
+              }
+            ]
+          },
+          true
+        ]
+      },
+      true
+    ]
+  }
+}

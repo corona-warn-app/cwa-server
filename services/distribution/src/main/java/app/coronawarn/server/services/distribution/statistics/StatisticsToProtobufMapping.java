@@ -1,15 +1,14 @@
 package app.coronawarn.server.services.distribution.statistics;
 
-
-import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.EMPTY_CARD;
-import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.FIRST_VACCINATION_CARD;
-import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.FULLY_VACCINATED_CARD;
-import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.INCIDENCE_CARD_ID;
-import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.INFECTIONS_CARD_ID;
-import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.KEY_SUBMISSION_CARD_ID;
-import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.REPRODUCTION_NUMBER_CARD;
-import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.VACCINATION_DOSES_CARD;
-import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.toCardName;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.EMPTY_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.FIRST_VACCINATION_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.FULLY_VACCINATED_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.INCIDENCE_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.INFECTIONS_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.KEY_SUBMISSION_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.REPRODUCTION_NUMBER_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.VACCINATION_DOSES_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.getNameFor;
 
 import app.coronawarn.server.common.persistence.service.StatisticsDownloadService;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
@@ -21,7 +20,6 @@ import app.coronawarn.server.services.distribution.statistics.exceptions.BucketN
 import app.coronawarn.server.services.distribution.statistics.exceptions.ConnectionException;
 import app.coronawarn.server.services.distribution.statistics.exceptions.FilePathNotFoundException;
 import app.coronawarn.server.services.distribution.statistics.file.JsonFile;
-import app.coronawarn.server.services.distribution.statistics.file.JsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.file.StatisticJsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.MissingPropertyException;
@@ -134,17 +132,16 @@ public class StatisticsToProtobufMapping {
     return LocalDate.parse(effectiveDate, formatter);
   }
 
-  @SuppressWarnings("checkstyle:Indentation")
   private List<KeyFigureCard> buildAllKeyFigureCards(List<StatisticsJsonStringObject> jsonStringObjects) {
     Map<Integer, Optional<KeyFigureCard>> figureCardMap = new HashMap<>();
 
-    figureCardMap.put(INFECTIONS_CARD_ID, Optional.empty());
-    figureCardMap.put(INCIDENCE_CARD_ID, Optional.empty());
-    figureCardMap.put(KEY_SUBMISSION_CARD_ID, Optional.empty());
-    figureCardMap.put(REPRODUCTION_NUMBER_CARD, Optional.empty());
-    figureCardMap.put(FIRST_VACCINATION_CARD, Optional.empty());
-    figureCardMap.put(FULLY_VACCINATED_CARD, Optional.empty());
-    figureCardMap.put(VACCINATION_DOSES_CARD, Optional.empty());
+    figureCardMap.put(INFECTIONS_CARD.ordinal(), Optional.empty());
+    figureCardMap.put(INCIDENCE_CARD.ordinal(), Optional.empty());
+    figureCardMap.put(KEY_SUBMISSION_CARD.ordinal(), Optional.empty());
+    figureCardMap.put(REPRODUCTION_NUMBER_CARD.ordinal(), Optional.empty());
+    figureCardMap.put(FIRST_VACCINATION_CARD.ordinal(), Optional.empty());
+    figureCardMap.put(FULLY_VACCINATED_CARD.ordinal(), Optional.empty());
+    figureCardMap.put(VACCINATION_DOSES_CARD.ordinal(), Optional.empty());
 
     List<StatisticsJsonStringObject> orderedList = jsonStringObjects.stream()
         .sorted(Comparator.comparing(a -> effectiveDateStringToLocalDate(a.getEffectiveDate())))
@@ -160,7 +157,7 @@ public class StatisticsToProtobufMapping {
           KeyFigureCard card;
           try {
             card = keyFigureCardFactory.createKeyFigureCard(stat, id);
-            logger.info("[{}] {} successfully created", stat.getEffectiveDate(), toCardName(id));
+            logger.info("[{}] {} successfully created", stat.getEffectiveDate(), getNameFor(id));
             figureCardMap.put(id, Optional.of(card));
           } catch (MissingPropertyException ex) {
             logger.warn("[{}] {}", stat.getEffectiveDate(), ex.getMessage());
@@ -181,15 +178,15 @@ public class StatisticsToProtobufMapping {
       }
     }
 
-    var emptyCard = keyFigureCardFactory.createKeyFigureCard(jsonStringObjects.get(0), EMPTY_CARD);
+    var emptyCard = keyFigureCardFactory.createKeyFigureCard(jsonStringObjects.get(0), EMPTY_CARD.ordinal());
     return List.of(
-        figureCardMap.get(INFECTIONS_CARD_ID).orElse(emptyCard),
-        figureCardMap.get(INCIDENCE_CARD_ID).orElse(emptyCard),
-        figureCardMap.get(KEY_SUBMISSION_CARD_ID).orElse(emptyCard),
-        figureCardMap.get(REPRODUCTION_NUMBER_CARD).orElse(emptyCard),
-        figureCardMap.get(FIRST_VACCINATION_CARD).orElse(emptyCard),
-        figureCardMap.get(FULLY_VACCINATED_CARD).orElse(emptyCard),
-        figureCardMap.get(VACCINATION_DOSES_CARD).orElse(emptyCard)
+        figureCardMap.get(INFECTIONS_CARD.ordinal()).orElse(emptyCard),
+        figureCardMap.get(INCIDENCE_CARD.ordinal()).orElse(emptyCard),
+        figureCardMap.get(KEY_SUBMISSION_CARD.ordinal()).orElse(emptyCard),
+        figureCardMap.get(REPRODUCTION_NUMBER_CARD.ordinal()).orElse(emptyCard),
+        figureCardMap.get(FIRST_VACCINATION_CARD.ordinal()).orElse(emptyCard),
+        figureCardMap.get(FULLY_VACCINATED_CARD.ordinal()).orElse(emptyCard),
+        figureCardMap.get(VACCINATION_DOSES_CARD.ordinal()).orElse(emptyCard)
     );
   }
 }

@@ -18,6 +18,10 @@
     </dependency>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
+      <artifactId>jupiterHelpers</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>${project.parent.groupId}</groupId>
       <artifactId>shared</artifactId>
     </dependency>
     <dependency>
