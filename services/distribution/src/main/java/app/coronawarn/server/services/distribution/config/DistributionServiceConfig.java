@@ -1012,6 +1012,12 @@ public class DistributionServiceConfig {
 
     private Ssl ssl;
 
+    private int retryPeriod;
+
+    private int maxRetryPeriod;
+
+    private int maxRetryAttempts;
+
     public Ssl getSsl() {
       return ssl;
     }
@@ -1034,6 +1040,30 @@ public class DistributionServiceConfig {
 
     public void setCountryListPath(String countryListPath) {
       this.countryListPath = countryListPath;
+    }
+
+    public int getRetryPeriod() {
+      return retryPeriod;
+    }
+
+    public void setRetryPeriod(int retryPeriod) {
+      this.retryPeriod = retryPeriod;
+    }
+
+    public int getMaxRetryPeriod() {
+      return maxRetryPeriod;
+    }
+
+    public void setMaxRetryPeriod(int maxRetryPeriod) {
+      this.maxRetryPeriod = maxRetryPeriod;
+    }
+
+    public int getMaxRetryAttempts() {
+      return maxRetryAttempts;
+    }
+
+    public void setMaxRetryAttempts(int maxRetryAttempts) {
+      this.maxRetryAttempts = maxRetryAttempts;
     }
 
     public static class Ssl {
