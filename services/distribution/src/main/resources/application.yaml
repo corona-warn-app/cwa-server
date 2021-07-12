@@ -226,7 +226,10 @@ services:
       valuesets-file-name: ${DIGITAL_GREEN_CERTIFICATE_VALUESETS_FILE_NAME:value-sets}
       supported-languages: ${DIGITAL_GREEN_CERTIFICATE_SUPPORTED_LANGUAGES:DE, EN, BG, PL, RO, TR}
       client:
-        base-url: ${BUSSINESS_RULES_BASE_PATH:https://dgca-businessrule-service.cfapps.eu10.hana.ondemand.com}
+        retry-period: 5
+        max-retry-period: 30
+        max-retry-attempts: 5
+        base-url: ${BUSSINESS_RULES_BASE_PATH:https://distribution-6155b8d7d3c6.dcc-rules.de}
         country-list-path: ${BUSSINESS_RULES_COUNTRY_LIST_PATH:/countrylist}
         value-sets-path: ${BUSSINESS_RULES_VALUE_SETS_PATH:/valuesets}
         rules-path: ${BUSSINESS_RULES_RULES_PATH:/rules}
