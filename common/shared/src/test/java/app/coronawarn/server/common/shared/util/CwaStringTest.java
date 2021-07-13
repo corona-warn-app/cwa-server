@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.common.shared.util;
 
 import static app.coronawarn.server.common.shared.util.CwaStringUtils.emptyCharrArrayIfNull;
