@@ -64,9 +64,9 @@
     <dom4j.version>2.1.3</dom4j.version>
     <awssdk-s3.version>2.16.52</awssdk-s3.version>
     <guava.version>30.1.1-jre</guava.version>
-    <jackson.version>2.12.3</jackson.version>
+    <jackson.version>2.12.4</jackson.version>
     <test-containers.version>1.15.3</test-containers.version>
-    <postgresql.version>42.2.22</postgresql.version>
+    <postgresql.version>42.2.23</postgresql.version>
     <wiremock.version>2.29.0</wiremock.version>
     <httpclient.version>4.5.13</httpclient.version>
     <junit.version>4.13.2</junit.version>
