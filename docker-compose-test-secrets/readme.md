@@ -31,5 +31,6 @@ certificate. Afterwards, the following command exports the certificate in a trus
 The exported trustore should be referenced in application configuration and passed to SSLContext as trust store.
 
 DEV and INT trustores:
+
 - `dcc_truststore`: Trustore which keeps dcc-rules.de intermediate certificate.
 - `dcc_invalid_truststore`: Trustore which keeps facebook.com certificate to test invalid certificate.
