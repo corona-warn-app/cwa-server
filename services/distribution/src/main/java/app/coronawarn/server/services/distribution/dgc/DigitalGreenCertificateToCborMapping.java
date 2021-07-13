@@ -1,12 +1,14 @@
 package app.coronawarn.server.services.distribution.dgc;
 
-import static app.coronawarn.server.common.shared.util.SerializationUtils.*;
+import static app.coronawarn.server.common.shared.util.SerializationUtils.cborEncode;
+import static app.coronawarn.server.common.shared.util.SerializationUtils.validateJsonSchema;
 
 import app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleType;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -60,9 +62,8 @@ public class DigitalGreenCertificateToCborMapping {
         BusinessRule businessRule = businessRuleOptional.get();
 
         if (businessRule.getType().equalsIgnoreCase(ruleType.name())) {
-          try {
-            validateJsonSchema(businessRule,
-                resourceLoader.getResource(DCC_VALIDATION_RULE_JSON_CLASSPATH).getInputStream());
+          try (final InputStream in = resourceLoader.getResource(DCC_VALIDATION_RULE_JSON_CLASSPATH).getInputStream()) {
+            validateJsonSchema(businessRule, in);
             businessRules.add(businessRule);
           } catch (JsonProcessingException | ValidationException e) {
             throw new DigitalCovidCertificateException(
