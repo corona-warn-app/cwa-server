@@ -1,12 +1,13 @@
 package app.coronawarn.server.common.federation.client;
 
+import static app.coronawarn.server.common.shared.util.CwaStringUtils.emptyCharrArrayIfNull;
+
 import app.coronawarn.server.common.federation.client.config.FederationGatewayConfig;
 import app.coronawarn.server.common.federation.client.hostname.HostnameVerifierProvider;
 import feign.Client;
 import feign.httpclient.ApacheHttpClient;
 import java.io.File;
 import javax.net.ssl.SSLContext;
-import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.springframework.cloud.commons.httpclient.ApacheHttpClientConnectionManagerFactory;
@@ -15,8 +16,6 @@ import org.springframework.cloud.commons.httpclient.DefaultApacheHttpClientConne
 import org.springframework.cloud.commons.httpclient.DefaultApacheHttpClientFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-
-import static app.coronawarn.server.common.shared.util.CwaStringUtils.emptyCharrArrayIfNull;
 
 /**
  * Creates a dedicated http client used by Feign when performing http calls to the Federation Gateway Service.
