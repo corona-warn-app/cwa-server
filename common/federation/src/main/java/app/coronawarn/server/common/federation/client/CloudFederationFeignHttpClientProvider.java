@@ -16,6 +16,8 @@ import org.springframework.cloud.commons.httpclient.DefaultApacheHttpClientFacto
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
+import static app.coronawarn.server.common.shared.util.CwaStringUtils.emptyCharrArrayIfNull;
+
 /**
  * Creates a dedicated http client used by Feign when performing http calls to the Federation Gateway Service.
  */
@@ -79,10 +81,6 @@ public class CloudFederationFeignHttpClientProvider implements FederationFeignHt
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
-  }
-
-  private static char[] emptyCharrArrayIfNull(String input) {
-    return input != null ? input.toCharArray() : new char[] {};
   }
 
   /**

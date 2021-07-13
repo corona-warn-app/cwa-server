@@ -18,6 +18,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import static app.coronawarn.server.common.shared.util.CwaStringUtils.emptyCharrArrayIfNull;
+
 /**
  * Creates a dedicated http client used by Feign when performing http calls to the Federation Gateway Service.
  */
@@ -25,7 +27,7 @@ import org.springframework.stereotype.Component;
 @Profile("!fake-dcc-client")
 public class CloudDccFeignHttpClientProvider implements DccFeignHttpClientProvider {
 
-  private static final Logger logger = LoggerFactory.getLogger(CloudDccFeignClientConfiguration.class);
+  private static final Logger logger = LoggerFactory.getLogger(CloudDccFeignHttpClientProvider.class);
 
   private final Integer connectionPoolSize;
   private final File trustStore;
@@ -66,19 +68,15 @@ public class CloudDccFeignHttpClientProvider implements DccFeignHttpClientProvid
   }
 
   private SSLContext getSslContext(File trustStorePath, String trustStorePass) {
-    logger.info("Instantiating SSL context with keystore: " + trustStorePath.getName());
+    logger.info("Instantiating SSL context with truststore: " + trustStorePath.getName());
     try {
       return SSLContextBuilder.create().loadTrustMaterial(trustStorePath,
               emptyCharrArrayIfNull(trustStorePass))
           .build();
     } catch (Exception e) {
-      logger.error("Problem on creating SSL context with key: " + trustStorePath.getName(), e);
+      logger.error("Problem on creating SSL context with truststore: " + trustStorePath.getName(), e);
       throw new RuntimeException(e);
     }
-  }
-
-  private static char[] emptyCharrArrayIfNull(String input) {
-    return input != null ? input.toCharArray() : new char[] {};
   }
 
   /**
