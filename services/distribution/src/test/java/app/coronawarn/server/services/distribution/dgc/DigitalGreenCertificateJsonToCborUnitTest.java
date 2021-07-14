@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Optional;
+import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
 import org.junit.BeforeClass;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -49,7 +50,7 @@ class DigitalGreenCertificateJsonToCborUnitTest {
   }
 
   @Test
-  void shouldThrowWhenRuleByHashAndCountryIsNotFetched() throws DigitalCovidCertificateException {
+  void shouldThrowWhenRuleByHashAndCountryIsNotFetched() throws FetchBusinessRulesException {
     when(digitalCovidCertificateClient.getRules()).thenReturn(Collections.singletonList(mockBusinessRuleItem()));
     when(digitalCovidCertificateClient.getCountryRuleByHash(any(),any())).thenReturn(Optional.empty());
 
@@ -58,7 +59,7 @@ class DigitalGreenCertificateJsonToCborUnitTest {
   }
 
   @Test
-  void shouldThrowWhenRuleObjectFailsValidation() throws DigitalCovidCertificateException {
+  void shouldThrowWhenRuleObjectFailsValidation() throws FetchBusinessRulesException {
     Resource validationSchema = new ClassPathResource(DCC_VALIDATION_RULE_JSON_CLASSPATH);
 
     when(resourceLoader.getResource(any())).thenReturn(validationSchema);
@@ -71,7 +72,7 @@ class DigitalGreenCertificateJsonToCborUnitTest {
   }
 
   @Test
-  void shouldThrowWhenValidationSchemaIsNotFound() throws DigitalCovidCertificateException {
+  void shouldThrowWhenValidationSchemaIsNotFound() throws FetchBusinessRulesException {
     Resource validationSchema = new ClassPathResource(RANDOM_STRING);
 
     when(resourceLoader.getResource(any())).thenReturn(validationSchema);
