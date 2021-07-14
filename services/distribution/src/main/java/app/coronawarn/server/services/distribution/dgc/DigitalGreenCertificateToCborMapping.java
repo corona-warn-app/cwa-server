@@ -13,7 +13,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
 import org.everit.json.schema.ValidationException;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
