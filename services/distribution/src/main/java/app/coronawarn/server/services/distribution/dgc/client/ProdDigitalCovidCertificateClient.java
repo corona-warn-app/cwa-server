@@ -5,6 +5,7 @@ import app.coronawarn.server.services.distribution.dgc.BusinessRule;
 import app.coronawarn.server.services.distribution.dgc.BusinessRuleItem;
 import app.coronawarn.server.services.distribution.dgc.ValueSet;
 import app.coronawarn.server.services.distribution.dgc.ValueSetMetadata;
+import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
 import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -47,9 +48,13 @@ public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificat
   }
 
   @Override
-  public List<BusinessRuleItem> getRules() {
+  public List<BusinessRuleItem> getRules() throws FetchBusinessRulesException {
     logger.debug("Get rules from DCC");
-    return digitalCovidCertificateClient.getRules().getBody();
+    try {
+      return digitalCovidCertificateClient.getRules().getBody();
+    } catch (Exception e) {
+      throw new FetchBusinessRulesException("Business rules could not be fetched because of: ", e);
+    }
   }
 
   @Override
