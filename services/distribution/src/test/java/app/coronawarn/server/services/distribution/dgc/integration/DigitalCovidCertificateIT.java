@@ -11,6 +11,7 @@ import app.coronawarn.server.services.distribution.dgc.client.CloudDccFeignHttpC
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.client.ProdDigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
+import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ public class DigitalCovidCertificateIT {
   private DigitalCovidCertificateClient digitalCovidCertificateClient;
 
   @Test
-  public void shouldFetchAllRulesItemsAndEachRuleAfter() {
+  public void shouldFetchAllRulesItemsAndEachRuleAfter() throws FetchBusinessRulesException {
     List<BusinessRuleItem> rules = digitalCovidCertificateClient.getRules();
     assertThat(rules).isNotEmpty();
 
