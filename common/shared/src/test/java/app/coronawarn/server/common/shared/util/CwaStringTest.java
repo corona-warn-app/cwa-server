@@ -14,6 +14,7 @@ class CwaStringTest {
   void shouldConvertStringToCharArray() {
     assertThat(String.valueOf(CwaStringUtils.emptyCharrArrayIfNull(STRING_TEST))).isEqualTo(STRING_TEST);
     assertThat(CwaStringUtils.emptyCharrArrayIfNull(EMPTY_STRING)).isEmpty();
+    assertThat(CwaStringUtils.emptyCharrArrayIfNull(null)).isEmpty();
   }
 
 }
