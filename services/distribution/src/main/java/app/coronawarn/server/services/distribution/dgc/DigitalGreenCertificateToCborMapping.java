@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import org.everit.json.schema.ValidationException;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
@@ -55,10 +56,6 @@ public class DigitalGreenCertificateToCborMapping {
     List<BusinessRuleItem> businessRulesItems = digitalCovidCertificateClient.getRules();
     List<BusinessRule> businessRules = new ArrayList<>();
 
-    if (businessRulesItems.isEmpty()) {
-      return businessRules;
-    }
-
     for (BusinessRuleItem businessRuleItem : businessRulesItems) {
       Optional<BusinessRule> businessRuleOptional =
           digitalCovidCertificateClient.getCountryRuleByHash(
@@ -85,10 +82,6 @@ public class DigitalGreenCertificateToCborMapping {
             + businessRuleItem.getCountry() + "' having hash '" + businessRuleItem.getHash()
             + "' could not be retrieved");
       }
-    }
-
-    if (businessRules.isEmpty()) {
-      throw new DigitalCovidCertificateException("No business rule present after processing");
     }
 
     return businessRules;

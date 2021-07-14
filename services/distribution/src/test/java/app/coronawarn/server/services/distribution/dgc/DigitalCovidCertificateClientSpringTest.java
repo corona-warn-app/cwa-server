@@ -14,6 +14,7 @@ import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCer
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,7 +82,7 @@ class DigitalCovidCertificateClientSpringTest {
   }
 
   @Test
-  public void shouldThrowDccExceptionWhenTryingToRetrieveRuleWithNonexistingHash() {
+  public void shouldThrowDccExceptionWhenTryingToRetrieveRuleWithNonexistingHash() throws FetchBusinessRulesException {
     assertThat(digitalCovidCertificateClient.getCountryRuleByHash(DE, NL)).isEmpty();
   }
 
@@ -96,7 +97,7 @@ class DigitalCovidCertificateClientSpringTest {
   }
 
   @Test
-  public void shouldReturnCorrectCountryRulesByHash() {
+  public void shouldReturnCorrectCountryRulesByHash() throws FetchBusinessRulesException {
     assertThat(digitalCovidCertificateClient.getCountryRuleByHash(DE, DE_HASH)).isPresent();
     assertThat(digitalCovidCertificateClient.getCountryRuleByHash(NL, NL_HASH)).isPresent();
     assertThat(digitalCovidCertificateClient.getCountryRuleByHash(CZ, CZ_HASH)).isPresent();
