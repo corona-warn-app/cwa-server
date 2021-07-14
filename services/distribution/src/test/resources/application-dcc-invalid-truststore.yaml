@@ -1,0 +1,8 @@
+---
+services:
+  distribution:
+    digital-green-certificate:
+      client:
+        ssl:
+          trust-store: ../../docker-compose-test-secrets/dcc_invalid_truststore
+          trust-store-password: 123456
