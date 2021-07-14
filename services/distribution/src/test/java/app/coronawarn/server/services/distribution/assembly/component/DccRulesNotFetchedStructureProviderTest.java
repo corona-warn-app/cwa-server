@@ -1,8 +1,12 @@
 package app.coronawarn.server.services.distribution.assembly.component;
 
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+
 import app.coronawarn.server.common.shared.collection.ImmutableStack;
-import app.coronawarn.server.common.shared.util.SerializationUtils;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.signing.DistributionArchiveSigningDecorator;
@@ -16,42 +20,26 @@ import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateTo
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.client.ProdDigitalCovidCertificateClient;
-import app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
-import org.junit.Rule;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.rules.TemporaryFolder;
-import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.when;
+import org.junit.Rule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.rules.TemporaryFolder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @EnableConfigurationProperties(value = {DistributionServiceConfig.class})
 @ExtendWith(SpringExtension.class)
