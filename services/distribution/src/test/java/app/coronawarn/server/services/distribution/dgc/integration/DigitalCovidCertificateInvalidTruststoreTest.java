@@ -10,6 +10,7 @@ import app.coronawarn.server.services.distribution.dgc.client.CloudDccFeignHttpC
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.client.ProdDigitalCovidCertificateClient;
 import java.io.FileNotFoundException;
+import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
 import feign.RetryableException;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -37,9 +38,10 @@ public class DigitalCovidCertificateInvalidTruststoreTest {
 
   @Test
   public void shouldNotEstablishSslConnection() {
-    Exception exception = Assert.assertThrows(RetryableException.class,
+    Exception exception = Assert.assertThrows(FetchBusinessRulesException.class,
         () -> digitalCovidCertificateClient.getRules());
-    assertThat(exception.getCause()).isInstanceOf(SSLHandshakeException.class);
+    assertThat(exception.getCause()).isInstanceOf(RetryableException.class);
+    assertThat(exception.getCause().getCause()).isInstanceOf(SSLHandshakeException.class);
   }
 
 }
