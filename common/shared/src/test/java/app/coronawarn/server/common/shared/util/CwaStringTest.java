@@ -20,6 +20,7 @@ class CwaStringTest {
   void shouldConvertStringToCharArray() {
     assertThat(String.valueOf(emptyCharrArrayIfNull(STRING_TEST))).isEqualTo(STRING_TEST);
     assertThat(emptyCharrArrayIfNull(EMPTY_STRING)).isEmpty();
+    assertThat(emptyCharrArrayIfNull(null)).isEmpty();
   }
 
 }
