@@ -1,5 +1,7 @@
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory;
 
+import static app.coronawarn.server.common.shared.util.TimeUtils.getCurrentUtcHour;
+import static app.coronawarn.server.common.shared.util.TimeUtils.getUtcDate;
 import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeys;
 import static app.coronawarn.server.services.distribution.common.Helpers.getExpectedHourFiles;
 import static app.coronawarn.server.services.distribution.common.Helpers.getFilePaths;
@@ -8,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
 import app.coronawarn.server.common.shared.collection.ImmutableStack;
-import app.coronawarn.server.common.shared.util.TimeUtils;
+import app.coronawarn.server.junit.DisabledAroundMidnight;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.ProdDiagnosisKeyBundler;
@@ -120,8 +122,9 @@ class DiagnosisKeysHourDirectoryTest {
   }
 
   @Test
+  @DisabledAroundMidnight(offsetInMinutes = 3 * 60 + 1)
   void testDistributionTimeIsNowItDoesIncludeCurrentHour() {
-    final LocalDateTime nowUtc = TimeUtils.getCurrentUtcHour();
+    final LocalDateTime nowUtc = getCurrentUtcHour();
     Collection<DiagnosisKey> diagnosisKeys = List.of(
         buildDiagnosisKeys(6, nowUtc.minusHours(3), 5),
         buildDiagnosisKeys(6, nowUtc.minusHours(2), 5),
@@ -129,7 +132,7 @@ class DiagnosisKeysHourDirectoryTest {
         .stream()
         .flatMap(List::stream)
         .collect(Collectors.toList());
-    runHourDistribution(diagnosisKeys, nowUtc, TimeUtils.getUtcDate());
+    runHourDistribution(diagnosisKeys, nowUtc, getUtcDate());
     Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
     assertThat(actualFiles).isEqualTo(getExpectedHourFiles(Set.of(
         String.valueOf(nowUtc.minusHours(3).getHour()),
