@@ -9,6 +9,7 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
 import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import app.coronawarn.server.common.shared.util.TimeUtils;
+import app.coronawarn.server.junit.DisabledAroundMidnight;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.ProdDiagnosisKeyBundler;
@@ -120,6 +121,7 @@ class DiagnosisKeysHourDirectoryTest {
   }
 
   @Test
+  @DisabledAroundMidnight(offsetInMinutes = 3 * 60 + 1)
   void testDistributionTimeIsNowItDoesIncludeCurrentHour() {
     final LocalDateTime nowUtc = TimeUtils.getCurrentUtcHour();
     Collection<DiagnosisKey> diagnosisKeys = List.of(
