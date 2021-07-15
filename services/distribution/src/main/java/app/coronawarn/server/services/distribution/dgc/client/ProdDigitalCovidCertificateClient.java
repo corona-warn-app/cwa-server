@@ -58,9 +58,14 @@ public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificat
   }
 
   @Override
-  public Optional<BusinessRule> getCountryRuleByHash(String country, String hash) {
+  public Optional<BusinessRule> getCountryRuleByHash(String country, String hash) throws FetchBusinessRulesException {
     logger.debug("Get business rule having country:" + country + " and hash: " + hash + "from DCC");
-    return Optional.ofNullable(digitalCovidCertificateClient.getCountryRule(country, hash).getBody());
+    try {
+      return Optional.ofNullable(digitalCovidCertificateClient.getCountryRule(country, hash).getBody());
+    } catch (Exception e) {
+      throw new FetchBusinessRulesException("Business rules with country '" + country + "' and hash '"
+          + hash + "' could not be fetched because of: ", e);
+    }
   }
 
 }
