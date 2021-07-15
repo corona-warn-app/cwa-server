@@ -1,11 +1,20 @@
 package app.coronawarn.server.services.distribution.dgc;
 
-import app.coronawarn.server.common.shared.exception.UnableToLoadFileException;
+import static app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient.DISEASE_AGENT_TARGETED_HASH;
+import static app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient.RULE_1_HASH;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+
 import app.coronawarn.server.common.shared.util.SerializationUtils;
-import app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleType;
-import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
+import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateFeignClient;
+import app.coronawarn.server.services.distribution.dgc.client.ProdDigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient;
-import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
+import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
+import feign.RetryableException;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,20 +22,7 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import java.util.Collections;
-import java.util.Optional;
-
-import static app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToCborMapping.DCC_VALIDATION_RULE_JSON_CLASSPATH;
-import static app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient.DISEASE_AGENT_TARGETED_HASH;
-import static app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient.RULE_1_HASH;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.junit.Assert.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class DigitalCovidCertificateClientUnitTest {
@@ -35,12 +31,18 @@ class DigitalCovidCertificateClientUnitTest {
 
   TestDigitalCovidCertificateClient testDigitalCovidCertificateClient;
 
+  ProdDigitalCovidCertificateClient prodDigitalCovidCertificateClient;
+
+  @Mock
+  DigitalCovidCertificateFeignClient digitalCovidCertificateFeignClient;
+
   @Mock
   ResourceLoader resourceLoader;
 
   @BeforeEach
   void setup() {
     testDigitalCovidCertificateClient = new TestDigitalCovidCertificateClient(resourceLoader);
+    prodDigitalCovidCertificateClient = new ProdDigitalCovidCertificateClient(digitalCovidCertificateFeignClient);
   }
 
   @Test
@@ -54,6 +56,14 @@ class DigitalCovidCertificateClientUnitTest {
       assertThat(testDigitalCovidCertificateClient.getCountryRuleByHash(DE, RULE_1_HASH)).isEmpty();
       assertThat(testDigitalCovidCertificateClient.getValueSet(DISEASE_AGENT_TARGETED_HASH)).isEmpty();
     }
+  }
+
+  @Test
+  void shouldThrowFetchExceptionWhenClientThrowsConnectionException() {
+    when(digitalCovidCertificateFeignClient.getCountryRule(eq("test"), eq("test")))
+        .thenThrow(RetryableException.class);
+    assertThrows(FetchBusinessRulesException.class,
+        () -> prodDigitalCovidCertificateClient.getCountryRuleByHash(any(), any()));
   }
 
 }
