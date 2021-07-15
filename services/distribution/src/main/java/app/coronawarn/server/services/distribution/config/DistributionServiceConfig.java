@@ -1068,35 +1068,8 @@ public class DistributionServiceConfig {
 
     public static class Ssl {
 
-      private File keyStore;
-      private String keyStorePassword;
-      private String keyPassword;
       private File trustStore;
       private String trustStorePassword;
-
-      public File getKeyStore() {
-        return keyStore;
-      }
-
-      public void setKeyStore(File keyStore) {
-        this.keyStore = keyStore;
-      }
-
-      public String getKeyStorePassword() {
-        return keyStorePassword;
-      }
-
-      public void setKeyStorePassword(String keyStorePassword) {
-        this.keyStorePassword = keyStorePassword;
-      }
-
-      public String getKeyPassword() {
-        return keyPassword;
-      }
-
-      public void setKeyPassword(String keyPassword) {
-        this.keyPassword = keyPassword;
-      }
 
       public File getTrustStore() {
         return trustStore;

@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,7 +51,7 @@ class DigitalGreenCertificateJsonToCborSpringTest {
   DigitalGreenCertificateToCborMapping digitalGreenCertificateToCborMapping;
 
   @Test
-  void shouldConstructCorrectAcceptanceRules() throws DigitalCovidCertificateException {
+  void shouldConstructCorrectAcceptanceRules() throws DigitalCovidCertificateException, FetchBusinessRulesException {
     List<BusinessRule> businessRules = digitalGreenCertificateToCborMapping.constructRules(RuleType.Acceptance);
 
     assertThat(businessRules).hasSize(2);
@@ -60,7 +61,7 @@ class DigitalGreenCertificateJsonToCborSpringTest {
   }
 
   @Test
-  void shouldConstructCorrectInvalidationRules() throws DigitalCovidCertificateException {
+  void shouldConstructCorrectInvalidationRules() throws DigitalCovidCertificateException, FetchBusinessRulesException {
     List<BusinessRule> businessRules = digitalGreenCertificateToCborMapping.constructRules(RuleType.Invalidation);
 
     assertThat(businessRules).hasSize(1);
@@ -69,7 +70,7 @@ class DigitalGreenCertificateJsonToCborSpringTest {
   }
 
   @Test
-  void shouldConstructCborAcceptanceRules() throws DigitalCovidCertificateException {
+  void shouldConstructCborAcceptanceRules() throws DigitalCovidCertificateException, FetchBusinessRulesException {
     byte[] businessRules = digitalGreenCertificateToCborMapping.constructCborRules(RuleType.Acceptance);
 
     assertThat(businessRules).isNotEmpty();

@@ -6,6 +6,7 @@ import static app.coronawarn.server.common.shared.util.SerializationUtils.valida
 import app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleType;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
+import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,9 +50,14 @@ public class DigitalGreenCertificateToCborMapping {
    *                                          will propagate and will stop any archive to be published down in the
    *                                          execution.
    */
-  public List<BusinessRule> constructRules(RuleType ruleType) throws DigitalCovidCertificateException {
+  public List<BusinessRule> constructRules(RuleType ruleType)
+      throws DigitalCovidCertificateException, FetchBusinessRulesException {
     List<BusinessRuleItem> businessRulesItems = digitalCovidCertificateClient.getRules();
     List<BusinessRule> businessRules = new ArrayList<>();
+
+    if (businessRulesItems.isEmpty()) {
+      return businessRules;
+    }
 
     for (BusinessRuleItem businessRuleItem : businessRulesItems) {
       Optional<BusinessRule> businessRuleOptional =
@@ -98,7 +104,8 @@ public class DigitalGreenCertificateToCborMapping {
   /**
    * CBOR encoding of {@code constructRules}.
    */
-  public byte[] constructCborRules(RuleType ruleType) throws DigitalCovidCertificateException {
+  public byte[] constructCborRules(RuleType ruleType)
+      throws DigitalCovidCertificateException, FetchBusinessRulesException {
     return cborEncodeOrElseThrow(constructRules(ruleType));
   }
 

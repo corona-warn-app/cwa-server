@@ -65,6 +65,10 @@
       <artifactId>junit-jupiter</artifactId>
     </dependency>
     <dependency>
+      <groupId>${project.parent.groupId}</groupId>
+      <artifactId>jupiterHelpers</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.everit.json</groupId>
       <artifactId>org.everit.json.schema</artifactId>
     </dependency>
