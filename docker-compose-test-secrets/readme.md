@@ -19,3 +19,18 @@ EFGS (in prod maintained by EFGS, TSI receives only public keys)
 - `efgs_signing_cert.pem`: EFGS signing certificate for EFGS batch signing.
 - `efgs.p12`: The EFGS PFX file that e.g. can also be used in a Postman request to fake being EFGS.
 - `contains_efgs_truststore.jks`: The Java truststore that is used on the server side, containing the `efgs.p12` file to verify that we are communicating with a trusted client. Therefore the `efgs.p12` needs to be used when sending a request.
+
+DCC (Digital Covid Certificate)
+----------------------------------------------------------------
+
+To enable SSH connection the intermediate certificate from the 3 certificates chain of 'dcc-rules.de' is used.
+In order to create a trustore with the above mentioned certificate, a browser can be used to export the intermediate
+certificate. Afterwards, the following command exports the certificate in a trustore:
+
+`keytool -import -file dcc.cer -alias dcc_cert -keystore dcc_truststore`
+The exported trustore should be referenced in application configuration and passed to SSLContext as trust store.
+
+DEV and INT trustores:
+
+- `dcc_truststore`: Trustore which keeps dcc-rules.de intermediate certificate.
+- `dcc_invalid_truststore`: Trustore which keeps facebook.com certificate to test invalid certificate.
