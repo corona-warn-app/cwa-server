@@ -57,7 +57,7 @@
     <json-simple.version>1.1.1</json-simple.version>
     <everit-json.version>1.5.1</everit-json.version>
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
-    <commons-io.version>2.10.0</commons-io.version>
+    <commons-io.version>2.11.0</commons-io.version>
     <feign.version>11.2</feign.version>
     <commons-math3.version>3.6.1</commons-math3.version>
     <bouncycastle.version>1.69</bouncycastle.version>

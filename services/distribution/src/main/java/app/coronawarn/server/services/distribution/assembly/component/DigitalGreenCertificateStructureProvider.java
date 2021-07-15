@@ -13,6 +13,7 @@ import app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleType;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToCborMapping;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
+import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,12 +122,14 @@ public class DigitalGreenCertificateStructureProvider {
       rulesArchive
           .addWritable(new FileOnDisk("export.bin", dgcToCborMapping.constructCborRules(ruleType)));
       logger.info(archiveName + " archive has been added to the DGC distribution folder");
+      return Optional.of(new DistributionArchiveSigningDecorator(rulesArchive, cryptoProvider,
+          distributionServiceConfig));
     } catch (DigitalCovidCertificateException e) {
       logger.error(archiveName + " archive was not overwritten because of:", e);
-      return Optional.empty();
+    } catch (FetchBusinessRulesException e) {
+      logger.error(archiveName + " archive was not overwritten because business rules could not been fetched:", e);
     }
 
-    return Optional.of(new DistributionArchiveSigningDecorator(rulesArchive, cryptoProvider,
-        distributionServiceConfig));
+    return Optional.empty();
   }
 }

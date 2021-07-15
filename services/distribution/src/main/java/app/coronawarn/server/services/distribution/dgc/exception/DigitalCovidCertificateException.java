@@ -9,8 +9,4 @@ public class DigitalCovidCertificateException extends Exception {
   public DigitalCovidCertificateException(String message, Throwable cause) {
     super(message, cause);
   }
-
-  public DigitalCovidCertificateException(Throwable cause) {
-    super(cause);
-  }
 }

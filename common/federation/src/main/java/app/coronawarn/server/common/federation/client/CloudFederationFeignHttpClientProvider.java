@@ -1,12 +1,13 @@
 package app.coronawarn.server.common.federation.client;
 
+import static app.coronawarn.server.common.shared.util.CwaStringUtils.emptyCharrArrayIfNull;
+
 import app.coronawarn.server.common.federation.client.config.FederationGatewayConfig;
 import app.coronawarn.server.common.federation.client.hostname.HostnameVerifierProvider;
 import feign.Client;
 import feign.httpclient.ApacheHttpClient;
 import java.io.File;
 import javax.net.ssl.SSLContext;
-import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.springframework.cloud.commons.httpclient.ApacheHttpClientConnectionManagerFactory;
@@ -79,10 +80,6 @@ public class CloudFederationFeignHttpClientProvider implements FederationFeignHt
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
-  }
-
-  private static char[] emptyCharrArrayIfNull(String input) {
-    return input != null ? input.toCharArray() : new char[] {};
   }
 
   /**
