@@ -225,6 +225,9 @@ services:
       dgc-directory: ${DIGITAL_GREEN_CERTIFICATE_DIRECTORY:ehn-dgc}
       valuesets-file-name: ${DIGITAL_GREEN_CERTIFICATE_VALUESETS_FILE_NAME:value-sets}
       supported-languages: ${DIGITAL_GREEN_CERTIFICATE_SUPPORTED_LANGUAGES:DE, EN, BG, PL, RO, TR}
+      dsc-client:
+        base-url: ${DSC_BASE_PATH:https://de.test.dscg.ubirch.com}
+        dsc-list-path: ${DSC_LIST_PATH:/trustList/DSC/}
       client:
         retry-period: 5
         max-retry-period: 30

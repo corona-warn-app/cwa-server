@@ -1008,8 +1008,6 @@ public class DistributionServiceConfig {
 
     private String baseUrl;
 
-    private String countryListPath;
-
     private Ssl ssl;
 
     private int retryPeriod;
@@ -1032,14 +1030,6 @@ public class DistributionServiceConfig {
 
     public void setBaseUrl(String baseUrl) {
       this.baseUrl = baseUrl;
-    }
-
-    public String getCountryListPath() {
-      return countryListPath;
-    }
-
-    public void setCountryListPath(String countryListPath) {
-      this.countryListPath = countryListPath;
     }
 
     public int getRetryPeriod() {
@@ -1676,6 +1666,8 @@ public class DistributionServiceConfig {
 
     private Client client;
 
+    private Client dscClient;
+
     public String getMahJsonPath() {
       return mahJsonPath;
     }
@@ -1762,6 +1754,14 @@ public class DistributionServiceConfig {
 
     public void setClient(Client client) {
       this.client = client;
+    }
+
+    public Client getDscClient() {
+      return dscClient;
+    }
+
+    public void setDscClient(Client dscClient) {
+      this.dscClient = dscClient;
     }
   }
 }
