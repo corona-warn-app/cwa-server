@@ -1,0 +1,14 @@
+// This file is auto-generated, DO NOT make any changes here
+syntax = "proto3";
+package app.coronawarn.server.common.protocols.internal.dgc;
+option java_multiple_files = true;
+
+message DSCList {
+
+  repeated DSCListItem certificates = 1;
+}
+
+message DSCListItem {
+  bytes kid = 1;
+  bytes data = 2;
+}
