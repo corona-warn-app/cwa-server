@@ -534,6 +534,8 @@ public class ApplicationConfigurationV2PublicationConfig {
         .build();
     return DGCParameters.newBuilder()
         .setTestCertificateParameters(testCertificateParameters)
+        .setExpirationThresholdInDays(distributionServiceConfig.getAppConfigParameters()
+            .getDgcParameters().getExpirationThresholdInDays())
         .build();
   }
 }

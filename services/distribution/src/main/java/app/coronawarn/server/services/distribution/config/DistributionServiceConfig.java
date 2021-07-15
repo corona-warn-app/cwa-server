@@ -1603,12 +1603,22 @@ public class DistributionServiceConfig {
 
       private DgcTestCertificateParameters dgcTestCertificateParameters;
 
+      private Integer expirationThresholdInDays;
+
       public DgcTestCertificateParameters getTestCertificateParameters() {
         return dgcTestCertificateParameters;
       }
 
       public void setTestCertificateParameters(DgcTestCertificateParameters dgcTestCertificateParameters) {
         this.dgcTestCertificateParameters = dgcTestCertificateParameters;
+      }
+
+      public Integer getExpirationThresholdInDays() {
+        return expirationThresholdInDays;
+      }
+
+      public void setExpirationThresholdInDays(Integer expirationThresholdInDays) {
+        this.expirationThresholdInDays = expirationThresholdInDays;
       }
 
       public static class DgcTestCertificateParameters {
