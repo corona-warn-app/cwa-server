@@ -89,6 +89,7 @@ public class DigitalGreenCertificateStructureProvider {
     getOnboardedCountriesArchive().ifPresent(dgcDirectory::addWritable);
     getRulesArchive(RuleType.Acceptance, ACCEPTANCE_RULES).ifPresent(dgcDirectory::addWritable);
     getRulesArchive(RuleType.Invalidation, INVALIDATION_RULES).ifPresent(dgcDirectory::addWritable);
+    getDscsArchive().ifPresent(dgcDirectory::addWritable);
 
     return dgcDirectory;
   }
