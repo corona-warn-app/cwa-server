@@ -16,6 +16,7 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToCborMapping;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient;
+import app.coronawarn.server.services.distribution.dgc.dsc.DigitalSigningCertificatesToProtobufMapping;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -62,6 +63,9 @@ class DigitalGreenCertificateStructureProviderTest {
   @MockBean
   OutputDirectoryProvider outputDirectoryProvider;
 
+  @MockBean
+  DigitalSigningCertificatesToProtobufMapping digitalSigningCertificatesToProtobufMapping;
+
   @Rule
   TemporaryFolder testOutputFolder = new TemporaryFolder();
 
@@ -77,7 +81,7 @@ class DigitalGreenCertificateStructureProviderTest {
   @Test
   void should_create_correct_file_structure_for_valuesets() {
     DigitalGreenCertificateStructureProvider underTest = new DigitalGreenCertificateStructureProvider(
-        distributionServiceConfig, cryptoProvider, dgcToProtobufMapping, dgcToCborMappingMock);
+        distributionServiceConfig, cryptoProvider, dgcToProtobufMapping, dgcToCborMappingMock,digitalSigningCertificatesToProtobufMapping);
     DirectoryOnDisk digitalGreenCertificates = underTest.getDigitalGreenCertificates();
     digitalGreenCertificates.prepare(new ImmutableStack<>());
 
@@ -91,22 +95,21 @@ class DigitalGreenCertificateStructureProviderTest {
         .filter(writableOnDisk -> writableOnDisk instanceof DirectoryOnDisk)
         .map(directory -> ((DirectoryOnDisk) directory).getWritables().iterator().next())
         .forEach(valueSet -> {
-            assertEquals("value-sets", valueSet.getName());
-            List<String> archiveContent = ((DistributionArchiveSigningDecorator) valueSet).getWritables().stream()
-                .map(Writable::getName).collect(Collectors.toList());
-            assertTrue((archiveContent).containsAll(Set.of("export.bin", "export.sig")));
+          assertEquals("value-sets", valueSet.getName());
+          List<String> archiveContent = ((DistributionArchiveSigningDecorator) valueSet).getWritables().stream()
+              .map(Writable::getName).collect(Collectors.toList());
+          assertTrue((archiveContent).containsAll(Set.of("export.bin", "export.sig")));
         });
   }
 
   @Test
   void should_create_correct_file_structure_for_business_rules() {
     DigitalGreenCertificateStructureProvider underTest = new DigitalGreenCertificateStructureProvider(
-        distributionServiceConfig, cryptoProvider, dgcToProtobufMapping, dgcToCborMappingMock);
+        distributionServiceConfig, cryptoProvider, dgcToProtobufMapping, dgcToCborMappingMock,digitalSigningCertificatesToProtobufMapping);
     DirectoryOnDisk digitalGreenCertificates = underTest.getDigitalGreenCertificates();
     digitalGreenCertificates.prepare(new ImmutableStack<>());
 
     assertEquals("ehn-dgc", digitalGreenCertificates.getName());
-
 
     List<Writable<WritableOnDisk>> businessRulesArchives = digitalGreenCertificates.getWritables().stream()
         .filter(writableOnDisk -> writableOnDisk instanceof DistributionArchiveSigningDecorator)

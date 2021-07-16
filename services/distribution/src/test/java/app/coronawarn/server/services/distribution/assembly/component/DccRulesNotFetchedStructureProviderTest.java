@@ -20,6 +20,7 @@ import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateTo
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.client.ProdDigitalCovidCertificateClient;
+import app.coronawarn.server.services.distribution.dgc.dsc.DigitalSigningCertificatesToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
 import java.io.File;
 import java.io.IOException;
@@ -62,6 +63,9 @@ class DccRulesNotFetchedStructureProviderTest {
 
   @Autowired
   DigitalGreenCertificateToCborMapping dgcToCborMappingMock;
+
+  @MockBean
+  DigitalSigningCertificatesToProtobufMapping digitalSigningCertificatesToProtobufMapping;
 
   @MockBean
   OutputDirectoryProvider outputDirectoryProvider;
@@ -154,7 +158,8 @@ class DccRulesNotFetchedStructureProviderTest {
 
   private DirectoryOnDisk getStructureProviderDirectory() {
     DigitalGreenCertificateStructureProvider underTest = new DigitalGreenCertificateStructureProvider(
-        distributionServiceConfig, cryptoProvider, dgcToProtobufMapping, dgcToCborMappingMock);
+        distributionServiceConfig, cryptoProvider, dgcToProtobufMapping,
+        dgcToCborMappingMock, digitalSigningCertificatesToProtobufMapping);
     DirectoryOnDisk digitalGreenCertificates = underTest.getDigitalGreenCertificates();
     digitalGreenCertificates.prepare(new ImmutableStack<>());
 

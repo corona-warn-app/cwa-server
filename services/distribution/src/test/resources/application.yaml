@@ -180,6 +180,9 @@ services:
       dgc-directory: ehn-dgc
       valuesets-file-name: value-sets
       supported-languages: DE, EN, BG, PL, RO, TR
+      dsc-client:
+        base-url: ${DSC_BASE_PATH:https://de.test.dscg.ubirch.com}
+        dsc-list-path: ${DSC_LIST_PATH:/trustList/DSC/}
       client:
         retry-period: 2
         max-retry-period: 5
