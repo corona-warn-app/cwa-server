@@ -1603,6 +1603,7 @@ public class DistributionServiceConfig {
 
       private DgcTestCertificateParameters dgcTestCertificateParameters;
 
+      @Min(0)
       private Integer expirationThresholdInDays;
 
       public DgcTestCertificateParameters getTestCertificateParameters() {
