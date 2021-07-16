@@ -23,6 +23,6 @@ public interface DigitalSigningCertificatesFeignClient {
    */
   @Timed
   @GetMapping(value = "${services.distribution.digital-green-certificate.dsc-client.dsc-list-path}")
-  ResponseEntity<List<JSONObject>> getDscTrustList();
+  ResponseEntity<String> getDscTrustList();
 
 }

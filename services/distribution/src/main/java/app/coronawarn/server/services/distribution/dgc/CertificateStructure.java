@@ -6,8 +6,8 @@ public class CertificateStructure {
 
   private String certificateType;
   private String country;
-  private Byte kid;
-  private Byte rawData;
+  private String kid;
+  private String rawData;
   private String signature;
   private String thumbprint;
   private Date timestamp;
@@ -28,19 +28,19 @@ public class CertificateStructure {
     this.country = country;
   }
 
-  public Byte getKid() {
+  public String getKid() {
     return kid;
   }
 
-  public void setKid(Byte kid) {
+  public void setKid(String kid) {
     this.kid = kid;
   }
 
-  public Byte getRawData() {
+  public String getRawData() {
     return rawData;
   }
 
-  public void setRawData(Byte rawData) {
+  public void setRawData(String rawData) {
     this.rawData = rawData;
   }
 

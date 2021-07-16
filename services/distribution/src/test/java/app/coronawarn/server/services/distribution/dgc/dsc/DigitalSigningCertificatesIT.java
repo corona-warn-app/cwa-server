@@ -3,12 +3,14 @@ package app.coronawarn.server.services.distribution.dgc.dsc;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleType;
 import app.coronawarn.server.services.distribution.dgc.BusinessRuleItem;
+import app.coronawarn.server.services.distribution.dgc.Certificates;
 import app.coronawarn.server.services.distribution.dgc.ValueSet;
 import app.coronawarn.server.services.distribution.dgc.ValueSetMetadata;
 import app.coronawarn.server.services.distribution.dgc.client.CloudDccFeignClientConfiguration;
 import app.coronawarn.server.services.distribution.dgc.client.CloudDccFeignHttpClientProvider;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.client.ProdDigitalCovidCertificateClient;
+import app.coronawarn.server.services.distribution.dgc.dsc.decode.DscListDecoder;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchDscTrustListException;
 import org.json.JSONObject;
@@ -29,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {DistributionServiceConfig.class, ProdDigitalSigningCertificatesClient.class,
-    CloudDscFeignClientConfiguration.class, CloudDscFeignHttpClientProvider.class},
+    CloudDscFeignClientConfiguration.class, CloudDscFeignHttpClientProvider.class, DscListDecoder.class},
     initializers = ConfigDataApplicationContextInitializer.class)
 @ImportAutoConfiguration({FeignAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class})
 public class DigitalSigningCertificatesIT {
@@ -38,8 +40,8 @@ public class DigitalSigningCertificatesIT {
   private DigitalSigningCertificatesClient digitalCovidCertificateClient;
 
   @Test
-  public void shouldFetchCountryList() throws FetchDscTrustListException {
-    List<JSONObject> countries = digitalCovidCertificateClient.getDscTrustList();
-    assertThat(countries).isNotEmpty();
+  public void should_fetch_certificates() throws FetchDscTrustListException {
+    Optional<Certificates> certificates = digitalCovidCertificateClient.getDscTrustList();
+    assertThat(certificates).isPresent();
   }
 }

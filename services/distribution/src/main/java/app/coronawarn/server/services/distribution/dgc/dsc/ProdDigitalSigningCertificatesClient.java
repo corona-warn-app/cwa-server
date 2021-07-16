@@ -1,9 +1,10 @@
 
 package app.coronawarn.server.services.distribution.dgc.dsc;
 
+import app.coronawarn.server.services.distribution.dgc.Certificates;
+import app.coronawarn.server.services.distribution.dgc.dsc.decode.DscListDecoder;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchDscTrustListException;
-import java.util.List;
-import org.json.JSONObject;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
@@ -21,16 +22,22 @@ public class ProdDigitalSigningCertificatesClient implements DigitalSigningCerti
 
   private final DigitalSigningCertificatesFeignClient digitalSigningCertificatesFeignClient;
 
+  private final DscListDecoder dscListDecoder;
+
   public ProdDigitalSigningCertificatesClient(
-      DigitalSigningCertificatesFeignClient digitalCovidCertificateFeignClient) {
+      DigitalSigningCertificatesFeignClient digitalCovidCertificateFeignClient,
+      DscListDecoder dscListDecoder) {
     this.digitalSigningCertificatesFeignClient = digitalCovidCertificateFeignClient;
+    this.dscListDecoder = dscListDecoder;
   }
 
   @Override
-  public List<JSONObject> getDscTrustList() throws FetchDscTrustListException {
+  public Optional<Certificates> getDscTrustList() throws FetchDscTrustListException {
     logger.debug("Get rules from DCC");
     try {
-      return digitalSigningCertificatesFeignClient.getDscTrustList().getBody();
+      return Optional.of(dscListDecoder
+          .decode(digitalSigningCertificatesFeignClient.getDscTrustList().getBody()));
+
     } catch (Exception e) {
       throw new FetchDscTrustListException("DSC Trust List could not be fetched because of: ", e);
     }

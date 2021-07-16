@@ -3,11 +3,8 @@ package app.coronawarn.server.services.distribution.dgc.dsc;
 
 import static app.coronawarn.server.common.shared.util.SerializationUtils.readConfiguredJsonOrDefault;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import app.coronawarn.server.services.distribution.dgc.Certificates;
 import java.util.Optional;
-import org.json.JSONObject;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
@@ -28,13 +25,8 @@ public class TestDigitalSigningCertificateClient implements DigitalSigningCertif
   }
 
   @Override
-  public List<JSONObject> getDscTrustList() {
-    Optional<JSONObject[]> dscTrustList = readConfiguredJsonOrDefault(resourceLoader, null,
-        "trustList/ubirchDSC.json", JSONObject[].class);
-
-    if (dscTrustList.isEmpty()) {
-      return Collections.emptyList();
-    }
-    return Arrays.asList(dscTrustList.get());
+  public Optional<Certificates> getDscTrustList() {
+    return readConfiguredJsonOrDefault(resourceLoader, null,
+        "trustList/ubirchDSC.json", Certificates.class);
   }
 }

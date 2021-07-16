@@ -2,9 +2,9 @@
 
 package app.coronawarn.server.services.distribution.dgc.dsc;
 
+import app.coronawarn.server.services.distribution.dgc.Certificates;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchDscTrustListException;
-import java.util.List;
-import org.json.JSONObject;
+import java.util.Optional;
 
 /**
  * This is a wrapper interface retrieving Digital Signign Certificates data.
@@ -13,5 +13,5 @@ import org.json.JSONObject;
  */
 public interface DigitalSigningCertificatesClient {
 
-  List<JSONObject> getDscTrustList() throws FetchDscTrustListException;
+  Optional<Certificates> getDscTrustList() throws FetchDscTrustListException;
 }
