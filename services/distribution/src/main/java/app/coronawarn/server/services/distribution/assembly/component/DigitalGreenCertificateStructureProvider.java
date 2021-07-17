@@ -14,6 +14,7 @@ import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateTo
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
+import app.coronawarn.server.services.distribution.dgc.exception.FetchValueSetsException;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,15 +70,19 @@ public class DigitalGreenCertificateStructureProvider {
     DirectoryOnDisk dgcDirectory = new DirectoryOnDisk(dgcConfig.getDgcDirectory());
 
     for (String currentLanguage: dgcConfig.getSupportedLanguages()) {
-      ArchiveOnDisk archiveToPublish = new ArchiveOnDisk(dgcConfig.getValuesetsFileName());
-      archiveToPublish.addWritable(new FileOnDisk(EXPORT_BIN,
-          dgcToProtobufMapping.constructProtobufMapping().toByteArray()));
-      DirectoryOnDisk languageDirectory = new DirectoryOnDisk(currentLanguage.toLowerCase());
-      languageDirectory.addWritable(new DistributionArchiveSigningDecorator(
-          archiveToPublish, cryptoProvider, distributionServiceConfig));
-      dgcDirectory.addWritable(languageDirectory);
-      logger.info("Writing digital green certificate to {}/{}/{}.", dgcDirectory.getName(), languageDirectory.getName(),
-          archiveToPublish.getName());
+      try {
+        ArchiveOnDisk archiveToPublish = new ArchiveOnDisk(dgcConfig.getValuesetsFileName());
+        archiveToPublish.addWritable(new FileOnDisk(EXPORT_BIN,
+            dgcToProtobufMapping.constructProtobufMapping().toByteArray()));
+        DirectoryOnDisk languageDirectory = new DirectoryOnDisk(currentLanguage.toLowerCase());
+        languageDirectory.addWritable(new DistributionArchiveSigningDecorator(
+            archiveToPublish, cryptoProvider, distributionServiceConfig));
+        dgcDirectory.addWritable(languageDirectory);
+        logger.info("Writing digital green certificate value sets to {}/{}/{}.",
+            dgcDirectory.getName(), languageDirectory.getName(), archiveToPublish.getName());
+      } catch (FetchValueSetsException e) {
+        logger.error("Digital green certificate valuesets were not written because of: ", e);
+      }
     }
 
     getOnboardedCountriesArchive().ifPresent(dgcDirectory::addWritable);
@@ -98,13 +103,16 @@ public class DigitalGreenCertificateStructureProvider {
       onboardedCountries
           .addWritable(new FileOnDisk("export.bin", dgcToCborMapping.constructCborCountries()));
       logger.info("Onboarded countries archive has been added to the DGC distribution folder");
+
+      return Optional.of(new DistributionArchiveSigningDecorator(onboardedCountries, cryptoProvider,
+          distributionServiceConfig));
     } catch (DigitalCovidCertificateException e) {
       logger.error("Onboarded countries archive was not overwritten because of:", e);
-      return Optional.empty();
+    } catch (FetchBusinessRulesException e) {
+      logger.error("Onboarded countries archive was not overwritten because countries could not been fetched:", e);
     }
 
-    return Optional.of(new DistributionArchiveSigningDecorator(onboardedCountries, cryptoProvider,
-        distributionServiceConfig));
+    return Optional.empty();
   }
 
   /**

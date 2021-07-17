@@ -12,6 +12,7 @@ import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertif
 import app.coronawarn.server.services.distribution.dgc.client.ProdDigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
+import app.coronawarn.server.services.distribution.dgc.exception.FetchValueSetsException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,13 +54,13 @@ public class DigitalCovidCertificateIT {
   }
 
   @Test
-  public void shouldFetchCountryList() {
+  public void shouldFetchCountryList() throws FetchBusinessRulesException {
     List<String> countries = digitalCovidCertificateClient.getCountryList();
     assertThat(countries).isNotEmpty();
   }
 
   @Test
-  public void shouldFetchAllValuesetsMetadataAndEachValuesetAfter() {
+  public void shouldFetchAllValuesetsMetadataAndEachValuesetAfter() throws FetchValueSetsException {
     List<ValueSetMetadata> valuesets = digitalCovidCertificateClient.getValueSets();
     assertThat(valuesets).isNotEmpty();
 

@@ -8,6 +8,7 @@ import app.coronawarn.server.services.distribution.dgc.ValueSet;
 import app.coronawarn.server.services.distribution.dgc.ValueSetMetadata;
 import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
+import app.coronawarn.server.services.distribution.dgc.exception.FetchValueSetsException;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,11 +19,11 @@ import java.util.Optional;
  */
 public interface DigitalCovidCertificateClient {
 
-  List<String> getCountryList();
+  List<String> getCountryList() throws FetchBusinessRulesException;
 
-  List<ValueSetMetadata> getValueSets();
+  List<ValueSetMetadata> getValueSets() throws FetchValueSetsException;
 
-  Optional<ValueSet> getValueSet(String hash);
+  Optional<ValueSet> getValueSet(String hash) throws FetchValueSetsException;
 
   List<BusinessRuleItem> getRules() throws FetchBusinessRulesException;
 

@@ -9,6 +9,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToCborMapping;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
+import app.coronawarn.server.services.distribution.dgc.exception.FetchValueSetsException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ class DgcStructureProviderDefaultValuesetsMissingTest {
   DigitalGreenCertificateToCborMapping dgcToCborMappingMock;
 
   @Test
-  void default_value_missing_should_result_in_empty_dir() throws UnableToLoadFileException {
+  void default_value_missing_should_result_in_empty_dir() throws UnableToLoadFileException, FetchValueSetsException {
     DigitalGreenCertificateStructureProvider underTest = new DigitalGreenCertificateStructureProvider(
         distributionServiceConfig, cryptoProvider, dgcToProtobufMappingMock, dgcToCborMappingMock);
     when(dgcToProtobufMappingMock.constructProtobufMapping())

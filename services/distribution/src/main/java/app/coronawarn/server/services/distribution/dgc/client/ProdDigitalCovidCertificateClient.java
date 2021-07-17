@@ -6,6 +6,7 @@ import app.coronawarn.server.services.distribution.dgc.BusinessRuleItem;
 import app.coronawarn.server.services.distribution.dgc.ValueSet;
 import app.coronawarn.server.services.distribution.dgc.ValueSetMetadata;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
+import app.coronawarn.server.services.distribution.dgc.exception.FetchValueSetsException;
 import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -30,21 +31,35 @@ public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificat
   }
 
   @Override
-  public List<String> getCountryList() {
+  public List<String> getCountryList() throws FetchBusinessRulesException {
     logger.debug("Get country list from DCC");
-    return digitalCovidCertificateClient.getCountryList().getBody();
+    try {
+      return digitalCovidCertificateClient.getCountryList().getBody();
+    } catch (Exception e) {
+      throw new FetchBusinessRulesException("Business rules could not be fetched because of: ", e);
+    }
   }
 
   @Override
-  public List<ValueSetMetadata> getValueSets() {
+  public List<ValueSetMetadata> getValueSets() throws FetchValueSetsException {
     logger.debug("Get valuesets from DCC");
-    return digitalCovidCertificateClient.getValueSets().getBody();
+    try {
+      return digitalCovidCertificateClient.getValueSets().getBody();
+    } catch (Exception e) {
+      throw new FetchValueSetsException("Value sets could not be fetched because of: ", e);
+    }
   }
 
   @Override
-  public Optional<ValueSet> getValueSet(String hash) {
+  public Optional<ValueSet> getValueSet(String hash) throws FetchValueSetsException {
     logger.debug("Get valuesets having hash: " + hash + " from DCC");
-    return Optional.ofNullable(digitalCovidCertificateClient.getValueSet(hash).getBody());
+    try {
+      return Optional.ofNullable(digitalCovidCertificateClient.getValueSet(hash).getBody());
+    } catch (Exception e) {
+      throw new FetchValueSetsException("Value set with hash '" + hash
+          + "' could not be fetched because of: ", e);
+    }
+
   }
 
   @Override
