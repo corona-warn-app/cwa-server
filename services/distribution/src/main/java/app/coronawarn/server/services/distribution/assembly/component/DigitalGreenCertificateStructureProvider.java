@@ -90,7 +90,7 @@ public class DigitalGreenCertificateStructureProvider {
   /**
    * Create onboarded countries Archive. If any exception is thrown during fetching data and packaging process,
    * an empty Archive will be published in order to not override any previous archive on CDN with broken data.
-   * @return - Onboarded countries archive
+   * @return - Onboarded countries archive.
    */
   private Optional<Writable<WritableOnDisk>> getOnboardedCountriesArchive() {
     ArchiveOnDisk onboardedCountries = new ArchiveOnDisk(ONBOARDED_COUNTRIES);
