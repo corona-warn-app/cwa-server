@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 **
  * Reads configuration parameters from the respective files in the class path or from DCC client and build a {@link
  * DigitalGreenCertificateStructureProvider} with them.
- */
+ 
 @Component
 public class DigitalGreenCertificateStructureProvider {
 
@@ -45,7 +45,7 @@ public class DigitalGreenCertificateStructureProvider {
 
   **
    * Create an instance.
-   */
+   
   public DigitalGreenCertificateStructureProvider(DistributionServiceConfig distributionServiceConfig,
       CryptoProvider cryptoProvider, DigitalGreenCertificateToProtobufMapping dgcToProtobufMapping,
       DigitalGreenCertificateToCborMapping dgcToCborMapping,
@@ -60,7 +60,7 @@ public class DigitalGreenCertificateStructureProvider {
   **
    * Returns the publishable archive with the Digital Green Certificates protobuf structures for mobile clients and
    * Business rules Cbor encoded structures.
-   */
+   
   public DirectoryOnDisk getDigitalGreenCertificates() {
     try {
       return constructArchiveToPublish(distributionServiceConfig.getDigitalGreenCertificate());
@@ -98,7 +98,7 @@ public class DigitalGreenCertificateStructureProvider {
    * Archive will be published in order to not override any previous archive on CDN with broken data.
    *
    * @return - Onboarded countries archive.
-   */
+   
   private Optional<Writable<WritableOnDisk>> getOnboardedCountriesArchive() {
     ArchiveOnDisk onboardedCountries = new ArchiveOnDisk(ONBOARDED_COUNTRIES);
     try {
@@ -118,7 +118,7 @@ public class DigitalGreenCertificateStructureProvider {
    * Create DSCs archive.
    *
    * @return - DSCs archive
-   */
+   
   private Optional<Writable<WritableOnDisk>> getDscsArchive() {
     ArchiveOnDisk dscsArchive = new ArchiveOnDisk(DSCS);
     try {
@@ -143,7 +143,7 @@ public class DigitalGreenCertificateStructureProvider {
    * @param ruleType    - rule type to receive rules for
    * @param archiveName - archive name for packaging rules
    * @return - business rules archive
-   */
+   
   private Optional<Writable<WritableOnDisk>> getRulesArchive(RuleType ruleType, String archiveName) {
     ArchiveOnDisk rulesArchive = new ArchiveOnDisk(archiveName);
 
