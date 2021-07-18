@@ -46,10 +46,12 @@ class ApplicationConfigurationV2MainFileTest {
       assertThat(applicationConfigurationAndroid).isNotNull();
       assertThat(applicationConfigurationAndroid.getDgcParameters()).isNotNull();
       assertThat(applicationConfigurationAndroid.getDgcParameters().getTestCertificateParameters()).isNotNull();
+      assertThat(applicationConfigurationAndroid.getDgcParameters().getExpirationThresholdInDays()).isEqualTo(14);
 
       assertThat(applicationConfigurationIos).isNotNull();
       assertThat(applicationConfigurationIos.getDgcParameters()).isNotNull();
       assertThat(applicationConfigurationIos.getDgcParameters().getTestCertificateParameters()).isNotNull();
+      assertThat(applicationConfigurationIos.getDgcParameters().getExpirationThresholdInDays()).isEqualTo(14);
 
       final DGCTestCertificateParameters testCertificateParameters = applicationConfigurationAndroid.getDgcParameters()
           .getTestCertificateParameters();
