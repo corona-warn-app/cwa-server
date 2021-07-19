@@ -20,8 +20,8 @@ import software.amazon.awssdk.services.s3.model.S3Exception;
 @Component
 @Profile("!local-json-stats")
 public class RemoteStatisticJsonFileLoader implements StatisticJsonFileLoader {
-  
-  private static final Logger logger = LoggerFactory.getLogger(StatisticJsonFileLoader.class);
+
+  private static final Logger logger = LoggerFactory.getLogger(RemoteStatisticJsonFileLoader.class);
 
   ObjectStoreClient s3Stats;
   DistributionServiceConfig config;
@@ -83,7 +83,7 @@ public class RemoteStatisticJsonFileLoader implements StatisticJsonFileLoader {
       return Optional.of(result);
     } catch (ExhaustedRetryException | NotModifiedException ex) {
       if (ex.getCause() instanceof NotModifiedException || ex instanceof NotModifiedException) {
-        logger.info("{}/{} didn't change, etag is: {}", resourcePath, etag);
+        logger.info("{} didn't change, etag is: {}", resourcePath, etag);
         return Optional.empty();
       } else {
         throw mapException((ExhaustedRetryException) ex);
