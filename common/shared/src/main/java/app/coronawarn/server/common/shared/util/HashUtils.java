@@ -13,12 +13,13 @@ public class HashUtils {
 
   private static final Logger logger = LoggerFactory.getLogger(HashUtils.class);
 
-  public enum MessageDigestAlgorithms {
-    SHA_256("SHA-256");
+  public enum Algorithms {
+    SHA_256("SHA-256"),
+    EC("EC");
 
     private String name;
 
-    MessageDigestAlgorithms(String name) {
+    Algorithms(String name) {
       this.name = name;
     }
 
@@ -44,12 +45,12 @@ public class HashUtils {
 
   /**
    * Returns a digested ByteString by a Message Digest object
-   * that implements the chosen {@link MessageDigestAlgorithms}.
+   * that implements the chosen {@link Algorithms}.
    *
    * @param data - ByteString to be diggested
    * @return - digested ByteString
    */
-  public static byte[] byteStringDigest(ByteString data, MessageDigestAlgorithms algorithm) {
+  public static byte[] byteStringDigest(ByteString data, Algorithms algorithm) {
     try {
       return MessageDigest.getInstance(algorithm.getName()).digest(data.toByteArray());
     } catch (NoSuchAlgorithmException e) {

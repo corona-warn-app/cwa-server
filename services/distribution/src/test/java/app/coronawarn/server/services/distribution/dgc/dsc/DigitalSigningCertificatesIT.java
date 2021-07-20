@@ -37,11 +37,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class DigitalSigningCertificatesIT {
 
   @Autowired
-  private DigitalSigningCertificatesClient digitalCovidCertificateClient;
+  private DigitalSigningCertificatesClient digitalSigningCertificatesClient;
 
   @Test
   public void should_fetch_certificates() throws FetchDscTrustListException {
-    Optional<Certificates> certificates = digitalCovidCertificateClient.getDscTrustList();
+    Optional<Certificates> certificates = digitalSigningCertificatesClient.getDscTrustList();
     assertThat(certificates).isPresent();
   }
 }

@@ -5,11 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import app.coronawarn.server.common.shared.util.HashUtils.MessageDigestAlgorithms;
+import app.coronawarn.server.common.shared.util.HashUtils.Algorithms;
 import com.google.protobuf.ByteString;
 import org.junit.jupiter.api.Test;
-import java.security.NoSuchAlgorithmException;
-import java.util.Random;
 
 class HashUtilsTest {
 
@@ -36,7 +34,7 @@ class HashUtilsTest {
 
   @Test
   void testByteStringDigest() {
-    byte[] hash = byteStringDigest(ByteString.copyFromUtf8(TEST_STRING), MessageDigestAlgorithms.SHA_256);
+    byte[] hash = byteStringDigest(ByteString.copyFromUtf8(TEST_STRING), Algorithms.SHA_256);
     assertThat(hash).hasSize(32);
   }
 }
