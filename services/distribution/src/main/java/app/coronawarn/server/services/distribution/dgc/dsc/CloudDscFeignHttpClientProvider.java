@@ -30,6 +30,8 @@ public class CloudDscFeignHttpClientProvider implements DscFeignHttpClientProvid
   private static final Logger logger = LoggerFactory.getLogger(CloudDscFeignHttpClientProvider.class);
 
   private final Integer connectionPoolSize;
+  private final File trustStore;
+  private final String trustStorePassword;
 
   /**
    * Construct Provider.
@@ -37,7 +39,11 @@ public class CloudDscFeignHttpClientProvider implements DscFeignHttpClientProvid
    * @param config - distribution configuration
    */
   public CloudDscFeignHttpClientProvider(DistributionServiceConfig config) {
+    Ssl ssl = config.getDigitalGreenCertificate().getDscClient().getSsl();
+
     this.connectionPoolSize = config.getConnectionPoolSize();
+    this.trustStore = ssl.getTrustStore();
+    this.trustStorePassword = ssl.getTrustStorePassword();
   }
 
   /**
@@ -57,7 +63,8 @@ public class CloudDscFeignHttpClientProvider implements DscFeignHttpClientProvid
   private ApacheHttpClientFactory federationHttpClientFactory() {
     return new DefaultApacheHttpClientFactory(HttpClientBuilder.create()
         .setMaxConnPerRoute(connectionPoolSize)
-        .setMaxConnTotal(connectionPoolSize));
+        .setMaxConnTotal(connectionPoolSize)
+        .setSSLContext(getSslContext(this.trustStore, this.trustStorePassword)));
   }
 
   /**
@@ -68,5 +75,18 @@ public class CloudDscFeignHttpClientProvider implements DscFeignHttpClientProvid
   @Bean
   public ApacheHttpClientConnectionManagerFactory createConnectionManager() {
     return new DefaultApacheHttpClientConnectionManagerFactory();
+  }
+
+  private SSLContext getSslContext(File trustStorePath, String trustStorePass) {
+    logger.info("Instantiating DSC client - SSL context with truststore: " + trustStorePath.getName());
+    try {
+      return SSLContextBuilder.create().loadTrustMaterial(trustStorePath,
+          emptyCharrArrayIfNull(trustStorePass))
+          .build();
+    } catch (Exception e) {
+      logger.error("Problem on creating DSC client - SSL context with truststore: "
+          + trustStorePath.getName(), e);
+      throw new RuntimeException(e);
+    }
   }
 }

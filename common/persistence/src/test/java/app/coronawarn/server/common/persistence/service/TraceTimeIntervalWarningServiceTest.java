@@ -12,7 +12,7 @@ import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsD
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import app.coronawarn.server.common.shared.util.HashUtils;
-import app.coronawarn.server.common.shared.util.HashUtils.MessageDigestAlgorithms;
+import app.coronawarn.server.common.shared.util.HashUtils.Algorithms;
 import com.google.protobuf.ByteString;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -66,13 +66,13 @@ class TraceTimeIntervalWarningServiceTest {
   void testSortedRetrievalResult() {
     traceWarningsRepository
         .saveDoNothingOnConflict(
-            HashUtils.byteStringDigest(ByteString.copyFromUtf8("sorted-uuid2"), MessageDigestAlgorithms.SHA_256),
+            HashUtils.byteStringDigest(ByteString.copyFromUtf8("sorted-uuid2"), Algorithms.SHA_256),
             56, 10, 3,
             CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION.apply(Instant.now().getEpochSecond()),
             SubmissionType.SUBMISSION_TYPE_PCR_TEST.name());
     traceWarningsRepository
         .saveDoNothingOnConflict(
-            HashUtils.byteStringDigest(ByteString.copyFromUtf8("sorted-uuid1"), MessageDigestAlgorithms.SHA_256),
+            HashUtils.byteStringDigest(ByteString.copyFromUtf8("sorted-uuid1"), Algorithms.SHA_256),
             456, 20, 2,
             CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION.apply(Instant.now().getEpochSecond()) - 10,
             SubmissionType.SUBMISSION_TYPE_PCR_TEST.name());
@@ -102,7 +102,7 @@ class TraceTimeIntervalWarningServiceTest {
   public void testHashingOfTraceLocationId() {
     String locationId = "afa27b44d43b02a9fea41d13cedc2e4016cfcf87c5dbf990e593669aa8ce286d";
     byte[] locationIdByte = Hex.decode(locationId);
-    byte[] hashedLocationId = HashUtils.byteStringDigest(ByteString.copyFrom(locationIdByte), MessageDigestAlgorithms.SHA_256);
+    byte[] hashedLocationId = HashUtils.byteStringDigest(ByteString.copyFrom(locationIdByte), Algorithms.SHA_256);
 
     final byte[] encode = Hex.encode(hashedLocationId);
     String s = new String(encode);
@@ -191,7 +191,7 @@ class TraceTimeIntervalWarningServiceTest {
           warning.getTransmissionRiskLevel().intValue());
       assertEquals(checkin.getStartIntervalNumber(), warning.getStartIntervalNumber().intValue());
       assertEquals(checkin.getEndIntervalNumber() - checkin.getStartIntervalNumber(), warning.getPeriod().intValue());
-      assertArrayEquals(HashUtils.byteStringDigest(checkin.getLocationId(), MessageDigestAlgorithms.SHA_256),
+      assertArrayEquals(HashUtils.byteStringDigest(checkin.getLocationId(), Algorithms.SHA_256),
           warning.getTraceLocationId());
     }
   }

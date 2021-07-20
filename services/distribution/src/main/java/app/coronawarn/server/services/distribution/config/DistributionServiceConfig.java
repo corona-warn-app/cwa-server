@@ -1006,6 +1006,8 @@ public class DistributionServiceConfig {
 
   public static class Client {
 
+    private String publicKey;
+
     private String baseUrl;
 
     private Ssl ssl;
@@ -1015,6 +1017,14 @@ public class DistributionServiceConfig {
     private int maxRetryPeriod;
 
     private int maxRetryAttempts;
+
+    public String getPublicKey() {
+      return publicKey;
+    }
+
+    public void setPublicKey(String publicKey) {
+      this.publicKey = publicKey;
+    }
 
     public Ssl getSsl() {
       return ssl;
