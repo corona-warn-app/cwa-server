@@ -29,8 +29,8 @@ public class DigitalSigningCertificatesToProtobufMapping {
     certificates.ifPresent(dscCertificates -> {
       for (CertificateStructure certs : dscCertificates.getCertificates()) {
         dscListItems.add(DscListItem.newBuilder()
-            .setData(ByteString.copyFrom(Base64.getDecoder().decode(certs.getKid())))
-            .setKid(ByteString.copyFrom(Base64.getDecoder().decode(certs.getRawData())))
+            .setData(ByteString.copyFrom(Base64.getDecoder().decode(certs.getRawData())))
+            .setKid(ByteString.copyFrom(Base64.getDecoder().decode(certs.getKid())))
             .build());
       }
     });
