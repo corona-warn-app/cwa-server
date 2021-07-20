@@ -10,17 +10,14 @@ import com.google.protobuf.ByteString;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DigitalSigningCertificatesToProtobufMapping {
 
-  private final DigitalSigningCertificatesClient digitalSigningCertificatesClient;
-
-  public DigitalSigningCertificatesToProtobufMapping(
-      DigitalSigningCertificatesClient digitalSigningCertificatesClient) {
-    this.digitalSigningCertificatesClient = digitalSigningCertificatesClient;
-  }
+  @Autowired
+  private DigitalSigningCertificatesClient digitalSigningCertificatesClient;
 
   public DscList constructProtobufMapping() throws UnableToLoadFileException, FetchDscTrustListException {
     return DscList.newBuilder().addAllCertificates(buildCertificates()).build();

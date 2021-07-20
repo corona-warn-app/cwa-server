@@ -20,6 +20,7 @@ import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateTo
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.client.ProdDigitalCovidCertificateClient;
+import app.coronawarn.server.services.distribution.dgc.dsc.DigitalSigningCertificatesClient;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalSigningCertificatesToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
 import java.io.File;
@@ -46,7 +47,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(
     classes = {DigitalGreenCertificateToProtobufMapping.class, DigitalGreenCertificateToCborMapping.class,
-        CryptoProvider.class, DistributionServiceConfig.class, ProdDigitalCovidCertificateClient.class},
+        CryptoProvider.class, DistributionServiceConfig.class, ProdDigitalCovidCertificateClient.class,
+        DigitalSigningCertificatesToProtobufMapping.class, DigitalSigningCertificatesClient.class},
     initializers = ConfigDataApplicationContextInitializer.class)
 class DccRulesNotFetchedStructureProviderTest {
 
@@ -64,7 +66,7 @@ class DccRulesNotFetchedStructureProviderTest {
   @Autowired
   DigitalGreenCertificateToCborMapping dgcToCborMappingMock;
 
-  @MockBean
+  @Autowired
   DigitalSigningCertificatesToProtobufMapping digitalSigningCertificatesToProtobufMapping;
 
   @MockBean
@@ -72,6 +74,9 @@ class DccRulesNotFetchedStructureProviderTest {
 
   @MockBean
   DigitalCovidCertificateClient digitalCovidCertificateClient;
+
+  @MockBean
+  DigitalSigningCertificatesClient digitalSigningCertificatesClient;
 
   @Rule
   TemporaryFolder testOutputFolder = new TemporaryFolder();
@@ -94,7 +99,7 @@ class DccRulesNotFetchedStructureProviderTest {
     assertEquals("ehn-dgc", digitalGreenCertificates.getName());
 
     List<Writable<WritableOnDisk>> businessRulesArchives = getBusinessRulesArchives(digitalGreenCertificates);
-    assertThat(businessRulesArchives).hasSize(1);
+    assertThat(businessRulesArchives).hasSize(2);
 
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("onboarded-countries"))).hasSize(1);
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("acceptance-rules"))).hasSize(0);
@@ -110,11 +115,13 @@ class DccRulesNotFetchedStructureProviderTest {
     assertEquals("ehn-dgc", digitalGreenCertificates.getName());
 
     List<Writable<WritableOnDisk>> businessRulesArchives = getBusinessRulesArchives(digitalGreenCertificates);
-    assertThat(businessRulesArchives).hasSize(3);
+    assertThat(businessRulesArchives).hasSize(4);
 
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("onboarded-countries"))).hasSize(1);
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("acceptance-rules"))).hasSize(1);
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("invalidation-rules"))).hasSize(1);
+    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("dscs"))).hasSize(1);
+
   }
 
   @Test
@@ -143,13 +150,14 @@ class DccRulesNotFetchedStructureProviderTest {
     assertEquals("ehn-dgc", digitalGreenCertificates.getName());
 
     List<Writable<WritableOnDisk>> businessRulesArchives = getBusinessRulesArchives(digitalGreenCertificates);
-    assertThat(businessRulesArchives).hasSize(2);
+    assertThat(businessRulesArchives).hasSize(3);
 
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("onboarded-countries"))).hasSize(1);
     // acceptance rules are invalid, they do not pass validation schema, thus archive won't be overwritten.
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("acceptance-rules"))).hasSize(0);
     // there are no invalid rules, thus they will be overwritten.
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("invalidation-rules"))).hasSize(1);
+
   }
 
   private Predicate<Writable<WritableOnDisk>> filterByArchiveName(String archiveName) {
