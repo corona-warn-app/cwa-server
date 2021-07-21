@@ -26,7 +26,6 @@ import app.coronawarn.server.services.distribution.statistics.keyfigurecard.fact
 import app.coronawarn.server.services.distribution.statistics.validation.StatisticsJsonValidator;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -79,7 +78,7 @@ public class StatisticsToProtobufMapping {
   }
 
   private void updateETag(String newETag) {
-    var currentTimestamp = TimeUtils.getCurrentUtcHour().toEpochSecond(ZoneOffset.UTC);
+    var currentTimestamp = TimeUtils.getNow().getEpochSecond();
     this.statisticsDownloadService.store(currentTimestamp, newETag);
   }
 
