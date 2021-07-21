@@ -3,15 +3,12 @@
 package app.coronawarn.server.services.distribution.dgc.dsc;
 
 import io.micrometer.core.annotation.Timed;
-import java.util.List;
-import org.json.JSONObject;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 
 /**
- * This is a Spring Cloud Feign based HTTP client that allows type-safe HTTP calls and abstract the implementation
- * away.
+ * This is a Spring Cloud Feign based HTTP client that allows type-safe HTTP calls and abstract the implementation away.
  * Used to make HTTP request to Digital Signign Certificates server.
  */
 @FeignClient(name = "dsc-server", configuration = CloudDscFeignClientConfiguration.class,

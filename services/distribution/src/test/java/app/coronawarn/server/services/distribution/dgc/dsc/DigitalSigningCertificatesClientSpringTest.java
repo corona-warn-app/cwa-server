@@ -34,9 +34,9 @@ class DigitalSigningCertificatesClientSpringTest {
   private DigitalSigningCertificatesClient digitalSigningCertificatesClient;
 
   @Test
-  public void should_retrieve_dsc_trust_list() throws FetchDscTrustListException {
+  void should_retrieve_dsc_trust_list() throws FetchDscTrustListException {
     Optional<Certificates> certificates = digitalSigningCertificatesClient.getDscTrustList();
-
+    assertThat(certificates).isNotEmpty();
   }
 
 }

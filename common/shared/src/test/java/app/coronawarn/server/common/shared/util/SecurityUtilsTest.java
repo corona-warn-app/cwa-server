@@ -16,10 +16,10 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.Base64;
 import org.junit.jupiter.api.Test;
 
-public class SecurityUtilsTest {
+class SecurityUtilsTest {
 
   @Test
-  public void testGetPublicKeyFromString() throws NoSuchAlgorithmException, InvalidKeySpecException {
+  void testGetPublicKeyFromString() throws NoSuchAlgorithmException, InvalidKeySpecException {
     PublicKey key = SecurityUtils
         .getPublicKeyFromString("MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIxHvrv8jQx9OEzTZbsx1prQVQn"
             + "/3ex0gMYf6GyaNBW0QKLMjrSDeN6HwSPM0QzhvhmyQUixl6l88A7Zpu5OWSw==");
@@ -29,7 +29,7 @@ public class SecurityUtilsTest {
   }
 
   @Test
-  public void testGetEcdsaEncodedStringFromSignature() throws IOException {
+  void testGetEcdsaEncodedStringFromSignature() throws IOException {
     String signature = "+AE7sEXzNjgvxiDXrKdXQqL/XiOPIB/1r579jyIPWtQp7/a6K4m2vBsnjZSWvsZ+wT+WHkF8F64eCktNamZGhw==";
     byte[] base64DecodedSignature = Base64.getDecoder().decode(signature);
 
@@ -39,7 +39,7 @@ public class SecurityUtilsTest {
   }
 
   @Test
-    public void testEcdsaSignatureVerification()
+  void testEcdsaSignatureVerification()
       throws NoSuchAlgorithmException, InvalidKeySpecException, IOException, SignatureException, InvalidKeyException {
     PublicKey key = SecurityUtils
         .getPublicKeyFromString("MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIxHvrv8jQx9OEzTZbsx1prQVQn"

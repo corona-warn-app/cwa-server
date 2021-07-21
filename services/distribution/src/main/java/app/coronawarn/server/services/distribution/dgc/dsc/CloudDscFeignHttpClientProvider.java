@@ -79,14 +79,14 @@ public class CloudDscFeignHttpClientProvider implements DscFeignHttpClientProvid
   //  }
 
   private SSLContext getSslContext(File trustStorePath, String trustStorePass) {
-    logger.info("Instantiating DSC client - SSL context with truststore: " + trustStorePath.getName());
+    logger.info("Instantiating DSC client - SSL context with truststore: {}", trustStorePath.getName());
     try {
       return SSLContextBuilder.create().loadTrustMaterial(trustStorePath,
           emptyCharrArrayIfNull(trustStorePass))
           .build();
     } catch (Exception e) {
-      logger.error("Problem on creating DSC client - SSL context with truststore: "
-          + trustStorePath.getName(), e);
+      logger.error("Problem on creating DSC client - SSL context with truststore: {}",
+          trustStorePath.getName(), e);
       throw new RuntimeException(e);
     }
   }
