@@ -122,7 +122,7 @@ public class LocalStatisticsToProtobufMapping {
   }
 
   private void updateETag(String newETag) {
-    var currentTimestamp = TimeUtils.getCurrentUtcHour().toEpochSecond(ZoneOffset.UTC);
+    var currentTimestamp = TimeUtils.getNow().getEpochSecond();
     this.localStatisticsDownloadService.store(currentTimestamp, newETag);
   }
 
