@@ -4,5 +4,5 @@ import feign.Client;
 
 
 public interface DscFeignHttpClientProvider {
-  Client createFeignClient();
+  Client createDscFeignClient();
 }

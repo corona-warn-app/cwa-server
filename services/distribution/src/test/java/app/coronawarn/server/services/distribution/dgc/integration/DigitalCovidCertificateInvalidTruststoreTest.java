@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.dgc.ApacheHttpTestConfiguration;
 import app.coronawarn.server.services.distribution.dgc.client.CloudDccFeignClientConfiguration;
 import app.coronawarn.server.services.distribution.dgc.client.CloudDccFeignHttpClientProvider;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
@@ -27,10 +28,10 @@ import javax.net.ssl.SSLHandshakeException;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {DistributionServiceConfig.class, ProdDigitalCovidCertificateClient.class,
-    CloudDccFeignClientConfiguration.class, CloudDccFeignHttpClientProvider.class},
+    CloudDccFeignClientConfiguration.class, CloudDccFeignHttpClientProvider.class, ApacheHttpTestConfiguration.class},
     initializers = ConfigDataApplicationContextInitializer.class)
 @ImportAutoConfiguration({FeignAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class})
-@ActiveProfiles("dcc-invalid-truststore")
+@ActiveProfiles({"dcc-invalid-truststore","dcc-client-factory"})
 public class DigitalCovidCertificateInvalidTruststoreTest {
 
   @Autowired

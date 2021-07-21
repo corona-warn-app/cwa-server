@@ -41,6 +41,5 @@ public class ProdDigitalSigningCertificatesClient implements DigitalSigningCerti
     } catch (Exception e) {
       throw new FetchDscTrustListException("DSC Trust List could not be fetched because of: ", e);
     }
-
   }
 }

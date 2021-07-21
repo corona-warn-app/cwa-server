@@ -34,15 +34,15 @@ public class CloudDscFeignClientConfiguration {
   }
 
   @Bean
-  public Client feignClient() {
-    return feignClientProvider.createFeignClient();
+  public Client dscFeignClient() {
+    return feignClientProvider.createDscFeignClient();
   }
 
   /**
    * Retrier configuration for Feign DSC client.
    */
   @Bean
-  public Retryer retryer() {
+  public Retryer dscRetryer() {
     long retryPeriod = TimeUnit.SECONDS.toMillis(
         distributionServiceConfig.getDigitalGreenCertificate().getDscClient().getRetryPeriod());
 
