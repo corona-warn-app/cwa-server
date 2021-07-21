@@ -69,24 +69,14 @@ public class CloudDccFeignHttpClientProvider implements DccFeignHttpClientProvid
   }
 
   private SSLContext getSslContext(File trustStorePath, String trustStorePass) {
-    logger.info("Instantiating DCC client - SSL context with truststore: " + trustStorePath.getName());
+    logger.info("Instantiating DCC client - SSL context with truststore: {}", trustStorePath.getName());
     try {
       return SSLContextBuilder.create().loadTrustMaterial(trustStorePath,
               emptyCharrArrayIfNull(trustStorePass))
           .build();
     } catch (Exception e) {
-      logger.error("Problem on creating SSL context with truststore: " + trustStorePath.getName(), e);
+      logger.error("Problem on creating SSL context with truststore: {}", trustStorePath.getName(), e);
       throw new RuntimeException(e);
     }
   }
-
-  //  /**
-  //   * Creates connection manager.
-  //   *
-  //   * @return ApacheHttpClientConnectionManagerFactory.
-  //   */
-  //  @Bean
-  //  public ApacheHttpClientConnectionManagerFactory createConnectionManager() {
-  //    return new DefaultApacheHttpClientConnectionManagerFactory();
-  //  }
 }

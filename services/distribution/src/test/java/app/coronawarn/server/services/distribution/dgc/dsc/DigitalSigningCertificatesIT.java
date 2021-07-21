@@ -40,13 +40,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
     initializers = ConfigDataApplicationContextInitializer.class)
 @ImportAutoConfiguration({FeignAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class})
 @ActiveProfiles("dsc-client-factory")
-public class DigitalSigningCertificatesIT {
+class DigitalSigningCertificatesIT {
 
   @Autowired
   private DigitalSigningCertificatesClient digitalSigningCertificatesClient;
 
   @Test
-  public void should_fetch_certificates() throws FetchDscTrustListException {
+  void should_fetch_certificates() throws FetchDscTrustListException {
     Optional<Certificates> certificates = digitalSigningCertificatesClient.getDscTrustList();
     assertThat(certificates).isPresent();
   }

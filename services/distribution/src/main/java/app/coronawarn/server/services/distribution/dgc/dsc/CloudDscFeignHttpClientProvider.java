@@ -73,11 +73,6 @@ public class CloudDscFeignHttpClientProvider implements DscFeignHttpClientProvid
    *
    * @return ApacheHttpClientConnectionManagerFactory.
    */
-  //  @Bean
-  //  public ApacheHttpClientConnectionManagerFactory createConnectionManager() {
-  //    return new DefaultApacheHttpClientConnectionManagerFactory();
-  //  }
-
   private SSLContext getSslContext(File trustStorePath, String trustStorePass) {
     logger.info("Instantiating DSC client - SSL context with truststore: {}", trustStorePath.getName());
     try {
