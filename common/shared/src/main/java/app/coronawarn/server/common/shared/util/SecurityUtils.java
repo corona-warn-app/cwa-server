@@ -27,8 +27,8 @@ public class SecurityUtils {
    */
   public static PublicKey getPublicKeyFromString(String publicKey)
       throws NoSuchAlgorithmException, InvalidKeySpecException {
-    byte[] base65PublicKey = Base64.getDecoder().decode(publicKey);
-    X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(base65PublicKey);
+    byte[] base64PublicKey = Base64.getDecoder().decode(publicKey);
+    X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(base64PublicKey);
 
     return KeyFactory.getInstance(Algorithms.EC.getName()).generatePublic(x509EncodedKeySpec);
   }
