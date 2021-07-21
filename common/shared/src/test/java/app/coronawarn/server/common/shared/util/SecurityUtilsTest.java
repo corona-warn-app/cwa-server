@@ -10,7 +10,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Base64;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SecurityUtilsTest {
 
