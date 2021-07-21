@@ -76,7 +76,7 @@ public class BuildLocalStatisticsHelper {
    * @param federalStateId - federal state id.
    * @return - federal state index in configurations and protobuf enum.
    */
-  public static int getFederalStateConfigIndex(Integer federalStateId) {
+  public static int getFederalStateConfigIndex(int federalStateId) {
     return federalStateId - 1;
   }
 
@@ -97,7 +97,7 @@ public class BuildLocalStatisticsHelper {
       case 1:
         return Trend.forNumber(2);
       default:
-        return Trend.forNumber(-1);
+        return Trend.UNRECOGNIZED;
     }
   }
 
