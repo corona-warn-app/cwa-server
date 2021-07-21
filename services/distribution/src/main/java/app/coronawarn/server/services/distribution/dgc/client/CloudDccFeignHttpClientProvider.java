@@ -53,14 +53,15 @@ public class CloudDccFeignHttpClientProvider implements DccFeignHttpClientProvid
   @Bean
   public Client createFeignClient() {
     return new ApacheHttpClient(
-        federationHttpClientFactory().createBuilder().build());
+        dccHttpClientFactory().createBuilder().build());
   }
 
   /**
    * Creates an {@link ApacheHttpClientFactory} that with no SSL certificates and no host names.
    */
   @Bean
-  private ApacheHttpClientFactory federationHttpClientFactory() {
+  @Profile("dcc-client-factory")
+  private ApacheHttpClientFactory dccHttpClientFactory() {
     return new DefaultApacheHttpClientFactory(HttpClientBuilder.create()
         .setMaxConnPerRoute(connectionPoolSize)
         .setMaxConnTotal(connectionPoolSize)
@@ -79,13 +80,13 @@ public class CloudDccFeignHttpClientProvider implements DccFeignHttpClientProvid
     }
   }
 
-  /**
-   * Creates connection manager.
-   *
-   * @return ApacheHttpClientConnectionManagerFactory.
-   */
-  @Bean
-  public ApacheHttpClientConnectionManagerFactory createConnectionManager() {
-    return new DefaultApacheHttpClientConnectionManagerFactory();
-  }
+  //  /**
+  //   * Creates connection manager.
+  //   *
+  //   * @return ApacheHttpClientConnectionManagerFactory.
+  //   */
+  //  @Bean
+  //  public ApacheHttpClientConnectionManagerFactory createConnectionManager() {
+  //    return new DefaultApacheHttpClientConnectionManagerFactory();
+  //  }
 }
