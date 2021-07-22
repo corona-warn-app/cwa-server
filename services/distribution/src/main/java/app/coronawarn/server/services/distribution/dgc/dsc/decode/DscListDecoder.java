@@ -17,7 +17,7 @@ import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
@@ -53,8 +53,7 @@ public class DscListDecoder {
       String signature = data.substring(0, data.indexOf(CONTENT_STARTS_CHAR)).trim();
       String content = data.substring(signature.length()).trim();
 
-      byte[] base64DecodedSignature = base64decode(signature);
-      byte[] ecdsaSignature = getEcdsaEncodeFromSignature(base64DecodedSignature);
+      byte[] ecdsaSignature = getEcdsaEncodeFromSignature(base64decode(signature));
 
       ecdsaSignatureVerification(ecdsaSignature, publicKey, content);
 
@@ -74,7 +73,7 @@ public class DscListDecoder {
    * Filters out from the Certificates object wrapper, the invalid X509 format certificates.
    */
   private Certificates filterValidCertificates(Certificates certificates) {
-    List<CertificateStructure> validCertificates = new ArrayList<>();
+    final Collection<CertificateStructure> validCertificates = new ArrayList<>(certificates.getCertificates().size());
 
     for (CertificateStructure certificate : certificates.getCertificates()) {
       InputStream certificateStream = new ByteArrayInputStream(base64decode(certificate.getRawData()));
@@ -82,13 +81,11 @@ public class DscListDecoder {
         CertificateFactory.getInstance("X.509").generateCertificate(certificateStream);
         validCertificates.add(certificate);
       } catch (CertificateException e) {
-        logger.error("Certificate having kid " + certificate.getKid() + " has failed X509 certificate validation. "
-            + "It will be skipped.", e);
+        logger.error("Skipping certificate (kid=" + certificate.getKid() + ") due to X.509 validation failure.", e);
       }
     }
     certificates.setCertificates(validCertificates);
 
     return certificates;
   }
-
 }
