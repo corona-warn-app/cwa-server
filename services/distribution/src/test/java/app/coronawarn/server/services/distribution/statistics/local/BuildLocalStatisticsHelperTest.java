@@ -15,13 +15,13 @@ import org.junit.jupiter.params.provider.ValueSource;
 class BuildLocalStatisticsHelperTest {
 
   @ParameterizedTest
-  @ValueSource(ints = {-1, Integer.MIN_VALUE})
+  @ValueSource(ints = {-10, Integer.MIN_VALUE})
   void testFindTrendBySevenDayIncidenceDecreasing(int i) {
     assertEquals(DECREASING, findTrendBySevenDayIncidence(i));
   }
 
   @ParameterizedTest
-  @ValueSource(ints = {1, Integer.MAX_VALUE})
+  @ValueSource(ints = {10, Integer.MAX_VALUE})
   void testFindTrendBySevenDayIncidenceIncreasing(int i) {
     assertEquals(INCREASING, findTrendBySevenDayIncidence(i));
   }
