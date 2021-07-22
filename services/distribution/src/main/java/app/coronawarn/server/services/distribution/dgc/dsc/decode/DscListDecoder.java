@@ -12,6 +12,7 @@ import app.coronawarn.server.services.distribution.dgc.exception.DscListDecodeEx
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.security.PublicKey;
+import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
@@ -36,7 +37,14 @@ public class DscListDecoder {
   }
 
   /**
-   * TODO: add javadoc.
+   * Decode the trust list of certificates.
+   * Verifies the trust list content by using the ECDSA signature logic.
+   * Filters only X509 valid format certificates from the response.
+   *
+   * @param data - trust list reponse from DSC as string.
+   * @return - object wrapping the list of certificates.
+   * @throws DscListDecodeException - thrown if any exception is catched and special treatment if signature
+   *     verification fails.
    */
   public Certificates decode(String data) throws DscListDecodeException {
     try {
@@ -56,12 +64,17 @@ public class DscListDecoder {
           typeFactory -> typeFactory.constructType(Certificates.class));
       return filterValidCertificates(certificates);
 
-    } catch (Exception e) {
+    } catch (SignatureException e) {
       throw new DscListDecodeException("Dsc list cannot be decoded because of "
-          + "signature verification failinig caused by: ", e);
+          + "signature verification failinig: ", e);
+    } catch (Exception e) {
+      throw new DscListDecodeException("Dsc list cannot be decoded because of: ", e);
     }
   }
 
+  /**
+   * Filters out from the Certificates object wrapper, the invalid X509 format certificates.
+   */
   private Certificates filterValidCertificates(Certificates certificates) {
     List<CertificateStructure> validCertificates = new ArrayList<>();
 
@@ -73,7 +86,7 @@ public class DscListDecoder {
         validCertificates.add(certificate);
       } catch (CertificateException e) {
         logger.error("Certificate having kid " + certificate.getKid() + " has failed X509 certificate validation. "
-            + "It will be skipped.");
+            + "It will be skipped.", e);
       }
     }
     certificates.setCertificates(validCertificates);

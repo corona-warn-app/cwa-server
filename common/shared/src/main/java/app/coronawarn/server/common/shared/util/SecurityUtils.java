@@ -1,5 +1,6 @@
 package app.coronawarn.server.common.shared.util;
 
+import static app.coronawarn.server.common.shared.util.HashUtils.Algorithms.SHA_ECDSA;
 import static java.util.Arrays.copyOfRange;
 
 import app.coronawarn.server.common.shared.util.HashUtils.Algorithms;
@@ -25,7 +26,11 @@ public class SecurityUtils {
   }
 
   /**
-   * TODO: add javadoc.
+   * Transforms a String public key into a Java security public key.
+   * @param publicKey - String public Key.
+   * @return - Java public key.
+   * @throws NoSuchAlgorithmException - thrown if key factory algorithm is not available.
+   * @throws InvalidKeySpecException - thrown if public key is not valid.
    */
   public static PublicKey getPublicKeyFromString(String publicKey)
       throws NoSuchAlgorithmException, InvalidKeySpecException {
@@ -36,7 +41,11 @@ public class SecurityUtils {
   }
 
   /**
-   * TODO: add javadoc.
+   * Process signature for eliptic curve encoding. Signature is a Base64 encoded String.
+   * Split signature into two halves and use bountycastle to transform it into a DER Sequence.
+   * @param signature - base64 signature.
+   * @return - ecdsa ready to verify signature.
+   * @throws IOException - thrown by DER sequence encoding method.
    */
   public static byte[] getEcdsaEncodeFromSignature(byte[] signature) throws IOException {
     byte[] left = copyOfRange(signature, 0, signature.length / 2);
@@ -51,13 +60,19 @@ public class SecurityUtils {
   }
 
   /**
-   * TODO: add javadoc.
+   * Verify an ECDSA signature by using the provided content and public key.
+   * @param encodedSignature - ecdsa ready signature.
+   * @param publicKey - public key.
+   * @param content - content to verify.
+   * @throws NoSuchAlgorithmException - thrown if signature verification alorithm is not available.
+   * @throws InvalidKeyException - thrown if the public key is invalid.
+   * @throws SignatureException - thrown if the signature verification fails.
    */
   public static void ecdsaSignatureVerification(byte[] encodedSignature,
       PublicKey publicKey,
       String content)
       throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
-    Signature signatureVerification = Signature.getInstance("SHA256withECDSA");
+    Signature signatureVerification = Signature.getInstance(SHA_ECDSA.getName());
     signatureVerification.initVerify(publicKey);
     signatureVerification.update(content.getBytes(StandardCharsets.UTF_8));
 

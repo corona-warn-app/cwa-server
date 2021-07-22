@@ -15,7 +15,8 @@ public class HashUtils {
 
   public enum Algorithms {
     SHA_256("SHA-256"),
-    EC("EC");
+    EC("EC"),
+    SHA_ECDSA("SHA256withECDSA");
 
     private String name;
 

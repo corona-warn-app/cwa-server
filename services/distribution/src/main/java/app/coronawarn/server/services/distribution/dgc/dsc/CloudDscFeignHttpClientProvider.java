@@ -80,8 +80,8 @@ public class CloudDscFeignHttpClientProvider implements DscFeignHttpClientProvid
           emptyCharrArrayIfNull(trustStorePass))
           .build();
     } catch (Exception e) {
-      logger.error("Problem on creating DSC client - SSL context with truststore: {}",
-          trustStorePath.getName(), e);
+      logger.error("Problem on creating DSC client - SSL context with truststore: "
+          + trustStorePath.getName(), e);
       throw new RuntimeException(e);
     }
   }

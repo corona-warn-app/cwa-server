@@ -1,16 +1,16 @@
 package app.coronawarn.server.services.distribution.dgc;
 
-import java.util.List;
+import java.util.Collection;
 
 public class Certificates {
 
-  private List<CertificateStructure> certificates;
+  private Collection<CertificateStructure> certificates;
 
-  public List<CertificateStructure> getCertificates() {
+  public Collection<CertificateStructure> getCertificates() {
     return certificates;
   }
 
-  public void setCertificates(List<CertificateStructure> certificates) {
+  public void setCertificates(Collection<CertificateStructure> certificates) {
     this.certificates = certificates;
   }
 }
