@@ -20,7 +20,7 @@ public class BuildLocalStatisticsHelper {
   /**
    * Supplies with an newly created Local Statistics protobuf containing Federal State statistics.
    *
-   * @param federalStateCode - federal state code.
+   * @param federalStateCode                - federal state code.
    * @param localStatisticsJsonStringObject - local statistics json object.
    * @return - Local Statistics supplier
    */
@@ -30,10 +30,9 @@ public class BuildLocalStatisticsHelper {
   }
 
   /**
-   * Enhances an instance of Local Statistics protobuf.
-   * Adds Federal State Data to the provided Local Statistics
+   * Enhances an instance of Local Statistics protobuf. Adds Federal State Data to the provided Local Statistics
    *
-   * @param federalStateCode - federal state code.
+   * @param federalStateCode                - federal state code.
    * @param localStatisticsJsonStringObject - local statistics json object.
    * @return - Function which adds Federal State Data to Local Statistics
    */
@@ -45,7 +44,7 @@ public class BuildLocalStatisticsHelper {
   /**
    * Supplies with an newly created Local Statistics protobuf containing Administrative Unit statistics.
    *
-   * @param federalStateCode - federal state code.
+   * @param federalStateCode                - federal state code.
    * @param localStatisticsJsonStringObject - local statistics json object.
    * @return - Local Statistics supplier
    */
@@ -55,8 +54,7 @@ public class BuildLocalStatisticsHelper {
   }
 
   /**
-   * Enhances an instance of Local Statistics protobuf.
-   * Adds Administrative Unit Data to the provided Local Statistics
+   * Enhances an instance of Local Statistics protobuf. Adds Administrative Unit Data to the provided Local Statistics
    *
    * @param localStatisticsJsonStringObject - local statistics json object.
    * @return - Function which adds Administrative Unit Data to Local Statistics
@@ -68,9 +66,8 @@ public class BuildLocalStatisticsHelper {
   }
 
   /**
-   * Get the federal state index used in configs and protobuf enum {@link FederalState}.
-   * It is the real federal state id subtracted by 1.
-   * This adjustment took place in order for the federal state to match the exact enum position.
+   * Get the federal state index used in configs and protobuf enum {@link FederalState}. It is the real federal state id
+   * subtracted by 1. This adjustment took place in order for the federal state to match the exact enum position.
    * Protobuf enums must start from index 0.
    *
    * @param federalStateId - federal state id.
@@ -81,30 +78,25 @@ public class BuildLocalStatisticsHelper {
   }
 
   /**
-   * Find trend enum from seven days incidence.
-   * INCREASING if trend = 1
-   * DECREASING if trend = -1
-   * STABLE if trend = 0
+   * Find trend enum from seven days incidence. INCREASING if trend = 1 DECREASING if trend = -1 STABLE if trend = 0
+   *
    * @param sevenDayIncidence1stReportedTrend1Percent - seven day incidence
    * @return - Trend
    */
   public static Trend findTrendBySevenDayIncidence(int sevenDayIncidence1stReportedTrend1Percent) {
-    switch (sevenDayIncidence1stReportedTrend1Percent) {
+    switch (Integer.signum(sevenDayIncidence1stReportedTrend1Percent)) {
       case -1:
-        return Trend.forNumber(3);
-      case 0:
-        return Trend.forNumber(1);
+        return Trend.DECREASING;
       case 1:
-        return Trend.forNumber(2);
+        return Trend.INCREASING;
       default:
-        return Trend.UNRECOGNIZED;
+        return Trend.STABLE;
     }
   }
 
   /**
-   * Find federal state code from province code.
-   * For province codes containing 4 digits, the federal state code consists of first digit.
-   * For province codes containing 5 digits, the federal state code consists of first two digits.
+   * Find federal state code from province code. For province codes containing 4 digits, the federal state code consists
+   * of first digit. For province codes containing 5 digits, the federal state code consists of first two digits.
    *
    * @param provinceCode - province code.
    * @return - federal state code.
@@ -114,10 +106,10 @@ public class BuildLocalStatisticsHelper {
   }
 
   /**
-   * Build local statistics containing federal state statistics from an instance of
-   * {@link LocalStatisticsJsonStringObject}.
+   * Build local statistics containing federal state statistics from an instance of {@link
+   * LocalStatisticsJsonStringObject}.
    *
-   * @param federalStateCode - federal state code.
+   * @param federalStateCode                - federal state code.
    * @param localStatisticsJsonStringObject - local statistics json object.
    * @return - Local Statistics protobuf.
    */
@@ -129,10 +121,10 @@ public class BuildLocalStatisticsHelper {
   }
 
   /**
-   * Build local statistics containing administrative unit statistics from an instance of
-   * {@link LocalStatisticsJsonStringObject}.
+   * Build local statistics containing administrative unit statistics from an instance of {@link
+   * LocalStatisticsJsonStringObject}.
    *
-   * @param federalStateCode - federal state code.
+   * @param federalStateCode                - federal state code.
    * @param localStatisticsJsonStringObject - local statistics json object.
    * @return - Local Statistics protobuf.
    */
@@ -144,11 +136,11 @@ public class BuildLocalStatisticsHelper {
   }
 
   /**
-   * Add federal state statistics to an already existing Local Statistics from an instance of
-   * {@link LocalStatisticsJsonStringObject}.
+   * Add federal state statistics to an already existing Local Statistics from an instance of {@link
+   * LocalStatisticsJsonStringObject}.
    *
-   * @param localStatistics - existing local statistics
-   * @param federalStateCode - federal state code.
+   * @param localStatistics                 - existing local statistics
+   * @param federalStateCode                - federal state code.
    * @param localStatisticsJsonStringObject - local statistics json object.
    * @return - Local Statistics protobuf containing new federal data.
    */
@@ -161,10 +153,10 @@ public class BuildLocalStatisticsHelper {
   }
 
   /**
-   * Add administrative unit statistics to an already existing Local Statistics from an instance of
-   * {@link LocalStatisticsJsonStringObject}.
+   * Add administrative unit statistics to an already existing Local Statistics from an instance of {@link
+   * LocalStatisticsJsonStringObject}.
    *
-   * @param localStatistics - existing local statistics
+   * @param localStatistics                 - existing local statistics
    * @param localStatisticsJsonStringObject - local statistics json object.
    * @return - Local Statistics protobuf containing new administrative unit data.
    */
@@ -177,8 +169,9 @@ public class BuildLocalStatisticsHelper {
 
 
   /**
-   * Build Administrative Unit Data from an instance of {@link LocalStatisticsJsonStringObject}.
-   * Used for populating Local Statistics.
+   * Build Administrative Unit Data from an instance of {@link LocalStatisticsJsonStringObject}. Used for populating
+   * Local Statistics.
+   *
    * @param localStatisticsJsonStringObject - - local statistics json object.
    * @return - Administrative Unit Data protobuf.
    */
@@ -192,9 +185,10 @@ public class BuildLocalStatisticsHelper {
   }
 
   /**
-   * Build Federal State Data from an instance of {@link LocalStatisticsJsonStringObject}.
-   * Used for populating Local Statistics.
-   * @param federalStateCode - federal state code.
+   * Build Federal State Data from an instance of {@link LocalStatisticsJsonStringObject}. Used for populating Local
+   * Statistics.
+   *
+   * @param federalStateCode                - federal state code.
    * @param localStatisticsJsonStringObject - - local statistics json object.
    * @return - Federal State Data protobuf.
    */
@@ -208,8 +202,9 @@ public class BuildLocalStatisticsHelper {
   }
 
   /**
-   * Build Seven Day Incidence Data from an instance of {@link LocalStatisticsJsonStringObject}.
-   * Used for populating Local Statistics.
+   * Build Seven Day Incidence Data from an instance of {@link LocalStatisticsJsonStringObject}. Used for populating
+   * Local Statistics.
+   *
    * @param localStatisticsJsonStringObject - - local statistics json object.
    * @return - Seven Days Incidence Data protobuf.
    */

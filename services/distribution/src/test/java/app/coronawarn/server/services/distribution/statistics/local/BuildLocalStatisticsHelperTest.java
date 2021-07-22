@@ -3,7 +3,6 @@ package app.coronawarn.server.services.distribution.statistics.local;
 import static app.coronawarn.server.common.protocols.internal.stats.KeyFigure.Trend.DECREASING;
 import static app.coronawarn.server.common.protocols.internal.stats.KeyFigure.Trend.INCREASING;
 import static app.coronawarn.server.common.protocols.internal.stats.KeyFigure.Trend.STABLE;
-import static app.coronawarn.server.common.protocols.internal.stats.KeyFigure.Trend.UNRECOGNIZED;
 import static app.coronawarn.server.services.distribution.statistics.local.BuildLocalStatisticsHelper.findFederalStateByProvinceCode;
 import static app.coronawarn.server.services.distribution.statistics.local.BuildLocalStatisticsHelper.findTrendBySevenDayIncidence;
 import static app.coronawarn.server.services.distribution.statistics.local.BuildLocalStatisticsHelper.getFederalStateConfigIndex;
@@ -16,15 +15,22 @@ import org.junit.jupiter.params.provider.ValueSource;
 class BuildLocalStatisticsHelperTest {
 
   @ParameterizedTest
-  @ValueSource(ints = {-1, 0, 1, 2, 3, 5, 7, 11})
-  void testGetFederalStateConfigIndex(int i) {
-    assertEquals(i, getFederalStateConfigIndex(i + 1));
+  @ValueSource(ints = {-1, Integer.MIN_VALUE})
+  void testFindTrendBySevenDayIncidenceDecreasing(int i) {
+    assertEquals(DECREASING, findTrendBySevenDayIncidence(i));
   }
 
   @ParameterizedTest
-  @ValueSource(ints = {-2, 2, 3, 5, 7, 11})
-  void testFindTrendBySevenDayIncidenceUnrecognized(int i) {
-    assertEquals(UNRECOGNIZED, findTrendBySevenDayIncidence(i));
+  @ValueSource(ints = {1, Integer.MAX_VALUE})
+  void testFindTrendBySevenDayIncidenceIncreasing(int i) {
+    assertEquals(INCREASING, findTrendBySevenDayIncidence(i));
+  }
+
+
+  @ParameterizedTest
+  @ValueSource(ints = {-1, 0, 1, 2, 3, 5, 7, 11})
+  void testGetFederalStateConfigIndex(int i) {
+    assertEquals(i, getFederalStateConfigIndex(i + 1));
   }
 
   @Test
