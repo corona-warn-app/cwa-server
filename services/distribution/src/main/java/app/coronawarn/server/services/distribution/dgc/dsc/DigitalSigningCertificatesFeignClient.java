@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.dgc.dsc;
 
 import io.micrometer.core.annotation.Timed;
@@ -21,5 +19,4 @@ public interface DigitalSigningCertificatesFeignClient {
   @Timed
   @GetMapping(value = "${services.distribution.digital-green-certificate.dsc-client.dsc-list-path}")
   ResponseEntity<String> getDscTrustList();
-
 }
