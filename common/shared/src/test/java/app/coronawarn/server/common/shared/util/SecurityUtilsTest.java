@@ -1,5 +1,6 @@
 package app.coronawarn.server.common.shared.util;
 
+import static app.coronawarn.server.common.shared.util.SecurityUtils.base64decode;
 import static app.coronawarn.server.common.shared.util.SecurityUtils.ecdsaSignatureVerification;
 import static app.coronawarn.server.common.shared.util.SecurityUtils.getEcdsaEncodeFromSignature;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,7 +14,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Base64;
 import org.junit.jupiter.api.Test;
 
 class SecurityUtilsTest {
@@ -31,7 +31,7 @@ class SecurityUtilsTest {
   @Test
   void testGetEcdsaEncodedStringFromSignature() throws IOException {
     String signature = "+AE7sEXzNjgvxiDXrKdXQqL/XiOPIB/1r579jyIPWtQp7/a6K4m2vBsnjZSWvsZ+wT+WHkF8F64eCktNamZGhw==";
-    byte[] base64DecodedSignature = Base64.getDecoder().decode(signature);
+    byte[] base64DecodedSignature = base64decode(signature);
 
     assertThat(Hex.encodeHexString(getEcdsaEncodeFromSignature(base64DecodedSignature)))
         .isEqualTo("3045022100f8013bb045f336382fc620d7aca75742a2ff5e238f201ff5af9efd8f220f5ad4022029eff6ba2b89b6bc"
@@ -45,7 +45,7 @@ class SecurityUtilsTest {
         .getPublicKeyFromString("MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIxHvrv8jQx9OEzTZbsx1prQVQn"
             + "/3ex0gMYf6GyaNBW0QKLMjrSDeN6HwSPM0QzhvhmyQUixl6l88A7Zpu5OWSw==");
     String signature = "+AE7sEXzNjgvxiDXrKdXQqL/XiOPIB/1r579jyIPWtQp7/a6K4m2vBsnjZSWvsZ+wT+WHkF8F64eCktNamZGhw==";
-    byte[] base64DecodedSignature = Base64.getDecoder().decode(signature);
+    byte[] base64DecodedSignature = base64decode(signature);
 
     assertThrows(SignatureException.class, () -> ecdsaSignatureVerification(base64DecodedSignature, key, ""));
   }

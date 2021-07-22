@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.distribution.dgc.dsc;
 
+import static app.coronawarn.server.common.shared.util.SecurityUtils.base64decode;
 
 import app.coronawarn.server.common.protocols.internal.dgc.DscList;
 import app.coronawarn.server.common.protocols.internal.dgc.DscListItem;
@@ -8,7 +9,6 @@ import app.coronawarn.server.services.distribution.dgc.CertificateStructure;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchDscTrustListException;
 import com.google.protobuf.ByteString;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -29,8 +29,8 @@ public class DigitalSigningCertificatesToProtobufMapping {
     certificates.ifPresent(dscCertificates -> {
       for (CertificateStructure certs : dscCertificates.getCertificates()) {
         dscListItems.add(DscListItem.newBuilder()
-            .setData(ByteString.copyFrom(Base64.getDecoder().decode(certs.getRawData())))
-            .setKid(ByteString.copyFrom(Base64.getDecoder().decode(certs.getKid())))
+            .setData(ByteString.copyFrom(base64decode(certs.getRawData())))
+            .setKid(ByteString.copyFrom(base64decode(certs.getKid())))
             .build());
       }
     });

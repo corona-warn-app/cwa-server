@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.distribution.dgc.dsc.decode;
 
+import static app.coronawarn.server.common.shared.util.SecurityUtils.base64decode;
 import static app.coronawarn.server.common.shared.util.SecurityUtils.ecdsaSignatureVerification;
 import static app.coronawarn.server.common.shared.util.SecurityUtils.getEcdsaEncodeFromSignature;
 import static app.coronawarn.server.common.shared.util.SecurityUtils.getPublicKeyFromString;
@@ -16,7 +17,6 @@ import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,14 +37,13 @@ public class DscListDecoder {
   }
 
   /**
-   * Decode the trust list of certificates.
-   * Verifies the trust list content by using the ECDSA signature logic.
-   * Filters only X509 valid format certificates from the response.
+   * Decode the trust list of certificates. Verifies the trust list content by using the ECDSA signature logic. Filters
+   * only X509 valid format certificates from the response.
    *
    * @param data - trust list reponse from DSC as string.
    * @return - object wrapping the list of certificates.
-   * @throws DscListDecodeException - thrown if any exception is catched and special treatment if signature
-   *     verification fails.
+   * @throws DscListDecodeException - thrown if any exception is catched and special treatment if signature verification
+   *                                fails.
    */
   public Certificates decode(String data) throws DscListDecodeException {
     try {
@@ -54,19 +53,18 @@ public class DscListDecoder {
       String signature = data.substring(0, data.indexOf(CONTENT_STARTS_CHAR)).trim();
       String content = data.substring(signature.length()).trim();
 
-      byte[] base64DecodedSignature = Base64.getDecoder().decode(signature);
+      byte[] base64DecodedSignature = base64decode(signature);
       byte[] ecdsaSignature = getEcdsaEncodeFromSignature(base64DecodedSignature);
 
       ecdsaSignatureVerification(ecdsaSignature, publicKey, content);
-
 
       Certificates certificates = SerializationUtils.deserializeJson(content,
           typeFactory -> typeFactory.constructType(Certificates.class));
       return filterValidCertificates(certificates);
 
     } catch (SignatureException e) {
-      throw new DscListDecodeException("Dsc list cannot be decoded because of "
-          + "signature verification failinig: ", e);
+      throw new DscListDecodeException("Dsc list cannot be decoded because of " + "signature verification failinig: ",
+          e);
     } catch (Exception e) {
       throw new DscListDecodeException("Dsc list cannot be decoded because of: ", e);
     }
@@ -79,8 +77,7 @@ public class DscListDecoder {
     List<CertificateStructure> validCertificates = new ArrayList<>();
 
     for (CertificateStructure certificate : certificates.getCertificates()) {
-      InputStream certificateStream = new ByteArrayInputStream(
-          Base64.getDecoder().decode(certificate.getRawData()));
+      InputStream certificateStream = new ByteArrayInputStream(base64decode(certificate.getRawData()));
       try {
         CertificateFactory.getInstance("X.509").generateCertificate(certificateStream);
         validCertificates.add(certificate);
