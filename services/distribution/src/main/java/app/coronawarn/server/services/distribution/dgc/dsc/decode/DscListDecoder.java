@@ -29,7 +29,7 @@ public class DscListDecoder {
 
   private static final Logger logger = LoggerFactory.getLogger(DscListDecoder.class);
 
-  public static final String CONTENT_STARTS_CHAR = "{";
+  public static final char CONTENT_STARTS_CHAR = '{';
   private final DistributionServiceConfig distributionServiceConfig;
 
   public DscListDecoder(DistributionServiceConfig distributionServiceConfig) {
@@ -62,10 +62,9 @@ public class DscListDecoder {
       return filterValidCertificates(certificates);
 
     } catch (SignatureException e) {
-      throw new DscListDecodeException("Dsc list cannot be decoded because of " + "signature verification failinig: ",
-          e);
+      throw new DscListDecodeException("Signature verification failed! DSC list NOT decoded.", e);
     } catch (Exception e) {
-      throw new DscListDecodeException("Dsc list cannot be decoded because of: ", e);
+      throw new DscListDecodeException("DSC list NOT decoded.", e);
     }
   }
 
