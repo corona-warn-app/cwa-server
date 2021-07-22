@@ -148,8 +148,6 @@ public final class SerializationUtils {
     schema.validate(jsonSubject);
   }
 
-
-
   private SerializationUtils() {
   }
 
