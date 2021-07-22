@@ -1,4 +1,3 @@
-
 package app.coronawarn.server.services.distribution.dgc.dsc;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
@@ -21,16 +20,16 @@ public class CloudDscFeignClientConfiguration {
 
   private final CloudDscFeignHttpClientProvider feignClientProvider;
 
-  private final DistributionServiceConfig distributionServiceConfig;
+  private final DistributionServiceConfig.Client clientConfig;
 
   /**
    * Create an instance.
    */
   public CloudDscFeignClientConfiguration(CloudDscFeignHttpClientProvider feignClientProvider,
-                                          DistributionServiceConfig distributionServiceConfig) {
+      DistributionServiceConfig distributionServiceConfig) {
     logger.debug("Creating Cloud DSC Feign Client Configuration");
     this.feignClientProvider = feignClientProvider;
-    this.distributionServiceConfig = distributionServiceConfig;
+    this.clientConfig = distributionServiceConfig.getDigitalGreenCertificate().getDscClient();
   }
 
   @Bean
@@ -43,15 +42,9 @@ public class CloudDscFeignClientConfiguration {
    */
   @Bean
   public Retryer dscRetryer() {
-    long retryPeriod = TimeUnit.SECONDS.toMillis(
-        distributionServiceConfig.getDigitalGreenCertificate().getDscClient().getRetryPeriod());
-
-    long maxRetryPeriod = TimeUnit.SECONDS.toMillis(
-        distributionServiceConfig.getDigitalGreenCertificate().getDscClient().getMaxRetryPeriod());
-
-    int maxAttempts = distributionServiceConfig.getDigitalGreenCertificate().getDscClient().getMaxRetryAttempts();
-
+    long retryPeriod = TimeUnit.SECONDS.toMillis(clientConfig.getRetryPeriod());
+    long maxRetryPeriod = TimeUnit.SECONDS.toMillis(clientConfig.getMaxRetryPeriod());
+    int maxAttempts = clientConfig.getMaxRetryAttempts();
     return new Retryer.Default(retryPeriod, maxRetryPeriod, maxAttempts);
   }
-
 }
