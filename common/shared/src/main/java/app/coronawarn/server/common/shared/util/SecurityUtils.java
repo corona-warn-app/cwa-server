@@ -1,9 +1,9 @@
 package app.coronawarn.server.common.shared.util;
 
+import static app.coronawarn.server.common.shared.util.HashUtils.Algorithms.EC;
 import static app.coronawarn.server.common.shared.util.HashUtils.Algorithms.SHA_ECDSA;
 import static java.util.Arrays.copyOfRange;
 
-import app.coronawarn.server.common.shared.util.HashUtils.Algorithms;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -24,7 +24,8 @@ import org.bouncycastle.asn1.DERSequence;
 public class SecurityUtils {
 
   /**
-   * Static delegator for {@link Base64#getDecoder()} / {@link Decoder#decode(byte[])}. 
+   * Static delegator for {@link Base64#getDecoder()} / {@link Decoder#decode(byte[])}.
+   * 
    * @param in String to be decoded
    * @return decoded byte array
    */
@@ -54,8 +55,8 @@ public class SecurityUtils {
   }
 
   /**
-   * Process signature for elliptic curve encoding. Signature is a Base64 encoded String. Split signature into two halves
-   * and use bountycastle to transform it into a DER Sequence.
+   * Process signature for elliptic curve encoding. Signature is a Base64 encoded String. Split signature into two
+   * halves and use bountycastle to transform it into a DER Sequence.
    *
    * @param signature - base64 signature.
    * @return - ecdsa ready to verify signature.
@@ -84,7 +85,7 @@ public class SecurityUtils {
   public static PublicKey getPublicKeyFromString(final String publicKey)
       throws NoSuchAlgorithmException, InvalidKeySpecException {
     final X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(base64decode(publicKey));
-    return KeyFactory.getInstance(Algorithms.EC.getName()).generatePublic(x509EncodedKeySpec);
+    return KeyFactory.getInstance(EC.getName()).generatePublic(x509EncodedKeySpec);
   }
 
   private SecurityUtils() {
