@@ -12,9 +12,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.commons.httpclient.ApacheHttpClientConnectionManagerFactory;
 import org.springframework.cloud.commons.httpclient.ApacheHttpClientFactory;
-import org.springframework.cloud.commons.httpclient.DefaultApacheHttpClientConnectionManagerFactory;
 import org.springframework.cloud.commons.httpclient.DefaultApacheHttpClientFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
@@ -75,7 +73,7 @@ public class CloudDccFeignHttpClientProvider implements DccFeignHttpClientProvid
               emptyCharrArrayIfNull(trustStorePass))
           .build();
     } catch (Exception e) {
-      logger.error("Problem on creating SSL context with truststore: {}", trustStorePath.getName(), e);
+      logger.error("Problem on creating SSL context with truststore: " + trustStorePath.getName(), e);
       throw new RuntimeException(e);
     }
   }
