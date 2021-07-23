@@ -14,9 +14,6 @@ import app.coronawarn.server.common.shared.util.SerializationUtils;
 import app.coronawarn.server.common.shared.util.TimeUtils;
 import app.coronawarn.server.services.distribution.config.RegionMappingConfig;
 import app.coronawarn.server.services.distribution.statistics.StatisticType;
-import app.coronawarn.server.services.distribution.statistics.exceptions.BucketNotFoundException;
-import app.coronawarn.server.services.distribution.statistics.exceptions.ConnectionException;
-import app.coronawarn.server.services.distribution.statistics.exceptions.FilePathNotFoundException;
 import app.coronawarn.server.services.distribution.statistics.file.JsonFile;
 import app.coronawarn.server.services.distribution.statistics.file.StatisticJsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.validation.StatisticsJsonValidator;
@@ -77,7 +74,7 @@ public class LocalStatisticsToProtobufMapping {
       Optional<JsonFile> optionalFile = this.getFile();
 
       if (optionalFile.isEmpty()) {
-        logger.warn("Stats file is already updated to the latest version. Skipping generation.");
+        logger.warn("Local-Stats file is already updated to the latest version. Skipping generation.");
         return Collections.emptyMap();
       } else {
         JsonFile file = optionalFile.get();
@@ -125,7 +122,7 @@ public class LocalStatisticsToProtobufMapping {
   }
 
   private void updateETag(String newETag) {
-    var currentTimestamp = TimeUtils.getCurrentUtcHour().toEpochSecond(ZoneOffset.UTC);
+    var currentTimestamp = TimeUtils.getNow().getEpochSecond();
     this.localStatisticsDownloadService.store(currentTimestamp, newETag);
   }
 

@@ -10,6 +10,7 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToCborMapping;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchValueSetsException;
+import app.coronawarn.server.services.distribution.dgc.dsc.DigitalSigningCertificatesToProtobufMapping;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,10 +40,14 @@ class DgcStructureProviderDefaultValuesetsMissingTest {
   @MockBean
   DigitalGreenCertificateToCborMapping dgcToCborMappingMock;
 
+  @MockBean
+  DigitalSigningCertificatesToProtobufMapping digitalSigningCertificatesToProtobufMapping;
+
   @Test
   void default_value_missing_should_result_in_empty_dir() throws UnableToLoadFileException, FetchValueSetsException {
     DigitalGreenCertificateStructureProvider underTest = new DigitalGreenCertificateStructureProvider(
-        distributionServiceConfig, cryptoProvider, dgcToProtobufMappingMock, dgcToCborMappingMock);
+        distributionServiceConfig, cryptoProvider, dgcToProtobufMappingMock,
+        dgcToCborMappingMock, digitalSigningCertificatesToProtobufMapping);
     when(dgcToProtobufMappingMock.constructProtobufMapping())
         .thenThrow(new UnableToLoadFileException(""));
     DirectoryOnDisk digitalGreenCertificates = underTest.getDigitalGreenCertificates();

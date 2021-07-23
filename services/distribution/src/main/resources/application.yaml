@@ -34,7 +34,7 @@ services:
     eu-package-name: EUR
     # Indicates whether the shifting and expiry policies are applied to all supported countries during distribution.
     apply-policies-for-all-countries: false
-    card-id-sequence: ${STATS_CARD_ID_SEQUENCE:[1,3,2,4,5,6,7]}
+    card-id-sequence: ${STATS_CARD_ID_SEQUENCE:[2,1,3,4,5,6,7]}
     # Local paths, that are used during the export creation.
     connection-pool-size: 200
     paths:
@@ -137,6 +137,7 @@ services:
           #   * >= 0
           #   * <= 60
           waitForRetryInSeconds: ${DGC_TC_WAIT_FOR_RETRY_IN_SECONDS:10}
+        expiration-threshold-in-days: ${DGC_EXPIRATION_THRESHOLD_IN_DAYS:14}
       ios-key-download-parameters:
         revoked-day-packages: ${KEY_DOWNLOAD_REVOKED_DAY_PACKAGES:[]}
         revoked-hour-packages: ${KEY_DOWNLOAD_REVOKED_HOUR_PACKAGES:[]}
@@ -225,11 +226,18 @@ services:
       dgc-directory: ${DIGITAL_GREEN_CERTIFICATE_DIRECTORY:ehn-dgc}
       valuesets-file-name: ${DIGITAL_GREEN_CERTIFICATE_VALUESETS_FILE_NAME:value-sets}
       supported-languages: ${DIGITAL_GREEN_CERTIFICATE_SUPPORTED_LANGUAGES:DE, EN, BG, PL, RO, TR}
+      dsc-client:
+        public-key: ${DSC_PUBLIC_KEY:MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETHfi8foQF4UtSNVxSFxeu7W+gMxdSGElhdo7825SD3Lyb+Sqh4G6Kra0ro1BdrM6Qx+hsUx4Qwdby7QY0pzxyA==}
+        base-url: ${DSC_BASE_PATH:https://de.dscg.ubirch.com}
+        dsc-list-path: ${DSC_LIST_PATH:/trustList/DSC/}
+        ssl:
+          trust-store: ${DSC_TRUST_STORE:../../docker-compose-test-secrets/dsc_truststore}
+          trust-store-password: ${DSC_TRUST_STORE_PASSWORD:123456}
       client:
         retry-period: 5
         max-retry-period: 30
         max-retry-attempts: 5
-        base-url: ${BUSSINESS_RULES_BASE_PATH:https://distribution-6155b8d7d3c6.dcc-rules.de}
+        base-url: ${BUSSINESS_RULES_BASE_PATH:https://distribution.dcc-rules.de}
         country-list-path: ${BUSSINESS_RULES_COUNTRY_LIST_PATH:/countrylist}
         value-sets-path: ${BUSSINESS_RULES_VALUE_SETS_PATH:/valuesets}
         rules-path: ${BUSSINESS_RULES_RULES_PATH:/rules}
