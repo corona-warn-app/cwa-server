@@ -92,7 +92,7 @@ class DccRulesNotFetchedStructureProviderTest {
 
   @Test
   void should_not_contain_acceptance_or_invalidation_rules() throws FetchBusinessRulesException {
-    when(digitalCovidCertificateClient.getRules()).thenThrow(new FetchBusinessRulesException("not fetched"));
+    when(digitalCovidCertificateClient.getRules()).thenThrow(FetchBusinessRulesException.class);
     when(digitalCovidCertificateClient.getCountryList()).thenReturn(Arrays.asList("DE", "RO"));
 
     DirectoryOnDisk digitalGreenCertificates = getStructureProviderDirectory();

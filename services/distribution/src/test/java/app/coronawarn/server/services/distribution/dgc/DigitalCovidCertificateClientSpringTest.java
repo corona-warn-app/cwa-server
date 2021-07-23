@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
+import app.coronawarn.server.services.distribution.dgc.exception.FetchValueSetsException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +51,7 @@ class DigitalCovidCertificateClientSpringTest {
   private DigitalCovidCertificateClient digitalCovidCertificateClient;
 
   @Test
-  public void testCountryList() {
+  public void testCountryList() throws FetchBusinessRulesException {
     List<String> countries = digitalCovidCertificateClient.getCountryList();
 
     assertThat(countries).isNotEmpty();
@@ -62,7 +63,7 @@ class DigitalCovidCertificateClientSpringTest {
   }
 
   @Test
-  public void shouldReturnCorrectValueSetsByHash() {
+  public void shouldReturnCorrectValueSetsByHash() throws FetchValueSetsException {
     Optional<ValueSet> valueSet1 = digitalCovidCertificateClient.getValueSet(VACCINE_MAH_HASH);
 
     assertThat(valueSet1).isPresent();
@@ -77,7 +78,7 @@ class DigitalCovidCertificateClientSpringTest {
   }
 
   @Test
-  public void shouldThrowDccExceptionWhenTryingToRetrieveValuesetWithNonexistingHash() {
+  public void shouldThrowDccExceptionWhenTryingToRetrieveValuesetWithNonexistingHash() throws FetchValueSetsException {
     assertThat(digitalCovidCertificateClient.getValueSet(RULE_3_HASH)).isEmpty();
   }
 
@@ -87,7 +88,7 @@ class DigitalCovidCertificateClientSpringTest {
   }
 
   @Test
-  public void shouldReturnCorrectValueSets() {
+  public void shouldReturnCorrectValueSets() throws FetchValueSetsException {
     List<ValueSetMetadata> valueSets = digitalCovidCertificateClient.getValueSets();
 
     assertThat(valueSets).isNotEmpty();

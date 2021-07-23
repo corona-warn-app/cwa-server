@@ -3,6 +3,7 @@ package app.coronawarn.server.services.distribution.dgc;
 import static app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient.DISEASE_AGENT_TARGETED_HASH;
 import static app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient.RULE_1_HASH;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -13,6 +14,8 @@ import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertif
 import app.coronawarn.server.services.distribution.dgc.client.ProdDigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
+import app.coronawarn.server.services.distribution.dgc.exception.FetchValueSetsException;
+import feign.FeignException.FeignClientException;
 import feign.RetryableException;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -66,4 +69,35 @@ class DigitalCovidCertificateClientUnitTest {
         () -> prodDigitalCovidCertificateClient.getCountryRuleByHash(any(), any()));
   }
 
+  @Test
+  void shouldThrowExceptionWhenGetCountryListFails() {
+    when(digitalCovidCertificateFeignClient.getCountryList())
+        .thenThrow(FeignClientException.class);
+    assertThrows(FetchBusinessRulesException.class,
+        () -> prodDigitalCovidCertificateClient.getCountryList());
+  }
+
+  @Test
+  void shouldThrowExceptionWhenGetValuesetsFails() {
+    when(digitalCovidCertificateFeignClient.getValueSets())
+        .thenThrow(FeignClientException.class);
+    assertThrows(FetchValueSetsException.class,
+        () -> prodDigitalCovidCertificateClient.getValueSets());
+  }
+
+  @Test
+  void shouldThrowExceptionWhenGetValueSetFails() {
+    when(digitalCovidCertificateFeignClient.getValueSet(any()))
+        .thenThrow(FeignClientException.class);
+    assertThatThrownBy(() -> prodDigitalCovidCertificateClient.getValueSet(any()))
+        .isExactlyInstanceOf(FetchValueSetsException.class).hasCauseExactlyInstanceOf(FeignClientException.class);
+  }
+
+  @Test
+  void shouldThrowExceptionWhenGetRulesFails() {
+    when(digitalCovidCertificateFeignClient.getRules())
+        .thenThrow(FeignClientException.class);
+    assertThrows(FetchBusinessRulesException.class,
+        () -> prodDigitalCovidCertificateClient.getRules());
+  }
 }
