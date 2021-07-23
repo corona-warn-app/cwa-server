@@ -1006,9 +1006,9 @@ public class DistributionServiceConfig {
 
   public static class Client {
 
-    private String baseUrl;
+    private String publicKey;
 
-    private String countryListPath;
+    private String baseUrl;
 
     private Ssl ssl;
 
@@ -1017,6 +1017,14 @@ public class DistributionServiceConfig {
     private int maxRetryPeriod;
 
     private int maxRetryAttempts;
+
+    public String getPublicKey() {
+      return publicKey;
+    }
+
+    public void setPublicKey(String publicKey) {
+      this.publicKey = publicKey;
+    }
 
     public Ssl getSsl() {
       return ssl;
@@ -1032,14 +1040,6 @@ public class DistributionServiceConfig {
 
     public void setBaseUrl(String baseUrl) {
       this.baseUrl = baseUrl;
-    }
-
-    public String getCountryListPath() {
-      return countryListPath;
-    }
-
-    public void setCountryListPath(String countryListPath) {
-      this.countryListPath = countryListPath;
     }
 
     public int getRetryPeriod() {
@@ -1603,12 +1603,24 @@ public class DistributionServiceConfig {
 
       private DgcTestCertificateParameters dgcTestCertificateParameters;
 
+      @Min(0)
+      @Max(100)
+      private Integer expirationThresholdInDays;
+
       public DgcTestCertificateParameters getTestCertificateParameters() {
         return dgcTestCertificateParameters;
       }
 
       public void setTestCertificateParameters(DgcTestCertificateParameters dgcTestCertificateParameters) {
         this.dgcTestCertificateParameters = dgcTestCertificateParameters;
+      }
+
+      public Integer getExpirationThresholdInDays() {
+        return expirationThresholdInDays;
+      }
+
+      public void setExpirationThresholdInDays(Integer expirationThresholdInDays) {
+        this.expirationThresholdInDays = expirationThresholdInDays;
       }
 
       public static class DgcTestCertificateParameters {
@@ -1675,6 +1687,8 @@ public class DistributionServiceConfig {
     private String[] supportedLanguages;
 
     private Client client;
+
+    private Client dscClient;
 
     public String getMahJsonPath() {
       return mahJsonPath;
@@ -1762,6 +1776,14 @@ public class DistributionServiceConfig {
 
     public void setClient(Client client) {
       this.client = client;
+    }
+
+    public Client getDscClient() {
+      return dscClient;
+    }
+
+    public void setDscClient(Client dscClient) {
+      this.dscClient = dscClient;
     }
   }
 }
