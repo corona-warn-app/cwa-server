@@ -12,9 +12,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.commons.httpclient.ApacheHttpClientConnectionManagerFactory;
 import org.springframework.cloud.commons.httpclient.ApacheHttpClientFactory;
-import org.springframework.cloud.commons.httpclient.DefaultApacheHttpClientConnectionManagerFactory;
 import org.springframework.cloud.commons.httpclient.DefaultApacheHttpClientFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
@@ -53,14 +51,15 @@ public class CloudDccFeignHttpClientProvider implements DccFeignHttpClientProvid
   @Bean
   public Client createFeignClient() {
     return new ApacheHttpClient(
-        federationHttpClientFactory().createBuilder().build());
+        dccHttpClientFactory().createBuilder().build());
   }
 
   /**
    * Creates an {@link ApacheHttpClientFactory} that with no SSL certificates and no host names.
    */
   @Bean
-  private ApacheHttpClientFactory federationHttpClientFactory() {
+  @Profile("dcc-client-factory")
+  private ApacheHttpClientFactory dccHttpClientFactory() {
     return new DefaultApacheHttpClientFactory(HttpClientBuilder.create()
         .setMaxConnPerRoute(connectionPoolSize)
         .setMaxConnTotal(connectionPoolSize)
@@ -68,7 +67,7 @@ public class CloudDccFeignHttpClientProvider implements DccFeignHttpClientProvid
   }
 
   private SSLContext getSslContext(File trustStorePath, String trustStorePass) {
-    logger.info("Instantiating SSL context with truststore: " + trustStorePath.getName());
+    logger.info("Instantiating DCC client - SSL context with truststore: {}", trustStorePath.getName());
     try {
       return SSLContextBuilder.create().loadTrustMaterial(trustStorePath,
               emptyCharrArrayIfNull(trustStorePass))
@@ -77,15 +76,5 @@ public class CloudDccFeignHttpClientProvider implements DccFeignHttpClientProvid
       logger.error("Problem on creating SSL context with truststore: " + trustStorePath.getName(), e);
       throw new RuntimeException(e);
     }
-  }
-
-  /**
-   * Creates connection manager.
-   *
-   * @return ApacheHttpClientConnectionManagerFactory.
-   */
-  @Bean
-  public ApacheHttpClientConnectionManagerFactory createConnectionManager() {
-    return new DefaultApacheHttpClientConnectionManagerFactory();
   }
 }
