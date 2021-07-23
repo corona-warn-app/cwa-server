@@ -94,7 +94,7 @@ public abstract class LocalFile {
    * @return <code>true</code> if and only if the {@link #s3Key} ends with a digit, false otherwise.
    */
   public boolean isKeyFile() {
-    return s3Key.matches(".*\\d");
+    return s3Key.matches(".*\\d") && !isStatisticFile();
   }
 
   public boolean isQrPosterTemplate() {
@@ -106,7 +106,7 @@ public abstract class LocalFile {
   }
 
   private boolean isStatisticFile() {
-    return s3Key.endsWith("stats");
+    return s3Key.endsWith("stats") || s3Key.matches(".*local_stats_\\d");
   }
 
   private boolean isVaccineValueSet() {
