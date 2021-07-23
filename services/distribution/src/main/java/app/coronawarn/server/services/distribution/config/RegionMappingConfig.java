@@ -28,7 +28,7 @@ public class RegionMappingConfig {
   RegionMappingConfig() {
   }
 
-  public Optional<Integer> getFederalStateGroup(Integer federalStateId) {
+  public Optional<Integer> getFederalStateGroup(int federalStateId) {
     return Optional.ofNullable(
         federalStatesGroups.get(getFederalStateConfigIndex(federalStateId)));
   }
