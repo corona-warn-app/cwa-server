@@ -1,15 +1,14 @@
 package app.coronawarn.server.common.shared.util;
 
-import static app.coronawarn.server.common.shared.util.HashUtils.*;
+import static app.coronawarn.server.common.shared.util.HashUtils.byteStringDigest;
+import static app.coronawarn.server.common.shared.util.HashUtils.generateSecureRandomByteArrayData;
+import static app.coronawarn.server.common.shared.util.HashUtils.md5DigestAsHex;
+import static app.coronawarn.server.common.shared.util.HashUtils.Algorithms.SHA_256;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import app.coronawarn.server.common.shared.util.HashUtils.MessageDigestAlgorithms;
 import com.google.protobuf.ByteString;
 import org.junit.jupiter.api.Test;
-import java.security.NoSuchAlgorithmException;
-import java.util.Random;
 
 class HashUtilsTest {
 
@@ -36,7 +35,7 @@ class HashUtilsTest {
 
   @Test
   void testByteStringDigest() {
-    byte[] hash = byteStringDigest(ByteString.copyFromUtf8(TEST_STRING), MessageDigestAlgorithms.SHA_256);
+    byte[] hash = byteStringDigest(ByteString.copyFromUtf8(TEST_STRING), SHA_256);
     assertThat(hash).hasSize(32);
   }
 }
