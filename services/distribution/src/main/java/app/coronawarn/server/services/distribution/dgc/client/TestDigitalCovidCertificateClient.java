@@ -1,4 +1,3 @@
-
 package app.coronawarn.server.services.distribution.dgc.client;
 
 import static app.coronawarn.server.common.shared.util.SerializationUtils.readConfiguredJsonOrDefault;
@@ -22,7 +21,6 @@ import java.util.Optional;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
-
 
 /**
  * This is an implementation with test data for interface retrieving Digital Covid Certificate data. Used to retrieve

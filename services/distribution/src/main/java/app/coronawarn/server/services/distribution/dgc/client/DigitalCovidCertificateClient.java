@@ -1,12 +1,9 @@
-
-
 package app.coronawarn.server.services.distribution.dgc.client;
 
 import app.coronawarn.server.services.distribution.dgc.BusinessRule;
 import app.coronawarn.server.services.distribution.dgc.BusinessRuleItem;
 import app.coronawarn.server.services.distribution.dgc.ValueSet;
 import app.coronawarn.server.services.distribution.dgc.ValueSetMetadata;
-import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchValueSetsException;
 import java.util.List;
