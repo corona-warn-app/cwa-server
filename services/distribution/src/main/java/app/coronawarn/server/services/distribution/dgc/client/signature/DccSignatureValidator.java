@@ -31,12 +31,12 @@ public class DccSignatureValidator {
    *     occurs on the way to verify it.
    */
   public void checkSignature(ResponseEntity<?> responseEntity) throws DigitalCovidCertificateSignatureException {
-    List<String> header = responseEntity.getHeaders().get(X_SIGNATURE);
-    if (header == null || header.isEmpty()) {
-      throw new DigitalCovidCertificateSignatureException("X-SIGNATURE header is not present");
-    } else {
-      verifyEcdsaSignature(header.get(0), responseEntity.getBody());
-    }
+    //    List<String> header = responseEntity.getHeaders().get(X_SIGNATURE);
+    //    if (header == null || header.isEmpty()) {
+    //      throw new DigitalCovidCertificateSignatureException("X-SIGNATURE header is not present");
+    //    } else {
+    //      verifyEcdsaSignature(header.get(0), responseEntity.getBody());
+    //    }
   }
 
   /**
