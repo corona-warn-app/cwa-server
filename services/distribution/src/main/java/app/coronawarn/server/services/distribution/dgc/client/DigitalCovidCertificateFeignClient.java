@@ -6,6 +6,7 @@ import app.coronawarn.server.services.distribution.dgc.BusinessRule;
 import app.coronawarn.server.services.distribution.dgc.BusinessRuleItem;
 import app.coronawarn.server.services.distribution.dgc.ValueSet;
 import app.coronawarn.server.services.distribution.dgc.ValueSetMetadata;
+import app.coronawarn.server.services.distribution.dgc.client.signature.VerifyDccSignature;
 import io.micrometer.core.annotation.Timed;
 import java.util.List;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -27,6 +28,7 @@ public interface DigitalCovidCertificateFeignClient {
    */
   @Timed
   @GetMapping(value = "${services.distribution.digital-green-certificate.client.country-list-path}")
+  @VerifyDccSignature
   ResponseEntity<List<String>> getCountryList();
 
   /**

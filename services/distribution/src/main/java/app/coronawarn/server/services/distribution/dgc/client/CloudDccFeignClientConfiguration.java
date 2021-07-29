@@ -11,6 +11,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.validation.beanvalidation.MethodValidationInterceptor;
+import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 
 @Configuration
 @EnableFeignClients
@@ -52,6 +54,16 @@ public class CloudDccFeignClientConfiguration {
     int maxAttempts = distributionServiceConfig.getDigitalGreenCertificate().getClient().getMaxRetryAttempts();
 
     return new Retryer.Default(retryPeriod, maxRetryPeriod, maxAttempts);
+  }
+
+  @Bean
+  public MethodValidationInterceptor methodValidationInterceptor() {
+    return new MethodValidationInterceptor();
+  }
+
+  @Bean
+  public MethodValidationPostProcessor methodValidationPostProcessor() {
+    return new MethodValidationPostProcessor();
   }
 
 }
