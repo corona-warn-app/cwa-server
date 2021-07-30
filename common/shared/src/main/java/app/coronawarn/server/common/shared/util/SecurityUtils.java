@@ -25,7 +25,7 @@ public class SecurityUtils {
 
   /**
    * Static delegator for {@link Base64#getDecoder()} / {@link Decoder#decode(byte[])}.
-   * 
+   *
    * @param in String to be decoded
    * @return decoded byte array
    */
@@ -44,10 +44,10 @@ public class SecurityUtils {
    * @throws SignatureException       - thrown if the signature verification fails.
    */
   public static void ecdsaSignatureVerification(final byte[] encodedSignature, final PublicKey publicKey,
-      final String content) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+      final byte[] content) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
     final Signature signatureVerification = Signature.getInstance(SHA_ECDSA.getName());
     signatureVerification.initVerify(publicKey);
-    signatureVerification.update(content.getBytes(StandardCharsets.UTF_8));
+    signatureVerification.update(content);
 
     if (!signatureVerification.verify(encodedSignature)) {
       throw new SignatureException("Signature verification failed");

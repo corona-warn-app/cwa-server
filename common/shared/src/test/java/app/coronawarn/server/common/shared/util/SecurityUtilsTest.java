@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.github.dockerjava.zerodep.shaded.org.apache.commons.codec.binary.Hex;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
@@ -47,6 +48,7 @@ class SecurityUtilsTest {
     String signature = "+AE7sEXzNjgvxiDXrKdXQqL/XiOPIB/1r579jyIPWtQp7/a6K4m2vBsnjZSWvsZ+wT+WHkF8F64eCktNamZGhw==";
     byte[] base64DecodedSignature = base64decode(signature);
 
-    assertThrows(SignatureException.class, () -> ecdsaSignatureVerification(base64DecodedSignature, key, ""));
+    assertThrows(SignatureException.class,
+        () -> ecdsaSignatureVerification(base64DecodedSignature, key, "".getBytes(StandardCharsets.UTF_8)));
   }
 }

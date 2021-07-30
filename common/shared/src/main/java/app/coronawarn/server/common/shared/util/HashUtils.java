@@ -53,7 +53,7 @@ public class HashUtils {
    */
   public static byte[] byteStringDigest(String data, Algorithms algorithm) {
     try {
-      return MessageDigest.getInstance(algorithm.getName()).digest(data.getBytes());
+      return MessageDigest.getInstance(algorithm.getName()).digest(data.getBytes(StandardCharsets.UTF_8));
     } catch (NoSuchAlgorithmException e) {
       logger.error("Digest algorithm does not exist", e);
     }

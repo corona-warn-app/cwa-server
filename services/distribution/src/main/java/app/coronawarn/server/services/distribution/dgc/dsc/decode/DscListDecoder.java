@@ -12,6 +12,7 @@ import app.coronawarn.server.services.distribution.dgc.Certificates;
 import app.coronawarn.server.services.distribution.dgc.exception.DscListDecodeException;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.cert.CertificateException;
@@ -55,7 +56,7 @@ public class DscListDecoder {
 
       byte[] ecdsaSignature = getEcdsaEncodeFromSignature(base64decode(signature));
 
-      ecdsaSignatureVerification(ecdsaSignature, publicKey, content);
+      ecdsaSignatureVerification(ecdsaSignature, publicKey, content.getBytes(StandardCharsets.UTF_8));
 
       Certificates certificates = SerializationUtils.deserializeJson(content,
           typeFactory -> typeFactory.constructType(Certificates.class));
