@@ -77,6 +77,8 @@ services:
     app-features:
       - label: isPlausibleDeniabilityActive
         value: ${PLAUSIBLE_DENIABILITY_ACTIVE:1}
+      - label: unencrypted-checkins-enabled
+        value: ${EVREG_UNENCRYPTED_CHECKINS_ENABLED:0}
     supported-countries: ${SUPPORTED_COUNTRIES:DE,FR,NL,IE}
     app-versions:
       latest-ios: ${IOS_LATEST_VERSION:1.5.3}

@@ -113,8 +113,8 @@ services:
       bucket: ${STATISTICS_FILE_S3_BUCKET:obs-cwa-public-dev}
 
     app-features:
-      - label: reserved
-        value: ${reserved:1}
+      - label: unencrypted-checkins-enabled
+        value: ${EVREG_UNENCRYPTED_CHECKINS_ENABLED:0}
     supported-countries: ${SUPPORTED_COUNTRIES}
     app-versions:
       latest-ios: ${IOS_LATEST_VERSION:1.5.3}
