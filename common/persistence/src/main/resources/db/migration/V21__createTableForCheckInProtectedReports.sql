@@ -1,8 +1,7 @@
 CREATE TABLE check_in_protected_reports (
   id SERIAL PRIMARY KEY,
   trace_location_ID_hash BYTEA NOT NULL,
-  start_interval_number INTEGER NOT NULL,
-  period INTEGER NOT NULL,
-  transmission_risk_level int,
+  initialization_vector BYTEA NOT NULL,
+  encrypted_check_in_record BYTEA NOT NULL,
   submission_timestamp BIGINT NOT NULL
 );
