@@ -37,11 +37,9 @@ public class ProdDigitalSigningCertificatesClient implements DigitalSigningCerti
     try {
       return Optional.of(dscListDecoder.decode(digitalSigningCertificatesFeignClient.getDscTrustList().getBody()));
     } catch (FeignException e) {
-      logger.error("Error on fetching DSC trust list caused by: " + e.getCause(), e);
-      throw new FetchDscTrustListException("DSC Trust List could not be fetched because of: ", e);
+      throw new FetchDscTrustListException("DSC Trust List could not be fetched because of: " + e.getMessage(), e);
     } catch (DscListDecodeException e) {
-      logger.error("Error on decoding DSC trust list caused by: " + e.getCause(), e);
-      throw new FetchDscTrustListException("DSC Trust List could not decode because of: ", e);
+      throw new FetchDscTrustListException("DSC Trust List could not decode because of: " + e.getMessage(), e);
     }
   }
 }

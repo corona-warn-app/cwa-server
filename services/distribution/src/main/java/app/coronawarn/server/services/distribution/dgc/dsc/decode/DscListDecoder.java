@@ -47,15 +47,18 @@ public class DscListDecoder {
    */
   public Certificates decode(String data) throws DscListDecodeException {
     try {
+      logger.debug("Get and convert public key for DSC.");
       PublicKey publicKey = getPublicKeyFromString(
           distributionServiceConfig.getDigitalGreenCertificate().getDscClient().getPublicKey());
 
       String signature = data.substring(0, data.indexOf(CONTENT_STARTS_CHAR)).trim();
       String content = data.substring(signature.length()).trim();
 
+      logger.debug("Start verifying DSC signature.");
       byte[] ecdsaSignature = getEcdsaEncodeFromSignature(base64decode(signature));
 
       ecdsaSignatureVerification(ecdsaSignature, publicKey, content);
+      logger.debug("DSC signature is valid.");
 
       Certificates certificates = SerializationUtils.deserializeJson(content,
           typeFactory -> typeFactory.constructType(Certificates.class));
