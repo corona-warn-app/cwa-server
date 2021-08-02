@@ -1,8 +1,10 @@
 package app.coronawarn.server.services.distribution.dgc.integration;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dgc.ApacheHttpTestConfiguration;
-import app.coronawarn.server.services.distribution.dgc.BusinessRule;
 import app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleType;
 import app.coronawarn.server.services.distribution.dgc.BusinessRuleItem;
 import app.coronawarn.server.services.distribution.dgc.ValueSet;
@@ -15,8 +17,12 @@ import app.coronawarn.server.services.distribution.dgc.client.signature.DccSigna
 import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchValueSetsException;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration;
@@ -40,6 +46,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ActiveProfiles("dcc-client-factory")
 public class DigitalCovidCertificateIT {
 
+  private static final Logger logger = LoggerFactory.getLogger(DigitalCovidCertificateIT.class);
+
   @Autowired
   private DigitalCovidCertificateClient digitalCovidCertificateClient;
 
@@ -48,13 +56,13 @@ public class DigitalCovidCertificateIT {
     List<BusinessRuleItem> rules = digitalCovidCertificateClient.getRules();
     assertThat(rules).isNotEmpty();
 
-    for(BusinessRuleItem businessRuleItem : rules) {
-      digitalCovidCertificateClient
-          .getCountryRuleByHash(businessRuleItem.getCountry(), businessRuleItem.getHash()).ifPresent(businessRule -> {
+    for (BusinessRuleItem businessRuleItem : rules) {
+      digitalCovidCertificateClient.getCountryRuleByHash(businessRuleItem.getCountry(), businessRuleItem.getHash())
+          .ifPresent(businessRule -> {
             assertThat(businessRule.getCountry()).isEqualTo(businessRuleItem.getCountry());
             assertThat(businessRule.getIdentifier()).isNotEmpty();
             assertTrue(isAcceptanceOrInvalidation(businessRule.getType()));
-      });
+          });
     }
   }
 
@@ -69,12 +77,19 @@ public class DigitalCovidCertificateIT {
     List<ValueSetMetadata> valuesets = digitalCovidCertificateClient.getValueSets();
     assertThat(valuesets).isNotEmpty();
 
+    int counter = 0;
     for (ValueSetMetadata valueSetMetadata : valuesets) {
-      Optional<ValueSet> valueSetOptional = digitalCovidCertificateClient.getValueSet(valueSetMetadata.getHash());
-      assertThat(valueSetOptional).isPresent();
-      assertThat(valueSetOptional.get().getValueSetId()).isNotEmpty();
-      assertThat(valueSetOptional.get().getValueSetValues()).isNotEmpty();
+      try {
+        Optional<ValueSet> valueSetOptional = digitalCovidCertificateClient.getValueSet(valueSetMetadata.getHash());
+        assertThat(valueSetOptional).isPresent();
+        assertThat(valueSetOptional.get().getValueSetId()).isNotEmpty();
+        assertThat(valueSetOptional.get().getValueSetValues()).isNotEmpty();
+        counter++;
+      } catch (final FetchValueSetsException e) {
+        logger.warn("Hash: '" + valueSetMetadata.getHash() + "' throwed exception!", e.getCause());
+      }
     }
+    assertTrue(counter > 0, "All valuesets failed!!!");
   }
 
   private boolean isAcceptanceOrInvalidation(String type) {
