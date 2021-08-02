@@ -7,6 +7,7 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.normalization.DiagnosisKeyNormalizer;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
+import app.coronawarn.server.services.submission.checkins.EventCheckInProtectedReportsValidator;
 import app.coronawarn.server.services.submission.checkins.EventCheckinDataValidator;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import java.lang.annotation.Documented;
@@ -63,16 +64,19 @@ public @interface ValidSubmissionPayload {
     private final Collection<String> supportedCountries;
     private final String defaultOriginCountry;
     private final EventCheckinDataValidator eventCheckinValidator;
+    private final EventCheckInProtectedReportsValidator eventCheckInProtectedReportsValidator;
     private static final Logger logger = LoggerFactory.getLogger(SubmissionPayloadValidator.class);
 
     public SubmissionPayloadValidator(SubmissionServiceConfig submissionServiceConfig,
-        EventCheckinDataValidator checkinDataValidator) {
+        EventCheckinDataValidator checkinDataValidator,
+        EventCheckInProtectedReportsValidator checkInProtectedReportsValidator) {
       maxNumberOfKeys = submissionServiceConfig.getMaxNumberOfKeys();
       maxRollingPeriod = submissionServiceConfig.getMaxRollingPeriod();
       minRollingPeriod = submissionServiceConfig.getMinRollingPeriod();
       supportedCountries = List.of(submissionServiceConfig.getSupportedCountries());
       defaultOriginCountry = submissionServiceConfig.getDefaultOriginCountry();
       eventCheckinValidator = checkinDataValidator;
+      eventCheckInProtectedReportsValidator = checkInProtectedReportsValidator;
     }
 
     /**
@@ -101,6 +105,7 @@ public @interface ValidSubmissionPayload {
           && checkTransmissionRiskLevelIsAcceptable(exposureKeys, validatorContext)
           && checkDaysSinceOnsetOfSymptomsIsInRange(exposureKeys, validatorContext)
           && eventCheckinValidator.verify(submissionPayload, validatorContext)
+          && eventCheckInProtectedReportsValidator.verify(submissionPayload, validatorContext)
           && checkRollingPeriodIsInRange(exposureKeys, validatorContext);
 
       if (!isValidPayload) {

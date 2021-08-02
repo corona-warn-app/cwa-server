@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
 @Component
+@Deprecated
 public class EventCheckinDataValidator {
 
   /**
