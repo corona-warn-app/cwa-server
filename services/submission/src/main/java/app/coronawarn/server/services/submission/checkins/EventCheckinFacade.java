@@ -6,6 +6,7 @@ import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsD
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
+import app.coronawarn.server.common.protocols.internal.pt.CheckInProtectedReport;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.controller.CheckinsStorageResult;
 import java.time.Instant;
@@ -49,6 +50,7 @@ public class EventCheckinFacade {
    * everything as {@link TraceTimeIntervalWarning} entities. Returns the number of inserted entities which is useful
    * for the case where there might be conflicts with the table constraints during the db save operations.
    */
+  @Deprecated
   public int saveCheckinsWithFakeData(List<CheckIn> originalCheckins, int numberOfFakesToCreate,
       byte[] pepper, int submissionTimestamp, SubmissionType submissionType) {
     List<CheckIn> allCheckins = new ArrayList<>(originalCheckins);
@@ -62,6 +64,7 @@ public class EventCheckinFacade {
    * @param submissionPayload - submission payload
    * @return - storage result containing number of filtered and saved check-ins.
    */
+  @Deprecated
   public CheckinsStorageResult extractAndStoreEventCheckins(SubmissionPayload submissionPayload) {
     // need a container object that reflects how many checkins were filtered even if storage fails
     AtomicInteger numberOfFilteredCheckins = new AtomicInteger(0);
