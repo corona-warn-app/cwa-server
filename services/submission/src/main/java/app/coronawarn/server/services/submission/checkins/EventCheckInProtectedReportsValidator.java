@@ -52,8 +52,8 @@ public class EventCheckInProtectedReportsValidator {
   boolean verifyEncryptedCheckInRecordLength(CheckInProtectedReport checkInProtectedReport,
       ConstraintValidatorContext validatorContext) {
     if (ObjectUtils.isEmpty(checkInProtectedReport.getEncryptedCheckInRecord())
-        || checkInProtectedReport.getEncryptedCheckInRecord().size() != 32) {
-      addViolation(validatorContext, "CheckInProtectedReports iv must have 32 bytes not "
+        || checkInProtectedReport.getEncryptedCheckInRecord().size() != 16) {
+      addViolation(validatorContext, "CheckInProtectedReports encryptedCheckInRecord must have 16 bytes not "
           + (checkInProtectedReport.getEncryptedCheckInRecord() == null
           ? 0 : checkInProtectedReport.getEncryptedCheckInRecord().size()));
       return false;
