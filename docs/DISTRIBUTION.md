@@ -261,9 +261,16 @@ until the threshold minimum is fulfilled.
 ## Digital Green Certificate
 
 A Digital Green Certificate is a digital proof that a person has either been vaccinated against COVID-19, received a negative test result or recovered from COVID-19.
+The data is provided by DCC Rule & Value Set Distribution Backend and consumed through a feign client build in cwa-server.
+The CWA Server serves as a proxy to obtain rules and value sets from the data source, apply necessary transformation, sign the data, and publish it on CDN.
+
+The consumed data is divided in two parts:
+- `value sets` - Contains the possible values for entities involved in the Digital Green Certificate process. Examples: virus definition, vaccine manufactures etc. Value Sets are published in a single zip file that contains a Protocol Buffer message and signature.
+- `business rules` - Contains the business rules for a Digital Green Certificate to be checked agains. Rules are published in multiple zip files (depending on country and type). Each zip file contains a binary representation(CBOR encoding) of a JSON structure and signature.
+
+### Value sets
 
 There are three different value sets to consume:
-
 - vaccine-prophylaxis.json - Vaccine or prophylaxis
 - vaccine-medicinal-product.json - Vaccine medicinal product
 - vaccine-mah-manf.json - Marketing Authorization Holder
