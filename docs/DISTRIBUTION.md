@@ -11,7 +11,7 @@ Each interval generates a `.zip` file for each applicable country where keys are
 
 1. export.bin: Contains the list of diagnosis keys.
 2. export.sig: Contains signature information needed for validating the export.bin file.
-The file structure definition can be found [here](https://github.com/google/exposure-notifications-server/blob/HEAD/internal/pb/export/export.proto).
+   The file structure definition can be found [here](https://github.com/google/exposure-notifications-server/blob/HEAD/internal/pb/export/export.proto).
 
 The distribution service is triggered by a CRON scheduler, currently set to 1 hour. However, this
 will change, since the Exposure Notification APIs have a rate-limiting in place (cf. details for [Apple](https://developer.apple.com/documentation/exposurenotification/enmanager/3586331-detectexposures) and [Google](https://developers.google.com/android/exposure-notifications/exposure-notifications-api#providediagnosiskeys)).
@@ -28,11 +28,11 @@ In that case, it needs to be guaranteed, that those fake diagnosis keys are indi
 Configuration files are needed for two use cases:
 
 1. Exposure Configuration: In order to calculate a risk score for each exposure incident, the mobile
-API requires a list of the following parameters, requiring weights and levels: duration, days, attenuation and transmission.
-The function and impact of those parameters is described on the [Apple Exposure Configuration Page](https://developer.apple.com/documentation/exposurenotification/enexposureconfiguration) and in the chapter [*Risk score calculation*](https://github.com/corona-warn-app/cwa-documentation/blob/HEAD/solution_architecture.md#risk-score-calculation) of the solution architecture document.
+   API requires a list of the following parameters, requiring weights and levels: duration, days, attenuation and transmission.
+   The function and impact of those parameters is described on the [Apple Exposure Configuration Page](https://developer.apple.com/documentation/exposurenotification/enexposureconfiguration) and in the chapter [*Risk score calculation*](https://github.com/corona-warn-app/cwa-documentation/blob/HEAD/solution_architecture.md#risk-score-calculation) of the solution architecture document.
 2. Mobile App Configuration: Provides configuration values needed for the CWA mobile app, which are
-not part of the exposure notification framework. These values are required for controlling the
-application behavior.
+   not part of the exposure notification framework. These values are required for controlling the
+   application behavior.
 
 ## Discovery
 
@@ -251,19 +251,50 @@ Furthermore, with the parameter `apply-policies-for-all-countries` it is possibl
 Policies are as follows:
 
 - As described in the GAEN framework (more details [here](https://developer.apple.com/documentation/exposurenotification/setting_up_a_key_server)),
-diagnosis keys must not be distributed before two hours after the end of the key's expiration window(calculated by
-adding the rolling period of the key to its start interval number).
+  diagnosis keys must not be distributed before two hours after the end of the key's expiration window(calculated by
+  adding the rolling period of the key to its start interval number).
 - The shifting policy. Which ensures that each distribution/export file published to the CDN. contains at least
-140 Temporary Exposure Keys (configurable by the `shifting-policy-threshold` property). Where there are less
-keys available to distribute in a specific distribution run, these keys are shifted to a succeeding export,
-until the threshold minimum is fulfilled.
+  140 Temporary Exposure Keys (configurable by the `shifting-policy-threshold` property). Where there are less
+  keys available to distribute in a specific distribution run, these keys are shifted to a succeeding export,
+  until the threshold minimum is fulfilled.
 
 ## Digital Green Certificate
 
 A Digital Green Certificate is a digital proof that a person has either been vaccinated against COVID-19, received a negative test result or recovered from COVID-19.
+The data is provided by DCC Rule & Value Set Distribution Backend and consumed through a feign client build in cwa-server.
+The CWA Server serves as a proxy to obtain rules and value sets from the data source, apply necessary transformation, sign the data, and publish it on CDN.
 
-There are three different value sets to consume:
+The consumed data is divided in two parts:
+- `value sets` - Contains the possible values for entities involved in the Digital Green Certificate process. Examples: virus definition, vaccine manufactures etc. Value Sets are published in a single zip file that contains a Protocol Buffer message and signature.
+- `business rules` - Contains the business rules for a Digital Green Certificate to be checked agains. Rules are published in multiple zip files (depending on country and type). Each zip file contains a binary representation(CBOR encoding) of a JSON structure and signature.
 
+### DCC Rule & Value Set Distribution Backend
+
+- PROD: https://distribution.dcc-rules.de
+- WRU: https://distribution-cff4f7147260.dcc-rules.de
+- INT: https://distribution-dfe4f5c711db.dcc-rules.de
+- DEV: https://distribution-6155b8d7d3c6.dcc-rules.de
+
+### Signature verification
+
+X-SIGNATURE header is present on the Response headers of the DCC.
+The signature is verified by using the ECDSA (eliptic curve encription) alogrithm using the public key and the body content.
+
+The signature verification is done by [`DccSignatureValidator`](services/distribution/dgc/client/signature/DccSignatureValidator.java).
+
+### Value sets
+
+A list containing all possible value sets(metadata) can be retrieved by calling `/valuesets` endpoint.
+Then, each individual value set can be retrieved by calling `/valuesets/{hash}`
+
+The [`DigitalGreenCertificateToProtobufMapping`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/dgc/DigitalGreenCertificateToProtobufMapping.java)
+is responsible for reading the values, using the [`DistributionServiceConfig`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/config/DistributionServiceConfig.java) to get server/client configurations.
+
+At the end of the process these URLs are created to allow retrieving the protobuf files: `ehn-dgc/{supportedLanguage}/value-sets`.
+
+The supported languages are [configurable](https://github.com/corona-warn-app/cwa-server/blob/5e47a2e485585043a05ec4173204dd020c757585/services/distribution/src/main/resources/application.yaml#L208), for now they are: DE, EN, BG, PL, RO, TR.
+
+For local testing the following valuesets may be consumed:
 - vaccine-prophylaxis.json - Vaccine or prophylaxis
 - vaccine-medicinal-product.json - Vaccine medicinal product
 - vaccine-mah-manf.json - Marketing Authorization Holder
@@ -272,24 +303,43 @@ There are three different value sets to consume:
 - test-result.json - Test Result
 - test-type.json - Type of Test
 
-All the above files are being encoded in Base64 and used in Vault as environment variables.
-The following secret names should be added for each environment with the corresponding values:
-
-- vaccine_mah_json
-- vaccine_medicinal_product_json
-- vaccine_prophylaxis_json
-- disease_agent_targeted_json
-- test_manf_json
-- test_result_json
-- test_type_json
-
 They can be found in the [dgc folder](https://github.com/corona-warn-app/cwa-server/tree/5e47a2e485585043a05ec4173204dd020c757585/services/distribution/src/main/resources/dgc)
 
-The [`DigitalGreenCertificateToProtobufMapping`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/dgc/DigitalGreenCertificateToProtobufMapping.java)
-is responsible for reading the values, using the [`DistributionServiceConfig`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/config/DistributionServiceConfig.java) and transforming the files into protobuffs.
+### Onboarded countries
+A list containing all onboarded countries can be retrieved by calling `/countrylist` endpoint.
+The country list is then CBOR enoded and distributed on CDN on the following path: `ehn-dgc/{supportedLanguage}/onboarded-countries`.
 
-At the end of the process these URLs are created to allow retrieving the protobuf files: `ehn-dgc/{supportedLanguage}/value-sets`.
+### Business rules
+A list containing all possible business rules(metadata) can be retrieved by calling `/rules` endpoint.
+Then, each individual business rule can be retrieved by calling `/rules/{countryCode}/{hash}`
 
-The supported languages are [configurable](https://github.com/corona-warn-app/cwa-server/blob/5e47a2e485585043a05ec4173204dd020c757585/services/distribution/src/main/resources/application.yaml#L208), for now they are: DE, EN, BG, PL, RO, TR.
+The [`DigitalGreenCertificateToCborMapping`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/dgc/DigitalGreenCertificateToCborMapping.java)
+is responsible for reading the values, encode them in CBOR format by using the [`DistributionServiceConfig`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/config/DistributionServiceConfig.java) to get server/client configurations.
 
-The path of the JSONS can be taken from Vault, but there is a default path set as well.
+All business rules ar then divided into `acceptance` and `invalidation` rules, encoded in CBOR format and distributed on CDN on the following paths:
+- acceptance rules: `ehn-dgc/acceptance-rules`.
+- invalidation rules: `ehn-dgc/invalidation-rules`.
+
+
+## Digital Signing Certificate
+The signing certificates for Digital Covid Certificate are provided by IBM/Ubirch.
+
+- PROD: https://de.dscg.ubirch.com
+- WRU: https://de.test.dscg.ubirch.com
+- INT: https://de.test.dscg.ubirch.com
+- DEV: https://de.test.dscg.ubirch.com
+
+### Signature verification
+For Digital Signing Certificate, the signature is present on the first line of the response body.
+
+The response is returned as a String from the Feign Client [`DigitalSigningCertificatesFeignClient`](app/coronawarn/server/services/distribution/dgc/dsc/DigitalSigningCertificatesFeignClient.java).
+and processed by [`DscListDecoder`](server/services/distribution/dgc/dsc/decode/DscListDecoder.java). The decoder splits the signature and the JSON format content and verifies the signature using the content and the public key.
+The encryption alogrithm is ECDSA.
+
+The content part of the body is also checked to be a valid X509 certificate.
+
+### CDN distribution
+
+The resulting certificates list is converted to Protobuf format by [`DigitalSigningCertificatesToProtobufMapping`](app/coronawarn/server/services/distribution/dgc/dsc/DigitalSigningCertificatesToProtobufMapping.java).
+
+Digital Signing Certificates are distributed on CDN on the following path: `ehn-dgc/dscs`.
