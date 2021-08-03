@@ -276,7 +276,7 @@ The consumed data is divided in two parts:
 - [INT](https://distribution-dfe4f5c711db.dcc-rules.de).
 - [DEV](https://distribution-6155b8d7d3c6.dcc-rules.de).
 
-### Signature verification
+### DCC Signature verification
 
 X-SIGNATURE header is present on the Response headers of the DCC.
 The signature is verified by using the ECDSA (eliptic curve encription) alogrithm using the public key and the body content.
@@ -321,9 +321,9 @@ The [`DigitalGreenCertificateToCborMapping`](/services/distribution/src/main/jav
 is responsible for reading the values, encode them in CBOR format by using the [`DistributionServiceConfig`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/config/DistributionServiceConfig.java) to get server/client configurations.
 
 All business rules ar then divided into `acceptance` and `invalidation` rules, encoded in CBOR format and distributed on CDN on the following paths:
+
 - acceptance rules: `ehn-dgc/acceptance-rules`.
 - invalidation rules: `ehn-dgc/invalidation-rules`.
-
 
 ## Digital Signing Certificate
 
@@ -334,7 +334,7 @@ The signing certificates for Digital Covid Certificate are provided by IBM/Ubirc
 - [INT](https://de.test.dscg.ubirch.com).
 - [DEV](https://de.test.dscg.ubirch.com).
 
-### Signature verification
+### DSC Signature verification
 
 For Digital Signing Certificate, the signature is present on the first line of the response body.
 
