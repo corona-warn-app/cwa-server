@@ -37,11 +37,26 @@ public class ProdTraceTimeIntervalWarningsPackageBundler extends TraceTimeInterv
    *                                  {@link ProdTraceTimeIntervalWarningsPackageBundler}.
    * @param distributionTime          The {@link LocalDateTime} at which the distribution runs.
    */
+  @Deprecated
   public void setTraceTimeIntervalWarnings(
       Collection<TraceTimeIntervalWarning> traceTimeIntervalWarnings,
       LocalDateTime distributionTime) {
     this.distributionTime = distributionTime;
     createTraceWarningsDistributionMap(traceTimeIntervalWarnings);
+  }
+
+  /**
+   * Sets the {@link CheckInProtectedReports}s to package.
+   *
+   * @param checkInProtectedReports The {@link CheckInProtectedReports traceTimeIntervalWarnings} contained by this
+   *                                  {@link ProdTraceTimeIntervalWarningsPackageBundler}.
+   * @param distributionTime          The {@link LocalDateTime} at which the distribution runs.
+   */
+  public void setCheckInProtectedReports(
+      Collection<CheckInProtectedReports> checkInProtectedReports,
+      LocalDateTime distributionTime) {
+    this.distributionTime = distributionTime;
+    createCheckInProtectedReportsMap(checkInProtectedReports);
   }
 
   @Deprecated
