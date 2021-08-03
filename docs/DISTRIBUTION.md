@@ -257,7 +257,7 @@ adding the rolling period of the key to its start interval number).
 140 Temporary Exposure Keys (configurable by the `shifting-policy-threshold` property). Where there are less
 keys available to distribute in a specific distribution run, these keys are shifted to a succeeding export,
 until the threshold minimum is fulfilled.
-  
+
 ## Digital Green Certificate
 
 A Digital Green Certificate is a digital proof that a person has either been vaccinated against COVID-19, received a negative test result or recovered from COVID-19.
@@ -265,15 +265,16 @@ The data is provided by DCC Rule & Value Set Distribution Backend and consumed t
 The CWA Server serves as a proxy to obtain rules and value sets from the data source, apply necessary transformation, sign the data, and publish it on CDN.
 
 The consumed data is divided in two parts:
+
 - `value sets` - Contains the possible values for entities involved in the Digital Green Certificate process. Examples: virus definition, vaccine manufactures etc. Value Sets are published in a single zip file that contains a Protocol Buffer message and signature.
 - `business rules` - Contains the business rules for a Digital Green Certificate to be checked agains. Rules are published in multiple zip files (depending on country and type). Each zip file contains a binary representation(CBOR encoding) of a JSON structure and signature.
 
 ### DCC Rule & Value Set Distribution Backend
 
-- PROD: https://distribution.dcc-rules.de
-- WRU: https://distribution-cff4f7147260.dcc-rules.de
-- INT: https://distribution-dfe4f5c711db.dcc-rules.de
-- DEV: https://distribution-6155b8d7d3c6.dcc-rules.de
+- [PROD](https://distribution.dcc-rules.de).
+- [WRU](https://distribution-cff4f7147260.dcc-rules.de).
+- [INT](https://distribution-dfe4f5c711db.dcc-rules.de).
+- [DEV](https://distribution-6155b8d7d3c6.dcc-rules.de).
 
 ### Signature verification
 
@@ -295,6 +296,7 @@ At the end of the process these URLs are created to allow retrieving the protobu
 The supported languages are [configurable](https://github.com/corona-warn-app/cwa-server/blob/5e47a2e485585043a05ec4173204dd020c757585/services/distribution/src/main/resources/application.yaml#L208), for now they are: DE, EN, BG, PL, RO, TR.
 
 For local testing the following valuesets may be consumed:
+
 - vaccine-prophylaxis.json - Vaccine or prophylaxis
 - vaccine-medicinal-product.json - Vaccine medicinal product
 - vaccine-mah-manf.json - Marketing Authorization Holder
@@ -306,10 +308,12 @@ For local testing the following valuesets may be consumed:
 They can be found in the [dgc folder](https://github.com/corona-warn-app/cwa-server/tree/5e47a2e485585043a05ec4173204dd020c757585/services/distribution/src/main/resources/dgc)
 
 ### Onboarded countries
+
 A list containing all onboarded countries can be retrieved by calling `/countrylist` endpoint.
 The country list is then CBOR enoded and distributed on CDN on the following path: `ehn-dgc/{supportedLanguage}/onboarded-countries`.
 
 ### Business rules
+
 A list containing all possible business rules(metadata) can be retrieved by calling `/rules` endpoint.
 Then, each individual business rule can be retrieved by calling `/rules/{countryCode}/{hash}`
 
@@ -322,14 +326,16 @@ All business rules ar then divided into `acceptance` and `invalidation` rules, e
 
 
 ## Digital Signing Certificate
+
 The signing certificates for Digital Covid Certificate are provided by IBM/Ubirch.
 
-- PROD: https://de.dscg.ubirch.com
-- WRU: https://de.test.dscg.ubirch.com
-- INT: https://de.test.dscg.ubirch.com
-- DEV: https://de.test.dscg.ubirch.com
+- [PROD](https://de.dscg.ubirch.com).
+- [WRU](https://de.test.dscg.ubirch.com).
+- [INT](https://de.test.dscg.ubirch.com).
+- [DEV](https://de.test.dscg.ubirch.com).
 
 ### Signature verification
+
 For Digital Signing Certificate, the signature is present on the first line of the response body.
 
 The response is returned as a String from the Feign Client [`DigitalSigningCertificatesFeignClient`](app/coronawarn/server/services/distribution/dgc/dsc/DigitalSigningCertificatesFeignClient.java).
