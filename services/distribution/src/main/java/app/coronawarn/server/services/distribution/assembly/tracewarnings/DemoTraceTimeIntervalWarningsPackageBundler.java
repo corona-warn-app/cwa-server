@@ -1,6 +1,7 @@
 package app.coronawarn.server.services.distribution.assembly.tracewarnings;
 
 
+import app.coronawarn.server.common.persistence.domain.CheckInProtectedReports;
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.util.Collection;
@@ -35,5 +36,12 @@ public class DemoTraceTimeIntervalWarningsPackageBundler extends TraceTimeInterv
     distributableTraceTimeIntervalWarnings.putAll(
         traceTimeIntervalWarnings.stream()
             .collect(Collectors.groupingBy(warning -> (int) warning.getSubmissionTimestamp(), Collectors.toList())));
+  }
+
+  @Override
+  protected void createCheckInProtectedReportsMap(Collection<CheckInProtectedReports> checkInProtectedReports) {
+    distributableCheckInProtectedReports.putAll(
+        checkInProtectedReports.stream()
+            .collect(Collectors.groupingBy(checkin -> (int) checkin.getSubmissionTimestamp(), Collectors.toList())));
   }
 }

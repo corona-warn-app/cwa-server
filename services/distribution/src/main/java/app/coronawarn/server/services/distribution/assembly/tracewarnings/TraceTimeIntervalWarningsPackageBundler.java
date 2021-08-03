@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.distribution.assembly.tracewarnings;
 
+import app.coronawarn.server.common.persistence.domain.CheckInProtectedReports;
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
@@ -47,6 +48,14 @@ public abstract class TraceTimeIntervalWarningsPackageBundler {
   protected final Map<Integer, List<TraceTimeIntervalWarning>> distributableTraceTimeIntervalWarnings =
       new HashMap<>();
 
+  /**
+   * A map containing check in protected reports, mapped by hours since epoch computed from their submission timestamp.
+   * This is the basis on which they will be distributed to the CDN.
+   *
+   * @see CheckinsDateSpecification#HOUR_SINCE_EPOCH_DERIVATION
+   */
+  protected final Map<Integer, List<CheckInProtectedReports>> distributableCheckInProtectedReports =
+      new HashMap<>();
 
   /**
    * Constructs a TraceWarningsPackageBundler based on the specified service configuration.
@@ -66,11 +75,26 @@ public abstract class TraceTimeIntervalWarningsPackageBundler {
    *                                  {@link TraceTimeIntervalWarningsPackageBundler}.
    * @param distributionTime          The {@link LocalDateTime} at which the distribution runs.
    */
+  @Deprecated
   public void setTraceTimeIntervalWarnings(
       Collection<TraceTimeIntervalWarning> traceTimeIntervalWarnings,
       LocalDateTime distributionTime) {
     this.distributionTime = distributionTime;
     createTraceWarningsDistributionMap(traceTimeIntervalWarnings);
+  }
+
+  /**
+   * Sets the {@link CheckInProtectedReports}s to package.
+   *
+   * @param checkInProtectedReports The {@link CheckInProtectedReports traceTimeIntervalWarnings} contained by this
+   *                                {@link TraceTimeIntervalWarningsPackageBundler}.
+   * @param distributionTime        The {@link LocalDateTime} at which the distribution runs.
+   */
+  public void setCheckInProtectedReports(
+      Collection<CheckInProtectedReports> checkInProtectedReports,
+      LocalDateTime distributionTime) {
+    this.distributionTime = distributionTime;
+    createCheckInProtectedReportsMap(checkInProtectedReports);
   }
 
   /**
@@ -130,6 +154,10 @@ public abstract class TraceTimeIntervalWarningsPackageBundler {
     return true;
   }
 
+  @Deprecated
   protected abstract void createTraceWarningsDistributionMap(
       Collection<TraceTimeIntervalWarning> traceTimeIntervalWarnings);
+
+  protected abstract void createCheckInProtectedReportsMap(
+      Collection<CheckInProtectedReports> traceTimeIntervalWarnings);
 }

@@ -4,7 +4,9 @@ import static app.coronawarn.server.common.persistence.domain.validation.ValidSu
 import static app.coronawarn.server.common.shared.util.HashUtils.Algorithms.SHA_256;
 import static java.time.ZoneOffset.UTC;
 
+import app.coronawarn.server.common.persistence.domain.CheckInProtectedReports;
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
+import app.coronawarn.server.common.persistence.repository.CheckInProtectedReportsRepository;
 import app.coronawarn.server.common.persistence.repository.TraceTimeIntervalWarningRepository;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
@@ -32,6 +34,7 @@ public class TraceTimeIntervalWarningService {
       LoggerFactory.getLogger(TraceTimeIntervalWarningService.class);
 
   private final TraceTimeIntervalWarningRepository traceTimeIntervalWarningRepo;
+  private final CheckInProtectedReportsRepository checkInProtectedReportsRepository;
   private final MessageDigest hashAlgorithm;
 
   /**
@@ -41,9 +44,11 @@ public class TraceTimeIntervalWarningService {
    * @throws NoSuchAlgorithmException In case the MessageDigest used in hashing can not be instantiated.
    */
   public TraceTimeIntervalWarningService(
-      TraceTimeIntervalWarningRepository traceTimeIntervalWarningRepo) throws NoSuchAlgorithmException {
+      TraceTimeIntervalWarningRepository traceTimeIntervalWarningRepo,
+      CheckInProtectedReportsRepository checkInProtectedReportsRepository) throws NoSuchAlgorithmException {
     this.traceTimeIntervalWarningRepo = traceTimeIntervalWarningRepo;
     this.hashAlgorithm = MessageDigest.getInstance(SHA_256.getName());
+    this.checkInProtectedReportsRepository = checkInProtectedReportsRepository;
   }
 
   /**
@@ -88,9 +93,20 @@ public class TraceTimeIntervalWarningService {
   /**
    * Returns all available {@link TraceTimeIntervalWarning}s sorted by their submissionTimestamp.
    */
+  @Deprecated
   public Collection<TraceTimeIntervalWarning> getTraceTimeIntervalWarnings() {
     return StreamUtils
         .createStreamFromIterator(traceTimeIntervalWarningRepo
+            .findAll(Sort.by(Direction.ASC, "submissionTimestamp")).iterator())
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * Returns all available {@link CheckInProtectedReports}s sorted by their submissionTimestamp.
+   */
+  public Collection<CheckInProtectedReports> getCheckInProtectedReports() {
+    return StreamUtils
+        .createStreamFromIterator(checkInProtectedReportsRepository
             .findAll(Sort.by(Direction.ASC, "submissionTimestamp")).iterator())
         .collect(Collectors.toList());
   }

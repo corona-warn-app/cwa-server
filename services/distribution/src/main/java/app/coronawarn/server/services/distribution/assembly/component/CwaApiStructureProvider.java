@@ -103,6 +103,8 @@ public class CwaApiStructureProvider {
         ignoredValue -> Optional.ofNullable(appConfigurationV2StructureProvider.getAppConfigurationV2ForAndroid()));
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.ofNullable(appConfigurationV2StructureProvider.getAppConfigurationV2ForIos()));
+    versionDirectory.addWritableToAll(
+        ignoredValue -> Optional.of(traceWarningsStructureProvider.getCheckInProtectedReportsDirectory()));
 
     return new IndexingDecoratorOnDisk<>(versionDirectory, distributionServiceConfig.getOutputFileNameV2());
   }

@@ -2,6 +2,7 @@ package app.coronawarn.server.services.distribution.assembly.component;
 
 import static app.coronawarn.server.common.shared.util.TimeUtils.getCurrentUtcHour;
 
+import app.coronawarn.server.common.persistence.domain.CheckInProtectedReports;
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.service.TraceTimeIntervalWarningService;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
@@ -43,11 +44,26 @@ public class TraceTimeIntervalWarningsStructureProvider {
    *
    * @return the directory
    */
+  @Deprecated
   public Directory<WritableOnDisk> getTraceWarningsDirectory() {
     logger.debug("Querying trace time interval warnings from the database...");
     Collection<TraceTimeIntervalWarning> traceWarnings =
         traceWarningsService.getTraceTimeIntervalWarnings();
     traceWarningsBundler.setTraceTimeIntervalWarnings(traceWarnings, getCurrentUtcHour());
+    return new TraceTimeIntervalWarningsDirectory(traceWarningsBundler, cryptoProvider,
+        distributionServiceConfig);
+  }
+
+  /**
+   * Get directory for {@link TraceTimeIntervalWarning}s from database.
+   *
+   * @return the directory
+   */
+  public Directory<WritableOnDisk> getCheckInProtectedReportsDirectory() {
+    logger.debug("Querying check in protected reports from the database...");
+    Collection<CheckInProtectedReports> checkInProtectedReports =
+        traceWarningsService.getCheckInProtectedReports();
+    traceWarningsBundler.setCheckInProtectedReports(checkInProtectedReports, getCurrentUtcHour());
     return new TraceTimeIntervalWarningsDirectory(traceWarningsBundler, cryptoProvider,
         distributionServiceConfig);
   }
