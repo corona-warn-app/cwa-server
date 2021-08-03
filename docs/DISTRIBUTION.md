@@ -271,17 +271,17 @@ The consumed data is divided in two parts:
 
 ### DCC Rule & Value Set Distribution Backend
 
-- [PROD](https://distribution.dcc-rules.de).
-- [WRU](https://distribution-cff4f7147260.dcc-rules.de).
-- [INT](https://distribution-dfe4f5c711db.dcc-rules.de).
-- [DEV](https://distribution-6155b8d7d3c6.dcc-rules.de).
+- PROD: `https://distribution.dcc-rules.de)`
+- WRU: `https://distribution-cff4f7147260.dcc-rules.de`
+- INT: `https://distribution-dfe4f5c711db.dcc-rules.de`
+- DEV: `https://distribution-6155b8d7d3c6.dcc-rules.de`
 
 ### DCC Signature verification
 
 X-SIGNATURE header is present on the Response headers of the DCC.
 The signature is verified by using the ECDSA (eliptic curve encription) alogrithm using the public key and the body content.
 
-The signature verification is done by [`DccSignatureValidator`](services/distribution/dgc/client/signature/DccSignatureValidator.java).
+The signature verification is done by [`DccSignatureValidator`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/dgc/client/signature/DccSignatureValidator.java).
 
 ### Value sets
 
@@ -338,7 +338,7 @@ The signing certificates for Digital Covid Certificate are provided by IBM/Ubirc
 
 For Digital Signing Certificate, the signature is present on the first line of the response body.
 
-The response is returned as a String from the Feign Client [`DigitalSigningCertificatesFeignClient`](app/coronawarn/server/services/distribution/dgc/dsc/DigitalSigningCertificatesFeignClient.java).
+The response is returned as a String from the Feign Client [`DigitalSigningCertificatesFeignClient`](services/distribution/dgc/dsc/DigitalSigningCertificatesFeignClient.java).
 and processed by [`DscListDecoder`](server/services/distribution/dgc/dsc/decode/DscListDecoder.java). The decoder splits the signature and the JSON format content and verifies the signature using the content and the public key.
 The encryption alogrithm is ECDSA.
 
