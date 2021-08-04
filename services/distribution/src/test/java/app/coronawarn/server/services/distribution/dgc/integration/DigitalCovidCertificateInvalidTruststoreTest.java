@@ -11,6 +11,7 @@ import app.coronawarn.server.services.distribution.dgc.client.CloudDccFeignHttpC
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.client.ProdDigitalCovidCertificateClient;
 import java.io.FileNotFoundException;
+import app.coronawarn.server.services.distribution.dgc.client.signature.DccSignatureValidator;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
 import feign.RetryableException;
 import org.junit.Assert;
@@ -28,7 +29,8 @@ import javax.net.ssl.SSLHandshakeException;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {DistributionServiceConfig.class, ProdDigitalCovidCertificateClient.class,
-    CloudDccFeignClientConfiguration.class, CloudDccFeignHttpClientProvider.class, ApacheHttpTestConfiguration.class},
+    CloudDccFeignClientConfiguration.class, CloudDccFeignHttpClientProvider.class, ApacheHttpTestConfiguration.class,
+    DccSignatureValidator.class},
     initializers = ConfigDataApplicationContextInitializer.class)
 @ImportAutoConfiguration({FeignAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class})
 @ActiveProfiles({"dcc-invalid-truststore","dcc-client-factory"})

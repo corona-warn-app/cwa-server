@@ -41,16 +41,12 @@ class DigitalCovidCertificateClientUnitTest {
   DigitalCovidCertificateFeignClient digitalCovidCertificateFeignClient;
 
   @Mock
-  DccSignatureValidator dccSignatureValidator;
-
-  @Mock
   ResourceLoader resourceLoader;
 
   @BeforeEach
   void setup() {
     testDigitalCovidCertificateClient = new TestDigitalCovidCertificateClient(resourceLoader);
-    prodDigitalCovidCertificateClient = new ProdDigitalCovidCertificateClient(
-        digitalCovidCertificateFeignClient, dccSignatureValidator);
+    prodDigitalCovidCertificateClient = new ProdDigitalCovidCertificateClient(digitalCovidCertificateFeignClient);
   }
 
   @Test

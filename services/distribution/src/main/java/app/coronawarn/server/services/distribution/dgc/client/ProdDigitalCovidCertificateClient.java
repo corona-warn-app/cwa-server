@@ -32,12 +32,8 @@ public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificat
 
   private final DigitalCovidCertificateFeignClient digitalCovidCertificateClient;
 
-  private final DccSignatureValidator dccSignatureValidator;
-
-  public ProdDigitalCovidCertificateClient(DigitalCovidCertificateFeignClient digitalCovidCertificateFeignClient,
-      DccSignatureValidator dccSignatureValidator) {
+  public ProdDigitalCovidCertificateClient(DigitalCovidCertificateFeignClient digitalCovidCertificateFeignClient) {
     this.digitalCovidCertificateClient = digitalCovidCertificateFeignClient;
-    this.dccSignatureValidator = dccSignatureValidator;
   }
 
   @Override
@@ -87,16 +83,9 @@ public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificat
       BiFunction<String, Exception, E> exceptionConverter)
       throws E {
     logger.debug("Get " + fetchEntityName + " from DCC");
-
     try {
       ResponseEntity<T> response = responseSupplier.get();
-      logger.debug("DCC " + fetchEntityName + " retrieved. Start signature verification.");
-      dccSignatureValidator.checkSignature(response);
-
       return response.getBody();
-    } catch (DigitalCovidCertificateSignatureException e) {
-      logger.error("Signature verification failed for DCC " +  fetchEntityName  + ":", e);
-      throw exceptionConverter.apply("Signature verification failed for " +  fetchEntityName, e);
     } catch (Exception e) {
       throw exceptionConverter.apply(fetchEntityName + " could not be fetched because of: ", e);
     }

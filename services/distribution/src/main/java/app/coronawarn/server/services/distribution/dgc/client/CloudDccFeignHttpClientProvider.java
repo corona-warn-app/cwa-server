@@ -1,10 +1,15 @@
 package app.coronawarn.server.services.distribution.dgc.client;
 
 import static app.coronawarn.server.common.shared.util.CwaStringUtils.emptyCharrArrayIfNull;
+import static app.coronawarn.server.common.shared.util.HashUtils.byteStringDigest;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.Client.Ssl;
+import app.coronawarn.server.services.distribution.dgc.client.signature.DccFeignDelegator;
+import app.coronawarn.server.services.distribution.dgc.client.signature.DccSignatureValidator;
 import feign.Client;
+import feign.Request;
+import feign.Request.Options;
 import feign.httpclient.ApacheHttpClient;
 import java.io.File;
 import javax.net.ssl.SSLContext;
@@ -30,14 +35,16 @@ public class CloudDccFeignHttpClientProvider implements DccFeignHttpClientProvid
   private final Integer connectionPoolSize;
   private final File trustStore;
   private final String trustStorePassword;
+  private final DccSignatureValidator dccSignatureValidator;
 
   /**
    * Construct Provider.
    *
    * @param config - distribution configuration
    */
-  public CloudDccFeignHttpClientProvider(DistributionServiceConfig config) {
-
+  public CloudDccFeignHttpClientProvider(DistributionServiceConfig config,
+      DccSignatureValidator dccSignatureValidator) {
+    this.dccSignatureValidator = dccSignatureValidator;
     Ssl ssl = config.getDigitalGreenCertificate().getClient().getSsl();
     this.connectionPoolSize = config.getConnectionPoolSize();
     this.trustStore = ssl.getTrustStore();
@@ -46,12 +53,14 @@ public class CloudDccFeignHttpClientProvider implements DccFeignHttpClientProvid
 
   /**
    * Creates a FeignClient.
+   * {@link DccFeignDelegator} is used to intercept the response before
+   * {@link ApacheHttpClient#execute(Request, Options)} in order to validate the signature.
    */
   @Override
   @Bean
   public Client createFeignClient() {
-    return new ApacheHttpClient(
-        dccHttpClientFactory().createBuilder().build());
+    ApacheHttpClient apacheHttpClient = new ApacheHttpClient(dccHttpClientFactory().createBuilder().build());
+    return new DccFeignDelegator(apacheHttpClient, this.dccSignatureValidator);
   }
 
   /**
