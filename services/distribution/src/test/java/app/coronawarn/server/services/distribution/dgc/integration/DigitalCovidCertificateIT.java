@@ -18,6 +18,7 @@ import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRu
 import app.coronawarn.server.services.distribution.dgc.exception.FetchValueSetsException;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
@@ -67,6 +68,7 @@ public class DigitalCovidCertificateIT {
   }
 
   @Test
+  @Disabled("X-SIGNATURE header not implemented yet")
   public void shouldFetchAllValuesetsMetadataAndEachValuesetAfter() throws FetchValueSetsException {
     List<ValueSetMetadata> valuesets = digitalCovidCertificateClient.getValueSets();
     assertThat(valuesets).isNotEmpty();
