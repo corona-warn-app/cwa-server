@@ -100,10 +100,27 @@ public abstract class TraceTimeIntervalWarningsPackageBundler {
   /**
    * Returns all available hourly (since epoch) data for distribution.
    */
+  @Deprecated
   public Set<Integer> getHoursForDistributableWarnings(String country) {
     if (isCountrySupported(country)) {
       final Optional<Integer> oldestOptional = getOldestHourWithDistributableWarnings(country);
       final Optional<Integer> latestOptional = getLatestHourWithDistributableWarnings(country);
+      if (oldestOptional.isPresent() && latestOptional.isPresent()) {
+        return IntStream.range(oldestOptional.get(), latestOptional.get() + 1).boxed()
+            .collect(Collectors.toSet());
+      }
+      return Collections.emptySet();
+    }
+    return Collections.emptySet();
+  }
+
+  /**
+   * Returns all available hourly (since epoch) data for distribution.
+   */
+  public Set<Integer> getHoursForDistributableCheckInProtectedReports(String country) {
+    if (isCountrySupported(country)) {
+      final Optional<Integer> oldestOptional = getOldestHourWithDistributableCheckIns(country);
+      final Optional<Integer> latestOptional = getLatestHourWithDistributableCheckins(country);
       if (oldestOptional.isPresent() && latestOptional.isPresent()) {
         return IntStream.range(oldestOptional.get(), latestOptional.get() + 1).boxed()
             .collect(Collectors.toSet());
@@ -119,9 +136,23 @@ public abstract class TraceTimeIntervalWarningsPackageBundler {
    * @param country support country.
    * @return optional containing the value of the min hour.
    */
+  @Deprecated
   public Optional<Integer> getOldestHourWithDistributableWarnings(String country) {
     if (isCountrySupported(country)) {
       return this.distributableTraceTimeIntervalWarnings.keySet().stream().min(Integer::compareTo);
+    }
+    return Optional.empty();
+  }
+
+  /**
+   * Fetch the oldest hour with distributable check in protected reports that is present in the distribution map.
+   *
+   * @param country support country.
+   * @return optional containing the value of the min hour.
+   */
+  public Optional<Integer> getOldestHourWithDistributableCheckIns(String country) {
+    if (isCountrySupported(country)) {
+      return this.distributableCheckInProtectedReports.keySet().stream().min(Integer::compareTo);
     }
     return Optional.empty();
   }
@@ -132,6 +163,7 @@ public abstract class TraceTimeIntervalWarningsPackageBundler {
    * @param country support country.
    * @return optional containing the value of the max hour.
    */
+  @Deprecated
   public Optional<Integer> getLatestHourWithDistributableWarnings(String country) {
     if (isCountrySupported(country)) {
       return this.distributableTraceTimeIntervalWarnings.keySet().stream().max(Integer::compareTo);
@@ -140,10 +172,31 @@ public abstract class TraceTimeIntervalWarningsPackageBundler {
   }
 
   /**
+   * Fetch the latest hour with distributable trace time interval warnings that is present in the distribution map.
+   *
+   * @param country support country.
+   * @return optional containing the value of the max hour.
+   */
+  public Optional<Integer> getLatestHourWithDistributableCheckins(String country) {
+    if (isCountrySupported(country)) {
+      return this.distributableCheckInProtectedReports.keySet().stream().max(Integer::compareTo);
+    }
+    return Optional.empty();
+  }
+
+  /**
    * Returns the trace time warnings ready to be distributed for the given hour since epoch.
    */
+  @Deprecated
   public List<TraceTimeIntervalWarning> getTraceTimeWarningsForHour(Integer currentHourSinceEpoch) {
     return distributableTraceTimeIntervalWarnings.getOrDefault(currentHourSinceEpoch, Collections.emptyList());
+  }
+
+  /**
+   * Returns the trace time warnings ready to be distributed for the given hour since epoch.
+   */
+  public List<CheckInProtectedReports> getCheckInProtectedReportsForHour(Integer currentHourSinceEpoch) {
+    return distributableCheckInProtectedReports.getOrDefault(currentHourSinceEpoch, Collections.emptyList());
   }
 
   private boolean isCountrySupported(String country) {

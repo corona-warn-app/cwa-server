@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory;
 
+import app.coronawarn.server.common.persistence.domain.CheckInProtectedReports;
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
@@ -12,6 +13,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDiskWithChecksum;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceTimeIntervalWarningsPackageBundler;
+import app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.file.CheckInProtectedReportsExportFile;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.file.TraceTimeIntervalWarningExportFile;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.util.List;
@@ -19,6 +21,7 @@ import java.util.Optional;
 
 public class TraceTimeIntervalWarningsHourDirectory extends IndexDirectoryOnDisk<Integer> {
 
+  public static final String V1 = "v1";
   private TraceTimeIntervalWarningsPackageBundler traceWarningsBundler;
   private CryptoProvider cryptoProvider;
   private DistributionServiceConfig distributionServiceConfig;
@@ -31,7 +34,12 @@ public class TraceTimeIntervalWarningsHourDirectory extends IndexDirectoryOnDisk
       DistributionServiceConfig distributionServiceConfig) {
     super(distributionServiceConfig.getApi().getHourPath(), indices -> {
       String country = (String) indices.peek();
-      return traceWarningsBundler.getHoursForDistributableWarnings(country);
+      String version = (String) indices.pop().peek();
+      if (version.equals(V1)) {
+        return traceWarningsBundler.getHoursForDistributableWarnings(country);
+      } else {
+        return traceWarningsBundler.getHoursForDistributableCheckInProtectedReports(country);
+      }
     }, Integer::valueOf);
 
     this.traceWarningsBundler = traceWarningsBundler;
@@ -44,22 +52,41 @@ public class TraceTimeIntervalWarningsHourDirectory extends IndexDirectoryOnDisk
     this.addWritableToAll(currentIndices -> {
       Integer hourSinceEpoch = (Integer) currentIndices.peek();
       String country = (String) currentIndices.pop().peek();
+      String version = (String) currentIndices.pop().pop().peek();
 
-      List<TraceTimeIntervalWarning> traceWarningsForCurrentHour =
-          this.traceWarningsBundler.getTraceTimeWarningsForHour(hourSinceEpoch);
-      if (traceWarningsForCurrentHour.isEmpty()) {
-        return Optional.of(new FileOnDiskWithChecksum("index", new byte[0]));
+      if (version.equals(V1)) {
+        List<TraceTimeIntervalWarning> traceWarningsForCurrentHour =
+            this.traceWarningsBundler.getTraceTimeWarningsForHour(hourSinceEpoch);
+        if (traceWarningsForCurrentHour.isEmpty()) {
+          return Optional.of(new FileOnDiskWithChecksum("index", new byte[0]));
+        }
+
+        File<WritableOnDisk> traceTimeIntervalWarningExportFile =
+            TraceTimeIntervalWarningExportFile.fromTraceTimeIntervalWarnings(
+                traceWarningsForCurrentHour, country, hourSinceEpoch, distributionServiceConfig);
+
+        Archive<WritableOnDisk> hourArchive =
+            new ArchiveOnDisk(distributionServiceConfig.getOutputFileName());
+        hourArchive.addWritable(traceTimeIntervalWarningExportFile);
+
+        return Optional.of(decorateTraceWarningArchives(hourArchive));
+      } else {
+        List<CheckInProtectedReports> checkInReportsForHour =
+            this.traceWarningsBundler.getCheckInProtectedReportsForHour(hourSinceEpoch);
+        if (checkInReportsForHour.isEmpty()) {
+          return Optional.of(new FileOnDiskWithChecksum("index", new byte[0]));
+        }
+
+        File<WritableOnDisk> checkInProtectedReportsExportFile =
+            CheckInProtectedReportsExportFile.fromCheckInProtectedReports(
+                checkInReportsForHour, country, hourSinceEpoch, distributionServiceConfig);
+
+        Archive<WritableOnDisk> hourArchive =
+            new ArchiveOnDisk(distributionServiceConfig.getOutputFileName());
+        hourArchive.addWritable(checkInProtectedReportsExportFile);
+
+        return Optional.of(decorateTraceWarningArchives(hourArchive));
       }
-
-      File<WritableOnDisk> traceTimeIntervalWarningExportFile =
-          TraceTimeIntervalWarningExportFile.fromTraceTimeIntervalWarnings(
-              traceWarningsForCurrentHour, country, hourSinceEpoch, distributionServiceConfig);
-
-      Archive<WritableOnDisk> hourArchive =
-          new ArchiveOnDisk(distributionServiceConfig.getOutputFileName());
-      hourArchive.addWritable(traceTimeIntervalWarningExportFile);
-
-      return Optional.of(decorateTraceWarningArchives(hourArchive));
     });
     super.prepare(indices);
   }

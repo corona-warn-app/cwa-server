@@ -3,6 +3,7 @@ package app.coronawarn.server.services.distribution.common;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.YamlLoader.loadYamlIntoProtobufBuilder;
 import static java.io.File.separator;
 
+import app.coronawarn.server.common.persistence.domain.CheckInProtectedReports;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
@@ -225,11 +226,31 @@ public class Helpers {
     };
   }
 
+  public static CheckInProtectedReports buildCheckInProtectedReports( int submissionHourSinceEpoch) {
+    final byte[] traceLocationIdHash = UUID.randomUUID().toString().getBytes();
+    final byte[] iv = UUID.randomUUID().toString().getBytes();
+    final byte[] encryptedCheckIns = new byte[16];
+    new Random().nextBytes(encryptedCheckIns);
+    return new CheckInProtectedReports(traceLocationIdHash, iv, encryptedCheckIns, submissionHourSinceEpoch) {
+      @Override
+      public Long getId() {
+        return Long.valueOf(Arrays.hashCode(traceLocationIdHash));
+      }
+    };
+  }
+
+
   public static List<TraceTimeIntervalWarning> buildTraceTimeIntervalWarning(
       int startIntervalNumber, int endIntervalNumber, int submissionHourSinceEpoch, int numberOfWarnings) {
     return IntStream.range(0, numberOfWarnings)
         .mapToObj(ignoredValue -> buildTraceTimeIntervalWarning(startIntervalNumber, endIntervalNumber,
             submissionHourSinceEpoch))
+        .collect(Collectors.toList());
+  }
+
+  public static List<CheckInProtectedReports> buildCheckInProtectedReports(int submissionHourSinceEpoch, int numberOfCheckIns) {
+    return IntStream.range(0, numberOfCheckIns)
+        .mapToObj(ignoredValue -> buildCheckInProtectedReports(submissionHourSinceEpoch))
         .collect(Collectors.toList());
   }
 
