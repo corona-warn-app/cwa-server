@@ -78,7 +78,7 @@ public class SecurityUtils {
    * Transforms a String public key into a Java security public key.
    *
    * @param publicKey - String public Key.
-   * @return - Java public key.
+   * @return - Java public key of the identity whose signature is going to be verified.
    * @throws NoSuchAlgorithmException - thrown if key factory algorithm is not available.
    * @throws InvalidKeySpecException  - thrown if public key is not valid.
    */

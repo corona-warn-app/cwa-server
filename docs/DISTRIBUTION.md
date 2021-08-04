@@ -338,14 +338,14 @@ The signing certificates for Digital Covid Certificate are provided by IBM/Ubirc
 
 For Digital Signing Certificate, the signature is present on the first line of the response body.
 
-The response is returned as a String from the Feign Client [`DigitalSigningCertificatesFeignClient`](services/distribution/dgc/dsc/DigitalSigningCertificatesFeignClient.java).
-and processed by [`DscListDecoder`](server/services/distribution/dgc/dsc/decode/DscListDecoder.java). The decoder splits the signature and the JSON format content and verifies the signature using the content and the public key.
+The response is returned as a String from the Feign Client [`DigitalSigningCertificatesFeignClient`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/dgc/dsc/DigitalSigningCertificatesFeignClient.java).
+and processed by [`DscListDecoder`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/dgc/dsc/decode/DscListDecoder.java). The decoder splits the signature and the JSON format content and verifies the signature using the content and the public key.
 The encryption alogrithm is ECDSA.
 
 The content part of the body is also checked to be a valid X509 certificate.
 
 ### CDN distribution
 
-The resulting certificates list is converted to Protobuf format by [`DigitalSigningCertificatesToProtobufMapping`](app/coronawarn/server/services/distribution/dgc/dsc/DigitalSigningCertificatesToProtobufMapping.java).
+The resulting certificates list is converted to Protobuf format by [`DigitalSigningCertificatesToProtobufMapping`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/dgc/dsc/DigitalSigningCertificatesToProtobufMapping.java).
 
 Digital Signing Certificates are distributed on CDN on the following path: `ehn-dgc/dscs`.

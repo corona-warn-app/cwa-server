@@ -40,8 +40,8 @@ class SecurityUtilsTest {
   }
 
   @Test
-  void testEcdsaSignatureVerification()
-      throws NoSuchAlgorithmException, InvalidKeySpecException, IOException, SignatureException, InvalidKeyException {
+  void shouldFailWhenSignatureDoesNotMatchContent()
+      throws NoSuchAlgorithmException, InvalidKeySpecException {
     PublicKey key = SecurityUtils
         .getPublicKeyFromString("MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIxHvrv8jQx9OEzTZbsx1prQVQn"
             + "/3ex0gMYf6GyaNBW0QKLMjrSDeN6HwSPM0QzhvhmyQUixl6l88A7Zpu5OWSw==");
