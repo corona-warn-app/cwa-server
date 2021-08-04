@@ -13,21 +13,29 @@ import org.json.simple.JSONObject;
 
 public class HourIntervalIndexingDecorator extends IndexingDecoratorOnDisk<Integer> {
 
+  private TraceTimeIntervalWarningsHourDirectory directory;
   private TraceTimeIntervalWarningsPackageBundler packageBundler;
 
+  /**
+   * Decorator for trace time interval warnings hour directory.
+   *
+   * @param directory                 the directory to decorate.
+   * @param packageBundler            the package bundler that contains the tracetime warning.
+   * @param distributionServiceConfig distribution config.
+   */
   public HourIntervalIndexingDecorator(TraceTimeIntervalWarningsHourDirectory directory,
       TraceTimeIntervalWarningsPackageBundler packageBundler,
       DistributionServiceConfig distributionServiceConfig) {
     super(directory, distributionServiceConfig.getOutputFileName());
     this.packageBundler = packageBundler;
+    this.directory = directory;
   }
 
   @SuppressWarnings("unchecked")
   @Override
   public FileOnDisk getIndexFile(String indexFileName, ImmutableStack<Object> indices) {
     String currentCountry = (String) indices.peek();
-    String version = (String) indices.pop().peek();
-    if (version.equals("v1")) {
+    if (this.directory.getVersion().equals("v1")) {
       final Optional<Integer> oldestHourWithDistributableWarnings = packageBundler
           .getOldestHourWithDistributableWarnings(currentCountry);
       final Optional<Integer> latestHourWithDistributableWarnings = packageBundler

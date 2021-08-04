@@ -2,6 +2,10 @@
 
 package app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.decorator;
 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import app.coronawarn.server.common.shared.util.TimeUtils;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
@@ -11,6 +15,9 @@ import app.coronawarn.server.services.distribution.assembly.tracewarnings.struct
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.Api;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 import org.assertj.core.api.Assertions;
 import org.json.simple.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -20,14 +27,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
-
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 
 @ExtendWith(SpringExtension.class)
@@ -92,7 +91,7 @@ class HourIntervalIndexingDecoratorTest {
   private HourIntervalIndexingDecorator makeDecoratedHourDirectory() {
     return new HourIntervalIndexingDecorator(
         new TraceTimeIntervalWarningsHourDirectory(traceTimeIntervalWarningsPackageBundler, cryptoProvider,
-            distributionServiceConfig),
+            distributionServiceConfig, "v1"),
         traceTimeIntervalWarningsPackageBundler,
         distributionServiceConfig);
   }

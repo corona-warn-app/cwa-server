@@ -25,16 +25,17 @@ public class TraceTimeIntervalWarningsHourDirectory extends IndexDirectoryOnDisk
   private TraceTimeIntervalWarningsPackageBundler traceWarningsBundler;
   private CryptoProvider cryptoProvider;
   private DistributionServiceConfig distributionServiceConfig;
+  private String version;
 
   /**
    * Creates an instance of the directory that holds packages for an hour since epoch, as defined by the API spec.
    */
   public TraceTimeIntervalWarningsHourDirectory(
       TraceTimeIntervalWarningsPackageBundler traceWarningsBundler, CryptoProvider cryptoProvider,
-      DistributionServiceConfig distributionServiceConfig) {
+      DistributionServiceConfig distributionServiceConfig, String version) {
     super(distributionServiceConfig.getApi().getHourPath(), indices -> {
       String country = (String) indices.peek();
-      String version = (String) indices.pop().peek();
+
       if (version.equals(V1)) {
         return traceWarningsBundler.getHoursForDistributableWarnings(country);
       } else {
@@ -45,6 +46,7 @@ public class TraceTimeIntervalWarningsHourDirectory extends IndexDirectoryOnDisk
     this.traceWarningsBundler = traceWarningsBundler;
     this.cryptoProvider = cryptoProvider;
     this.distributionServiceConfig = distributionServiceConfig;
+    this.version = version;
   }
 
   @Override
@@ -93,5 +95,9 @@ public class TraceTimeIntervalWarningsHourDirectory extends IndexDirectoryOnDisk
 
   private Directory<WritableOnDisk> decorateTraceWarningArchives(Archive<WritableOnDisk> archive) {
     return new DistributionArchiveSigningDecorator(archive, cryptoProvider, distributionServiceConfig);
+  }
+
+  public String getVersion() {
+    return version;
   }
 }

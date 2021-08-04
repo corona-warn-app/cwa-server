@@ -14,30 +14,34 @@ import java.util.Set;
 
 public class TraceTimeIntervalWarningsCountryDirectory extends IndexDirectoryOnDisk<String> {
 
+  private final String version;
   private TraceTimeIntervalWarningsPackageBundler traceWarningsBundler;
   private CryptoProvider cryptoProvider;
   private DistributionServiceConfig distributionServiceConfig;
 
   /**
-   * Creates an instance of the custom directory that includes the entire
-   * {@link TraceTimeIntervalWarning} package structure for a country as per the API specification.
+   * Creates an instance of the custom directory that includes the entire {@link TraceTimeIntervalWarning} package
+   * structure for a country as per the API specification.
    */
   public TraceTimeIntervalWarningsCountryDirectory(
       TraceTimeIntervalWarningsPackageBundler traceWarningsBundler, CryptoProvider cryptoProvider,
-      DistributionServiceConfig distributionServiceConfig) {
+      DistributionServiceConfig distributionServiceConfig, String version) {
     super(distributionServiceConfig.getApi().getCountryPath(),
         ignoredValue -> Set.of(distributionServiceConfig.getApi().getOriginCountry()),
         Object::toString);
     this.traceWarningsBundler = traceWarningsBundler;
     this.cryptoProvider = cryptoProvider;
     this.distributionServiceConfig = distributionServiceConfig;
+    this.version = version;
   }
 
   @Override
   public void prepare(ImmutableStack<Object> indices) {
     this.addWritableToAll(ignoredValue -> Optional
-        .of(decorateHourDirectory(new TraceTimeIntervalWarningsHourDirectory(traceWarningsBundler,
-            cryptoProvider, distributionServiceConfig))));
+        .of(decorateHourDirectory(
+            new TraceTimeIntervalWarningsHourDirectory(traceWarningsBundler, cryptoProvider,
+                distributionServiceConfig, version)
+        )));
     super.prepare(indices);
   }
 

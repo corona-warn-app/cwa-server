@@ -4,6 +4,7 @@ package app.coronawarn.server.common.shared.collection;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.stream.Collectors;
 
 public class ImmutableStack<T> {
 
@@ -48,4 +49,5 @@ public class ImmutableStack<T> {
   public T peek() {
     return this.stack.peek();
   }
+
 }
