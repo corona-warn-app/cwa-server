@@ -5,8 +5,6 @@ import app.coronawarn.server.services.distribution.dgc.BusinessRule;
 import app.coronawarn.server.services.distribution.dgc.BusinessRuleItem;
 import app.coronawarn.server.services.distribution.dgc.ValueSet;
 import app.coronawarn.server.services.distribution.dgc.ValueSetMetadata;
-import app.coronawarn.server.services.distribution.dgc.client.signature.DccSignatureValidator;
-import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateSignatureException;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchValueSetsException;
 import app.coronawarn.server.services.distribution.dgc.exception.ThirdPartyServiceException;
@@ -90,4 +88,5 @@ public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificat
       throw exceptionConverter.apply(fetchEntityName + " could not be fetched because of: ", e);
     }
   }
+
 }

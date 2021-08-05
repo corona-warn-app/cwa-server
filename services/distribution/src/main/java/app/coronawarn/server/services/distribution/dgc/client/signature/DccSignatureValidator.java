@@ -7,6 +7,7 @@ import static app.coronawarn.server.common.shared.util.SecurityUtils.getPublicKe
 
 import app.coronawarn.server.common.shared.util.HashUtils.Algorithms;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateSignatureException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
@@ -46,9 +47,9 @@ public class DccSignatureValidator {
 
       ecdsaSignatureVerification(base64Signature, publicKey, toHexString);
     } catch (NoSuchAlgorithmException e) {
-      throw signatureExceptionConverter().apply(e, "Specified algorithm is not available for Key Factory.");
+      throw new DigitalCovidCertificateSignatureException("Specified algorithm is not available for Key Factory.", e);
     } catch (InvalidKeySpecException | InvalidKeyException e) {
-      throw signatureExceptionConverter().apply(e, "DCC Public key generation throwed an error.");
+      throw new DigitalCovidCertificateSignatureException("DCC Public key generation throwed an error.", e);
     } catch (SignatureException e) {
       throw signatureExceptionConverter().apply(e, "Invalid signature.");
     }
