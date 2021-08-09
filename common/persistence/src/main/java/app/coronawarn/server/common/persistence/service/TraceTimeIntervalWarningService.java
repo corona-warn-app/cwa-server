@@ -10,6 +10,7 @@ import app.coronawarn.server.common.persistence.repository.CheckInProtectedRepor
 import app.coronawarn.server.common.persistence.repository.TraceTimeIntervalWarningRepository;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
+import app.coronawarn.server.common.protocols.internal.pt.CheckInProtectedReport;
 import com.google.protobuf.ByteString;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -88,6 +89,28 @@ public class TraceTimeIntervalWarningService {
     }
 
     return numberOfInsertedTraceWarnings;
+  }
+
+  /**
+   * Store the given checkin data as {@link TraceTimeIntervalWarning} entities for the Protected Reports. Returns the
+   * number of inserted entities, which is useful for the case where there might be conflicts with the table constraints
+   * during the db save operations.
+   */
+  @Transactional
+  public int saveCheckInProtectedReports(List<CheckInProtectedReport> allCheckins, Integer submissionTimestamp) {
+    int numberOfCheckInProtectedReports = 0;
+    for (CheckInProtectedReport checkInProtectedReports : allCheckins) {
+      boolean checkInProtectedInsertedSuccessfully = checkInProtectedReportsRepository
+          .saveDoNothingOnConflict(checkInProtectedReports.getLocationIdHash().toByteArray(),
+              checkInProtectedReports.getIv().toByteArray(),
+              checkInProtectedReports.getEncryptedCheckInRecord().toByteArray(),
+              submissionTimestamp);
+
+      if (checkInProtectedInsertedSuccessfully) {
+        numberOfCheckInProtectedReports++;
+      }
+    }
+    return numberOfCheckInProtectedReports;
   }
 
   /**
