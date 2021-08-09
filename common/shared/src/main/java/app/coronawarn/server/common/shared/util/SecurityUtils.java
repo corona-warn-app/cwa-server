@@ -6,7 +6,6 @@ import static java.util.Arrays.copyOfRange;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
@@ -25,7 +24,7 @@ public class SecurityUtils {
 
   /**
    * Static delegator for {@link Base64#getDecoder()} / {@link Decoder#decode(byte[])}.
-   * 
+   *
    * @param in String to be decoded
    * @return decoded byte array
    */
@@ -44,10 +43,10 @@ public class SecurityUtils {
    * @throws SignatureException       - thrown if the signature verification fails.
    */
   public static void ecdsaSignatureVerification(final byte[] encodedSignature, final PublicKey publicKey,
-      final String content) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+      final byte[] content) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
     final Signature signatureVerification = Signature.getInstance(SHA_ECDSA.getName());
     signatureVerification.initVerify(publicKey);
-    signatureVerification.update(content.getBytes(StandardCharsets.UTF_8));
+    signatureVerification.update(content);
 
     if (!signatureVerification.verify(encodedSignature)) {
       throw new SignatureException("Signature verification failed");
@@ -78,7 +77,7 @@ public class SecurityUtils {
    * Transforms a String public key into a Java security public key.
    *
    * @param publicKey - String public Key.
-   * @return - Java public key.
+   * @return - Java public key of the identity whose signature is going to be verified.
    * @throws NoSuchAlgorithmException - thrown if key factory algorithm is not available.
    * @throws InvalidKeySpecException  - thrown if public key is not valid.
    */

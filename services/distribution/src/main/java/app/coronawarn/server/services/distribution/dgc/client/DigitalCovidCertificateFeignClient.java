@@ -32,7 +32,7 @@ public interface DigitalCovidCertificateFeignClient {
   /**
    * HTTP GET to return a specific valuesets based on its hash.
    *
-   * @param hash - valueset hash
+   * @param hash - valueset hash.
    */
   @Timed
   @GetMapping(value = "${services.distribution.digital-green-certificate.client.value-sets-path}/{hash}")

@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.github.dockerjava.zerodep.shaded.org.apache.commons.codec.binary.Hex;
 import java.io.IOException;
-import java.security.InvalidKeyException;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.SignatureException;
@@ -39,14 +39,15 @@ class SecurityUtilsTest {
   }
 
   @Test
-  void testEcdsaSignatureVerification()
-      throws NoSuchAlgorithmException, InvalidKeySpecException, IOException, SignatureException, InvalidKeyException {
+  void shouldFailWhenSignatureDoesNotMatchContent()
+      throws NoSuchAlgorithmException, InvalidKeySpecException {
     PublicKey key = SecurityUtils
         .getPublicKeyFromString("MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIxHvrv8jQx9OEzTZbsx1prQVQn"
             + "/3ex0gMYf6GyaNBW0QKLMjrSDeN6HwSPM0QzhvhmyQUixl6l88A7Zpu5OWSw==");
     String signature = "+AE7sEXzNjgvxiDXrKdXQqL/XiOPIB/1r579jyIPWtQp7/a6K4m2vBsnjZSWvsZ+wT+WHkF8F64eCktNamZGhw==";
     byte[] base64DecodedSignature = base64decode(signature);
 
-    assertThrows(SignatureException.class, () -> ecdsaSignatureVerification(base64DecodedSignature, key, ""));
+    assertThrows(SignatureException.class,
+        () -> ecdsaSignatureVerification(base64DecodedSignature, key, "".getBytes(StandardCharsets.UTF_8)));
   }
 }
