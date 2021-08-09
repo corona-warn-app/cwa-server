@@ -93,7 +93,6 @@ public class SubmissionController {
   private DeferredResult<ResponseEntity<Void>> buildRealDeferredResult(SubmissionPayload submissionPayload,
       String tan) {
     DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
-    CheckinsStorageResult checkinsStorageResult = new CheckinsStorageResult(0, 0);
 
     StopWatch stopWatch = new StopWatch();
     stopWatch.start();
@@ -103,13 +102,7 @@ public class SubmissionController {
         deferredResult.setResult(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
       } else {
         extractAndStoreDiagnosisKeys(submissionPayload);
-        if (submissionServiceConfig.getEvregUnencryptedCheckinsEnabled() == 1) {
-          // The deprecated method (extractAndStoreEventCheckins) shall only be executed
-          // if $EVREG_UNENCRYPTED_CHECKINS_ENABLED is set to 1
-          checkinsStorageResult = eventCheckinFacade
-              .extractAndStoreEventCheckins(submissionPayload);
-        }
-        eventCheckinFacade.saveCheckInProtectedReports(submissionPayload.getCheckInProtectedReportsList());
+        CheckinsStorageResult checkinsStorageResult = eventCheckinFacade.extractAndStoreCheckins(submissionPayload);
 
         deferredResult.setResult(ResponseEntity.ok()
             .header("cwa-filtered-checkins", String.valueOf(checkinsStorageResult.getNumberOfFilteredCheckins()))

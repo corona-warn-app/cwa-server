@@ -60,7 +60,7 @@ public class SubmissionServiceConfig {
   @Min(1)
   @Max(144)
   private Integer minRollingPeriod;
-  private Integer evregUnencryptedCheckinsEnabled;
+  private Boolean unencryptedCheckinsEnabled;
 
   @Autowired
   private TekFieldDerivations tekFieldDerivations;
@@ -205,12 +205,12 @@ public class SubmissionServiceConfig {
     this.trlDerivations = trlDerivations;
   }
 
-  public Integer getEvregUnencryptedCheckinsEnabled() {
-    return evregUnencryptedCheckinsEnabled;
+  public Boolean isUnencryptedCheckinsEnabled() {
+    return unencryptedCheckinsEnabled;
   }
 
-  public void setEvregUnencryptedCheckinsEnabled(Integer evregUnencryptedCheckinsEnabled) {
-    this.evregUnencryptedCheckinsEnabled = evregUnencryptedCheckinsEnabled;
+  public void setUnencryptedCheckinsEnabled(Boolean unencryptedCheckinsEnabled) {
+    this.unencryptedCheckinsEnabled = unencryptedCheckinsEnabled;
   }
 
   public static class Payload {

@@ -66,7 +66,7 @@ public class EventCheckinFacade {
    * @return - storage result containing number of filtered and saved check-ins.
    */
   @Deprecated
-  public CheckinsStorageResult extractAndStoreEventCheckins(SubmissionPayload submissionPayload) {
+  private CheckinsStorageResult extractAndStoreEventCheckins(SubmissionPayload submissionPayload) {
     // need a container object that reflects how many checkins were filtered even if storage fails
     AtomicInteger numberOfFilteredCheckins = new AtomicInteger(0);
     AtomicInteger numberOfSavedCheckins = new AtomicInteger(0);
@@ -96,9 +96,23 @@ public class EventCheckinFacade {
    * @return the number of saved checkins.
    */
 
-  public int saveCheckInProtectedReports(List<CheckInProtectedReport> checkInProtectedReports) {
+  private CheckinsStorageResult saveCheckInProtectedReports(List<CheckInProtectedReport> checkInProtectedReports) {
     Integer submissionTimestamp = CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
         .apply(Instant.now().getEpochSecond());
-    return traceTimeIntervalWarningService.saveCheckInProtectedReports(checkInProtectedReports, submissionTimestamp);
+    int numberOfSavedCheckins = traceTimeIntervalWarningService.saveCheckInProtectedReports(checkInProtectedReports, submissionTimestamp);
+    logger.debug("Successfully saved " + numberOfSavedCheckins + " protected reports");
+    return new CheckinsStorageResult(0, numberOfSavedCheckins);
+  }
+
+  public CheckinsStorageResult extractAndStoreCheckins(SubmissionPayload submissionPayload) {
+    CheckinsStorageResult checkinsStorageResult = new CheckinsStorageResult(0, 0);
+
+    if (submissionServiceConfig.isUnencryptedCheckinsEnabled()) {
+      CheckinsStorageResult other = this.extractAndStoreEventCheckins(submissionPayload);
+      checkinsStorageResult = checkinsStorageResult.update(other);
+    }
+    CheckinsStorageResult saved =  this.saveCheckInProtectedReports(submissionPayload.getCheckInProtectedReportsList());
+    checkinsStorageResult = checkinsStorageResult.update(saved);
+    return checkinsStorageResult;
   }
 }
