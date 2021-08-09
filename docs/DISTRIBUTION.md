@@ -182,7 +182,7 @@ prefixes:
 
 The exported diagnosis-keys are being organized in hourly and daily archives. The folder structure is as follows:
 `/version/<version>/diagnosis-keys/country/<ISO-3166-country>/date/<YYYY-MM-DD>/hour/<hh>/index`. The version, country,
-date and hour directory also contain an index file each, listing all the subdirectories. All generated files are named
+date and hour directory also contain an index file each, listing all the sub-directories. All generated files are named
 `index`, which acts as a workaround to also support files & folders with the same name - e.g.
 `version/v1/diagnosis-keys/country` is both a file and the folder `version/v1/diagnosis-keys/country/`. S3 supports this
 concept, but writing this structure to the local disk is not supported. Therefore, this country file will be assembled as
@@ -200,9 +200,9 @@ directories are created and the keys are added to their respective archives. To 
 determined by the distribution timestamp.
 
 The diagnosis keys need to be expired for at least two hours, before they can be distributed. This means that if the key
-has been submitted within two hours after the expiry date, it cannot be published immediately. Therefore a distribution
+has been submitted within two hours after the expire date, it cannot be published immediately. Therefore a distribution
 timestamp is calculated, which is either the submission timestamp, or, if the submission timestamp is within two hours
-after the expiry date, the expiry date plus two hours. This ensures compliance with the specification from Google and
+after the expire date, the expire date plus two hours. This ensures compliance with the specification from Google and
 Apple.
 
 Each run creates all hourly and daily archives for the last 14 days. To prevent unnecessary uploads the
@@ -267,7 +267,7 @@ The CWA Server serves as a proxy to obtain rules and value sets from the data so
 The consumed data is divided in two parts:
 
 - `value sets` - Contains the possible values for entities involved in the Digital Green Certificate process. Examples: virus definition, vaccine manufactures etc. Value Sets are published in a single zip file that contains a Protocol Buffer message and signature.
-- `business rules` - Contains the business rules for a Digital Green Certificate to be checked agains. Rules are published in multiple zip files (depending on country and type). Each zip file contains a binary representation(CBOR encoding) of a JSON structure and signature.
+- `business rules` - Contains the business rules for a Digital Green Certificate to be checked against. Rules are published in multiple zip files (depending on country and type). Each zip file contains a binary representation(CBOR encoding) of a JSON structure and signature.
 
 ### DCC Rule & Value Set Distribution Backend
 
@@ -276,7 +276,7 @@ The consumed data is divided in two parts:
 ### DCC Signature verification
 
 X-SIGNATURE header is present on the Response headers of the DCC.
-The signature is verified by using the ECDSA (eliptic curve encription) alogrithm using the public key and the body content.
+The signature is verified by using the ECDSA (elliptic curve encryption) algorithm using the public key and the body content.
 
 The signature verification is done by [`DccSignatureValidator`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/dgc/client/signature/DccSignatureValidator.java).
 
@@ -292,7 +292,7 @@ At the end of the process these URLs are created to allow retrieving the protobu
 
 The supported languages are [configurable](https://github.com/corona-warn-app/cwa-server/blob/5e47a2e485585043a05ec4173204dd020c757585/services/distribution/src/main/resources/application.yaml#L208), for now they are: DE, EN, BG, PL, RO, TR.
 
-For local testing the following valuesets may be consumed:
+For local testing the following value sets may be consumed:
 
 - vaccine-prophylaxis.json - Vaccine or prophylaxis
 - vaccine-medicinal-product.json - Vaccine medicinal product
@@ -307,7 +307,7 @@ They can be found in the [dgc folder](https://github.com/corona-warn-app/cwa-ser
 ### Onboarded countries
 
 A list containing all onboarded countries can be retrieved by calling `/countrylist` endpoint.
-The country list is then CBOR enoded and distributed on CDN on the following path: `ehn-dgc/{supportedLanguage}/onboarded-countries`.
+The country list is then CBOR encoded and distributed on CDN on the following path: `ehn-dgc/{supportedLanguage}/onboarded-countries`.
 
 ### Business rules
 
@@ -317,7 +317,7 @@ Then, each individual business rule can be retrieved by calling `/rules/{country
 The [`DigitalGreenCertificateToCborMapping`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/dgc/DigitalGreenCertificateToCborMapping.java)
 is responsible for reading the values, encode them in CBOR format by using the [`DistributionServiceConfig`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/config/DistributionServiceConfig.java) to get server/client configurations.
 
-All business rules ar then divided into `acceptance` and `invalidation` rules, encoded in CBOR format and distributed on CDN on the following paths:
+All business rules are then divided into `acceptance` and `invalidation` rules, encoded in CBOR format and distributed on CDN on the following paths:
 
 - acceptance rules: `ehn-dgc/acceptance-rules`.
 - invalidation rules: `ehn-dgc/invalidation-rules`.
@@ -335,7 +335,7 @@ For Digital Signing Certificate, the signature is present on the first line of t
 
 The response is returned as a String from the Feign Client [`DigitalSigningCertificatesFeignClient`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/dgc/dsc/DigitalSigningCertificatesFeignClient.java).
 and processed by [`DscListDecoder`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/dgc/dsc/decode/DscListDecoder.java). The decoder splits the signature and the JSON format content and verifies the signature using the content and the public key.
-The encryption alogrithm is ECDSA.
+The encryption algorithm is ECDSA.
 
 The content part of the body is also checked to be a valid X509 certificate.
 
