@@ -1,7 +1,6 @@
 package app.coronawarn.server.services.distribution.dgc.client;
 
 import static app.coronawarn.server.common.shared.util.CwaStringUtils.emptyCharrArrayIfNull;
-import static app.coronawarn.server.common.shared.util.HashUtils.byteStringDigest;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.Client.Ssl;
