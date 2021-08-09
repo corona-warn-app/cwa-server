@@ -271,10 +271,7 @@ The consumed data is divided in two parts:
 
 ### DCC Rule & Value Set Distribution Backend
 
-- PROD: `https://distribution.dcc-rules.de)`
-- WRU: `https://distribution-cff4f7147260.dcc-rules.de`
-- INT: `https://distribution-dfe4f5c711db.dcc-rules.de`
-- DEV: `https://distribution-6155b8d7d3c6.dcc-rules.de`
+- `https://distribution.dcc-rules.de`
 
 ### DCC Signature verification
 
@@ -329,10 +326,8 @@ All business rules ar then divided into `acceptance` and `invalidation` rules, e
 
 The signing certificates for Digital Covid Certificate are provided by IBM/Ubirch.
 
-- [PROD](https://de.dscg.ubirch.com).
-- [WRU](https://de.test.dscg.ubirch.com).
-- [INT](https://de.test.dscg.ubirch.com).
-- [DEV](https://de.test.dscg.ubirch.com).
+- Prod: `https://de.dscg.ubirch.com`
+- Test: `https://de.test.dscg.ubirch.com`
 
 ### DSC Signature verification
 
