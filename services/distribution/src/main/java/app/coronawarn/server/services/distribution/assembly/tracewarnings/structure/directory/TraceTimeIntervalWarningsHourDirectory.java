@@ -21,7 +21,7 @@ import java.util.Optional;
 
 public class TraceTimeIntervalWarningsHourDirectory extends IndexDirectoryOnDisk<Integer> {
 
-  public static final String V1 = "v1";
+  public static final String VERSION_V1 = "v1";
   private TraceTimeIntervalWarningsPackageBundler traceWarningsBundler;
   private CryptoProvider cryptoProvider;
   private DistributionServiceConfig distributionServiceConfig;
@@ -36,7 +36,7 @@ public class TraceTimeIntervalWarningsHourDirectory extends IndexDirectoryOnDisk
     super(distributionServiceConfig.getApi().getHourPath(), indices -> {
       String country = (String) indices.peek();
 
-      if (version.equals(V1)) {
+      if (version.equals(VERSION_V1)) {
         return traceWarningsBundler.getHoursForDistributableWarnings(country);
       } else {
         return traceWarningsBundler.getHoursForDistributableCheckInProtectedReports(country);
@@ -54,9 +54,7 @@ public class TraceTimeIntervalWarningsHourDirectory extends IndexDirectoryOnDisk
     this.addWritableToAll(currentIndices -> {
       Integer hourSinceEpoch = (Integer) currentIndices.peek();
       String country = (String) currentIndices.pop().peek();
-      String version = (String) currentIndices.pop().pop().peek();
-
-      if (version.equals(V1)) {
+      if (version.equals(VERSION_V1)) {
         List<TraceTimeIntervalWarning> traceWarningsForCurrentHour =
             this.traceWarningsBundler.getTraceTimeWarningsForHour(hourSinceEpoch);
         if (traceWarningsForCurrentHour.isEmpty()) {

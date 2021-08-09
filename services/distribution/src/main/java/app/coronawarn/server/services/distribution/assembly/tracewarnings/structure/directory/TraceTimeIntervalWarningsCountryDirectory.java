@@ -11,13 +11,15 @@ import app.coronawarn.server.services.distribution.assembly.tracewarnings.struct
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
 public class TraceTimeIntervalWarningsCountryDirectory extends IndexDirectoryOnDisk<String> {
 
-  private final String version;
+  private String version;
   private TraceTimeIntervalWarningsPackageBundler traceWarningsBundler;
   private CryptoProvider cryptoProvider;
   private DistributionServiceConfig distributionServiceConfig;
+  Function<String, Set<Integer>> getHoursFunction;
 
   /**
    * Creates an instance of the custom directory that includes the entire {@link TraceTimeIntervalWarning} package
@@ -47,6 +49,7 @@ public class TraceTimeIntervalWarningsCountryDirectory extends IndexDirectoryOnD
 
   private IndexDirectory<Integer, WritableOnDisk> decorateHourDirectory(
       TraceTimeIntervalWarningsHourDirectory hourDirectory) {
-    return new HourIntervalIndexingDecorator(hourDirectory, traceWarningsBundler, distributionServiceConfig);
+    return new HourIntervalIndexingDecorator(hourDirectory, traceWarningsBundler, distributionServiceConfig, version);
   }
+
 }

@@ -1,10 +1,5 @@
 package app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.integration;
 
-import static java.io.File.separator;
-import static java.io.File.separatorChar;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
-
 import app.coronawarn.server.common.persistence.service.TraceTimeIntervalWarningService;
 import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
@@ -19,15 +14,8 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.common.Helpers;
 import app.coronawarn.server.services.distribution.objectstore.ObjectStoreAccess;
-import java.io.File;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,8 +29,21 @@ import org.springframework.cloud.vault.config.VaultAutoConfiguration;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import java.io.File;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-@ContextConfiguration(classes = { Application.class }, initializers = ConfigDataApplicationContextInitializer.class)
+import static java.io.File.separator;
+import static java.io.File.separatorChar;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
+@ContextConfiguration(classes = {Application.class}, initializers = ConfigDataApplicationContextInitializer.class)
 @ExtendWith(SpringExtension.class)
 @EnableAutoConfiguration(exclude = VaultAutoConfiguration.class)
 @ActiveProfiles("fake-dcc-client")
@@ -100,7 +101,75 @@ class TraceTimeIntervalWarningsDistributionIT {
         .getTraceWarningsDirectory();
     final Directory<WritableOnDisk> directory = outputDirectoryProvider.getDirectory();
     directory.addWritable(traceWarningsDirectory);
-    directory.prepare(new ImmutableStack<>());
+    ImmutableStack<Object> indices = new ImmutableStack<>();
+    indices = indices.push("v1");
+    directory.prepare(indices);
+    directory.write();
+
+    // then
+    Set<String> expectedPaths = new java.util.HashSet<>(
+        Set.of(PARENT_DIRECTORY, StringUtils.joinWith(separator, PARENT_DIRECTORY, "twp"),
+            StringUtils.joinWith(separator, PARENT_DIRECTORY, "twp", "country"),
+            StringUtils.joinWith(separator, PARENT_DIRECTORY, "twp", "country", "DE"),
+            StringUtils.joinWith(separator, PARENT_DIRECTORY, "twp", "country", "DE", "hour"),
+            StringUtils.joinWith(separator, PARENT_DIRECTORY, "twp", "country", "index"),
+            StringUtils.joinWith(separator, PARENT_DIRECTORY, "twp", "country", "index.checksum"),
+            StringUtils.joinWith(separator, PARENT_DIRECTORY, "twp", "country", "DE", "hour", "index"),
+            StringUtils.joinWith(separator, PARENT_DIRECTORY, "twp", "country", "DE", "hour", "index.checksum")));
+    IntStream.range(oldestHour, latestHour + 1).forEach(hour -> {
+      expectedPaths.add(StringUtils.joinWith(separator, PARENT_DIRECTORY, "twp", "country", "DE", "hour", hour));
+    });
+    Set<String> actualFiles = Helpers.getSubFoldersPaths(tempFolder.getRoot().getAbsolutePath(), PARENT_DIRECTORY);
+    actualFiles.addAll(Helpers.getFilePaths(tempFolder.getRoot(), tempFolder.getRoot().getAbsolutePath()));
+    final List<Integer> excludedCurrentHourEmptyList = actualFiles.stream()
+        .filter(path -> hasSuffix(path, excludedCurrentHour))
+        .map(this::extractSubmissionHour)
+        .collect(Collectors.toList());
+    List<Integer> oldestAndLatestTimeStamps = actualFiles.stream()
+        .filter(path -> hasSuffix(path, latestHour, oldestHour))
+        .map(this::extractSubmissionHour).collect(Collectors.toList());
+
+    assertThat(excludedCurrentHourEmptyList).isEmpty();
+    assertThat(oldestAndLatestTimeStamps).containsExactlyInAnyOrder(latestHour, oldestHour);
+    assertThat(actualFiles).containsAll(expectedPaths);
+  }
+
+  // TODO FR -- wait until creation of reported checkings is implemented
+  @Test
+  @IGN
+  void testIndicesAreOldestAndLatestForMultipleEncryptedSubmissions() throws Exception {
+    // given
+    LocalDateTime utcHour = TimeUtils.getCurrentUtcHour();
+    Integer excludedCurrentHour = CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
+        .apply(utcHour.toEpochSecond(ZoneOffset.UTC));
+    Integer oldestHour = CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
+        .apply(utcHour.minusHours(10).toEpochSecond(ZoneOffset.UTC));
+    Integer latestHour = CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
+        .apply(utcHour.minusHours(1).toEpochSecond(ZoneOffset.UTC));
+
+    List<CheckIn> checkIns = Helpers.buildCheckIns(5, 10, 30);
+    List<CheckIn> additionalCheckIns = Helpers.buildCheckIns(5, 10, 30);
+    List<CheckIn> anotherCheckIns = Helpers.buildCheckIns(5, 10, 30);
+
+    traceTimeIntervalWarningService
+        .saveCheckins(checkIns, excludedCurrentHour, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
+    traceTimeIntervalWarningService
+        .saveCheckins(additionalCheckIns, oldestHour, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
+    traceTimeIntervalWarningService
+        .saveCheckins(anotherCheckIns, latestHour, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
+
+    // when
+    // - create protected reports directory
+    // - add all to the test parent folder
+    final Directory<WritableOnDisk> traceWarningsDirectory = traceTimeIntervalWarningsStructureProvider
+        .getCheckInProtectedReportsDirectory();
+    final Directory<WritableOnDisk> directory = outputDirectoryProvider.getDirectory();
+    directory.addWritable(traceWarningsDirectory);
+
+    // Prepare indices. In this case push version onto the indices to indicate that the root starts with "v2". This is needed for the correct handling of the version.
+    ImmutableStack<Object> indices = new ImmutableStack<>();
+    indices = indices.push("v2");
+    directory.prepare(indices);
     directory.write();
 
     // then

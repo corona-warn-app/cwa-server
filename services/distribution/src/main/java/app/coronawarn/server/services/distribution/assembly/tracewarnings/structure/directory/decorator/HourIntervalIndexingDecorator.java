@@ -7,14 +7,15 @@ import app.coronawarn.server.services.distribution.assembly.structure.file.FileO
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceTimeIntervalWarningsPackageBundler;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.TraceTimeIntervalWarningsHourDirectory;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import org.json.simple.JSONObject;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
-import org.json.simple.JSONObject;
 
 public class HourIntervalIndexingDecorator extends IndexingDecoratorOnDisk<Integer> {
 
-  private TraceTimeIntervalWarningsHourDirectory directory;
+  private String version;
   private TraceTimeIntervalWarningsPackageBundler packageBundler;
+  public static String VERSION_V1 = "v1";
 
   /**
    * Decorator for trace time interval warnings hour directory.
@@ -25,17 +26,19 @@ public class HourIntervalIndexingDecorator extends IndexingDecoratorOnDisk<Integ
    */
   public HourIntervalIndexingDecorator(TraceTimeIntervalWarningsHourDirectory directory,
       TraceTimeIntervalWarningsPackageBundler packageBundler,
-      DistributionServiceConfig distributionServiceConfig) {
+      DistributionServiceConfig distributionServiceConfig,
+      final String version) {
     super(directory, distributionServiceConfig.getOutputFileName());
     this.packageBundler = packageBundler;
-    this.directory = directory;
+    this.version = version;
   }
 
   @SuppressWarnings("unchecked")
   @Override
   public FileOnDisk getIndexFile(String indexFileName, ImmutableStack<Object> indices) {
     String currentCountry = (String) indices.peek();
-    if (this.directory.getVersion().equals("v1")) {
+
+    if (this.version.equals(VERSION_V1)) {
       final Optional<Integer> oldestHourWithDistributableWarnings = packageBundler
           .getOldestHourWithDistributableWarnings(currentCountry);
       final Optional<Integer> latestHourWithDistributableWarnings = packageBundler
