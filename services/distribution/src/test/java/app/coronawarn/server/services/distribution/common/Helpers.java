@@ -10,6 +10,7 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Repo
 import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
+import app.coronawarn.server.common.protocols.internal.pt.CheckInProtectedReport;
 import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import app.coronawarn.server.common.shared.exception.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
@@ -213,6 +214,15 @@ public class Helpers {
     return expectedFiles;
   }
 
+
+  public static List<TraceTimeIntervalWarning> buildTraceTimeIntervalWarning(
+      int startIntervalNumber, int endIntervalNumber, int submissionHourSinceEpoch, int numberOfWarnings) {
+    return IntStream.range(0, numberOfWarnings)
+        .mapToObj(ignoredValue -> buildTraceTimeIntervalWarning(startIntervalNumber, endIntervalNumber,
+            submissionHourSinceEpoch))
+        .collect(Collectors.toList());
+  }
+
   public static TraceTimeIntervalWarning buildTraceTimeIntervalWarning(int startIntervalNumber,
       int endIntervalNumber, int submissionHourSinceEpoch) {
     final byte[] guid = UUID.randomUUID().toString().getBytes();
@@ -226,7 +236,14 @@ public class Helpers {
     };
   }
 
-  public static CheckInProtectedReports buildCheckInProtectedReports( int submissionHourSinceEpoch) {
+  public static List<CheckInProtectedReports> buildCheckInProtectedReports(int submissionHourSinceEpoch,
+      int numberOfCheckIns) {
+    return IntStream.range(0, numberOfCheckIns)
+        .mapToObj(ignoredValue -> buildCheckInProtectedReport(submissionHourSinceEpoch))
+        .collect(Collectors.toList());
+  }
+
+  public static CheckInProtectedReports buildCheckInProtectedReport(int submissionHourSinceEpoch) {
     final byte[] traceLocationIdHash = UUID.randomUUID().toString().getBytes();
     final byte[] iv = UUID.randomUUID().toString().getBytes();
     final byte[] encryptedCheckIns = new byte[16];
@@ -239,20 +256,6 @@ public class Helpers {
     };
   }
 
-
-  public static List<TraceTimeIntervalWarning> buildTraceTimeIntervalWarning(
-      int startIntervalNumber, int endIntervalNumber, int submissionHourSinceEpoch, int numberOfWarnings) {
-    return IntStream.range(0, numberOfWarnings)
-        .mapToObj(ignoredValue -> buildTraceTimeIntervalWarning(startIntervalNumber, endIntervalNumber,
-            submissionHourSinceEpoch))
-        .collect(Collectors.toList());
-  }
-
-  public static List<CheckInProtectedReports> buildCheckInProtectedReports(int submissionHourSinceEpoch, int numberOfCheckIns) {
-    return IntStream.range(0, numberOfCheckIns)
-        .mapToObj(ignoredValue -> buildCheckInProtectedReports(submissionHourSinceEpoch))
-        .collect(Collectors.toList());
-  }
 
   public static List<CheckIn> buildCheckIns(int startIntervalNumber, int endIntervalNumber, int numberOfCheckIns) {
     return IntStream.range(0, numberOfCheckIns).mapToObj(
@@ -268,4 +271,25 @@ public class Helpers {
         .setTransmissionRiskLevel(5)
         .build();
   }
+
+  public static List<CheckInProtectedReport> buildCheckInProtectedReports(int numberOfCheckIns) {
+    return IntStream.range(0, numberOfCheckIns)
+        .mapToObj(ignoredValue -> buildCheckInProtectedReport())
+        .collect(Collectors.toList());
+  }
+
+  public static CheckInProtectedReport buildCheckInProtectedReport() {
+    final byte[] traceLocationIdHash = UUID.randomUUID().toString().getBytes();
+    final byte[] iv = UUID.randomUUID().toString().getBytes();
+    final byte[] encryptedCheckIns = new byte[16];
+    new Random().nextBytes(encryptedCheckIns);
+
+    return CheckInProtectedReport.newBuilder()
+        .setLocationIdHash(ByteString.copyFrom(traceLocationIdHash))
+        .setIv(ByteString.copyFrom(iv))
+        .setEncryptedCheckInRecord(ByteString.copyFrom(encryptedCheckIns))
+        .build();
+
+  }
+
 }

@@ -4,6 +4,7 @@ import app.coronawarn.server.common.persistence.service.TraceTimeIntervalWarning
 import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
+import app.coronawarn.server.common.protocols.internal.pt.CheckInProtectedReport;
 import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import app.coronawarn.server.common.shared.util.TimeUtils;
 import app.coronawarn.server.services.distribution.Application;
@@ -15,7 +16,6 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.common.Helpers;
 import app.coronawarn.server.services.distribution.objectstore.ObjectStoreAccess;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,6 +35,7 @@ import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -134,9 +135,7 @@ class TraceTimeIntervalWarningsDistributionIT {
     assertThat(actualFiles).containsAll(expectedPaths);
   }
 
-  // TODO FR -- wait until creation of reported checkings is implemented
   @Test
-  @IGN
   void testIndicesAreOldestAndLatestForMultipleEncryptedSubmissions() throws Exception {
     // given
     LocalDateTime utcHour = TimeUtils.getCurrentUtcHour();
@@ -147,16 +146,16 @@ class TraceTimeIntervalWarningsDistributionIT {
     Integer latestHour = CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
         .apply(utcHour.minusHours(1).toEpochSecond(ZoneOffset.UTC));
 
-    List<CheckIn> checkIns = Helpers.buildCheckIns(5, 10, 30);
-    List<CheckIn> additionalCheckIns = Helpers.buildCheckIns(5, 10, 30);
-    List<CheckIn> anotherCheckIns = Helpers.buildCheckIns(5, 10, 30);
+    List<CheckInProtectedReport> checkIns = Helpers.buildCheckInProtectedReports(30);
+    List<CheckInProtectedReport> additionalCheckIns = Helpers.buildCheckInProtectedReports(30);
+    List<CheckInProtectedReport> anotherCheckIns = Helpers.buildCheckInProtectedReports(30);
 
     traceTimeIntervalWarningService
-        .saveCheckins(checkIns, excludedCurrentHour, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
+        .saveCheckInProtectedReports(checkIns, excludedCurrentHour);
     traceTimeIntervalWarningService
-        .saveCheckins(additionalCheckIns, oldestHour, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
+        .saveCheckInProtectedReports(additionalCheckIns, oldestHour);
     traceTimeIntervalWarningService
-        .saveCheckins(anotherCheckIns, latestHour, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
+        .saveCheckInProtectedReports(anotherCheckIns, latestHour);
 
     // when
     // - create protected reports directory
@@ -166,13 +165,14 @@ class TraceTimeIntervalWarningsDistributionIT {
     final Directory<WritableOnDisk> directory = outputDirectoryProvider.getDirectory();
     directory.addWritable(traceWarningsDirectory);
 
-    // Prepare indices. In this case push version onto the indices to indicate that the root starts with "v2". This is needed for the correct handling of the version.
+    // Prepare indices.
+    // In this case push the version ("v2" for encrypted checkins) onto the indices to indicate that the root starts with "v2".
+    // This is needed for the correct handling of the version.
     ImmutableStack<Object> indices = new ImmutableStack<>();
     indices = indices.push("v2");
     directory.prepare(indices);
     directory.write();
 
-    // then
     Set<String> expectedPaths = new java.util.HashSet<>(
         Set.of(PARENT_DIRECTORY, StringUtils.joinWith(separator, PARENT_DIRECTORY, "twp"),
             StringUtils.joinWith(separator, PARENT_DIRECTORY, "twp", "country"),
@@ -194,10 +194,18 @@ class TraceTimeIntervalWarningsDistributionIT {
     List<Integer> oldestAndLatestTimeStamps = actualFiles.stream()
         .filter(path -> hasSuffix(path, latestHour, oldestHour))
         .map(this::extractSubmissionHour).collect(Collectors.toList());
+    final List<Integer> actualHourlyFilesBetweenOldestAndLatest = actualFiles.stream()
+        .filter(path -> Pattern.matches("^[a-zA-Z\\/]+\\d+$", path))
+        .map(this::extractSubmissionHour)
+        .filter(submissionTimestamp -> oldestHour <= submissionTimestamp && latestHour >= submissionTimestamp)
+        .collect(Collectors.toList());
 
     assertThat(excludedCurrentHourEmptyList).isEmpty();
     assertThat(oldestAndLatestTimeStamps).containsExactlyInAnyOrder(latestHour, oldestHour);
     assertThat(actualFiles).containsAll(expectedPaths);
+    Integer[] expectedHourlyFiles = IntStream.range(oldestHour, latestHour + 1).boxed().toArray(Integer[]::new);
+    assertThat(actualHourlyFilesBetweenOldestAndLatest)
+        .containsExactlyInAnyOrder(expectedHourlyFiles);
   }
 
   private int extractSubmissionHour(String path) {

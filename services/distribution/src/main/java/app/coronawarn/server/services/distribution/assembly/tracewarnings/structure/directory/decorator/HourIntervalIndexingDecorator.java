@@ -7,9 +7,9 @@ import app.coronawarn.server.services.distribution.assembly.structure.file.FileO
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceTimeIntervalWarningsPackageBundler;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.TraceTimeIntervalWarningsHourDirectory;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import org.json.simple.JSONObject;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
+import org.json.simple.JSONObject;
 
 public class HourIntervalIndexingDecorator extends IndexingDecoratorOnDisk<Integer> {
 

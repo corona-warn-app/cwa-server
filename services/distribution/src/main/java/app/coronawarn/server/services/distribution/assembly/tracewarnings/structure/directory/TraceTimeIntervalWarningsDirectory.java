@@ -11,10 +11,6 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceTimeIntervalWarningsPackageBundler;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-
 public class TraceTimeIntervalWarningsDirectory extends DirectoryOnDisk {
 
   private final CryptoProvider cryptoProvider;
@@ -36,7 +32,6 @@ public class TraceTimeIntervalWarningsDirectory extends DirectoryOnDisk {
   }
 
   @Override
-  // use some kind of lookup table to provide the correct methods
   public void prepare(ImmutableStack<Object> indices) {
     String version = (String) indices.peek();
     this.addWritable(decorateCountryDirectory(new TraceTimeIntervalWarningsCountryDirectory(
