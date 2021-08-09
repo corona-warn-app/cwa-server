@@ -307,7 +307,7 @@ They can be found in the [dgc folder](https://github.com/corona-warn-app/cwa-ser
 ### Onboarded countries
 
 A list containing all onboarded countries can be retrieved by calling `/countrylist` endpoint.
-The country list is then CBOR enoded and distributed on CDN on the following path: `ehn-dgc/{supportedLanguage}/onboarded-countries`.
+The country list is then CBOR encoded and distributed on CDN on the following path: `ehn-dgc/{supportedLanguage}/onboarded-countries`.
 
 ### Business rules
 
@@ -317,7 +317,7 @@ Then, each individual business rule can be retrieved by calling `/rules/{country
 The [`DigitalGreenCertificateToCborMapping`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/dgc/DigitalGreenCertificateToCborMapping.java)
 is responsible for reading the values, encode them in CBOR format by using the [`DistributionServiceConfig`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/config/DistributionServiceConfig.java) to get server/client configurations.
 
-All business rules ar then divided into `acceptance` and `invalidation` rules, encoded in CBOR format and distributed on CDN on the following paths:
+All business rules are then divided into `acceptance` and `invalidation` rules, encoded in CBOR format and distributed on CDN on the following paths:
 
 - acceptance rules: `ehn-dgc/acceptance-rules`.
 - invalidation rules: `ehn-dgc/invalidation-rules`.

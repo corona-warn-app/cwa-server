@@ -55,15 +55,4 @@ public class CloudDccFeignClientConfiguration {
 
     return new Retryer.Default(retryPeriod, maxRetryPeriod, maxAttempts);
   }
-
-  @Bean
-  public MethodValidationInterceptor methodValidationInterceptor() {
-    return new MethodValidationInterceptor();
-  }
-
-  @Bean
-  public MethodValidationPostProcessor methodValidationPostProcessor() {
-    return new MethodValidationPostProcessor();
-  }
-
 }

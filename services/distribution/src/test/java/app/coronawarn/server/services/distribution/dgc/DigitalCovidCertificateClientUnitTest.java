@@ -13,7 +13,6 @@ import app.coronawarn.server.common.shared.util.SerializationUtils;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateFeignClient;
 import app.coronawarn.server.services.distribution.dgc.client.ProdDigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient;
-import app.coronawarn.server.services.distribution.dgc.client.signature.DccSignatureValidator;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchValueSetsException;
 import feign.FeignException.FeignClientException;

@@ -11,7 +11,7 @@ import java.util.Collection;
 
 public class DccFeignDelegator implements Client {
 
-  public static final String X_SIGNATURE = "x-signature";
+  public static final String X_SIGNATURE = "X-SIGNATURE";
 
   private final ApacheHttpClient apacheHttpClient;
   private final DccSignatureValidator dccSignatureValidator;
@@ -49,7 +49,7 @@ public class DccFeignDelegator implements Client {
   private String getSignature(Response response, String requestUrl) throws IOException {
     Collection<String> header = response.headers().get(X_SIGNATURE);
     if (header == null || header.isEmpty()) {
-      throw new IOException("X-SIGNATURE header is missing from the response of: " + requestUrl);
+      throw new IOException(X_SIGNATURE + " header is missing from the response of: " + requestUrl);
     }
     return header.iterator().next();
   }
