@@ -234,6 +234,7 @@ services:
           trust-store: ${DSC_TRUST_STORE:../../docker-compose-test-secrets/dsc_truststore}
           trust-store-password: ${DSC_TRUST_STORE_PASSWORD:123456}
       client:
+        public-key: ${DCC_PUBLIC_KEY:MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEnQmn1s+sTWqFPuRhqFRide7HD52SrsD01ZdX4cxN1r0pnZ0Zh7JNwZxmXlOQW5NDVlPdHq2QcD06gmP/10QizA==}
         retry-period: 5
         max-retry-period: 30
         max-retry-attempts: 5

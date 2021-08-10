@@ -45,6 +45,22 @@ public class HashUtils {
   }
 
   /**
+   * Returns a digested String by a Message Digest object
+   * that implements the chosen {@link Algorithms}.
+   *
+   * @param data - String to be diggested
+   * @return - digested ByteString
+   */
+  public static byte[] byteStringDigest(String data, Algorithms algorithm) {
+    try {
+      return MessageDigest.getInstance(algorithm.getName()).digest(data.getBytes(StandardCharsets.UTF_8));
+    } catch (NoSuchAlgorithmException e) {
+      logger.error("Digest algorithm does not exist", e);
+    }
+    return new byte[0];
+  }
+
+  /**
    * Returns a digested ByteString by a Message Digest object
    * that implements the chosen {@link Algorithms}.
    *

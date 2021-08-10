@@ -1,18 +1,17 @@
 package app.coronawarn.server.services.distribution.dgc.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dgc.ApacheHttpTestConfiguration;
 import app.coronawarn.server.services.distribution.dgc.client.CloudDccFeignClientConfiguration;
 import app.coronawarn.server.services.distribution.dgc.client.CloudDccFeignHttpClientProvider;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.client.ProdDigitalCovidCertificateClient;
-import java.io.FileNotFoundException;
+import app.coronawarn.server.services.distribution.dgc.client.signature.DccSignatureValidator;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
 import feign.RetryableException;
+import javax.net.ssl.SSLHandshakeException;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,11 +23,11 @@ import org.springframework.cloud.openfeign.FeignAutoConfiguration;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import javax.net.ssl.SSLHandshakeException;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {DistributionServiceConfig.class, ProdDigitalCovidCertificateClient.class,
-    CloudDccFeignClientConfiguration.class, CloudDccFeignHttpClientProvider.class, ApacheHttpTestConfiguration.class},
+    CloudDccFeignClientConfiguration.class, CloudDccFeignHttpClientProvider.class, ApacheHttpTestConfiguration.class,
+    DccSignatureValidator.class},
     initializers = ConfigDataApplicationContextInitializer.class)
 @ImportAutoConfiguration({FeignAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class})
 @ActiveProfiles({"dcc-invalid-truststore","dcc-client-factory"})
