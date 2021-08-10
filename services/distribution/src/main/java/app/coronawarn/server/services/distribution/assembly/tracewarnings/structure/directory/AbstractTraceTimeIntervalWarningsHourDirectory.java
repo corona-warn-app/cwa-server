@@ -11,6 +11,9 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceTimeIntervalWarningsPackageBundler;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 
+/**
+ * Abstract class to represent common logic related to the hour directory of check ins.
+ */
 public abstract class AbstractTraceTimeIntervalWarningsHourDirectory extends IndexDirectoryOnDisk<Integer> {
 
 
@@ -19,11 +22,12 @@ public abstract class AbstractTraceTimeIntervalWarningsHourDirectory extends Ind
   protected DistributionServiceConfig distributionServiceConfig;
 
   /**
-   * @param bundler
-   * @param cryptoProvider
-   * @param distributionServiceConfig
-   * @param indexFunction
-   * @param indexFormatter
+   * Constructor for abstract trace time interval warning hour directory.
+   * @param bundler bundle to fetch related check ins.
+   * @param cryptoProvider the crypto provide for signing.
+   * @param distributionServiceConfig the config
+   * @param indexFunction the index function that will be applied for sub directories.
+   * @param indexFormatter the formatter.
    */
   public AbstractTraceTimeIntervalWarningsHourDirectory(
       TraceTimeIntervalWarningsPackageBundler bundler,

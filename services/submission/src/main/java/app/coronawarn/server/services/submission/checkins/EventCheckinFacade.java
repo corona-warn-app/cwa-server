@@ -95,15 +95,21 @@ public class EventCheckinFacade {
    * @param checkInProtectedReports List of checkins
    * @return the number of saved checkins.
    */
-
   private CheckinsStorageResult saveCheckInProtectedReports(List<CheckInProtectedReport> checkInProtectedReports) {
     Integer submissionTimestamp = CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
         .apply(Instant.now().getEpochSecond());
-    int numberOfSavedCheckins = traceTimeIntervalWarningService.saveCheckInProtectedReports(checkInProtectedReports, submissionTimestamp);
+    int numberOfSavedCheckins = traceTimeIntervalWarningService
+        .saveCheckInProtectedReports(checkInProtectedReports, submissionTimestamp);
     logger.debug("Successfully saved " + numberOfSavedCheckins + " protected reports");
     return new CheckinsStorageResult(0, numberOfSavedCheckins);
   }
 
+  /**
+   * Extract and store checkins. Used for unencrypted checkins and encrypted check ins and
+   * returns statistics about the saving process.
+   * @param submissionPayload the payload where to extract the checkins from.
+   * @return an instance of {@link CheckinsStorageResult} that represents how many check ins were saved and filtered.
+   */
   public CheckinsStorageResult extractAndStoreCheckins(SubmissionPayload submissionPayload) {
     CheckinsStorageResult checkinsStorageResult = new CheckinsStorageResult(0, 0);
 

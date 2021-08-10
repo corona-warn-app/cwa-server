@@ -11,6 +11,8 @@ public abstract class AbstractCheckInExportFile extends FileOnDiskWithChecksum {
   protected abstract byte[] createTraceWarningExportBytes();
 
   /**
+   * Constructor for abstract check in export file.
+   *
    * @param region         the corresponding region that this file will be put in.
    * @param intervalNumber the interval number.
    */

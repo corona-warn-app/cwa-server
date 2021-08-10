@@ -13,6 +13,10 @@ import app.coronawarn.server.services.distribution.assembly.tracewarnings.struct
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.util.List;
 import java.util.Optional;
+
+/**
+ * Hour directory for checkins in the v1 implementation.
+ */
 @Deprecated
 public class TraceTimeIntervalWarningsHourV1Directory extends AbstractTraceTimeIntervalWarningsHourDirectory {
 

@@ -11,7 +11,7 @@ public class CheckinsStorageResult {
   /**
    * Creates an instance.
    *
-   * @param numberOfFilteredCheckins Total number of checkins which were filtered
+   * @param numberOfFilteredCheckins Total number of checkins which were filtered.
    * @param numberOfSavedCheckins    Total number of checkins stored in the db.
    */
   public CheckinsStorageResult(int numberOfFilteredCheckins, int numberOfSavedCheckins) {
@@ -28,10 +28,10 @@ public class CheckinsStorageResult {
   }
 
   /**
-   * Creates a new updated CheckinsStorageResult that contains the summed values of both this & other
+   * Creates a new updated CheckinsStorageResult that contains the summed values of both this & other.
    *
    * @param other CheckinsStorageResult with numberOfFilteredCheckins & numberOfSavedCheckins to be added.
-   * @return updated CheckinsStorageResult
+   * @return updated CheckinsStorageResult.
    */
   public CheckinsStorageResult update(CheckinsStorageResult other) {
     return new CheckinsStorageResult(this.getNumberOfFilteredCheckins()

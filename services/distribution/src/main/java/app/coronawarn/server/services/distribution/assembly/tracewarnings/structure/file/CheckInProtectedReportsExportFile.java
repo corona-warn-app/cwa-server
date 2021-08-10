@@ -51,7 +51,7 @@ public class CheckInProtectedReportsExportFile extends AbstractCheckInExportFile
 
 
   private static List<app.coronawarn.server.common.protocols.internal.pt.CheckInProtectedReport>
-  getCheckInProtectedReportFromCheckInProtectedReports(
+      getCheckInProtectedReportFromCheckInProtectedReports(
       List<CheckInProtectedReports> traceTimeIntervalWarnings) {
 
     return traceTimeIntervalWarnings.stream()

@@ -47,7 +47,7 @@ public class TraceTimeIntervalWarningExportFile extends AbstractCheckInExportFil
 
 
   private static List<app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning>
-  getTraceIntervalWarningsFromTraceIntervalWarnings(
+      getTraceIntervalWarningsFromTraceIntervalWarnings(
       List<TraceTimeIntervalWarning> traceTimeIntervalWarnings) {
 
     return traceTimeIntervalWarnings.stream()
