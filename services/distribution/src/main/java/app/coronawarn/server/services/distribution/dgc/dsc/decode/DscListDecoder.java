@@ -58,6 +58,7 @@ public class DscListDecoder {
 
       ecdsaSignatureVerification(ecdsaSignature, publicKey, content.getBytes(StandardCharsets.UTF_8));
 
+      logger.info("Signing certificates have been fetched and have the following content: " + content);
       Certificates certificates = SerializationUtils.deserializeJson(content,
           typeFactory -> typeFactory.constructType(Certificates.class));
       return filterValidCertificates(certificates);

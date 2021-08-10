@@ -1,6 +1,8 @@
 
 package app.coronawarn.server.services.distribution.dgc.client;
 
+import static app.coronawarn.server.common.shared.util.SerializationUtils.stringifyObject;
+
 import app.coronawarn.server.services.distribution.dgc.BusinessRule;
 import app.coronawarn.server.services.distribution.dgc.BusinessRuleItem;
 import app.coronawarn.server.services.distribution.dgc.ValueSet;
@@ -83,6 +85,9 @@ public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificat
     logger.debug("Get " + fetchEntityName + " from DCC");
     try {
       ResponseEntity<T> response = responseSupplier.get();
+
+      logger.info(fetchEntityName + "has been fetched and contains the following data: "
+          + stringifyObject(response.getBody()));
       return response.getBody();
     } catch (Exception e) {
       throw exceptionConverter.apply(fetchEntityName + " could not be fetched because of: ", e);
