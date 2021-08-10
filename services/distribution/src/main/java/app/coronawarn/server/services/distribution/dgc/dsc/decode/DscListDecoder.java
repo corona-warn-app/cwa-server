@@ -4,6 +4,7 @@ import static app.coronawarn.server.common.shared.util.SecurityUtils.base64decod
 import static app.coronawarn.server.common.shared.util.SecurityUtils.ecdsaSignatureVerification;
 import static app.coronawarn.server.common.shared.util.SecurityUtils.getEcdsaEncodeFromSignature;
 import static app.coronawarn.server.common.shared.util.SecurityUtils.getPublicKeyFromString;
+import static app.coronawarn.server.services.distribution.dgc.client.ProdDigitalCovidCertificateClient.AUDIT;
 
 import app.coronawarn.server.common.shared.util.SerializationUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
@@ -12,6 +13,7 @@ import app.coronawarn.server.services.distribution.dgc.Certificates;
 import app.coronawarn.server.services.distribution.dgc.exception.DscListDecodeException;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.cert.CertificateException;
@@ -55,8 +57,8 @@ public class DscListDecoder {
 
       byte[] ecdsaSignature = getEcdsaEncodeFromSignature(base64decode(signature));
 
-      ecdsaSignatureVerification(ecdsaSignature, publicKey, content);
-
+      ecdsaSignatureVerification(ecdsaSignature, publicKey, content.getBytes(StandardCharsets.UTF_8));
+      logger.info(AUDIT, "DSC list - {}", content);
       Certificates certificates = SerializationUtils.deserializeJson(content,
           typeFactory -> typeFactory.constructType(Certificates.class));
       return filterValidCertificates(certificates);

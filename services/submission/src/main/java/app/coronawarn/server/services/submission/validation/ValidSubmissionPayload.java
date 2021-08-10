@@ -67,6 +67,12 @@ public @interface ValidSubmissionPayload {
     private final EventCheckInProtectedReportsValidator eventCheckInProtectedReportsValidator;
     private static final Logger logger = LoggerFactory.getLogger(SubmissionPayloadValidator.class);
 
+    /**
+     * Constructor.
+     * 
+     * @param submissionServiceConfig configuration.
+     * @param checkinDataValidator validation.
+     */
     public SubmissionPayloadValidator(SubmissionServiceConfig submissionServiceConfig,
         EventCheckinDataValidator checkinDataValidator,
         EventCheckInProtectedReportsValidator checkInProtectedReportsValidator) {

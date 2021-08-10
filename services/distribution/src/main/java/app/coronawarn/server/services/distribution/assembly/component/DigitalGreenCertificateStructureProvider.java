@@ -134,9 +134,9 @@ public class DigitalGreenCertificateStructureProvider {
       dscsArchive
           .addWritable(new FileOnDisk("export.bin",
               digitalSigningCertificatesToProtobufMapping.constructProtobufMapping().toByteArray()));
-      logger.info("Onboarded countries archive has been added to the DGC distribution folder");
+      logger.info("Digital signing certificate archive has been added to the DGC distribution folder");
     } catch (UnableToLoadFileException | FetchDscTrustListException e) {
-      logger.error("Onboarded countries archive was not overwritten because of:", e);
+      logger.error("Digital signing certificate archive was not overwritten because of:", e);
       return Optional.empty();
     }
 
