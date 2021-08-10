@@ -42,6 +42,6 @@ public class DemoTraceTimeIntervalWarningsPackageBundler extends TraceTimeInterv
   protected void createCheckInProtectedReportsMap(Collection<CheckInProtectedReports> checkInProtectedReports) {
     distributableCheckInProtectedReports.putAll(
         checkInProtectedReports.stream()
-            .collect(Collectors.groupingBy(checkin -> (int) checkin.getSubmissionTimestamp(), Collectors.toList())));
+            .collect(Collectors.groupingBy(checkInProtectedReport -> (int) checkInProtectedReport.getSubmissionTimestamp(), Collectors.toList())));
   }
 }

@@ -3,7 +3,6 @@ package app.coronawarn.server.services.distribution.assembly.tracewarnings.struc
 import app.coronawarn.server.common.persistence.domain.CheckInProtectedReports;
 import app.coronawarn.server.common.protocols.internal.pt.TraceWarningPackage;
 import app.coronawarn.server.common.shared.collection.ImmutableStack;
-import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDiskWithChecksum;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import com.google.protobuf.ByteString;
 import java.util.Comparator;
@@ -14,22 +13,24 @@ import java.util.stream.Collectors;
  * A {@link app.coronawarn.server.services.distribution.assembly.structure.file.File} containing a list of {@link
  * app.coronawarn.server.common.protocols.internal.pt.CheckInProtectedReport} serialized protos.
  */
-public class CheckInProtectedReportsExportFile extends FileOnDiskWithChecksum {
+public class CheckInProtectedReportsExportFile extends AbstractCheckInExportFile {
 
   private final List<app.coronawarn.server.common.protocols.internal.pt.CheckInProtectedReport>
       checkInProtectedReports;
-  private final String region;
-  private final int intervalNumber;
 
-  CheckInProtectedReportsExportFile(
+  public CheckInProtectedReportsExportFile(
       List<app.coronawarn.server.common.protocols.internal.pt.CheckInProtectedReport> checkInProtectedReports,
       String region, int intervalNumber, DistributionServiceConfig distributionServiceConfig) {
-    super(distributionServiceConfig.getTekExport().getFileName(), new byte[0]);
-
-    this.region = region;
-    this.intervalNumber = intervalNumber;
+    super(region, intervalNumber, distributionServiceConfig.getTekExport().getFileName());
     this.checkInProtectedReports = checkInProtectedReports;
   }
+
+  protected byte[] createTraceWarningExportBytes() {
+    return TraceWarningPackage.newBuilder().setIntervalNumber(this.intervalNumber)
+        .setRegion(this.region).addAllCheckInProtectedReports(this.checkInProtectedReports).build()
+        .toByteArray();
+  }
+
 
   @Override
   public void prepare(ImmutableStack<Object> indices) {
@@ -48,14 +49,9 @@ public class CheckInProtectedReportsExportFile extends FileOnDiskWithChecksum {
         intervalNumber, distributionServiceConfig);
   }
 
-  private byte[] createTraceWarningExportBytes() {
-    return TraceWarningPackage.newBuilder().setIntervalNumber(this.intervalNumber)
-        .setRegion(this.region).addAllCheckInProtectedReports(this.checkInProtectedReports).build()
-        .toByteArray();
-  }
 
   private static List<app.coronawarn.server.common.protocols.internal.pt.CheckInProtectedReport>
-      getCheckInProtectedReportFromCheckInProtectedReports(
+  getCheckInProtectedReportFromCheckInProtectedReports(
       List<CheckInProtectedReports> traceTimeIntervalWarnings) {
 
     return traceTimeIntervalWarnings.stream()

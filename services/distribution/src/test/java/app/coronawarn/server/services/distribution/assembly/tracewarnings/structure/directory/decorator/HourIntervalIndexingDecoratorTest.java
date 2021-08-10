@@ -2,15 +2,22 @@
 
 package app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.decorator;
 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import app.coronawarn.server.common.shared.util.TimeUtils;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceTimeIntervalWarningsPackageBundler;
-import app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.TraceTimeIntervalWarningsHourDirectory;
+import app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.TraceTimeIntervalWarningsHourV1Directory;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.Api;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 import org.assertj.core.api.Assertions;
 import org.json.simple.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -20,13 +27,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
-
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 
 @ExtendWith(SpringExtension.class)
@@ -41,7 +41,7 @@ class HourIntervalIndexingDecoratorTest {
   @MockBean
   TraceTimeIntervalWarningsPackageBundler traceTimeIntervalWarningsPackageBundler;
 
-  HourIntervalIndexingDecorator underTest;
+  AbstractHourIntervalIndexingDecorator underTest;
 
   @BeforeEach
   public void setup() {
@@ -88,11 +88,11 @@ class HourIntervalIndexingDecoratorTest {
     );
   }
 
-  private HourIntervalIndexingDecorator makeDecoratedHourDirectory() {
-    return new HourIntervalIndexingDecorator(
-        new TraceTimeIntervalWarningsHourDirectory(traceTimeIntervalWarningsPackageBundler, cryptoProvider,
-            distributionServiceConfig, "v1"),
+  private AbstractHourIntervalIndexingDecorator makeDecoratedHourDirectory() {
+    return new HourIntervalIndexingV1Decorator(
+        new TraceTimeIntervalWarningsHourV1Directory(traceTimeIntervalWarningsPackageBundler, cryptoProvider,
+            distributionServiceConfig),
         traceTimeIntervalWarningsPackageBundler,
-        distributionServiceConfig, "v1");
+        distributionServiceConfig);
   }
 }
