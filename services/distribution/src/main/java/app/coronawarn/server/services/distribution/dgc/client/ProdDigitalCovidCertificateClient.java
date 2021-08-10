@@ -1,4 +1,3 @@
-
 package app.coronawarn.server.services.distribution.dgc.client;
 
 import static app.coronawarn.server.common.shared.util.SerializationUtils.stringifyObject;
@@ -16,6 +15,8 @@ import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -29,6 +30,8 @@ import org.springframework.stereotype.Component;
 public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificateClient {
 
   private static final Logger logger = LoggerFactory.getLogger(ProdDigitalCovidCertificateClient.class);
+  
+  public static final Marker AUDIT = MarkerFactory.getMarker("AUDIT"); 
 
   private final DigitalCovidCertificateFeignClient digitalCovidCertificateClient;
 
@@ -85,9 +88,7 @@ public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificat
     logger.debug("Get " + fetchEntityName + " from DCC");
     try {
       ResponseEntity<T> response = responseSupplier.get();
-
-      logger.info(fetchEntityName + "has been fetched and contains the following data: "
-          + stringifyObject(response.getBody()));
+      logger.info(AUDIT,  "{} - {}", fetchEntityName, stringifyObject(response.getBody()));
       return response.getBody();
     } catch (Exception e) {
       throw exceptionConverter.apply(fetchEntityName + " could not be fetched because of: ", e);

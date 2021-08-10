@@ -4,6 +4,7 @@ import static app.coronawarn.server.common.shared.util.SecurityUtils.base64decod
 import static app.coronawarn.server.common.shared.util.SecurityUtils.ecdsaSignatureVerification;
 import static app.coronawarn.server.common.shared.util.SecurityUtils.getEcdsaEncodeFromSignature;
 import static app.coronawarn.server.common.shared.util.SecurityUtils.getPublicKeyFromString;
+import static app.coronawarn.server.services.distribution.dgc.client.ProdDigitalCovidCertificateClient.AUDIT;
 
 import app.coronawarn.server.common.shared.util.SerializationUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
@@ -57,8 +58,7 @@ public class DscListDecoder {
       byte[] ecdsaSignature = getEcdsaEncodeFromSignature(base64decode(signature));
 
       ecdsaSignatureVerification(ecdsaSignature, publicKey, content.getBytes(StandardCharsets.UTF_8));
-
-      logger.info("Signing certificates have been fetched and have the following content: " + content);
+      logger.info(AUDIT, "DSC list - {}", content);
       Certificates certificates = SerializationUtils.deserializeJson(content,
           typeFactory -> typeFactory.constructType(Certificates.class));
       return filterValidCertificates(certificates);
