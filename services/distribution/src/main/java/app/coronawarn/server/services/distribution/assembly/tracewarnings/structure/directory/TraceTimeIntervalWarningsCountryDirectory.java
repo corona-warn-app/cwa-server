@@ -10,10 +10,10 @@ import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceT
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.decorator.HourIntervalIndexingV1Decorator;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.decorator.HourIntervalIndexingV2Decorator;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.util.Optional;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TraceTimeIntervalWarningsCountryDirectory extends IndexDirectoryOnDisk<String> {
 
