@@ -66,6 +66,7 @@ class TraceTimeIntervalWarningsDistributionIT {
   private TemporaryFolder tempFolder = new TemporaryFolder();
 
   private static final String PARENT_DIRECTORY = "parent";
+  private static final String VERSION = "version";
 
   @BeforeEach
   public void setup() throws Exception {
@@ -101,7 +102,12 @@ class TraceTimeIntervalWarningsDistributionIT {
     final Directory<WritableOnDisk> traceWarningsDirectory = traceTimeIntervalWarningsStructureProvider
         .getTraceWarningsDirectory();
     final Directory<WritableOnDisk> directory = outputDirectoryProvider.getDirectory();
-    directory.addWritable(traceWarningsDirectory);
+    final Directory<WritableOnDisk> version = new DirectoryOnDisk("version");
+    final Directory<WritableOnDisk> v1 = new DirectoryOnDisk("v1");
+    directory.addWritable(version);
+    version.addWritable(v1);
+    v1.addWritable(traceWarningsDirectory);
+
     ImmutableStack<Object> indices = new ImmutableStack<>();
     indices = indices.push("v1");
     directory.prepare(indices);
@@ -109,16 +115,16 @@ class TraceTimeIntervalWarningsDistributionIT {
 
     // then
     Set<String> expectedPaths = new java.util.HashSet<>(
-        Set.of(PARENT_DIRECTORY, StringUtils.joinWith(separator, PARENT_DIRECTORY, "twp"),
-            StringUtils.joinWith(separator, PARENT_DIRECTORY, "twp", "country"),
-            StringUtils.joinWith(separator, PARENT_DIRECTORY, "twp", "country", "DE"),
-            StringUtils.joinWith(separator, PARENT_DIRECTORY, "twp", "country", "DE", "hour"),
-            StringUtils.joinWith(separator, PARENT_DIRECTORY, "twp", "country", "index"),
-            StringUtils.joinWith(separator, PARENT_DIRECTORY, "twp", "country", "index.checksum"),
-            StringUtils.joinWith(separator, PARENT_DIRECTORY, "twp", "country", "DE", "hour", "index"),
-            StringUtils.joinWith(separator, PARENT_DIRECTORY, "twp", "country", "DE", "hour", "index.checksum")));
+        Set.of(PARENT_DIRECTORY, StringUtils.joinWith(separator, PARENT_DIRECTORY, VERSION, "v1", "twp"),
+            StringUtils.joinWith(separator, PARENT_DIRECTORY, VERSION,"v1", "twp", "country"),
+            StringUtils.joinWith(separator, PARENT_DIRECTORY, VERSION,"v1", "twp", "country", "DE"),
+            StringUtils.joinWith(separator, PARENT_DIRECTORY, VERSION,"v1", "twp", "country", "DE", "hour"),
+            StringUtils.joinWith(separator, PARENT_DIRECTORY, VERSION,"v1", "twp", "country", "index"),
+            StringUtils.joinWith(separator, PARENT_DIRECTORY, VERSION,"v1", "twp", "country", "index.checksum"),
+            StringUtils.joinWith(separator, PARENT_DIRECTORY, VERSION,"v1", "twp", "country", "DE", "hour", "index"),
+            StringUtils.joinWith(separator, PARENT_DIRECTORY, VERSION,"v1", "twp", "country", "DE", "hour", "index.checksum")));
     IntStream.range(oldestHour, latestHour + 1).forEach(hour -> {
-      expectedPaths.add(StringUtils.joinWith(separator, PARENT_DIRECTORY, "twp", "country", "DE", "hour", hour));
+      expectedPaths.add(StringUtils.joinWith(separator, PARENT_DIRECTORY, VERSION, "v1", "twp", "country", "DE", "hour", hour));
     });
     Set<String> actualFiles = Helpers.getSubFoldersPaths(tempFolder.getRoot().getAbsolutePath(), PARENT_DIRECTORY);
     actualFiles.addAll(Helpers.getFilePaths(tempFolder.getRoot(), tempFolder.getRoot().getAbsolutePath()));

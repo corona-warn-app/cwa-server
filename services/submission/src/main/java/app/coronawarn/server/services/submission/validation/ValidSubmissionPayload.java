@@ -69,9 +69,9 @@ public @interface ValidSubmissionPayload {
 
     /**
      * Constructor.
-     * 
+     *
      * @param submissionServiceConfig configuration.
-     * @param checkinDataValidator validation.
+     * @param checkinDataValidator    validation.
      */
     public SubmissionPayloadValidator(SubmissionServiceConfig submissionServiceConfig,
         EventCheckinDataValidator checkinDataValidator,
@@ -114,6 +114,10 @@ public @interface ValidSubmissionPayload {
           && eventCheckInProtectedReportsValidator.verify(submissionPayload, validatorContext)
           && checkRollingPeriodIsInRange(exposureKeys, validatorContext);
 
+      // given -> subPay VALID
+      // when -> ceva -> flow aplicatie
+      // then -> raspuns -> check headers
+
       if (!isValidPayload) {
         PrintableSubmissionPayload printableSubmissionPayload = new PrintableSubmissionPayload(submissionPayload);
         logger.error("Errors caused by invalid payload {}", printableSubmissionPayload);
@@ -152,7 +156,7 @@ public @interface ValidSubmissionPayload {
      * Verify if payload contains invalid or unaccepted origin country.
      *
      * @return false if the originCountry field of the given payload does not contain a country code from the configured
-     *         <code>application.yml/supported-countries</code>
+     * <code>application.yml/supported-countries</code>
      */
     private boolean checkOriginCountryIsValid(SubmissionPayload submissionPayload,
         ConstraintValidatorContext validatorContext) {
