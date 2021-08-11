@@ -30,7 +30,13 @@ public class DemoTraceTimeIntervalWarningsPackageBundler extends TraceTimeInterv
     super(distributionServiceConfig);
   }
 
-
+  /**
+   * Create distribution map.
+   *
+   * @param traceTimeIntervalWarnings the base for creating the distribution map.
+   * @deprecated because trace time warnings are being replaced by protected reports.
+   */
+  @Deprecated(since = "2.8")
   protected void createTraceWarningsDistributionMap(
       Collection<TraceTimeIntervalWarning> traceTimeIntervalWarnings) {
     distributableTraceTimeIntervalWarnings.putAll(

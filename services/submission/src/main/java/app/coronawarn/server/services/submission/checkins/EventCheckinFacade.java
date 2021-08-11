@@ -49,8 +49,10 @@ public class EventCheckinFacade {
    * For each checkin in the given list, generate other fake checkin data based on the passed in number and store
    * everything as {@link TraceTimeIntervalWarning} entities. Returns the number of inserted entities which is useful
    * for the case where there might be conflicts with the table constraints during the db save operations.
+   *
+   * @deprecated because trace time warnings are being replaced by protected reports.
    */
-  @Deprecated
+  @Deprecated(since = "2.8")
   public int saveCheckinsWithFakeData(List<CheckIn> originalCheckins, int numberOfFakesToCreate,
       byte[] pepper, int submissionTimestamp, SubmissionType submissionType) {
     List<CheckIn> allCheckins = new ArrayList<>(originalCheckins);
@@ -64,8 +66,9 @@ public class EventCheckinFacade {
    *
    * @param submissionPayload - submission payload
    * @return - storage result containing number of filtered and saved check-ins.
+   * @deprecated because trace time warnings are being replaced by protected reports.
    */
-  @Deprecated
+  @Deprecated(since = "2.8")
   private CheckinsStorageResult extractAndStoreEventCheckins(SubmissionPayload submissionPayload) {
     // need a container object that reflects how many checkins were filtered even if storage fails
     AtomicInteger numberOfFilteredCheckins = new AtomicInteger(0);
@@ -100,24 +103,25 @@ public class EventCheckinFacade {
         .apply(Instant.now().getEpochSecond());
     int numberOfSavedCheckins = traceTimeIntervalWarningService
         .saveCheckInProtectedReports(checkInProtectedReports, submissionTimestamp);
-    logger.debug("Successfully saved " + numberOfSavedCheckins + " protected reports");
+    logger.debug("Successfully saved {} protected reports", numberOfSavedCheckins);
     return new CheckinsStorageResult(0, numberOfSavedCheckins);
   }
 
   /**
-   * Extract and store checkins. Used for unencrypted checkins and encrypted check ins and
-   * returns statistics about the saving process.
+   * Extract and store checkins. Used for unencrypted checkins and encrypted check ins and returns statistics about the
+   * saving process.
+   *
    * @param submissionPayload the payload where to extract the checkins from.
    * @return an instance of {@link CheckinsStorageResult} that represents how many check ins were saved and filtered.
    */
   public CheckinsStorageResult extractAndStoreCheckins(SubmissionPayload submissionPayload) {
     CheckinsStorageResult checkinsStorageResult = new CheckinsStorageResult(0, 0);
 
-    if (submissionServiceConfig.isUnencryptedCheckinsEnabled()) {
+    if (Boolean.TRUE.equals(submissionServiceConfig.isUnencryptedCheckinsEnabled())) {
       CheckinsStorageResult other = this.extractAndStoreEventCheckins(submissionPayload);
       checkinsStorageResult = checkinsStorageResult.update(other);
     }
-    CheckinsStorageResult saved =  this.saveCheckInProtectedReports(submissionPayload.getCheckInProtectedReportsList());
+    CheckinsStorageResult saved = this.saveCheckInProtectedReports(submissionPayload.getCheckInProtectedReportsList());
     checkinsStorageResult = checkinsStorageResult.update(saved);
     return checkinsStorageResult;
   }

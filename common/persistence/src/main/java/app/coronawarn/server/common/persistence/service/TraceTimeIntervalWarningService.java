@@ -34,8 +34,10 @@ public class TraceTimeIntervalWarningService {
   private static final Logger logger =
       LoggerFactory.getLogger(TraceTimeIntervalWarningService.class);
 
+  @Deprecated(since = "2.8", forRemoval = true)
   private final TraceTimeIntervalWarningRepository traceTimeIntervalWarningRepo;
   private final CheckInProtectedReportsRepository checkInProtectedReportsRepository;
+  @Deprecated(since = "2.8", forRemoval = true)
   private final MessageDigest hashAlgorithm;
 
   /**
@@ -56,12 +58,16 @@ public class TraceTimeIntervalWarningService {
    * Store the given checkin data as {@link TraceTimeIntervalWarning} entities. Returns the number of inserted entities,
    * which is useful for the case where there might be conflicts with the table constraints during the db save
    * operations.
+   * 
+   * @deprecated in favor of encrypted checkins.
    */
+  @Deprecated(since = "2.8", forRemoval = true)
   @Transactional
   public int saveCheckins(List<CheckIn> checkins, int submissionTimestamp, SubmissionType submissionType) {
     return saveCheckins(checkins, this::hashLocationId, submissionTimestamp, submissionType);
   }
 
+  @Deprecated(since = "2.8", forRemoval = true)
   private int saveCheckins(List<CheckIn> checkins, Function<ByteString, byte[]> idHashGenerator,
       int submissionTimestamp, SubmissionType submissionType) {
     int numberOfInsertedTraceWarnings = 0;
@@ -110,13 +116,19 @@ public class TraceTimeIntervalWarningService {
         numberOfCheckInProtectedReports++;
       }
     }
+    if (allCheckins.size() != numberOfCheckInProtectedReports && allCheckins.size() > 0) {
+      logger.error("Couldn't save all ({}) received encrypted checkins. Stored only {}!", allCheckins.size(),
+          numberOfCheckInProtectedReports);
+    }
     return numberOfCheckInProtectedReports;
   }
 
   /**
    * Returns all available {@link TraceTimeIntervalWarning}s sorted by their submissionTimestamp.
+   *
+   * @deprecated because trace time warnings are not longer supported and replaced by encrypted checkins.
    */
-  @Deprecated
+  @Deprecated(since = "2.8", forRemoval = true)
   public Collection<TraceTimeIntervalWarning> getTraceTimeIntervalWarnings() {
     return StreamUtils
         .createStreamFromIterator(traceTimeIntervalWarningRepo
@@ -134,6 +146,7 @@ public class TraceTimeIntervalWarningService {
         .collect(Collectors.toList());
   }
 
+  @Deprecated(since = "2.8", forRemoval = true)
   private byte[] hashLocationId(ByteString locationId) {
     return hashAlgorithm.digest(locationId.toByteArray());
   }
@@ -159,5 +172,10 @@ public class TraceTimeIntervalWarningService {
     logger.info("Deleting {} trace time warning(s) with a submission timestamp older than {} day(s) ago.",
         numberOfDeletions, daysToRetain);
     traceTimeIntervalWarningRepo.deleteOlderThan(threshold);
+    
+    numberOfDeletions = checkInProtectedReportsRepository.countOlderThan(threshold);
+    logger.info("Deleting {} encrypted trace time warning(s) with a submission timestamp older than {} day(s) ago.",
+        numberOfDeletions, daysToRetain);
+    checkInProtectedReportsRepository.deleteOlderThan(threshold);
   }
 }

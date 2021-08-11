@@ -36,8 +36,9 @@ public class ProdTraceTimeIntervalWarningsPackageBundler extends TraceTimeInterv
    * @param traceTimeIntervalWarnings The {@link TraceTimeIntervalWarning traceTimeIntervalWarnings} contained by this
    *                                  {@link ProdTraceTimeIntervalWarningsPackageBundler}.
    * @param distributionTime          The {@link LocalDateTime} at which the distribution runs.
+   * @deprecated because trace time warnings are being replaced by protected reports.
    */
-  @Deprecated
+  @Deprecated(since = "2.8")
   public void setTraceTimeIntervalWarnings(
       Collection<TraceTimeIntervalWarning> traceTimeIntervalWarnings,
       LocalDateTime distributionTime) {
@@ -49,8 +50,8 @@ public class ProdTraceTimeIntervalWarningsPackageBundler extends TraceTimeInterv
    * Sets the {@link CheckInProtectedReports}s to package.
    *
    * @param checkInProtectedReports The {@link CheckInProtectedReports traceTimeIntervalWarnings} contained by this
-   *                                  {@link ProdTraceTimeIntervalWarningsPackageBundler}.
-   * @param distributionTime          The {@link LocalDateTime} at which the distribution runs.
+   *                                {@link ProdTraceTimeIntervalWarningsPackageBundler}.
+   * @param distributionTime        The {@link LocalDateTime} at which the distribution runs.
    */
   public void setCheckInProtectedReports(
       Collection<CheckInProtectedReports> checkInProtectedReports,
@@ -59,7 +60,13 @@ public class ProdTraceTimeIntervalWarningsPackageBundler extends TraceTimeInterv
     createCheckInProtectedReportsMap(checkInProtectedReports);
   }
 
-  @Deprecated
+  /**
+   * Create distribution map.
+   *
+   * @param traceTimeIntervalWarnings the base for creating the distribution map.
+   * @deprecated because trace time warnings are being replaced by protected reports.
+   */
+  @Deprecated(since = "2.8")
   protected void createTraceWarningsDistributionMap(
       Collection<TraceTimeIntervalWarning> traceTimeIntervalWarnings) {
     distributableTraceTimeIntervalWarnings.putAll(
@@ -76,7 +83,12 @@ public class ProdTraceTimeIntervalWarningsPackageBundler extends TraceTimeInterv
             .collect(Collectors.groupingBy(checkIn -> (int) checkIn.getSubmissionTimestamp(), Collectors.toList())));
   }
 
-  @Deprecated
+  /**
+   * Filter by distribution time.
+   *
+   * @deprecated because trace time warnings are being replaced by protected reports.
+   */
+  @Deprecated(since = "2.8")
   private boolean filterByDistributionTime(TraceTimeIntervalWarning warning) {
     long oldestDateForCheckins =
         distributionTime.minusDays(daysInThePast).toEpochSecond(ZoneOffset.UTC);

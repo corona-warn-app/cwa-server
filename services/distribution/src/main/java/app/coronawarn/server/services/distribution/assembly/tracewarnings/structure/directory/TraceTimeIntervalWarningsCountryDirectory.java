@@ -10,10 +10,10 @@ import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceT
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.decorator.HourIntervalIndexingV1Decorator;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.decorator.HourIntervalIndexingV2Decorator;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.util.Optional;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TraceTimeIntervalWarningsCountryDirectory extends IndexDirectoryOnDisk<String> {
 
@@ -62,7 +62,13 @@ public class TraceTimeIntervalWarningsCountryDirectory extends IndexDirectoryOnD
 
   }
 
-  @Deprecated
+  /**
+   * Decorate v1 directory.
+   *
+   * @param hourDirectory the directory to decorate.
+   * @deprecated because trace time warnings are being replaced by protected reports.
+   */
+  @Deprecated(since = "2.8")
   private IndexDirectory<Integer, WritableOnDisk> decorateV1HourDirectory(
       TraceTimeIntervalWarningsHourV1Directory hourDirectory) {
     return new HourIntervalIndexingV1Decorator(hourDirectory, traceWarningsBundler, distributionServiceConfig);

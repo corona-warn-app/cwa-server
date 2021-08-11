@@ -43,8 +43,9 @@ public class TraceTimeIntervalWarningsStructureProvider {
    * Get directory for {@link TraceTimeIntervalWarning}s from database.
    *
    * @return the directory
+   * @deprecated because trace time warnings are not longer supported and replaced by encrypted checkins.
    */
-  @Deprecated
+  @Deprecated(since = "2.8")
   public Directory<WritableOnDisk> getTraceWarningsDirectory() {
     logger.debug("Querying trace time interval warnings from the database...");
     Collection<TraceTimeIntervalWarning> traceWarnings =
@@ -53,7 +54,6 @@ public class TraceTimeIntervalWarningsStructureProvider {
     return new TraceTimeIntervalWarningsDirectory(traceWarningsBundler, cryptoProvider,
         distributionServiceConfig);
   }
-
 
 
   /**
