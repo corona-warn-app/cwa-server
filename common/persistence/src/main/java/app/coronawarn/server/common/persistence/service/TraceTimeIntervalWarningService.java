@@ -34,8 +34,10 @@ public class TraceTimeIntervalWarningService {
   private static final Logger logger =
       LoggerFactory.getLogger(TraceTimeIntervalWarningService.class);
 
+  @Deprecated
   private final TraceTimeIntervalWarningRepository traceTimeIntervalWarningRepo;
   private final CheckInProtectedReportsRepository checkInProtectedReportsRepository;
+  @Deprecated
   private final MessageDigest hashAlgorithm;
 
   /**
@@ -56,12 +58,16 @@ public class TraceTimeIntervalWarningService {
    * Store the given checkin data as {@link TraceTimeIntervalWarning} entities. Returns the number of inserted entities,
    * which is useful for the case where there might be conflicts with the table constraints during the db save
    * operations.
+   * 
+   * @deprecated in favor of encrypted checkins.
    */
+  @Deprecated
   @Transactional
   public int saveCheckins(List<CheckIn> checkins, int submissionTimestamp, SubmissionType submissionType) {
     return saveCheckins(checkins, this::hashLocationId, submissionTimestamp, submissionType);
   }
 
+  @Deprecated
   private int saveCheckins(List<CheckIn> checkins, Function<ByteString, byte[]> idHashGenerator,
       int submissionTimestamp, SubmissionType submissionType) {
     int numberOfInsertedTraceWarnings = 0;
@@ -136,6 +142,7 @@ public class TraceTimeIntervalWarningService {
         .collect(Collectors.toList());
   }
 
+  @Deprecated
   private byte[] hashLocationId(ByteString locationId) {
     return hashAlgorithm.digest(locationId.toByteArray());
   }
