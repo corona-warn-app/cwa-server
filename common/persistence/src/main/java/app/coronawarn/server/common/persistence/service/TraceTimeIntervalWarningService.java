@@ -34,10 +34,10 @@ public class TraceTimeIntervalWarningService {
   private static final Logger logger =
       LoggerFactory.getLogger(TraceTimeIntervalWarningService.class);
 
-  @Deprecated
+  @Deprecated(since = "2.8", forRemoval = true)
   private final TraceTimeIntervalWarningRepository traceTimeIntervalWarningRepo;
   private final CheckInProtectedReportsRepository checkInProtectedReportsRepository;
-  @Deprecated
+  @Deprecated(since = "2.8", forRemoval = true)
   private final MessageDigest hashAlgorithm;
 
   /**
@@ -61,13 +61,13 @@ public class TraceTimeIntervalWarningService {
    * 
    * @deprecated in favor of encrypted checkins.
    */
-  @Deprecated
+  @Deprecated(since = "2.8", forRemoval = true)
   @Transactional
   public int saveCheckins(List<CheckIn> checkins, int submissionTimestamp, SubmissionType submissionType) {
     return saveCheckins(checkins, this::hashLocationId, submissionTimestamp, submissionType);
   }
 
-  @Deprecated
+  @Deprecated(since = "2.8", forRemoval = true)
   private int saveCheckins(List<CheckIn> checkins, Function<ByteString, byte[]> idHashGenerator,
       int submissionTimestamp, SubmissionType submissionType) {
     int numberOfInsertedTraceWarnings = 0;
@@ -124,7 +124,7 @@ public class TraceTimeIntervalWarningService {
    *
    * @deprecated because trace time warnings are not longer supported and replaced by encrypted checkins.
    */
-  @Deprecated(since = "2.8")
+  @Deprecated(since = "2.8", forRemoval = true)
   public Collection<TraceTimeIntervalWarning> getTraceTimeIntervalWarnings() {
     return StreamUtils
         .createStreamFromIterator(traceTimeIntervalWarningRepo
@@ -142,7 +142,7 @@ public class TraceTimeIntervalWarningService {
         .collect(Collectors.toList());
   }
 
-  @Deprecated
+  @Deprecated(since = "2.8", forRemoval = true)
   private byte[] hashLocationId(ByteString locationId) {
     return hashAlgorithm.digest(locationId.toByteArray());
   }
