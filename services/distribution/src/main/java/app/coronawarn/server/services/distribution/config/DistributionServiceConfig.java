@@ -282,8 +282,6 @@ public class DistributionServiceConfig {
 
   public static class StatisticsConfig {
 
-    private Double trendCalculationThreshold;
-
     private String statisticPath;
 
     private String localStatisticPath;
@@ -310,14 +308,6 @@ public class DistributionServiceConfig {
 
     public void setStatisticPath(String statisticPath) {
       this.statisticPath = statisticPath;
-    }
-
-    public Double getTrendCalculationThreshold() {
-      return trendCalculationThreshold;
-    }
-
-    public void setTrendCalculationThreshold(Double trendCalculationThreshold) {
-      this.trendCalculationThreshold = trendCalculationThreshold;
     }
 
     public String getAccessKey() {
