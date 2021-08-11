@@ -48,5 +48,4 @@ public class ImmutableStack<T> {
   public T peek() {
     return this.stack.peek();
   }
-
 }
