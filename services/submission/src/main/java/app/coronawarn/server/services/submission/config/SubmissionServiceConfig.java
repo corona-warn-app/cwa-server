@@ -219,7 +219,7 @@ public class SubmissionServiceConfig {
    */
   @Deprecated
   public Boolean isUnencryptedCheckinsEnabled() {
-    return unencryptedCheckinsEnabled;
+    return unencryptedCheckinsEnabled == null ? false : unencryptedCheckinsEnabled;
   }
 
   public void setUnencryptedCheckinsEnabled(Boolean unencryptedCheckinsEnabled) {
