@@ -13,8 +13,15 @@ import app.coronawarn.server.services.distribution.assembly.tracewarnings.struct
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * Hour directory for checkins in the v2 implementation.
+ */
 public class TraceTimeIntervalWarningsHourV2Directory extends AbstractTraceTimeIntervalWarningsHourDirectory {
+
+  private static final Logger logger = LoggerFactory.getLogger(TraceTimeIntervalWarningsHourV2Directory.class);
 
   /**
    * Creates an instance of the directory that holds packages for an hour since epoch, as defined by the API spec.
@@ -40,7 +47,8 @@ public class TraceTimeIntervalWarningsHourV2Directory extends AbstractTraceTimeI
       if (checkInReportsForHour.isEmpty()) {
         return Optional.of(new FileOnDiskWithChecksum("index", new byte[0]));
       }
-
+      logger.debug("Building protected reports export file for hour {} and country {} with {} encrypted checkins.",
+          hourSinceEpoch, country, checkInReportsForHour.size());
       File<WritableOnDisk> checkInProtectedReportsExportFile =
           CheckInProtectedReportsExportFile.fromCheckInProtectedReports(
               checkInReportsForHour, country, hourSinceEpoch, distributionServiceConfig);

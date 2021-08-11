@@ -10,6 +10,8 @@ import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceT
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.decorator.HourIntervalIndexingV1Decorator;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.decorator.HourIntervalIndexingV2Decorator;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.Optional;
 import java.util.Set;
 
@@ -21,6 +23,8 @@ public class TraceTimeIntervalWarningsCountryDirectory extends IndexDirectoryOnD
   protected final TraceTimeIntervalWarningsPackageBundler traceWarningsBundler;
   private final CryptoProvider cryptoProvider;
   private final DistributionServiceConfig distributionServiceConfig;
+
+  private static final Logger logger = LoggerFactory.getLogger(TraceTimeIntervalWarningsCountryDirectory.class);
 
   /**
    * Creates an instance of the custom directory that includes the entire {@link TraceTimeIntervalWarning} package
@@ -47,6 +51,7 @@ public class TraceTimeIntervalWarningsCountryDirectory extends IndexDirectoryOnD
                   distributionServiceConfig)
           )));
     } else if (this.version.equals(VERSION_V2)) {
+      logger.debug("Preparing encrypted checkins for version {}", this.version);
       this.addWritableToAll(ignoredValue -> Optional
           .of(decorateV2HourDirectory(
               new TraceTimeIntervalWarningsHourV2Directory(traceWarningsBundler, cryptoProvider,
