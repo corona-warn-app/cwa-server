@@ -58,7 +58,7 @@ public class TraceTimeIntervalWarningService {
    * Store the given checkin data as {@link TraceTimeIntervalWarning} entities. Returns the number of inserted entities,
    * which is useful for the case where there might be conflicts with the table constraints during the db save
    * operations.
-   * 
+   *
    * @deprecated in favor of encrypted checkins.
    */
   @Deprecated(since = "2.8", forRemoval = true)
@@ -172,7 +172,7 @@ public class TraceTimeIntervalWarningService {
     logger.info("Deleting {} trace time warning(s) with a submission timestamp older than {} day(s) ago.",
         numberOfDeletions, daysToRetain);
     traceTimeIntervalWarningRepo.deleteOlderThan(threshold);
-    
+
     numberOfDeletions = checkInProtectedReportsRepository.countOlderThan(threshold);
     logger.info("Deleting {} encrypted trace time warning(s) with a submission timestamp older than {} day(s) ago.",
         numberOfDeletions, daysToRetain);
