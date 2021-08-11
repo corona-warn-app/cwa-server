@@ -18,8 +18,8 @@ public class TraceTimeIntervalWarningsDirectory extends DirectoryOnDisk {
   private final TraceTimeIntervalWarningsPackageBundler traceWarningsBundler;
 
   /**
-   * Creates an instance of the custom directory that includes the entire {@link TraceTimeIntervalWarning} package
-   * structure as per the API specification.
+   * Creates an instance of the custom directory that includes the entire
+   * {@link TraceTimeIntervalWarning} package structure as per the API specification.
    */
   public TraceTimeIntervalWarningsDirectory(
       TraceTimeIntervalWarningsPackageBundler traceWarningsBundler, CryptoProvider cryptoProvider,
@@ -28,7 +28,6 @@ public class TraceTimeIntervalWarningsDirectory extends DirectoryOnDisk {
     this.traceWarningsBundler = traceWarningsBundler;
     this.cryptoProvider = cryptoProvider;
     this.distributionServiceConfig = distributionServiceConfig;
-
   }
 
   @Override

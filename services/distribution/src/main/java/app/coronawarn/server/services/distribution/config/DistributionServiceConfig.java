@@ -73,7 +73,6 @@ public class DistributionServiceConfig {
   private PresenceTracingParameters presenceTracingParameters;
   private DigitalGreenCertificate digitalGreenCertificate;
   private Integer connectionPoolSize;
-  private Boolean isDeprecated;
 
   public Paths getPaths() {
     return paths;
@@ -228,14 +227,6 @@ public class DistributionServiceConfig {
     this.androidQrCodePosterTemplate = androidQrCodePosterTemplate;
   }
 
-  public boolean isDeprecated() {
-    return isDeprecated;
-  }
-
-  public void setDeprecated(boolean deprecated) {
-    isDeprecated = deprecated;
-  }
-
   public List<AppFeature> getAppFeatures() {
     return appFeatures;
   }
@@ -291,8 +282,6 @@ public class DistributionServiceConfig {
 
   public static class StatisticsConfig {
 
-    private Double trendCalculationThreshold;
-
     private String statisticPath;
 
     private String localStatisticPath;
@@ -319,14 +308,6 @@ public class DistributionServiceConfig {
 
     public void setStatisticPath(String statisticPath) {
       this.statisticPath = statisticPath;
-    }
-
-    public Double getTrendCalculationThreshold() {
-      return trendCalculationThreshold;
-    }
-
-    public void setTrendCalculationThreshold(Double trendCalculationThreshold) {
-      this.trendCalculationThreshold = trendCalculationThreshold;
     }
 
     public String getAccessKey() {

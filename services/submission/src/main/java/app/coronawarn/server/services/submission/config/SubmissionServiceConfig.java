@@ -60,6 +60,13 @@ public class SubmissionServiceConfig {
   @Min(1)
   @Max(144)
   private Integer minRollingPeriod;
+
+  /**
+   * unencryptedCheckinsEnabled.
+   *
+   * @deprecated should be removed when false
+   */
+  @Deprecated
   private Boolean unencryptedCheckinsEnabled;
 
   @Autowired
@@ -205,8 +212,14 @@ public class SubmissionServiceConfig {
     this.trlDerivations = trlDerivations;
   }
 
+  /**
+   * unencryptedCheckinsEnabled.
+   *
+   * @deprecated should be removed when false
+   */
+  @Deprecated
   public Boolean isUnencryptedCheckinsEnabled() {
-    return unencryptedCheckinsEnabled;
+    return unencryptedCheckinsEnabled == null ? false : unencryptedCheckinsEnabled;
   }
 
   public void setUnencryptedCheckinsEnabled(Boolean unencryptedCheckinsEnabled) {

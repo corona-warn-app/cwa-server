@@ -63,6 +63,13 @@ public @interface ValidSubmissionPayload {
     private final int maxRollingPeriod;
     private final Collection<String> supportedCountries;
     private final String defaultOriginCountry;
+    
+    /**
+     * EventCheckinDataValidator.
+     *
+     * @deprecated in favor of {@link #eventCheckInProtectedReportsValidator}. 
+     */
+    @Deprecated(since = "2.8", forRemoval = true)
     private final EventCheckinDataValidator eventCheckinValidator;
     private final EventCheckInProtectedReportsValidator eventCheckInProtectedReportsValidator;
     private static final Logger logger = LoggerFactory.getLogger(SubmissionPayloadValidator.class);
@@ -114,10 +121,6 @@ public @interface ValidSubmissionPayload {
           && eventCheckInProtectedReportsValidator.verify(submissionPayload, validatorContext)
           && checkRollingPeriodIsInRange(exposureKeys, validatorContext);
 
-      // given -> subPay VALID
-      // when -> ceva -> flow aplicatie
-      // then -> raspuns -> check headers
-
       if (!isValidPayload) {
         PrintableSubmissionPayload printableSubmissionPayload = new PrintableSubmissionPayload(submissionPayload);
         logger.error("Errors caused by invalid payload {}", printableSubmissionPayload);
@@ -156,7 +159,7 @@ public @interface ValidSubmissionPayload {
      * Verify if payload contains invalid or unaccepted origin country.
      *
      * @return false if the originCountry field of the given payload does not contain a country code from the configured
-     * <code>application.yml/supported-countries</code>
+     *         <code>application.yml/supported-countries</code>
      */
     private boolean checkOriginCountryIsValid(SubmissionPayload submissionPayload,
         ConstraintValidatorContext validatorContext) {
