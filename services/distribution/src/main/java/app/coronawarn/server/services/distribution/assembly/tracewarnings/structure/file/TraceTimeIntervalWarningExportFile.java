@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  *
  * @deprecated because trace time warnings are being replaced by protected reports.
  */
-@Deprecated
+@Deprecated(since = "2.8")
 public class TraceTimeIntervalWarningExportFile extends AbstractCheckInExportFile {
 
   protected final List<app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning>
@@ -40,7 +40,7 @@ public class TraceTimeIntervalWarningExportFile extends AbstractCheckInExportFil
    *
    * @deprecated because trace time warnings are being replaced by protected reports.
    */
-  @Deprecated
+  @Deprecated(since = "2.8")
   public static TraceTimeIntervalWarningExportFile fromTraceTimeIntervalWarnings(
       List<TraceTimeIntervalWarning> traceTimeIntervalWarnings, String country,
       int intervalNumber, DistributionServiceConfig distributionServiceConfig) {

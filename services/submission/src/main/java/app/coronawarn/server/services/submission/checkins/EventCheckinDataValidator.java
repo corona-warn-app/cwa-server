@@ -14,7 +14,7 @@ import org.springframework.util.ObjectUtils;
  * @deprecated because trace time warnings are being replaced by protected reports.
  */
 @Component
-@Deprecated
+@Deprecated(since = "2.8")
 public class EventCheckinDataValidator {
 
   /**

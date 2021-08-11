@@ -52,7 +52,7 @@ public class EventCheckinFacade {
    *
    * @deprecated because trace time warnings are being replaced by protected reports.
    */
-  @Deprecated
+  @Deprecated(since = "2.8")
   public int saveCheckinsWithFakeData(List<CheckIn> originalCheckins, int numberOfFakesToCreate,
       byte[] pepper, int submissionTimestamp, SubmissionType submissionType) {
     List<CheckIn> allCheckins = new ArrayList<>(originalCheckins);
@@ -68,7 +68,7 @@ public class EventCheckinFacade {
    * @return - storage result containing number of filtered and saved check-ins.
    * @deprecated because trace time warnings are being replaced by protected reports.
    */
-  @Deprecated
+  @Deprecated(since = "2.8")
   private CheckinsStorageResult extractAndStoreEventCheckins(SubmissionPayload submissionPayload) {
     // need a container object that reflects how many checkins were filtered even if storage fails
     AtomicInteger numberOfFilteredCheckins = new AtomicInteger(0);

@@ -76,7 +76,7 @@ public abstract class TraceTimeIntervalWarningsPackageBundler {
    * @param distributionTime          The {@link LocalDateTime} at which the distribution runs.
    * @deprecated because trace time warnings are being replaced by protected reports.
    */
-  @Deprecated
+  @Deprecated(since = "2.8")
   public void setTraceTimeIntervalWarnings(
       Collection<TraceTimeIntervalWarning> traceTimeIntervalWarnings,
       LocalDateTime distributionTime) {
@@ -103,7 +103,7 @@ public abstract class TraceTimeIntervalWarningsPackageBundler {
    *
    * @deprecated because trace time warnings are being replaced by protected reports.
    */
-  @Deprecated
+  @Deprecated(since = "2.8")
   public Set<Integer> getHoursForDistributableWarnings(String country) {
     if (isCountrySupported(country)) {
       final Optional<Integer> oldestOptional = getOldestHourWithDistributableWarnings(country);
@@ -140,7 +140,7 @@ public abstract class TraceTimeIntervalWarningsPackageBundler {
    * @return optional containing the value of the min hour.
    * @deprecated because trace time warnings are being replaced by protected reports.
    */
-  @Deprecated
+  @Deprecated(since = "2.8")
   public Optional<Integer> getOldestHourWithDistributableWarnings(String country) {
     if (isCountrySupported(country)) {
       return this.distributableTraceTimeIntervalWarnings.keySet().stream().min(Integer::compareTo);
@@ -168,7 +168,7 @@ public abstract class TraceTimeIntervalWarningsPackageBundler {
    * @return optional containing the value of the max hour.
    * @deprecated because trace time warnings are being replaced by protected reports.
    */
-  @Deprecated
+  @Deprecated(since = "2.8")
   public Optional<Integer> getLatestHourWithDistributableWarnings(String country) {
     if (isCountrySupported(country)) {
       return this.distributableTraceTimeIntervalWarnings.keySet().stream().max(Integer::compareTo);
@@ -194,7 +194,7 @@ public abstract class TraceTimeIntervalWarningsPackageBundler {
    *
    * @deprecated because trace time warnings are being replaced by protected reports.
    */
-  @Deprecated
+  @Deprecated(since = "2.8")
   public List<TraceTimeIntervalWarning> getTraceTimeWarningsForHour(Integer currentHourSinceEpoch) {
     return distributableTraceTimeIntervalWarnings.getOrDefault(currentHourSinceEpoch, Collections.emptyList());
   }
@@ -220,7 +220,7 @@ public abstract class TraceTimeIntervalWarningsPackageBundler {
    * @param traceTimeIntervalWarnings the base for creating the distribution map.
    * @deprecated because trace time warnings are being replaced by protected reports.
    */
-  @Deprecated
+  @Deprecated(since = "2.8")
   protected abstract void createTraceWarningsDistributionMap(
       Collection<TraceTimeIntervalWarning> traceTimeIntervalWarnings);
 
