@@ -66,7 +66,6 @@ services:
       force-update-keyfiles: ${FORCE_UPDATE_KEYFILES:false}
       hour-file-retention-days: 2
     statistics:
-      trend-calculation-threshold: 0.05
       statistic-path: stats/statistic_data.json
       local-statistic-path: stats/local_statistic_data_processing_test.json
       access-key: fakeAccessKey

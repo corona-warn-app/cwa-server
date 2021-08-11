@@ -117,7 +117,7 @@ public class EventCheckinFacade {
   public CheckinsStorageResult extractAndStoreCheckins(SubmissionPayload submissionPayload) {
     CheckinsStorageResult checkinsStorageResult = new CheckinsStorageResult(0, 0);
 
-    if (Boolean.TRUE.equals(submissionServiceConfig.isUnencryptedCheckinsEnabled())) {
+    if (submissionServiceConfig.isUnencryptedCheckinsEnabled()) {
       CheckinsStorageResult other = this.extractAndStoreEventCheckins(submissionPayload);
       checkinsStorageResult = checkinsStorageResult.update(other);
     }
