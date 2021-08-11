@@ -114,7 +114,6 @@ public class TemporaryExposureKeyExportFile extends FileOnDiskWithChecksum {
   private static List<TemporaryExposureKey> getTemporaryExposureKeysFromDiagnosisKeys(
       List<DiagnosisKey> diagnosisKeys) {
     return diagnosisKeys.stream().map(diagnosisKey -> TemporaryExposureKey.newBuilder()
-
         .setKeyData(ByteString.copyFrom(diagnosisKey.getKeyData()))
         .setTransmissionRiskLevel(diagnosisKey.getTransmissionRiskLevel())
         .setRollingStartIntervalNumber(diagnosisKey.getRollingStartIntervalNumber())
@@ -126,7 +125,6 @@ public class TemporaryExposureKeyExportFile extends FileOnDiskWithChecksum {
   }
 
   private byte[] getHeaderBytes() {
-
     String header = distributionServiceConfig.getTekExport().getFileHeader();
     int headerWidth = distributionServiceConfig.getTekExport().getFileHeaderWidth();
     return padRight(header, headerWidth).getBytes(StandardCharsets.UTF_8);
