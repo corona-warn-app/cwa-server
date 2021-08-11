@@ -73,7 +73,6 @@ public class DistributionServiceConfig {
   private PresenceTracingParameters presenceTracingParameters;
   private DigitalGreenCertificate digitalGreenCertificate;
   private Integer connectionPoolSize;
-  private Boolean isDeprecated;
 
   public Paths getPaths() {
     return paths;
@@ -226,14 +225,6 @@ public class DistributionServiceConfig {
 
   public void setAndroidQrCodePosterTemplate(QrCodePosterTemplate androidQrCodePosterTemplate) {
     this.androidQrCodePosterTemplate = androidQrCodePosterTemplate;
-  }
-
-  public boolean isDeprecated() {
-    return isDeprecated;
-  }
-
-  public void setDeprecated(boolean deprecated) {
-    isDeprecated = deprecated;
   }
 
   public List<AppFeature> getAppFeatures() {
