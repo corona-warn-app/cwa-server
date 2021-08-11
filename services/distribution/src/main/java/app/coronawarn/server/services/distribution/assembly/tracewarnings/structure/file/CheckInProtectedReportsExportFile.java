@@ -2,7 +2,6 @@ package app.coronawarn.server.services.distribution.assembly.tracewarnings.struc
 
 import app.coronawarn.server.common.persistence.domain.CheckInProtectedReports;
 import app.coronawarn.server.common.protocols.internal.pt.TraceWarningPackage;
-import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import com.google.protobuf.ByteString;
 import java.util.Comparator;
@@ -31,13 +30,6 @@ public class CheckInProtectedReportsExportFile extends AbstractCheckInExportFile
         .toByteArray();
   }
 
-
-  @Override
-  public void prepare(ImmutableStack<Object> indices) {
-    this.setBytes(createTraceWarningExportBytes());
-    super.prepare(indices);
-  }
-
   /**
    * Creates a binary export file by converting the given warnings to their proto structures.
    */
@@ -48,7 +40,6 @@ public class CheckInProtectedReportsExportFile extends AbstractCheckInExportFile
         getCheckInProtectedReportFromCheckInProtectedReports(traceTimeIntervalWarnings), country,
         intervalNumber, distributionServiceConfig);
   }
-
 
   private static List<app.coronawarn.server.common.protocols.internal.pt.CheckInProtectedReport>
       getCheckInProtectedReportFromCheckInProtectedReports(
