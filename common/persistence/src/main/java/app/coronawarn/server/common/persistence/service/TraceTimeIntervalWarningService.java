@@ -116,6 +116,10 @@ public class TraceTimeIntervalWarningService {
         numberOfCheckInProtectedReports++;
       }
     }
+    if (allCheckins.size() != numberOfCheckInProtectedReports && allCheckins.size() > 0) {
+      logger.error("Couldn't save all ({}) received encrypted checkins. Stored only {}!", allCheckins.size(),
+          numberOfCheckInProtectedReports);
+    }
     return numberOfCheckInProtectedReports;
   }
 
