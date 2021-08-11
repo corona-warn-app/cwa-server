@@ -8,6 +8,9 @@ import javax.validation.ConstraintValidatorContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
+/**
+ * @deprecated because trace time warnings are being replaced by protected reports.
+ */
 @Component
 @Deprecated
 public class EventCheckinDataValidator {

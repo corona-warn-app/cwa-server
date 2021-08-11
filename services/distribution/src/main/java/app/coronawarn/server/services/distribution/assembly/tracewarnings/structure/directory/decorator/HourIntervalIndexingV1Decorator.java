@@ -12,6 +12,8 @@ import org.json.simple.JSONObject;
 
 /**
  * The v1 Implementation of hour interval indexing.
+ *
+ * @deprecated because trace time warnings are being replaced by protected reports.
  */
 @Deprecated
 public class HourIntervalIndexingV1Decorator extends AbstractHourIntervalIndexingDecorator {
@@ -22,6 +24,7 @@ public class HourIntervalIndexingV1Decorator extends AbstractHourIntervalIndexin
    * @param directory                 the directory to decorate.
    * @param packageBundler            the package bundler that contains the tracetime warning.
    * @param distributionServiceConfig distribution config.
+   * @deprecated because trace time warnings are being replaced by protected reports.
    */
   @Deprecated
   public HourIntervalIndexingV1Decorator(TraceTimeIntervalWarningsHourV1Directory directory,
@@ -35,6 +38,7 @@ public class HourIntervalIndexingV1Decorator extends AbstractHourIntervalIndexin
    * @param indexFileName the name of the file that will be written to disk and contains the JSON.
    * @param indices       the indices that indicate the current path inside a directory.
    * @return the file on disk that contains the oldest and latest as JSON with a checksum.
+   * @deprecated because trace time warnings are being replaced by protected reports.
    */
   @Override
   @Deprecated

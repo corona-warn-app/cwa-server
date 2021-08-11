@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 /**
  * A {@link app.coronawarn.server.services.distribution.assembly.structure.file.File} containing a list of {@link
  * app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning} serialized protos.
+ *
+ * @deprecated because trace time warnings are being replaced by protected reports.
  */
 @Deprecated
 public class TraceTimeIntervalWarningExportFile extends AbstractCheckInExportFile {
@@ -35,6 +37,8 @@ public class TraceTimeIntervalWarningExportFile extends AbstractCheckInExportFil
 
   /**
    * Creates a binary export file by converting the given warnings to their proto structures.
+   *
+   * @deprecated because trace time warnings are being replaced by protected reports.
    */
   @Deprecated
   public static TraceTimeIntervalWarningExportFile fromTraceTimeIntervalWarnings(
@@ -47,7 +51,7 @@ public class TraceTimeIntervalWarningExportFile extends AbstractCheckInExportFil
 
 
   private static List<app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning>
-      getTraceIntervalWarningsFromTraceIntervalWarnings(
+  getTraceIntervalWarningsFromTraceIntervalWarnings(
       List<TraceTimeIntervalWarning> traceTimeIntervalWarnings) {
 
     return traceTimeIntervalWarnings.stream()

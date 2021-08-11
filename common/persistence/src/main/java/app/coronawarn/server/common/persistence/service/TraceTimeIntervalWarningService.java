@@ -1,9 +1,5 @@
 package app.coronawarn.server.common.persistence.service;
 
-import static app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionTimestampValidator.SECONDS_PER_HOUR;
-import static app.coronawarn.server.common.shared.util.HashUtils.Algorithms.SHA_256;
-import static java.time.ZoneOffset.UTC;
-
 import app.coronawarn.server.common.persistence.domain.CheckInProtectedReports;
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.repository.CheckInProtectedReportsRepository;
@@ -12,6 +8,13 @@ import app.coronawarn.server.common.protocols.internal.SubmissionPayload.Submiss
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import app.coronawarn.server.common.protocols.internal.pt.CheckInProtectedReport;
 import com.google.protobuf.ByteString;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.util.StreamUtils;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
@@ -20,13 +23,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.util.StreamUtils;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+
+import static app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionTimestampValidator.SECONDS_PER_HOUR;
+import static app.coronawarn.server.common.shared.util.HashUtils.Algorithms.SHA_256;
+import static java.time.ZoneOffset.UTC;
 
 @Component
 public class TraceTimeIntervalWarningService {
@@ -115,6 +115,8 @@ public class TraceTimeIntervalWarningService {
 
   /**
    * Returns all available {@link TraceTimeIntervalWarning}s sorted by their submissionTimestamp.
+   *
+   * @deprecated because trace time warnings are not longer supported and replaced by encrypted checkins.
    */
   @Deprecated
   public Collection<TraceTimeIntervalWarning> getTraceTimeIntervalWarnings() {

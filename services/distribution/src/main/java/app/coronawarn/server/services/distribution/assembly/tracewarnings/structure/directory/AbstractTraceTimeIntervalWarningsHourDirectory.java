@@ -23,13 +23,14 @@ public abstract class AbstractTraceTimeIntervalWarningsHourDirectory extends Ind
 
   /**
    * Constructor for abstract trace time interval warning hour directory.
-   * @param bundler bundle to fetch related check ins.
-   * @param cryptoProvider the crypto provide for signing.
+   *
+   * @param bundler                   bundle to fetch related check ins.
+   * @param cryptoProvider            the crypto provide for signing.
    * @param distributionServiceConfig the config
-   * @param indexFunction the index function that will be applied for sub directories.
-   * @param indexFormatter the formatter.
+   * @param indexFunction             the index function that will be applied for sub directories.
+   * @param indexFormatter            the formatter.
    */
-  public AbstractTraceTimeIntervalWarningsHourDirectory(
+  protected AbstractTraceTimeIntervalWarningsHourDirectory(
       TraceTimeIntervalWarningsPackageBundler bundler,
       CryptoProvider cryptoProvider,
       DistributionServiceConfig distributionServiceConfig,

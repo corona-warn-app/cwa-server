@@ -16,7 +16,7 @@ public abstract class AbstractCheckInExportFile extends FileOnDiskWithChecksum {
    * @param region         the corresponding region that this file will be put in.
    * @param intervalNumber the interval number.
    */
-  public AbstractCheckInExportFile(String region, int intervalNumber,
+  protected AbstractCheckInExportFile(String region, int intervalNumber,
       String fileName) {
     super(fileName, new byte[0]);
     this.region = region;

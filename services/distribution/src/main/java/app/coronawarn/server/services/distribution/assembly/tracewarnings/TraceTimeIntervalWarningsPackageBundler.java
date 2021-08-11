@@ -4,18 +4,12 @@ import app.coronawarn.server.common.persistence.domain.CheckInProtectedReports;
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * New packages with trace warnings shall be assembled and published to CDN, similar to the diagnosis keys. The packages
@@ -74,6 +68,7 @@ public abstract class TraceTimeIntervalWarningsPackageBundler {
    * @param traceTimeIntervalWarnings The {@link TraceTimeIntervalWarning traceTimeIntervalWarnings} contained by this
    *                                  {@link TraceTimeIntervalWarningsPackageBundler}.
    * @param distributionTime          The {@link LocalDateTime} at which the distribution runs.
+   * @deprecated because trace time warnings are being replaced by protected reports.
    */
   @Deprecated
   public void setTraceTimeIntervalWarnings(
@@ -99,6 +94,8 @@ public abstract class TraceTimeIntervalWarningsPackageBundler {
 
   /**
    * Returns all available hourly (since epoch) data for distribution.
+   *
+   * @deprecated because trace time warnings are being replaced by protected reports.
    */
   @Deprecated
   public Set<Integer> getHoursForDistributableWarnings(String country) {
@@ -135,6 +132,7 @@ public abstract class TraceTimeIntervalWarningsPackageBundler {
    *
    * @param country support country.
    * @return optional containing the value of the min hour.
+   * @deprecated because trace time warnings are being replaced by protected reports.
    */
   @Deprecated
   public Optional<Integer> getOldestHourWithDistributableWarnings(String country) {
@@ -162,6 +160,7 @@ public abstract class TraceTimeIntervalWarningsPackageBundler {
    *
    * @param country support country.
    * @return optional containing the value of the max hour.
+   * @deprecated because trace time warnings are being replaced by protected reports.
    */
   @Deprecated
   public Optional<Integer> getLatestHourWithDistributableWarnings(String country) {
@@ -186,6 +185,8 @@ public abstract class TraceTimeIntervalWarningsPackageBundler {
 
   /**
    * Returns the trace time warnings ready to be distributed for the given hour since epoch.
+   *
+   * @deprecated because trace time warnings are being replaced by protected reports.
    */
   @Deprecated
   public List<TraceTimeIntervalWarning> getTraceTimeWarningsForHour(Integer currentHourSinceEpoch) {
@@ -207,6 +208,9 @@ public abstract class TraceTimeIntervalWarningsPackageBundler {
     return true;
   }
 
+  /**
+   * @deprecated because trace time warnings are being replaced by protected reports.
+   */
   @Deprecated
   protected abstract void createTraceWarningsDistributionMap(
       Collection<TraceTimeIntervalWarning> traceTimeIntervalWarnings);

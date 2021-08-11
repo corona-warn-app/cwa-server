@@ -22,6 +22,8 @@ public class TraceTimeIntervalWarningsHourV1Directory extends AbstractTraceTimeI
 
   /**
    * Creates an instance of the directory that holds packages for an hour since epoch, as defined by the API spec.
+   *
+   * @deprecated because trace time warnings are being replaced by protected reports.
    */
   @Deprecated
   public TraceTimeIntervalWarningsHourV1Directory(

@@ -62,6 +62,9 @@ public class TraceTimeIntervalWarningsCountryDirectory extends IndexDirectoryOnD
 
   }
 
+  /**
+   * @deprecated because trace time warnings are being replaced by protected reports.
+   */
   @Deprecated
   private IndexDirectory<Integer, WritableOnDisk> decorateV1HourDirectory(
       TraceTimeIntervalWarningsHourV1Directory hourDirectory) {
