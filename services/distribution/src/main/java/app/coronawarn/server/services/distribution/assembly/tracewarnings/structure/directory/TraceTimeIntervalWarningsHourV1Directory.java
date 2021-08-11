@@ -17,7 +17,7 @@ import java.util.Optional;
 /**
  * Hour directory for checkins in the v1 implementation.
  */
-@Deprecated
+@Deprecated(since = "2.8")
 public class TraceTimeIntervalWarningsHourV1Directory extends AbstractTraceTimeIntervalWarningsHourDirectory {
 
   /**
@@ -25,7 +25,7 @@ public class TraceTimeIntervalWarningsHourV1Directory extends AbstractTraceTimeI
    *
    * @deprecated because trace time warnings are being replaced by protected reports.
    */
-  @Deprecated
+  @Deprecated(since = "2.8")
   public TraceTimeIntervalWarningsHourV1Directory(
       TraceTimeIntervalWarningsPackageBundler traceWarningsBundler, CryptoProvider cryptoProvider,
       DistributionServiceConfig distributionServiceConfig) {

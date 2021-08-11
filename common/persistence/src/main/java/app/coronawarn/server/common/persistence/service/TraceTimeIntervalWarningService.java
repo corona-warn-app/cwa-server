@@ -124,7 +124,7 @@ public class TraceTimeIntervalWarningService {
    *
    * @deprecated because trace time warnings are not longer supported and replaced by encrypted checkins.
    */
-  @Deprecated
+  @Deprecated(since = "2.8")
   public Collection<TraceTimeIntervalWarning> getTraceTimeIntervalWarnings() {
     return StreamUtils
         .createStreamFromIterator(traceTimeIntervalWarningRepo

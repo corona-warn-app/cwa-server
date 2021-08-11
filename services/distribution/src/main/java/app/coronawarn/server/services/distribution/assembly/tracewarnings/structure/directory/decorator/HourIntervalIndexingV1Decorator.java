@@ -15,7 +15,7 @@ import org.json.simple.JSONObject;
  *
  * @deprecated because trace time warnings are being replaced by protected reports.
  */
-@Deprecated
+@Deprecated(since = "2.8")
 public class HourIntervalIndexingV1Decorator extends AbstractHourIntervalIndexingDecorator {
 
   /**
@@ -26,7 +26,7 @@ public class HourIntervalIndexingV1Decorator extends AbstractHourIntervalIndexin
    * @param distributionServiceConfig distribution config.
    * @deprecated because trace time warnings are being replaced by protected reports.
    */
-  @Deprecated
+  @Deprecated(since = "2.8")
   public HourIntervalIndexingV1Decorator(TraceTimeIntervalWarningsHourV1Directory directory,
       TraceTimeIntervalWarningsPackageBundler packageBundler, DistributionServiceConfig distributionServiceConfig) {
     super(directory, packageBundler, distributionServiceConfig);
@@ -41,7 +41,7 @@ public class HourIntervalIndexingV1Decorator extends AbstractHourIntervalIndexin
    * @deprecated because trace time warnings are being replaced by protected reports.
    */
   @Override
-  @Deprecated
+  @Deprecated(since = "2.8")
   public FileOnDisk getIndexFile(String indexFileName, ImmutableStack<Object> indices) {
     String currentCountry = (String) indices.peek();
     final Optional<Integer> oldestHourWithDistributableWarnings = packageBundler
