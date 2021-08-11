@@ -168,5 +168,10 @@ public class TraceTimeIntervalWarningService {
     logger.info("Deleting {} trace time warning(s) with a submission timestamp older than {} day(s) ago.",
         numberOfDeletions, daysToRetain);
     traceTimeIntervalWarningRepo.deleteOlderThan(threshold);
+    
+    numberOfDeletions = checkInProtectedReportsRepository.countOlderThan(threshold);
+    logger.info("Deleting {} encrypted trace time warning(s) with a submission timestamp older than {} day(s) ago.",
+        numberOfDeletions, daysToRetain);
+    checkInProtectedReportsRepository.deleteOlderThan(threshold);
   }
 }
