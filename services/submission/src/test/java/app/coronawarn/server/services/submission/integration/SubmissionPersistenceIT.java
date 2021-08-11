@@ -1,9 +1,11 @@
 package app.coronawarn.server.services.submission.integration;
 
+import static app.coronawarn.server.common.shared.util.HashUtils.generateSecureRandomByteArrayData;
 import static app.coronawarn.server.services.submission.SubmissionPayloadGenerator.buildTemporaryExposureKeyWithoutMultiplying;
 import static app.coronawarn.server.services.submission.SubmissionPayloadGenerator.buildTemporaryExposureKeys;
 import static app.coronawarn.server.services.submission.assertions.SubmissionAssertions.assertElementsCorrespondToEachOther;
 import static java.util.Collections.emptyList;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -16,11 +18,15 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Temp
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.Builder;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
+import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
+import app.coronawarn.server.common.protocols.internal.pt.CheckInProtectedReport;
+import app.coronawarn.server.services.submission.checkins.EventCheckinDataValidatorTest;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.controller.FakeDelayManager;
 import app.coronawarn.server.services.submission.controller.RequestExecutor;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import com.google.common.io.BaseEncoding;
+import com.google.protobuf.ByteString;
 import com.google.protobuf.util.JsonFormat;
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,6 +38,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -51,6 +58,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -314,6 +322,40 @@ class SubmissionPersistenceIT {
     assertEquals(0, diagnosisKeyService.getDiagnosisKeys().size());
   }
 
+  @Test
+  void testUnencryptedCheckinsFlagEnabled() {
+    // GIVEN:
+    List<String> visitedCountries = Collections.singletonList("DE");
+    String originCountry = "DE";
+    Boolean consentToFederation = true;
+    List<TemporaryExposureKey> temporaryExposureKeys = createValidTemporaryExposureKeys();
+    List<CheckInProtectedReport> protectedReports = Collections.singletonList(CheckInProtectedReport.newBuilder()
+        .setEncryptedCheckInRecord(ByteString.copyFrom(generateSecureRandomByteArrayData(16)))
+        .setIv(ByteString.copyFrom(generateSecureRandomByteArrayData(32)))
+        .setLocationIdHash(ByteString.copyFrom(generateSecureRandomByteArrayData(32)))
+        .build());
+    List<CheckIn> checkins = Collections.singletonList(
+        CheckIn.newBuilder().setStartIntervalNumber(1)
+            .setEndIntervalNumber(3)
+            .setTransmissionRiskLevel(1)
+            .setLocationId(EventCheckinDataValidatorTest.CORRECT_LOCATION_ID)
+            .build());
+    SubmissionPayload submissionPayload = buildSubmissionPayloadWithCheckins(visitedCountries, originCountry,
+        consentToFederation,
+        temporaryExposureKeys, SubmissionType.SUBMISSION_TYPE_PCR_TEST, protectedReports, checkins);
+    String tan = "tan";
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("cwa-authorization", tan);
+
+    // WHEN:
+    ResponseEntity<Void> result = executor.executePost(submissionPayload);
+
+    // THEN:
+    assertThat(result.getHeaders().get("cwa-filtered-checkins").get(0)).isEqualTo("1");
+    assertThat(result.getHeaders().get("cwa-saved-checkins").get(0)).isEqualTo("1");
+  }
+
   private static Stream<Arguments> invalidSubmissionPayload() {
     return Stream.of(
         Arguments.of(List.of("XX"), null, null),
@@ -364,9 +406,37 @@ class SubmissionPersistenceIT {
   private SubmissionPayload buildSubmissionPayload(List<String> visitedCountries, String originCountry,
       Boolean consentToFederation, List<TemporaryExposureKey> temporaryExposureKeys,
       SubmissionType submissionType) {
+
     Builder submissionPayloadBuilder = SubmissionPayload
         .newBuilder()
         .addAllKeys(temporaryExposureKeys);
+
+    if (visitedCountries != null) {
+      submissionPayloadWithVisitedCountries(submissionPayloadBuilder, visitedCountries);
+    }
+    if (originCountry != null) {
+      submissionPayloadWithOriginCountry(submissionPayloadBuilder, originCountry);
+    }
+    if (consentToFederation != null) {
+      submissionPayloadWithConsentToFederation(submissionPayloadBuilder, consentToFederation);
+    }
+    if (submissionType != null) {
+      submissionPayloadWithSubmissionType(submissionPayloadBuilder, submissionType);
+    }
+
+    SubmissionPayload submissionPayload = submissionPayloadBuilder.build();
+    return submissionPayload;
+  }
+
+  private SubmissionPayload buildSubmissionPayloadWithCheckins(List<String> visitedCountries, String originCountry,
+      Boolean consentToFederation, List<TemporaryExposureKey> temporaryExposureKeys,
+      SubmissionType submissionType, List<CheckInProtectedReport> protectedReports, List<CheckIn> checkins) {
+
+    Builder submissionPayloadBuilder = SubmissionPayload
+        .newBuilder()
+        .addAllKeys(temporaryExposureKeys)
+        .addAllCheckInProtectedReports(protectedReports)
+        .addAllCheckIns(checkins);
 
     if (visitedCountries != null) {
       submissionPayloadWithVisitedCountries(submissionPayloadBuilder, visitedCountries);
