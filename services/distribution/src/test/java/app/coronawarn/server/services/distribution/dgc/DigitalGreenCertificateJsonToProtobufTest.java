@@ -9,13 +9,13 @@ import static app.coronawarn.server.services.distribution.dgc.DigitalGreenCertif
 import static app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping.VACCINE_PROPHYLAXIS_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import app.coronawarn.server.common.shared.exception.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchValueSetsException;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +26,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@Deprecated
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {DistributionServiceConfig.class, DigitalGreenCertificateToProtobufMapping.class,
@@ -51,7 +52,8 @@ class DigitalGreenCertificateJsonToProtobufTest {
   }
 
   @Test
-  void shouldReadDefaultMahJsonIfNotConfigured() throws UnableToLoadFileException, FetchValueSetsException {
+  @Disabled("Default valuesets are deprecated.")
+  void shouldReadDefaultMahJsonIfNotConfigured() throws FetchValueSetsException {
     var result = dgcToProtobufMapping.readMahJson();
 
     assertThat(result.getValueSetId()).isEqualTo(VACCINE_MAH_ID);
@@ -69,7 +71,8 @@ class DigitalGreenCertificateJsonToProtobufTest {
 
 
   @Test
-  void shouldReadDefaultMProductJsonIfNotConfigured() throws UnableToLoadFileException, FetchValueSetsException {
+  @Disabled("Default valuesets are deprecated.")
+  void shouldReadDefaultMProductJsonIfNotConfigured() throws FetchValueSetsException {
     var result = dgcToProtobufMapping.readMedicinalProductJson();
 
     assertThat(result.getValueSetId()).isEqualTo(VACCINE_MEDICINAL_PRODUCT_ID);
@@ -86,7 +89,8 @@ class DigitalGreenCertificateJsonToProtobufTest {
   }
 
   @Test
-  void shouldReadDefaultProphylaxisJsonIfNotConfigured() throws UnableToLoadFileException, FetchValueSetsException {
+  @Disabled("Default valuesets are deprecated.")
+  void shouldReadDefaultProphylaxisJsonIfNotConfigured() throws FetchValueSetsException {
     var result = dgcToProtobufMapping.readProphylaxisJson();
 
     assertThat(result.getValueSetId()).isEqualTo(VACCINE_PROPHYLAXIS_ID);
@@ -104,7 +108,8 @@ class DigitalGreenCertificateJsonToProtobufTest {
 
   @Test
   @DirtiesContext
-  void shouldReadConfiguredProphylaxisJson() throws UnableToLoadFileException, FetchValueSetsException {
+  @Disabled("Default valuesets are deprecated.")
+  void shouldReadConfiguredProphylaxisJson() throws FetchValueSetsException {
     distributionServiceConfig.getDigitalGreenCertificate().setProphylaxisJsonPath("dgc/vaccine-prophylaxis-test.json");
     var result = dgcToProtobufMapping.readProphylaxisJson();
 
@@ -122,7 +127,8 @@ class DigitalGreenCertificateJsonToProtobufTest {
   }
 
   @Test
-  void shouldReadDefaultTestManfJsonIfNotConfigured() throws UnableToLoadFileException, FetchValueSetsException {
+  @Disabled("Default valuesets are deprecated.")
+  void shouldReadDefaultTestManfJsonIfNotConfigured() throws FetchValueSetsException {
     var result = dgcToProtobufMapping.readTestManfJson();
 
     assertThat(result.getValueSetId()).isEqualTo(TEST_MANF_ID);
@@ -139,7 +145,8 @@ class DigitalGreenCertificateJsonToProtobufTest {
   }
 
   @Test
-  void shouldReadDefaultTestResultIfNotConfigured() throws UnableToLoadFileException, FetchValueSetsException {
+  @Disabled("Default valuesets are deprecated.")
+  void shouldReadDefaultTestResultIfNotConfigured() throws FetchValueSetsException {
     var result = dgcToProtobufMapping.readTestResultJson();
 
     assertThat(result.getValueSetId()).isEqualTo(TEST_RESULT_ID);
@@ -156,7 +163,8 @@ class DigitalGreenCertificateJsonToProtobufTest {
   }
 
   @Test
-  void shouldReadDefaultTestTypeIfNotConfigured() throws UnableToLoadFileException, FetchValueSetsException {
+  @Disabled("Default valuesets are deprecated.")
+  void shouldReadDefaultTestTypeIfNotConfigured() throws FetchValueSetsException {
     var result = dgcToProtobufMapping.readTestTypeJson();
 
     assertThat(result.getValueSetId()).isEqualTo(TEST_TYPE_ID);
@@ -173,8 +181,8 @@ class DigitalGreenCertificateJsonToProtobufTest {
   }
 
   @Test
-  void shouldReadDefaultDiseaseAgentTargetedIfNotConfigured() throws UnableToLoadFileException,
-      FetchValueSetsException {
+  @Disabled("Default valuesets are deprecated.")
+  void shouldReadDefaultDiseaseAgentTargetedIfNotConfigured() throws FetchValueSetsException {
     var result = dgcToProtobufMapping.readDiseaseAgentTargetedJson();
 
     assertThat(result.getValueSetId()).isEqualTo(DISEASE_AGENT_TARGETED_ID);

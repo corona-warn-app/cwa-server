@@ -1,12 +1,8 @@
 package app.coronawarn.server.services.distribution.dgc;
 
-import static app.coronawarn.server.common.shared.util.SerializationUtils.readConfiguredJsonOrDefault;
-
 import app.coronawarn.server.common.protocols.internal.dgc.ValueSetItem;
 import app.coronawarn.server.common.protocols.internal.dgc.ValueSets;
-import app.coronawarn.server.common.shared.exception.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.DigitalGreenCertificate;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchValueSetsException;
 import java.util.List;
@@ -57,8 +53,8 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  ValueSet readMahJson() throws UnableToLoadFileException, FetchValueSetsException {
-    return read(VACCINE_MAH_ID, dgcConfig -> dgcConfig.getMahJsonPath(), VACCINE_MAH_DEFAULT_PATH);
+  ValueSet readMahJson() throws FetchValueSetsException {
+    return getValueSet(VACCINE_MAH_ID);
   }
 
   /**
@@ -66,9 +62,8 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  ValueSet readMedicinalProductJson() throws UnableToLoadFileException, FetchValueSetsException {
-    return read(VACCINE_MEDICINAL_PRODUCT_ID, dgcConfig -> dgcConfig.getMedicinalProductsJsonPath(),
-        VACCINE_MEDICINAL_PRODUCT_DEFAULT_PATH);
+  ValueSet readMedicinalProductJson() throws FetchValueSetsException {
+    return getValueSet(VACCINE_MEDICINAL_PRODUCT_ID);
   }
 
   /**
@@ -76,9 +71,8 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  ValueSet readProphylaxisJson() throws UnableToLoadFileException, FetchValueSetsException {
-    return read(VACCINE_PROPHYLAXIS_ID, dgcConfig -> dgcConfig.getProphylaxisJsonPath(),
-        VACCINE_PROPHYLAXIS_DEFAULT_PATH);
+  ValueSet readProphylaxisJson() throws FetchValueSetsException {
+    return getValueSet(VACCINE_PROPHYLAXIS_ID);
   }
 
   /**
@@ -86,9 +80,8 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  ValueSet readDiseaseAgentTargetedJson() throws UnableToLoadFileException, FetchValueSetsException {
-    return read(DISEASE_AGENT_TARGETED_ID, dgcConfig -> dgcConfig.getDiseaseAgentTargetedJsonPath(),
-        DISEASE_AGENT_TARGETED_DEFAULT_PATH);
+  ValueSet readDiseaseAgentTargetedJson() throws FetchValueSetsException {
+    return getValueSet(DISEASE_AGENT_TARGETED_ID);
   }
 
   /**
@@ -96,8 +89,8 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  ValueSet readTestManfJson() throws UnableToLoadFileException, FetchValueSetsException {
-    return read(TEST_MANF_ID, dgcConfig -> dgcConfig.getTestManfJsonPath(), TEST_MANF_DEFAULT_PATH);
+  ValueSet readTestManfJson() throws FetchValueSetsException {
+    return getValueSet(TEST_MANF_ID);
   }
 
   /**
@@ -105,8 +98,8 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  ValueSet readTestResultJson() throws UnableToLoadFileException, FetchValueSetsException {
-    return read(TEST_RESULT_ID, dgcConfig -> dgcConfig.getTestResultJsonPath(), TEST_RESULT_DEFAULT_PATH);
+  ValueSet readTestResultJson() throws FetchValueSetsException {
+    return getValueSet(TEST_RESULT_ID);
   }
 
   /**
@@ -114,8 +107,8 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  ValueSet readTestTypeJson() throws UnableToLoadFileException, FetchValueSetsException {
-    return read(TEST_TYPE_ID, dgcConfig -> dgcConfig.getTestTypeJsonPath(), TEST_TYPE_DEFAULT_PATH);
+  ValueSet readTestTypeJson() throws FetchValueSetsException {
+    return getValueSet(TEST_TYPE_ID);
   }
 
   /**
@@ -123,7 +116,7 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return the protobuf filled with values from JSON.
    */
-  public ValueSets constructProtobufMapping() throws UnableToLoadFileException, FetchValueSetsException {
+  public ValueSets constructProtobufMapping() throws FetchValueSetsException {
     List<ValueSetItem> mahItems = toValueSetItems(readMahJson().getValueSetValues());
     List<ValueSetItem> productItems = toValueSetItems(readMedicinalProductJson().getValueSetValues());
     List<ValueSetItem> prophylaxisItems = toValueSetItems(readProphylaxisJson().getValueSetValues());
@@ -157,64 +150,37 @@ public class DigitalGreenCertificateToProtobufMapping {
         .collect(Collectors.toList());
   }
 
-  static interface ConfigValueProvider {
-    String getPath(DigitalGreenCertificate dgcConfig);
-  }
-
   /**
-   * First read the valueSet from the remote server using a feign client and the valueSetId.
-   * If that doesn't work, fall back to reading it from the configured source (e.g. via Vault).
-   * If that doesn't work, fall back on the version included in the sources.
+   * Read the valueSetHash for the given ID from the metadata, and then the valueSet for the returned hash.
    *
-   * @param valueSetId The remote valueSetId to read.
-   * @param configGetter The local file to read as configured.
-   * @param valueSetDefaultPath The source file to read.
-   * @return The ValueSet that has been read.
-   * @throws UnableToLoadFileException If all fails.
-   */
-  private ValueSet read(String valueSetId, ConfigValueProvider configGetter, String valueSetDefaultPath)
-      throws UnableToLoadFileException, FetchValueSetsException {
-    Optional<ValueSet> result = getValueSet(valueSetId).or(() -> {
-      String path = configGetter.getPath(distributionServiceConfig.getDigitalGreenCertificate());
-      return readConfiguredJsonOrDefault(resourceLoader, path, valueSetDefaultPath,
-          ValueSet.class);
-    });
-    return result.orElseThrow(() -> new UnableToLoadFileException(valueSetDefaultPath));
-  }
-
-  /**
-   * Read the valueSetHash for the given ID from the metadata,
-   * and then the valueSet for the returned hash.
    * @param valueSetId The ID of the valueSet to resolve.
    * @return The ValueSet or empty.
    */
-  private Optional<ValueSet> getValueSet(String valueSetId) throws FetchValueSetsException {
+  private ValueSet getValueSet(String valueSetId) throws FetchValueSetsException {
     Optional<String> hash = getValueSetHash(valueSetId);
+
     if (hash.isPresent()) {
       return dccClient.getValueSet(hash.get());
+    } else {
+      throw new FetchValueSetsException("Hash not found for value set id: " + valueSetId);
     }
-    return Optional.empty();
   }
 
   /**
    * Get the hash for the given ValueSetId from the metadata.
+   *
    * @param valueSetId The valueSetId to get the hash for.
    * @return The hash as contained in the metadata or empty.
    */
   private Optional<String> getValueSetHash(String valueSetId) throws FetchValueSetsException {
     if (metadata == null) {
+      // feign client either returns a non-null metadata or throw FetchValueSetsException.
       metadata = dccClient.getValueSets();
-      if (metadata == null) {
-        logger.error("Tried to retrieve ValueSets metadata from {}, but received null!", dccClient);
-        return Optional.empty();
-      }
     }
-    for (ValueSetMetadata metadataItem : metadata) {
-      if (metadataItem.getId().equals(valueSetId)) {
-        return Optional.of(metadataItem.getHash());
-      }
-    }
-    logger.error("Didn't find the ValueSets for valueSetId {}.", valueSetId);
-    return Optional.empty();
+
+    return metadata.stream()
+        .filter(metadataItem -> metadataItem.getId().equals(valueSetId))
+        .map(ValueSetMetadata::getHash)
+        .findFirst();
   }
 }

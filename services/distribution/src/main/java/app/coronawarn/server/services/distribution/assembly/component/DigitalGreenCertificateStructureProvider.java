@@ -63,20 +63,14 @@ public class DigitalGreenCertificateStructureProvider {
    * Business rules Cbor encoded structures.
    */
   public DirectoryOnDisk getDigitalGreenCertificates() {
-    try {
-      return constructArchiveToPublish(distributionServiceConfig.getDigitalGreenCertificate());
-    } catch (UnableToLoadFileException e) {
-      logger.error("We don't generate a value-sets file and this shouldn't override existing ones.", e);
-      return new DirectoryOnDisk(EMPTY_STRING);
-    }
+    return constructArchiveToPublish(distributionServiceConfig.getDigitalGreenCertificate());
   }
 
-  private DirectoryOnDisk constructArchiveToPublish(DigitalGreenCertificate dgcConfig)
-      throws UnableToLoadFileException {
+  private DirectoryOnDisk constructArchiveToPublish(DigitalGreenCertificate dgcConfig) {
     DirectoryOnDisk dgcDirectory = new DirectoryOnDisk(dgcConfig.getDgcDirectory());
 
-    for (String currentLanguage: dgcConfig.getSupportedLanguages()) {
-      try {
+    try {
+      for (String currentLanguage : dgcConfig.getSupportedLanguages()) {
         ArchiveOnDisk archiveToPublish = new ArchiveOnDisk(dgcConfig.getValuesetsFileName());
         archiveToPublish.addWritable(new FileOnDisk(EXPORT_BIN,
             dgcToProtobufMapping.constructProtobufMapping().toByteArray()));
@@ -86,9 +80,9 @@ public class DigitalGreenCertificateStructureProvider {
         dgcDirectory.addWritable(languageDirectory);
         logger.info("Writing digital green certificate value sets to {}/{}/{}.",
             dgcDirectory.getName(), languageDirectory.getName(), archiveToPublish.getName());
-      } catch (FetchValueSetsException e) {
-        logger.error("Digital green certificate valuesets were not written because of: ", e);
       }
+    } catch (FetchValueSetsException e) {
+      logger.error("Digital green certificate valuesets were not written because of: ", e);
     }
 
     getOnboardedCountriesArchive().ifPresent(dgcDirectory::addWritable);

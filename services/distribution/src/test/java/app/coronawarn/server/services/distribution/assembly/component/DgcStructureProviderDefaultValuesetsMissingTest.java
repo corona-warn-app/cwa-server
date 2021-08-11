@@ -9,8 +9,9 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToCborMapping;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
-import app.coronawarn.server.services.distribution.dgc.exception.FetchValueSetsException;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalSigningCertificatesToProtobufMapping;
+import app.coronawarn.server.services.distribution.dgc.exception.FetchValueSetsException;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@Deprecated
 @EnableConfigurationProperties(value = {DistributionServiceConfig.class})
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(
@@ -44,7 +46,8 @@ class DgcStructureProviderDefaultValuesetsMissingTest {
   DigitalSigningCertificatesToProtobufMapping digitalSigningCertificatesToProtobufMapping;
 
   @Test
-  void default_value_missing_should_result_in_empty_dir() throws UnableToLoadFileException, FetchValueSetsException {
+  @Disabled("Default valuesets are deprecated.")
+  void default_value_missing_should_result_in_empty_dir() throws FetchValueSetsException {
     DigitalGreenCertificateStructureProvider underTest = new DigitalGreenCertificateStructureProvider(
         distributionServiceConfig, cryptoProvider, dgcToProtobufMappingMock,
         dgcToCborMappingMock, digitalSigningCertificatesToProtobufMapping);

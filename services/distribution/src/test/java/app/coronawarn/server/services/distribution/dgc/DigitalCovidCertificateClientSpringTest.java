@@ -4,18 +4,16 @@ import static app.coronawarn.server.services.distribution.dgc.client.TestDigital
 import static app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient.RULE_3_HASH;
 import static app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient.VACCINE_MAH_HASH;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.util.Strings.isNullOrEmpty;
+import static org.junit.Assert.assertThrows;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient;
-import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchValueSetsException;
+import java.util.List;
+import java.util.function.Predicate;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,27 +62,29 @@ class DigitalCovidCertificateClientSpringTest {
 
   @Test
   public void shouldReturnCorrectValueSetsByHash() throws FetchValueSetsException {
-    Optional<ValueSet> valueSet1 = digitalCovidCertificateClient.getValueSet(VACCINE_MAH_HASH);
+    ValueSet valueSet1 = digitalCovidCertificateClient.getValueSet(VACCINE_MAH_HASH);
 
-    assertThat(valueSet1).isPresent();
-    assertThat(valueSet1.get().getValueSetId()).isEqualTo(VALUESET_1_ID);
-    assertThat(valueSet1.get().getValueSetValues().get(VALUESET_1_ENTRY_1)).isNotNull();
-    assertThat(valueSet1.get().getValueSetValues().get(VALUESET_1_ENTRY_2)).isNotNull();
+    assertThat(valueSet1).isNotNull();
+    assertThat(valueSet1.getValueSetId()).isEqualTo(VALUESET_1_ID);
+    assertThat(valueSet1.getValueSetValues().get(VALUESET_1_ENTRY_1)).isNotNull();
+    assertThat(valueSet1.getValueSetValues().get(VALUESET_1_ENTRY_2)).isNotNull();
 
-    Optional<ValueSet> valueSet2 = digitalCovidCertificateClient.getValueSet(DISEASE_AGENT_TARGETED_HASH);
-    assertThat(valueSet2).isPresent();
-    assertThat(valueSet2.get().getValueSetId()).isEqualTo(VALUESET_2_ID);
-    assertThat(valueSet2.get().getValueSetValues().get(VALUESET_2_ENTRY_1)).isNotNull();
+    ValueSet valueSet2 = digitalCovidCertificateClient.getValueSet(DISEASE_AGENT_TARGETED_HASH);
+    assertThat(valueSet2).isNotNull();
+    assertThat(valueSet2.getValueSetId()).isEqualTo(VALUESET_2_ID);
+    assertThat(valueSet2.getValueSetValues().get(VALUESET_2_ENTRY_1)).isNotNull();
   }
 
   @Test
-  public void shouldThrowDccExceptionWhenTryingToRetrieveValuesetWithNonexistingHash() throws FetchValueSetsException {
-    assertThat(digitalCovidCertificateClient.getValueSet(RULE_3_HASH)).isEmpty();
+  public void shouldThrowDccExceptionWhenTryingToRetrieveValuesetWithNonexistingHash() {
+    assertThrows(FetchValueSetsException.class,
+        () -> digitalCovidCertificateClient.getValueSet(RULE_3_HASH));
   }
 
   @Test
-  public void shouldThrowDccExceptionWhenTryingToRetrieveRuleWithNonexistingHash() throws FetchBusinessRulesException {
-    assertThat(digitalCovidCertificateClient.getCountryRuleByHash(DE, NL)).isEmpty();
+  public void shouldThrowDccExceptionWhenTryingToRetrieveRuleWithNonexistingHash() {
+    assertThrows(FetchBusinessRulesException.class,
+        () -> digitalCovidCertificateClient.getCountryRuleByHash(DE, NL));
   }
 
   @Test
@@ -99,9 +99,9 @@ class DigitalCovidCertificateClientSpringTest {
 
   @Test
   public void shouldReturnCorrectCountryRulesByHash() throws FetchBusinessRulesException {
-    assertThat(digitalCovidCertificateClient.getCountryRuleByHash(DE, DE_HASH)).isPresent();
-    assertThat(digitalCovidCertificateClient.getCountryRuleByHash(NL, NL_HASH)).isPresent();
-    assertThat(digitalCovidCertificateClient.getCountryRuleByHash(CZ, CZ_HASH)).isPresent();
+    assertThat(digitalCovidCertificateClient.getCountryRuleByHash(DE, DE_HASH)).isNotNull();
+    assertThat(digitalCovidCertificateClient.getCountryRuleByHash(NL, NL_HASH)).isNotNull();
+    assertThat(digitalCovidCertificateClient.getCountryRuleByHash(CZ, CZ_HASH)).isNotNull();
   }
 
   private Predicate<String> filterByCountryName(String name) {

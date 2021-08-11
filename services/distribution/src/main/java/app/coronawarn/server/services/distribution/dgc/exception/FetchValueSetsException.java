@@ -7,4 +7,8 @@ public class FetchValueSetsException extends ThirdPartyServiceException {
   public FetchValueSetsException(String message, Throwable cause) {
     super(message, cause);
   }
+
+  public FetchValueSetsException(String message) {
+    super(message);
+  }
 }

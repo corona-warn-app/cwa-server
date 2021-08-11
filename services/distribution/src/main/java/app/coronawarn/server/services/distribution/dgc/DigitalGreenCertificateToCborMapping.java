@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import org.everit.json.schema.ValidationException;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
@@ -44,11 +43,9 @@ public class DigitalGreenCertificateToCborMapping {
    *
    * @param ruleType - rule type for which the business rules will be retrieved.
    * @return - business rules
-   * @throws DigitalCovidCertificateException - exception thrown if anything happens while executing the logic.
-   *                                          Examples: business rules could not be fetched, one specific rule could not
-   *                                          be fetched, json validation fails for a specific rule etc. This exception
-   *                                          will propagate and will stop any archive to be published down in the
-   *                                          execution.
+   * @throws DigitalCovidCertificateException - thrown if json validation schema is not found or the validationfails for
+   *                                          a specific rule. This exception will propagate and will stop any archive
+   *                                          to be published down in the execution.
    */
   public List<BusinessRule> constructRules(RuleType ruleType)
       throws DigitalCovidCertificateException, FetchBusinessRulesException {
@@ -56,30 +53,22 @@ public class DigitalGreenCertificateToCborMapping {
     List<BusinessRule> businessRules = new ArrayList<>();
 
     for (BusinessRuleItem businessRuleItem : businessRulesItems) {
-      Optional<BusinessRule> businessRuleOptional =
+      BusinessRule businessRule =
           digitalCovidCertificateClient.getCountryRuleByHash(
               businessRuleItem.getCountry(), businessRuleItem.getHash());
 
-      if (businessRuleOptional.isPresent()) {
-        BusinessRule businessRule = businessRuleOptional.get();
-
-        if (businessRule.getType().equalsIgnoreCase(ruleType.name())) {
-          try (final InputStream in = resourceLoader.getResource(DCC_VALIDATION_RULE_JSON_CLASSPATH).getInputStream()) {
-            validateJsonSchema(businessRule, in);
-            businessRules.add(businessRule);
-          } catch (JsonProcessingException | ValidationException e) {
-            throw new DigitalCovidCertificateException(
-                "Rule for country '" + businessRuleItem.getCountry() + "' having hash '" + businessRuleItem.getHash()
-                + "' is not valid", e);
-          } catch (IOException e) {
-            throw new DigitalCovidCertificateException(
-                "Validation rules schema found at: " + DCC_VALIDATION_RULE_JSON_CLASSPATH + "could not be found", e);
-          }
+      if (businessRule.getType().equalsIgnoreCase(ruleType.name())) {
+        try (final InputStream in = resourceLoader.getResource(DCC_VALIDATION_RULE_JSON_CLASSPATH).getInputStream()) {
+          validateJsonSchema(businessRule, in);
+          businessRules.add(businessRule);
+        } catch (JsonProcessingException | ValidationException e) {
+          throw new DigitalCovidCertificateException(
+              "Rule for country '" + businessRuleItem.getCountry() + "' having hash '" + businessRuleItem.getHash()
+                  + "' is not valid", e);
+        } catch (IOException e) {
+          throw new DigitalCovidCertificateException(
+              "Validation rules schema found at: " + DCC_VALIDATION_RULE_JSON_CLASSPATH + "could not be found", e);
         }
-      } else {
-        throw new DigitalCovidCertificateException("Rule for country '"
-            + businessRuleItem.getCountry() + "' having hash '" + businessRuleItem.getHash()
-            + "' could not be retrieved");
       }
     }
 

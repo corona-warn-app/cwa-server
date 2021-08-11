@@ -56,8 +56,10 @@ class DigitalCovidCertificateClientUnitTest {
 
       assertThat(testDigitalCovidCertificateClient.getCountryList()).isEmpty();
       assertThat(testDigitalCovidCertificateClient.getRules()).isEmpty();
-      assertThat(testDigitalCovidCertificateClient.getCountryRuleByHash(DE, RULE_1_HASH)).isEmpty();
-      assertThat(testDigitalCovidCertificateClient.getValueSet(DISEASE_AGENT_TARGETED_HASH)).isEmpty();
+      assertThrows(FetchBusinessRulesException.class,
+          () -> testDigitalCovidCertificateClient.getCountryRuleByHash(DE, RULE_1_HASH));
+      assertThrows(FetchValueSetsException.class,
+          () -> testDigitalCovidCertificateClient.getValueSet(DISEASE_AGENT_TARGETED_HASH));
     }
   }
 
