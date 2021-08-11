@@ -63,6 +63,13 @@ public @interface ValidSubmissionPayload {
     private final int maxRollingPeriod;
     private final Collection<String> supportedCountries;
     private final String defaultOriginCountry;
+    
+    /**
+     * EventCheckinDataValidator.
+     *
+     * @deprecated in favor of {@link #eventCheckInProtectedReportsValidator}. 
+     */
+    @Deprecated(since = "2.8", forRemoval = true)
     private final EventCheckinDataValidator eventCheckinValidator;
     private final EventCheckInProtectedReportsValidator eventCheckInProtectedReportsValidator;
     private static final Logger logger = LoggerFactory.getLogger(SubmissionPayloadValidator.class);
