@@ -92,7 +92,7 @@ divided into different sub-categories:
 - `api` - API configuration, configures the API, which is used by the mobile app to query diagnosis keys
 - `signature` - Signature configuration, used for signing the exports
 - `objectstore` - Configuration for the S3 compatible object storage
-- `app-features` - Configuration for mobile clients.
+- `app-features` - [Configuration for mobile clients](#app-features)
 
 ## Object Store
 
@@ -350,8 +350,11 @@ Digital Signing Certificates are distributed on CDN on the following path: `ehn-
 Starting with version 2.8 there is now the possibility to submit encrypted check-ins. For clients to check whether this feature is enabled on the cwa-server a new app feature [```EVREG_UNENCRYPTED_CHECKINS_ENABLED```](../services/distribution/src/main/resources/application.yaml) is introduced.
 
 ```yaml
-unencrypted-checkins-enabled: <0 or 1>
+    app-features:
+      - label: unencrypted-checkins-enabled
+        value: ${EVREG_UNENCRYPTED_CHECKINS_ENABLED:0}
 ```
+
 #### Additional Note
-**Not to be confused** with [```UNENCRYPTED_CHECKINS_ENABLED```](../services/submission/src/main/resources/application.yaml) from the distribution service
-which indicates whether submission still accepts default check-ins or only accepts encrypted check-ins.
+**Not to be confused** with [```UNENCRYPTED_CHECKINS_ENABLED```](../services/submission/src/main/resources/application.yaml) from the **submission service**, which indicates whether
+submission still accepts default check-ins or only accepts encrypted check-ins and is of type `Boolean`.
