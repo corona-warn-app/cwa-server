@@ -8,6 +8,7 @@ and to the Federation Gateway for keys that are applicable.
 The payload to be sent by the mobile applications is defined in the [submission_payload.proto](../common/protocols/src/main/proto/app/coronawarn/server/common/protocols/internal/submission_payload.proto) and
 [temporary_exposure_key_export.proto](../common/protocols/src/main/proto/app/coronawarn/server/common/protocols/external/exposurenotification/temporary_exposure_key_export.proto) and
 [check_in.proto](../common/protocols/src/main/proto/app/coronawarn/server/common/protocols/internal/pt/check_in.proto)
+[check_in_protected_report.proto](../common/protocols/src/main/proto/app/coronawarn/server/common/protocols/internal/pt/check_in.proto)
 
 ```protobuf
   message SubmissionPayload {
@@ -49,6 +50,13 @@ The payload to be sent by the mobile applications is defined in the [submission_
     uint32 endIntervalNumber = 3;
     uint32 transmissionRiskLevel = 4;
   }
+
+  message CheckInProtectedReport {
+    bytes locationIdHash = 1;
+    bytes iv = 2;
+    bytes encryptedCheckInRecord = 3;
+    bytes mac = 4;
+}
 ```
 
 Additionally, the endpoint requires the following headers to be set:
