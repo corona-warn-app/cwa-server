@@ -57,7 +57,9 @@ Additionally, the endpoint requires the following headers to be set:
 CWA-Authorization: TAN <TAN>
 CWA-Fake: <0 or 1>
 ```
+
 The response headers returned by this endpoint include the number if check-ins that were successfully saved and the number of check-ins that were filtered out before further processing.
+
 ```http response headers
 cwa-filtered-checkins: "number" <String>
 cwa-saved-checkins: "number" <String>
@@ -193,5 +195,3 @@ unencrypted-checkins-enabled: <true or false>
 
 **Not to be confused** with [```EVREG_UNENCRYPTED_CHECKINS_ENABLED```](../services/distribution/src/main/resources/application.yaml) from the distribution service
 which indicates for the mobile clients which feature is enabled and is of type ```Integer```.
-
-
