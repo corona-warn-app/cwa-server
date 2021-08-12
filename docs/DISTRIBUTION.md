@@ -358,5 +358,4 @@ Starting with version 2.8 there is now the possibility to submit encrypted check
 
 #### Additional Note
 
-**Not to be confused** with [```UNENCRYPTED_CHECKINS_ENABLED```](../services/submission/src/main/resources/application.yaml) from the **submission service**, which indicates whether
-submission still accepts default check-ins or only accepts encrypted check-ins and is of type `Boolean`.
+**Not to be confused** with [```UNENCRYPTED_CHECKINS_ENABLED```](../services/submission/src/main/resources/application.yaml) from the **submission service**, which indicates whether submission still accepts default check-ins or only accepts encrypted check-ins and is of type `Boolean`.
