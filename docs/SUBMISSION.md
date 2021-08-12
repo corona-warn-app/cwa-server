@@ -181,14 +181,17 @@ Key padding is implemented in [`SubmissionController`](https://github.com/corona
 and happens after TAN verification, but before we persist sumitted keys on the CWA server.
 
 ## Submission Application Properties
+
 Starting with version 2.8 there is now the possibility to submit encrypted check-ins. For this a new property ```unencrypted-checkins-enabled```is included.
 This flag is used to control whether check-ins ( which is the current default) are still allowed or not accepted anymore.
 
 ```yaml
 unencrypted-checkins-enabled: <true or false>
 ```
-#### Additional Note
+
+### Additional Note
+
 **Not to be confused** with [```EVREG_UNENCRYPTED_CHECKINS_ENABLED```](../services/distribution/src/main/resources/application.yaml) from the distribution service
-which indicates for the mobile clients which feature is enabled and is of type ```Integer ```.
+which indicates for the mobile clients which feature is enabled and is of type ```Integer```.
 
 
