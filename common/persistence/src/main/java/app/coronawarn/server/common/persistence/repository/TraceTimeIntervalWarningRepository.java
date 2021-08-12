@@ -8,6 +8,11 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+/**
+ * Event check-in repository.
+ * @deprecated in favor of encrypted check-ins.
+ */
+@Deprecated(since = "2.8", forRemoval = true)
 @Repository
 public interface TraceTimeIntervalWarningRepository
     extends PagingAndSortingRepository<TraceTimeIntervalWarning, Long> {
