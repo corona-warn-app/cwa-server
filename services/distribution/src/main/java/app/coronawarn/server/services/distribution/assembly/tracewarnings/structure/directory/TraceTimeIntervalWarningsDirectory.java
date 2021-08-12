@@ -32,8 +32,9 @@ public class TraceTimeIntervalWarningsDirectory extends DirectoryOnDisk {
 
   @Override
   public void prepare(ImmutableStack<Object> indices) {
+    String version = (String) indices.peek();
     this.addWritable(decorateCountryDirectory(new TraceTimeIntervalWarningsCountryDirectory(
-        traceWarningsBundler, cryptoProvider, distributionServiceConfig)));
+        traceWarningsBundler, cryptoProvider, distributionServiceConfig, version)));
     super.prepare(indices);
   }
 

@@ -2,8 +2,6 @@ package app.coronawarn.server.services.distribution.assembly.tracewarnings.struc
 
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.protocols.internal.pt.TraceWarningPackage;
-import app.coronawarn.server.common.shared.collection.ImmutableStack;
-import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDiskWithChecksum;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import com.google.protobuf.ByteString;
 import java.util.Comparator;
@@ -13,33 +11,36 @@ import java.util.stream.Collectors;
 /**
  * A {@link app.coronawarn.server.services.distribution.assembly.structure.file.File} containing a list of {@link
  * app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning} serialized protos.
+ *
+ * @deprecated because trace time warnings are being replaced by protected reports.
  */
-public class TraceTimeIntervalWarningExportFile extends FileOnDiskWithChecksum {
+@Deprecated(since = "2.8")
+public class TraceTimeIntervalWarningExportFile extends AbstractCheckInExportFile {
 
-  private final List<app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning>
+  protected final List<app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning>
       traceTimeIntervalWarnings;
-  private final String region;
-  private final int intervalNumber;
 
-  TraceTimeIntervalWarningExportFile(
+
+  public TraceTimeIntervalWarningExportFile(
       List<app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning> traceTimeIntervalWarnings,
       String region, int intervalNumber, DistributionServiceConfig distributionServiceConfig) {
-    super(distributionServiceConfig.getTekExport().getFileName(), new byte[0]);
-
-    this.region = region;
-    this.intervalNumber = intervalNumber;
+    super(region, intervalNumber, distributionServiceConfig.getTekExport().getFileName());
     this.traceTimeIntervalWarnings = traceTimeIntervalWarnings;
   }
 
-  @Override
-  public void prepare(ImmutableStack<Object> indices) {
-    this.setBytes(createTraceWarningExportBytes());
-    super.prepare(indices);
+  protected byte[] createTraceWarningExportBytes() {
+    return TraceWarningPackage.newBuilder().setIntervalNumber(this.intervalNumber)
+        .setRegion(this.region).addAllTimeIntervalWarnings(this.traceTimeIntervalWarnings).build()
+        .toByteArray();
   }
+
 
   /**
    * Creates a binary export file by converting the given warnings to their proto structures.
+   *
+   * @deprecated because trace time warnings are being replaced by protected reports.
    */
+  @Deprecated(since = "2.8")
   public static TraceTimeIntervalWarningExportFile fromTraceTimeIntervalWarnings(
       List<TraceTimeIntervalWarning> traceTimeIntervalWarnings, String country,
       int intervalNumber, DistributionServiceConfig distributionServiceConfig) {
@@ -48,11 +49,6 @@ public class TraceTimeIntervalWarningExportFile extends FileOnDiskWithChecksum {
         intervalNumber, distributionServiceConfig);
   }
 
-  private byte[] createTraceWarningExportBytes() {
-    return TraceWarningPackage.newBuilder().setIntervalNumber(this.intervalNumber)
-        .setRegion(this.region).addAllTimeIntervalWarnings(this.traceTimeIntervalWarnings).build()
-        .toByteArray();
-  }
 
   private static List<app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning>
       getTraceIntervalWarningsFromTraceIntervalWarnings(
