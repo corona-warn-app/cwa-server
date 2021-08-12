@@ -18,6 +18,7 @@ import app.coronawarn.server.common.shared.util.TimeUtils;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.ProdTraceTimeIntervalWarningsPackageBundler;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceTimeIntervalWarningsPackageBundler;
 import app.coronawarn.server.services.distribution.assembly.transformation.EnfParameterAdapter;
@@ -31,6 +32,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -119,18 +121,21 @@ public class TraceTimeIntervalWarningsStructureProviderTest {
 
     Set<String> expectedPaths = Set.of(
         PARENT_TEST_FOLDER,
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour",
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "DE"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "DE", "hour"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "DE", "hour",
             oldestHour),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour",
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "DE", "hour",
             newestNotCurrentHour),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "index"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "index.checksum"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour", "index"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour", "index.checksum"));
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "index"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "index.checksum"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "DE", "hour", "index"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "DE", "hour",
+            "index.checksum"));
 
     Set<String> actualFiles =
         getSubFoldersPaths(testOutputFolder.getRoot().getAbsolutePath(), PARENT_TEST_FOLDER);
@@ -142,7 +147,7 @@ public class TraceTimeIntervalWarningsStructureProviderTest {
 
     // Newest hour path should not be in the package structure since it is the current hour
     assertFalse(actualFiles.contains(StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour",
-            currentHour)), "Should NOT contain current hour");
+        currentHour)), "Should NOT contain current hour");
   }
 
   @Test
@@ -164,18 +169,21 @@ public class TraceTimeIntervalWarningsStructureProviderTest {
 
     Set<String> expectedPaths = Set.of(
         PARENT_TEST_FOLDER,
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour",
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "DE"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "DE", "hour"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "DE", "hour",
             oldestHour),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour",
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "DE", "hour",
             middleHour),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "index"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "index.checksum"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour", "index"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour", "index.checksum"));
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "index"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "index.checksum"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "DE", "hour", "index"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "DE", "hour",
+            "index.checksum"));
 
     Set<String> actualFiles =
         getSubFoldersPaths(testOutputFolder.getRoot().getAbsolutePath(), PARENT_TEST_FOLDER);
@@ -206,16 +214,19 @@ public class TraceTimeIntervalWarningsStructureProviderTest {
 
     Set<String> expectedPaths = Set.of(
         PARENT_TEST_FOLDER,
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour",
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "DE"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "DE", "hour"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "DE", "hour",
             newerHour),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "index"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "index.checksum"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour", "index"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour", "index.checksum"));
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "index"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "index.checksum"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "DE", "hour", "index"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "DE", "hour",
+            "index.checksum"));
 
     Set<String> actualFiles =
         getSubFoldersPaths(testOutputFolder.getRoot().getAbsolutePath(), PARENT_TEST_FOLDER);
@@ -240,14 +251,17 @@ public class TraceTimeIntervalWarningsStructureProviderTest {
 
     Set<String> expectedPaths = Set.of(
         PARENT_TEST_FOLDER,
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "index"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "index.checksum"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour", "index"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour", "index.checksum"));
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "DE"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "DE", "hour"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "index"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "index.checksum"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "DE", "hour", "index"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "DE", "hour",
+            "index.checksum"));
 
     Set<String> actualFiles =
         getSubFoldersPaths(testOutputFolder.getRoot().getAbsolutePath(), PARENT_TEST_FOLDER);
@@ -278,28 +292,33 @@ public class TraceTimeIntervalWarningsStructureProviderTest {
 
     Set<String> expectedHourlyPackagesPaths = new HashSet<>();
     IntStream.range(0, numberOfHourlyPackages + 1).forEach(hourlyPackage -> {
-      final String hourDirectory = StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour",
-          oldestHour + hourlyPackage);
+      final String hourDirectory = StringUtils
+          .joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "DE", "hour",
+              oldestHour + hourlyPackage);
       final String hourIndexDirectory = StringUtils
-          .joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour",
+          .joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "DE", "hour",
               oldestHour + hourlyPackage, "index");
       final String hourIndexChecksumDirectory = StringUtils
-          .joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour",
+          .joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "DE", "hour",
               oldestHour + hourlyPackage, "index.checksum");
       expectedHourlyPackagesPaths.addAll(Set.of(hourDirectory, hourIndexDirectory, hourIndexChecksumDirectory));
     });
 
     Set<String> expectedPaths = Stream.of(
         PARENT_TEST_FOLDER,
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "index"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "index.checksum"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour", "index"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour", "index.checksum")).collect(
-        Collectors.toSet());
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "DE"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "DE", "hour"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "index"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "index.checksum"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "DE", "hour", "index"),
+        StringUtils
+            .joinWith(SEPARATOR, PARENT_TEST_FOLDER, "version", "v1", "twp", "country", "DE", "hour", "index.checksum"))
+        .collect(
+            Collectors.toSet());
     expectedPaths.addAll(expectedHourlyPackagesPaths);
 
     Set<String> actualFiles =
@@ -317,10 +336,16 @@ public class TraceTimeIntervalWarningsStructureProviderTest {
   private void writeDirectories(List<TraceTimeIntervalWarning> traceWarnings) throws IOException {
     when(traceTimeWarningService.getTraceTimeIntervalWarnings()).thenReturn(traceWarnings);
     Directory<WritableOnDisk> outputDirectory = this.outputDirectoryProvider.getDirectory();
+    IndexDirectoryOnDisk<String> versionDirectory = new IndexDirectoryOnDisk<>(
+        distributionServiceConfig.getApi().getVersionPath(),
+        ignoredValue -> Set.of(distributionServiceConfig.getApi().getVersionV1()),
+        Object::toString);
     TraceTimeIntervalWarningsStructureProvider distributionStructureProvider =
         new TraceTimeIntervalWarningsStructureProvider(traceTimeWarningService, bundler,
             cryptoProvider, distributionServiceConfig);
-    outputDirectory.addWritable(distributionStructureProvider.getTraceWarningsDirectory());
+    versionDirectory
+        .addWritableToAll(ignored -> Optional.of(distributionStructureProvider.getTraceWarningsDirectory()));
+    outputDirectory.addWritable(versionDirectory);
     outputDirectoryProvider.clear();
     outputDirectory.prepare(new ImmutableStack<>());
     outputDirectory.write();

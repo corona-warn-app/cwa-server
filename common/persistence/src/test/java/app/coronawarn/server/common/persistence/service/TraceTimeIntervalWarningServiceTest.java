@@ -7,11 +7,14 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
+import app.coronawarn.server.common.persistence.domain.CheckInProtectedReports;
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
+import app.coronawarn.server.common.persistence.repository.CheckInProtectedReportsRepository;
 import app.coronawarn.server.common.persistence.repository.TraceTimeIntervalWarningRepository;
 import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
+import app.coronawarn.server.common.protocols.internal.pt.CheckInProtectedReport;
 import app.coronawarn.server.common.shared.util.HashUtils;
 import com.google.protobuf.ByteString;
 import java.time.Instant;
@@ -40,6 +43,9 @@ class TraceTimeIntervalWarningServiceTest {
 
   @Autowired
   TraceTimeIntervalWarningRepository traceWarningsRepository;
+
+  @Autowired
+  CheckInProtectedReportsRepository protectedReportsRepository;
 
   private int currentTimestamp;
 
@@ -154,6 +160,36 @@ class TraceTimeIntervalWarningServiceTest {
     var actKeys = traceWarningsService.getTraceTimeIntervalWarnings();
 
     assertThat(actKeys).isEmpty();
+  }
+
+  @Test
+  void testSaveCheckInProtectedReports() {
+    List<CheckInProtectedReport> reports = Collections.singletonList(
+        CheckInProtectedReport.newBuilder()
+            .setLocationIdHash(ByteString.EMPTY)
+            .setEncryptedCheckInRecord(ByteString.EMPTY)
+            .setIv(ByteString.EMPTY)
+            .build()
+    );
+
+    final int numberOfCheckInProtectedReports = traceWarningsService
+        .saveCheckInProtectedReports(reports, currentTimestamp);
+    assertThat(numberOfCheckInProtectedReports).isEqualTo(1);
+  }
+
+  @Test
+  void testGetCheckInProtectedReports() {
+    final byte[] data = {1};
+
+    protectedReportsRepository.saveDoNothingOnConflict(data, data, data, 100);
+    protectedReportsRepository.saveDoNothingOnConflict(data, data, data, 5);
+    protectedReportsRepository.saveDoNothingOnConflict(data, data, data, 800);
+
+    final Collection<CheckInProtectedReports> checkInProtectedReports = traceWarningsService
+        .getCheckInProtectedReports();
+    assertThat(checkInProtectedReports).flatExtracting(CheckInProtectedReports::getSubmissionTimestamp)
+        .containsExactly(5L, 100L, 800L);
+
   }
 
   private List<CheckIn> getRandomTestData() {

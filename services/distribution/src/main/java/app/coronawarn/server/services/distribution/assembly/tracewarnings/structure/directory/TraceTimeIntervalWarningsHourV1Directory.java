@@ -6,9 +6,6 @@ import app.coronawarn.server.services.distribution.assembly.component.CryptoProv
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.signing.DistributionArchiveSigningDecorator;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDiskWithChecksum;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceTimeIntervalWarningsPackageBundler;
@@ -17,26 +14,26 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import java.util.List;
 import java.util.Optional;
 
-public class TraceTimeIntervalWarningsHourDirectory extends IndexDirectoryOnDisk<Integer> {
-
-  private TraceTimeIntervalWarningsPackageBundler traceWarningsBundler;
-  private CryptoProvider cryptoProvider;
-  private DistributionServiceConfig distributionServiceConfig;
+/**
+ * Hour directory for checkins in the v1 implementation.
+ */
+@Deprecated(since = "2.8")
+public class TraceTimeIntervalWarningsHourV1Directory extends AbstractTraceTimeIntervalWarningsHourDirectory {
 
   /**
    * Creates an instance of the directory that holds packages for an hour since epoch, as defined by the API spec.
+   *
+   * @deprecated because trace time warnings are being replaced by protected reports.
    */
-  public TraceTimeIntervalWarningsHourDirectory(
+  @Deprecated(since = "2.8")
+  public TraceTimeIntervalWarningsHourV1Directory(
       TraceTimeIntervalWarningsPackageBundler traceWarningsBundler, CryptoProvider cryptoProvider,
       DistributionServiceConfig distributionServiceConfig) {
-    super(distributionServiceConfig.getApi().getHourPath(), indices -> {
-      String country = (String) indices.peek();
-      return traceWarningsBundler.getHoursForDistributableWarnings(country);
-    }, Integer::valueOf);
-
-    this.traceWarningsBundler = traceWarningsBundler;
-    this.cryptoProvider = cryptoProvider;
-    this.distributionServiceConfig = distributionServiceConfig;
+    super(traceWarningsBundler, cryptoProvider, distributionServiceConfig,
+        indices -> {
+          String country = (String) indices.peek();
+          return traceWarningsBundler.getHoursForDistributableWarnings(country);
+        }, Integer::valueOf);
   }
 
   @Override
@@ -62,9 +59,5 @@ public class TraceTimeIntervalWarningsHourDirectory extends IndexDirectoryOnDisk
       return Optional.of(decorateTraceWarningArchives(hourArchive));
     });
     super.prepare(indices);
-  }
-
-  private Directory<WritableOnDisk> decorateTraceWarningArchives(Archive<WritableOnDisk> archive) {
-    return new DistributionArchiveSigningDecorator(archive, cryptoProvider, distributionServiceConfig);
   }
 }

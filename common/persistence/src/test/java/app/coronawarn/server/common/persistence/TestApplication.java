@@ -3,6 +3,7 @@
 package app.coronawarn.server.common.persistence;
 
 import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
+import app.coronawarn.server.common.persistence.repository.CheckInProtectedReportsRepository;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import app.coronawarn.server.common.persistence.repository.FederationBatchInfoRepository;
 import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRepository;
@@ -65,8 +66,9 @@ public class TestApplication {
 
   @Bean
   TraceTimeIntervalWarningService traceTimeWarningService(
-      TraceTimeIntervalWarningRepository timeIntervalWarningRepository) throws NoSuchAlgorithmException {
-    return new TraceTimeIntervalWarningService(timeIntervalWarningRepository);
+      TraceTimeIntervalWarningRepository timeIntervalWarningRepository,
+      CheckInProtectedReportsRepository checkInProtectedReportsRepository) throws NoSuchAlgorithmException {
+    return new TraceTimeIntervalWarningService(timeIntervalWarningRepository, checkInProtectedReportsRepository);
   }
 
   @Bean
