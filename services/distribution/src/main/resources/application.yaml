@@ -104,7 +104,6 @@ services:
       hour-file-retention-days: 2
     # Configuration for the publishing of app statistics
     statistics:
-      trend-calculation-threshold: 0.05
       statistic-path: ${STATISTICS_FILE_NAME:json/v1/cwa_reporting_public_data.json}
       local-statistic-path: ${LOCAL_STATISTICS_FILE_NAME:json/v1/cwa_reporting_public_data_region.json}
       access-key: ${STATISTICS_FILE_ACCESS_KEY_ID:}
@@ -113,8 +112,8 @@ services:
       bucket: ${STATISTICS_FILE_S3_BUCKET:obs-cwa-public-dev}
 
     app-features:
-      - label: reserved
-        value: ${reserved:1}
+      - label: unencrypted-checkins-enabled
+        value: ${EVREG_UNENCRYPTED_CHECKINS_ENABLED:0}
     supported-countries: ${SUPPORTED_COUNTRIES}
     app-versions:
       latest-ios: ${IOS_LATEST_VERSION:1.5.3}

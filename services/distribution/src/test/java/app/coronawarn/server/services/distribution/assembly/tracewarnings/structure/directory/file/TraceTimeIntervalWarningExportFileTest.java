@@ -61,6 +61,7 @@ class TraceTimeIntervalWarningExportFileTest {
     byte[] checksum = Files.readAllBytes(outputFile.toPath().resolve(FILE_NAME_CHECKSUM));
     byte[] checksum2 = Files.readAllBytes(outputFile2.toPath().resolve(FILE_NAME_CHECKSUM));
 
+    //then
     assertThat(checksum).isEqualTo(checksum2);
   }
 

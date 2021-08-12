@@ -61,6 +61,14 @@ public class SubmissionServiceConfig {
   @Max(144)
   private Integer minRollingPeriod;
 
+  /**
+   * unencryptedCheckinsEnabled.
+   *
+   * @deprecated should be removed when false
+   */
+  @Deprecated
+  private Boolean unencryptedCheckinsEnabled;
+
   @Autowired
   private TekFieldDerivations tekFieldDerivations;
 
@@ -202,6 +210,20 @@ public class SubmissionServiceConfig {
 
   public void setTrlDerivations(TrlDerivations trlDerivations) {
     this.trlDerivations = trlDerivations;
+  }
+
+  /**
+   * unencryptedCheckinsEnabled.
+   *
+   * @deprecated should be removed when false
+   */
+  @Deprecated
+  public Boolean isUnencryptedCheckinsEnabled() {
+    return unencryptedCheckinsEnabled == null ? false : unencryptedCheckinsEnabled;
+  }
+
+  public void setUnencryptedCheckinsEnabled(Boolean unencryptedCheckinsEnabled) {
+    this.unencryptedCheckinsEnabled = unencryptedCheckinsEnabled;
   }
 
   public static class Payload {
