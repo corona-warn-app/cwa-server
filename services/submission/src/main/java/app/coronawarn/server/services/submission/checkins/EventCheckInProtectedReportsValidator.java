@@ -20,10 +20,10 @@ public class EventCheckInProtectedReportsValidator {
   public boolean verify(SubmissionPayload submissionPayload, ConstraintValidatorContext validatorContext) {
     List<CheckInProtectedReport> checkInProtectedReportsList = submissionPayload.getCheckInProtectedReportsList();
     return checkInProtectedReportsList.stream()
-        .map(checkin -> verifyLocationIdHashLength(checkin, validatorContext)
-            && verifyIvLength(checkin, validatorContext)
-            && verifyEncryptedCheckInRecordLength(checkin, validatorContext))
-        .allMatch(checkinValidation -> Boolean.valueOf(checkinValidation).equals(Boolean.TRUE));
+        .map(checkInProtectedReport -> verifyLocationIdHashLength(checkInProtectedReport, validatorContext)
+            && verifyIvLength(checkInProtectedReport, validatorContext)
+            && verifyEncryptedCheckInRecordLength(checkInProtectedReport, validatorContext))
+        .allMatch(checkInValidation -> Boolean.valueOf(checkInValidation).equals(Boolean.TRUE));
   }
 
   boolean verifyLocationIdHashLength(CheckInProtectedReport checkInProtectedReport,
@@ -31,8 +31,8 @@ public class EventCheckInProtectedReportsValidator {
     if (ObjectUtils.isEmpty(checkInProtectedReport.getLocationIdHash())
         || checkInProtectedReport.getLocationIdHash().size() != 32) {
       addViolation(validatorContext, "CheckInProtectedReports locationIdHash must have 32 bytes not "
-          + (checkInProtectedReport.getLocationIdHash() == null
-          ? 0 : checkInProtectedReport.getLocationIdHash().size()));
+          + (checkInProtectedReport.getLocationIdHash() == null ? 0
+          : checkInProtectedReport.getLocationIdHash().size()));
       return false;
     }
     return true;
@@ -54,8 +54,8 @@ public class EventCheckInProtectedReportsValidator {
     if (ObjectUtils.isEmpty(checkInProtectedReport.getEncryptedCheckInRecord())
         || checkInProtectedReport.getEncryptedCheckInRecord().size() != 16) {
       addViolation(validatorContext, "CheckInProtectedReports encryptedCheckInRecord must have 16 bytes not "
-          + (checkInProtectedReport.getEncryptedCheckInRecord() == null
-          ? 0 : checkInProtectedReport.getEncryptedCheckInRecord().size()));
+          + (checkInProtectedReport.getEncryptedCheckInRecord() == null ? 0
+          : checkInProtectedReport.getEncryptedCheckInRecord().size()));
       return false;
     }
     return true;
