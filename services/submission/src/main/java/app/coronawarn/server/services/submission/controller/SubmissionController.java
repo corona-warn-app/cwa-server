@@ -83,6 +83,13 @@ public class SubmissionController {
     return buildRealDeferredResult(exposureKeys, tan);
   }
 
+  /**
+   * Saves the checkins and, if needed, filters them.
+   *
+   * @param submissionPayload Type protobuf.
+   * @param tan               A tan for diagnosis verification.
+   * @return DeferredResult.
+   */
   private DeferredResult<ResponseEntity<Void>> buildRealDeferredResult(SubmissionPayload submissionPayload,
       String tan) {
     DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
@@ -95,8 +102,7 @@ public class SubmissionController {
         deferredResult.setResult(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
       } else {
         extractAndStoreDiagnosisKeys(submissionPayload);
-        CheckinsStorageResult checkinsStorageResult = eventCheckinFacade
-            .extractAndStoreEventCheckins(submissionPayload);
+        CheckinsStorageResult checkinsStorageResult = eventCheckinFacade.extractAndStoreCheckins(submissionPayload);
 
         deferredResult.setResult(ResponseEntity.ok()
             .header("cwa-filtered-checkins", String.valueOf(checkinsStorageResult.getNumberOfFilteredCheckins()))

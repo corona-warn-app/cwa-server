@@ -13,6 +13,7 @@ message TraceWarningPackage {
 }
 
 message TraceTimeIntervalWarning {
+  option deprecated = true;
   bytes locationIdHash = 1; // SHA-256 of the Location ID
   // 10-minute intervals since UNIX Epoch
   uint32 startIntervalNumber = 2;

@@ -1,8 +1,10 @@
 package app.coronawarn.server.services.distribution.assembly.tracewarnings.structure;
 
+import static app.coronawarn.server.services.distribution.common.Helpers.buildCheckInProtectedReports;
 import static app.coronawarn.server.services.distribution.common.Helpers.buildTraceTimeIntervalWarning;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import app.coronawarn.server.common.persistence.domain.CheckInProtectedReports;
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
 import app.coronawarn.server.common.shared.util.TimeUtils;
@@ -56,6 +58,18 @@ class DemoTraceTimeIntervalWarningsPackageBundlerTest {
   }
 
   @Test
+  void testGetsCheckInProtectedForHour() {
+    List<CheckInProtectedReports> checkInProtectedReports = Stream
+        .of(buildCheckInProtectedReports(5, 5),
+            buildCheckInProtectedReports(5, 5),
+            buildCheckInProtectedReports(5, 5))
+        .flatMap(List::stream)
+        .collect(Collectors.toList());
+    bundler.setCheckInProtectedReports(checkInProtectedReports, LocalDateTime.of(1970, 1, 5, 0, 0));
+    assertThat(bundler.getCheckInProtectedReportsForHour(5)).hasSize(15);
+  }
+
+  @Test
   void testGetHoursTraceLocationWarningsForCountry() {
     List<TraceTimeIntervalWarning> warnings = Stream
         .of(buildTraceTimeIntervalWarning(6, 50, 5, 5),
@@ -65,6 +79,42 @@ class DemoTraceTimeIntervalWarningsPackageBundlerTest {
         .collect(Collectors.toList());
     bundler.setTraceTimeIntervalWarnings(warnings, LocalDateTime.of(1970, 1, 5, 0, 0));
     assertThat(bundler.getHoursForDistributableWarnings("DE")).hasSize(3);
+  }
+
+  @Test
+  void testGetHoursTraceLocationWarningsForUnknownCountryReturnsEmptySet() {
+    List<TraceTimeIntervalWarning> warnings = Stream
+        .of(buildTraceTimeIntervalWarning(6, 50, 5, 5),
+            buildTraceTimeIntervalWarning(6, 50, 6, 5),
+            buildTraceTimeIntervalWarning(6, 50, 7, 5))
+        .flatMap(List::stream)
+        .collect(Collectors.toList());
+    bundler.setTraceTimeIntervalWarnings(warnings, LocalDateTime.of(1970, 1, 5, 0, 0));
+    assertThat(bundler.getHoursForDistributableWarnings("UNKNOWN")).isEmpty();
+  }
+
+  @Test
+  void testGetHoursCheckInProtectedReportsForCountry() {
+    List<CheckInProtectedReports> checkInProtectedReports = Stream
+        .of(buildCheckInProtectedReports(5, 5),
+            buildCheckInProtectedReports(6, 5),
+            buildCheckInProtectedReports(7, 5))
+        .flatMap(List::stream)
+        .collect(Collectors.toList());
+    bundler.setCheckInProtectedReports(checkInProtectedReports, LocalDateTime.of(1970, 1, 5, 0, 0));
+    assertThat(bundler.getHoursForDistributableCheckInProtectedReports("DE")).hasSize(3);
+  }
+
+  @Test
+  void testGetHoursCheckInProtectedReportsForUnknownCountryShouldReturnEmptySet() {
+    List<CheckInProtectedReports> checkInProtectedReports = Stream
+        .of(buildCheckInProtectedReports(5, 5),
+            buildCheckInProtectedReports(6, 5),
+            buildCheckInProtectedReports(7, 5))
+        .flatMap(List::stream)
+        .collect(Collectors.toList());
+    bundler.setCheckInProtectedReports(checkInProtectedReports, LocalDateTime.of(1970, 1, 5, 0, 0));
+    assertThat(bundler.getHoursForDistributableCheckInProtectedReports("UNKNOWN")).isEmpty();
   }
 
   @Test
