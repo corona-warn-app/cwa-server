@@ -1,6 +1,6 @@
-package app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory;
+package app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.v1;
 
-import app.coronawarn.server.common.persistence.domain.CheckInProtectedReports;
+import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
@@ -9,30 +9,31 @@ import app.coronawarn.server.services.distribution.assembly.structure.archive.Ar
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDiskWithChecksum;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceTimeIntervalWarningsPackageBundler;
-import app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.file.CheckInProtectedReportsExportFile;
+import app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.AbstractTraceTimeIntervalWarningsHourDirectory;
+import app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.file.TraceTimeIntervalWarningExportFile;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.util.List;
 import java.util.Optional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * Hour directory for checkins in the v2 implementation.
+ * Hour directory for checkins in the v1 implementation.
  */
-public class TraceTimeIntervalWarningsHourV2Directory extends AbstractTraceTimeIntervalWarningsHourDirectory {
-
-  private static final Logger logger = LoggerFactory.getLogger(TraceTimeIntervalWarningsHourV2Directory.class);
+@Deprecated(since = "2.8")
+public class TraceTimeIntervalWarningsHourV1Directory extends AbstractTraceTimeIntervalWarningsHourDirectory {
 
   /**
    * Creates an instance of the directory that holds packages for an hour since epoch, as defined by the API spec.
+   *
+   * @deprecated because trace time warnings are being replaced by protected reports.
    */
-  public TraceTimeIntervalWarningsHourV2Directory(
+  @Deprecated(since = "2.8")
+  public TraceTimeIntervalWarningsHourV1Directory(
       TraceTimeIntervalWarningsPackageBundler traceWarningsBundler, CryptoProvider cryptoProvider,
       DistributionServiceConfig distributionServiceConfig) {
     super(traceWarningsBundler, cryptoProvider, distributionServiceConfig,
         indices -> {
           String country = (String) indices.peek();
-          return traceWarningsBundler.getHoursForDistributableCheckInProtectedReports(country);
+          return traceWarningsBundler.getHoursForDistributableWarnings(country);
         }, Integer::valueOf);
   }
 
@@ -42,20 +43,19 @@ public class TraceTimeIntervalWarningsHourV2Directory extends AbstractTraceTimeI
       Integer hourSinceEpoch = (Integer) currentIndices.peek();
       String country = (String) currentIndices.pop().peek();
 
-      List<CheckInProtectedReports> checkInReportsForHour =
-          this.traceWarningsBundler.getCheckInProtectedReportsForHour(hourSinceEpoch);
-      if (checkInReportsForHour.isEmpty()) {
+      List<TraceTimeIntervalWarning> traceWarningsForCurrentHour =
+          this.traceWarningsBundler.getTraceTimeWarningsForHour(hourSinceEpoch);
+      if (traceWarningsForCurrentHour.isEmpty()) {
         return Optional.of(new FileOnDiskWithChecksum("index", new byte[0]));
       }
-      logger.debug("Building protected reports export file for hour {} and country {} with {} encrypted checkins.",
-          hourSinceEpoch, country, checkInReportsForHour.size());
-      File<WritableOnDisk> checkInProtectedReportsExportFile =
-          CheckInProtectedReportsExportFile.fromCheckInProtectedReports(
-              checkInReportsForHour, country, hourSinceEpoch, distributionServiceConfig);
+
+      File<WritableOnDisk> traceTimeIntervalWarningExportFile =
+          TraceTimeIntervalWarningExportFile.fromTraceTimeIntervalWarnings(
+              traceWarningsForCurrentHour, country, hourSinceEpoch, distributionServiceConfig);
 
       Archive<WritableOnDisk> hourArchive =
-          new ArchiveOnDisk(distributionServiceConfig.getOutputFileNameV2());
-      hourArchive.addWritable(checkInProtectedReportsExportFile);
+          new ArchiveOnDisk(distributionServiceConfig.getOutputFileName());
+      hourArchive.addWritable(traceTimeIntervalWarningExportFile);
 
       return Optional.of(decorateTraceWarningArchives(hourArchive));
     });

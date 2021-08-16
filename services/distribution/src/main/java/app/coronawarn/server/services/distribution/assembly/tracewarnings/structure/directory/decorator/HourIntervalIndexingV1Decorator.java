@@ -4,7 +4,7 @@ import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDiskWithChecksum;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceTimeIntervalWarningsPackageBundler;
-import app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.TraceTimeIntervalWarningsHourV1Directory;
+import app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.v1.TraceTimeIntervalWarningsHourV1Directory;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;

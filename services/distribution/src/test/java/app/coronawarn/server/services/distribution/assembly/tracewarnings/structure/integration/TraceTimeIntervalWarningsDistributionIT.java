@@ -116,15 +116,17 @@ class TraceTimeIntervalWarningsDistributionIT {
     // then
     Set<String> expectedPaths = new java.util.HashSet<>(
         Set.of(PARENT_DIRECTORY, StringUtils.joinWith(separator, PARENT_DIRECTORY, VERSION, "v1", "twp"),
-            StringUtils.joinWith(separator, PARENT_DIRECTORY, VERSION,"v1", "twp", "country"),
-            StringUtils.joinWith(separator, PARENT_DIRECTORY, VERSION,"v1", "twp", "country", "DE"),
-            StringUtils.joinWith(separator, PARENT_DIRECTORY, VERSION,"v1", "twp", "country", "DE", "hour"),
-            StringUtils.joinWith(separator, PARENT_DIRECTORY, VERSION,"v1", "twp", "country", "index"),
-            StringUtils.joinWith(separator, PARENT_DIRECTORY, VERSION,"v1", "twp", "country", "index.checksum"),
-            StringUtils.joinWith(separator, PARENT_DIRECTORY, VERSION,"v1", "twp", "country", "DE", "hour", "index"),
-            StringUtils.joinWith(separator, PARENT_DIRECTORY, VERSION,"v1", "twp", "country", "DE", "hour", "index.checksum")));
+            StringUtils.joinWith(separator, PARENT_DIRECTORY, VERSION, "v1", "twp", "country"),
+            StringUtils.joinWith(separator, PARENT_DIRECTORY, VERSION, "v1", "twp", "country", "DE"),
+            StringUtils.joinWith(separator, PARENT_DIRECTORY, VERSION, "v1", "twp", "country", "DE", "hour"),
+            StringUtils.joinWith(separator, PARENT_DIRECTORY, VERSION, "v1", "twp", "country", "index"),
+            StringUtils.joinWith(separator, PARENT_DIRECTORY, VERSION, "v1", "twp", "country", "index.checksum"),
+            StringUtils.joinWith(separator, PARENT_DIRECTORY, VERSION, "v1", "twp", "country", "DE", "hour", "index"),
+            StringUtils.joinWith(separator, PARENT_DIRECTORY, VERSION, "v1", "twp", "country", "DE", "hour",
+                "index.checksum")));
     IntStream.range(oldestHour, latestHour + 1).forEach(hour -> {
-      expectedPaths.add(StringUtils.joinWith(separator, PARENT_DIRECTORY, VERSION, "v1", "twp", "country", "DE", "hour", hour));
+      expectedPaths
+          .add(StringUtils.joinWith(separator, PARENT_DIRECTORY, VERSION, "v1", "twp", "country", "DE", "hour", hour));
     });
     Set<String> actualFiles = Helpers.getSubFoldersPaths(tempFolder.getRoot().getAbsolutePath(), PARENT_DIRECTORY);
     actualFiles.addAll(Helpers.getFilePaths(tempFolder.getRoot(), tempFolder.getRoot().getAbsolutePath()));
@@ -168,12 +170,10 @@ class TraceTimeIntervalWarningsDistributionIT {
     // - add all to the test parent folder
     final Directory<WritableOnDisk> traceWarningsDirectory = traceTimeIntervalWarningsStructureProvider
         .getCheckInProtectedReportsDirectory();
+
     final Directory<WritableOnDisk> directory = outputDirectoryProvider.getDirectory();
     directory.addWritable(traceWarningsDirectory);
 
-    // Prepare indices.
-    // In this case push the version ("v2" for encrypted checkins) onto the indices to indicate that the root starts with "v2".
-    // This is needed for the correct handling of the version.
     ImmutableStack<Object> indices = new ImmutableStack<>();
     indices = indices.push("v2");
     directory.prepare(indices);
