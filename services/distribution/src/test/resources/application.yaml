@@ -8,7 +8,7 @@ logging:
 services:
   distribution:
     output-file-name: index
-    output-file-name-v2: index-v2
+    output-file-name-v2: index
     retention-days: 14
     expiry-policy-minutes: 120
     shifting-policy-threshold: 5
