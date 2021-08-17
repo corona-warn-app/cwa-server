@@ -48,7 +48,7 @@ public class EventCheckInProtectedReportsValidatorTest {
                 .setEncryptedCheckInRecord(ByteString
                     .copyFrom(generateSecureRandomByteArrayData(16)))
                 .setIv(ByteString
-                    .copyFrom(generateSecureRandomByteArrayData(32)))
+                    .copyFrom(generateSecureRandomByteArrayData(16)))
                 .setLocationIdHash(ByteString
                     .copyFrom(generateSecureRandomByteArrayData(32)))
                 .build()))
@@ -85,7 +85,7 @@ public class EventCheckInProtectedReportsValidatorTest {
   @Test
   void verifyIvLengthIsTrue() {
     CheckInProtectedReport checkInProtectedReport = CheckInProtectedReport.newBuilder().setIv(
-        ByteString.copyFrom(generateSecureRandomByteArrayData(32))).build();
+        ByteString.copyFrom(generateSecureRandomByteArrayData(16))).build();
 
     boolean result = underTest.verifyIvLength(checkInProtectedReport, mockValidatorContext);
     assertThat(result).isTrue();
@@ -127,7 +127,7 @@ public class EventCheckInProtectedReportsValidatorTest {
   private static Stream<Arguments> generateWrongLengthByteStrings() {
     return Stream.of(
         Arguments.of(ByteString.copyFrom(generateSecureRandomByteArrayData(100))),
-        Arguments.of(ByteString.copyFrom(generateSecureRandomByteArrayData(0))),
+        Arguments.of(ByteString.copyFrom(generateSecureRandomByteArrayData(33))),
         Arguments.of(ByteString.EMPTY));
   }
 
