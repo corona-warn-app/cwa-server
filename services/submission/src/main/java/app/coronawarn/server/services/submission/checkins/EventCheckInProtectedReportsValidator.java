@@ -10,6 +10,10 @@ import org.springframework.util.ObjectUtils;
 @Component
 public class EventCheckInProtectedReportsValidator {
 
+  public static final int INIT_VECTOR_LENGTH = 16;
+  public static final int LOCATION_ID_HASH_LENGTH = 32;
+  public static final int ENCRYPTED_CHECK_IN_RECORD_LENGTH = 16;
+
   /**
    * Given the submission payload, it verifies whether user event checkInProtectedReports data is aligned with the
    * application constraints. For each checkInProtectedReports:
@@ -29,7 +33,7 @@ public class EventCheckInProtectedReportsValidator {
   boolean verifyLocationIdHashLength(CheckInProtectedReport checkInProtectedReport,
       ConstraintValidatorContext validatorContext) {
     if (ObjectUtils.isEmpty(checkInProtectedReport.getLocationIdHash())
-        || checkInProtectedReport.getLocationIdHash().size() != 32) {
+        || checkInProtectedReport.getLocationIdHash().size() != LOCATION_ID_HASH_LENGTH) {
       addViolation(validatorContext, "CheckInProtectedReports locationIdHash must have 32 bytes not "
           + (checkInProtectedReport.getLocationIdHash() == null ? 0
           : checkInProtectedReport.getLocationIdHash().size()));
@@ -41,7 +45,7 @@ public class EventCheckInProtectedReportsValidator {
   boolean verifyIvLength(CheckInProtectedReport checkInProtectedReport,
       ConstraintValidatorContext validatorContext) {
     if (ObjectUtils.isEmpty(checkInProtectedReport.getIv())
-        || checkInProtectedReport.getIv().size() != 32) {
+        || checkInProtectedReport.getIv().size() != INIT_VECTOR_LENGTH) {
       addViolation(validatorContext, "CheckInProtectedReports iv must have 32 bytes not "
           + (checkInProtectedReport.getIv() == null ? 0 : checkInProtectedReport.getIv().size()));
       return false;
@@ -52,7 +56,7 @@ public class EventCheckInProtectedReportsValidator {
   boolean verifyEncryptedCheckInRecordLength(CheckInProtectedReport checkInProtectedReport,
       ConstraintValidatorContext validatorContext) {
     if (ObjectUtils.isEmpty(checkInProtectedReport.getEncryptedCheckInRecord())
-        || checkInProtectedReport.getEncryptedCheckInRecord().size() != 16) {
+        || checkInProtectedReport.getEncryptedCheckInRecord().size() != ENCRYPTED_CHECK_IN_RECORD_LENGTH) {
       addViolation(validatorContext, "CheckInProtectedReports encryptedCheckInRecord must have 16 bytes not "
           + (checkInProtectedReport.getEncryptedCheckInRecord() == null ? 0
           : checkInProtectedReport.getEncryptedCheckInRecord().size()));
