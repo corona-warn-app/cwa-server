@@ -54,7 +54,7 @@ public class TraceTimeIntervalWarningsHourV2Directory extends AbstractTraceTimeI
               checkInReportsForHour, country, hourSinceEpoch, distributionServiceConfig);
 
       Archive<WritableOnDisk> hourArchive =
-          new ArchiveOnDisk(distributionServiceConfig.getOutputFileNameV2());
+          new ArchiveOnDisk(distributionServiceConfig.getOutputFileName());
       hourArchive.addWritable(checkInProtectedReportsExportFile);
 
       return Optional.of(decorateTraceWarningArchives(hourArchive));
