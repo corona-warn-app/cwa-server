@@ -40,6 +40,7 @@ public class SubmissionController {
    * The route to the submission endpoint (version agnostic).
    */
   public static final String SUBMISSION_ROUTE = "/diagnosis-keys";
+  public static final String SUBMISSION_ON_BEHALF_ROUTE = "/submission-on-behalf";
   private static final Logger logger = LoggerFactory.getLogger(SubmissionController.class);
 
   private final SubmissionMonitor submissionMonitor;
@@ -81,6 +82,30 @@ public class SubmissionController {
     submissionMonitor.incrementRequestCounter();
     submissionMonitor.incrementRealRequestCounter();
     return buildRealDeferredResult(exposureKeys, tan);
+  }
+
+  /**
+   * Handles "submission on behalf" requests.
+   * The basic idea is, that public health departments
+   * should be enabled to warn all participants of a certain event
+   * although the department didn't join the event - it's like: "warn on behalf of ..."
+   *
+   * @param submissionPayload The unmarshalled protocol buffers submission payload.
+   * @param tan          A tan for diagnosis verification.
+   * @return An empty response body.
+   */
+  @PostMapping(value = SUBMISSION_ON_BEHALF_ROUTE, headers = {"cwa-fake=0"})
+  @Timed(description = "Time spent handling submission.")
+  public DeferredResult<ResponseEntity<Void>> submissionOnBehalf(
+      @ValidSubmissionPayload @RequestBody SubmissionPayload submissionPayload,
+      @RequestHeader("cwa-authorization") String tan) {
+    // TODO How to handle the submission monitor for "submission of behalf"?
+    submissionMonitor.incrementRequestCounter();
+    submissionMonitor.incrementRealRequestCounter();
+    // TODO Validate payload specially
+    // TODO Check response header `X-CWA-TELETAN-TYPE` of TAN-validation
+    // otherwise continue as normal
+    return buildRealDeferredResult(submissionPayload, tan);
   }
 
   /**
