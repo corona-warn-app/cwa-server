@@ -29,7 +29,7 @@ import org.springframework.context.annotation.Configuration;
 public class TestApplication {
 
   @Bean
-  ValidDiagnosisKeyFilter validKeysFilter() {
+  ValidDiagnosisKeyFilter validDiagnosisKeyFilter() {
     return new ValidDiagnosisKeyFilter();
   }
 
@@ -40,7 +40,7 @@ public class TestApplication {
 
   @Bean
   DiagnosisKeyService createDiagnosisKeyService(DiagnosisKeyRepository keyRepository) {
-    return new DiagnosisKeyService(keyRepository, validKeysFilter());
+    return new DiagnosisKeyService(keyRepository, validDiagnosisKeyFilter());
   }
 
   @Bean
@@ -50,7 +50,7 @@ public class TestApplication {
 
   @Bean
   FederationUploadKeyService createFederationUploadKeyService() {
-    return new FederationUploadKeyService(createFederationUploadKeyRepository(), validKeysFilter(),
+    return new FederationUploadKeyService(createFederationUploadKeyRepository(), validDiagnosisKeyFilter(),
         keySharingPoliciesChecker());
   }
 
@@ -65,7 +65,7 @@ public class TestApplication {
   }
 
   @Bean
-  TraceTimeIntervalWarningService traceTimeWarningService(
+  TraceTimeIntervalWarningService traceTimeIntervalWarningService(
       TraceTimeIntervalWarningRepository timeIntervalWarningRepository,
       CheckInProtectedReportsRepository checkInProtectedReportsRepository) throws NoSuchAlgorithmException {
     return new TraceTimeIntervalWarningService(timeIntervalWarningRepository, checkInProtectedReportsRepository);
