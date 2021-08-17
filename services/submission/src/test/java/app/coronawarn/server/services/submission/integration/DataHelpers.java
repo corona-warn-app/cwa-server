@@ -57,7 +57,7 @@ public class DataHelpers {
 
   public static CheckInProtectedReport buildDefaultEncryptedCheckIn() {
     return buildEncryptedCheckIn(ByteString.copyFrom(generateSecureRandomByteArrayData(16)),
-        ByteString.copyFrom(generateSecureRandomByteArrayData(32)),
+        ByteString.copyFrom(generateSecureRandomByteArrayData(16)),
         ByteString.copyFrom(generateSecureRandomByteArrayData(32)));
   }
 
