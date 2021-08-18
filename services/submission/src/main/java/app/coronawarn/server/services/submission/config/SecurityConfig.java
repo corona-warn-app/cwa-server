@@ -3,6 +3,7 @@
 package app.coronawarn.server.services.submission.config;
 
 import app.coronawarn.server.services.submission.controller.SubmissionController;
+import java.util.Arrays;
 import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +14,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity

@@ -47,8 +47,8 @@ public abstract class TanVerificationService {
    * Implement to differentiate between validating a regular submission TAN and a submission-on-behalf TAN
    * (#CWA_TELETAN_TYPE_RESPONSE_HEADER has value #CWA_TELETAN_TYPE_RESPONSE_HEADER).
    *
-   * @param tan
-   * @return
+   * @param tan the tan that will be verified either for normal submission or submission on behalf.
+   * @return whether the implemented logic returns that the tan is valid or not.
    */
   abstract boolean verifyWithVerificationService(Tan tan);
 

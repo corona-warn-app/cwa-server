@@ -4,8 +4,6 @@ import feign.FeignException;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
@@ -29,7 +27,7 @@ public class EventTanVerifier extends TanVerificationService {
    *
    * @param tan Submission Authorization TAN
    * @return {@literal true} if verification service is able to verify the provided TAN and if it is a 'submission on
-   * behalf' TAN, {@literal false} otherwise
+   *     behalf' TAN, {@literal false} otherwise
    * @throws RestClientException if http status code is neither 2xx nor 404
    */
   boolean verifyWithVerificationService(Tan tan) {

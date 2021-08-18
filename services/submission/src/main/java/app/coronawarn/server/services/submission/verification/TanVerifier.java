@@ -32,7 +32,7 @@ public class TanVerifier extends TanVerificationService {
    *
    * @param tan Submission Authorization TAN
    * @return {@literal true} if verification service is able to verify the provided TAN and the TAN is no 'submission on
-   * behalf' TAN, {@literal false} otherwise
+   *     behalf' TAN, {@literal false} otherwise
    * @throws RestClientException if http status code is neither 2xx nor 404
    */
   boolean verifyWithVerificationService(Tan tan) {
