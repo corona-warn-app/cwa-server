@@ -11,6 +11,8 @@ import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
 import app.coronawarn.server.services.submission.normalization.SubmissionKeyNormalizer;
 import app.coronawarn.server.services.submission.validation.ValidSubmissionPayload;
+import app.coronawarn.server.services.submission.verification.EventTanVerifier;
+import app.coronawarn.server.services.submission.verification.TanVerificationService;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import io.micrometer.core.annotation.Timed;
 import java.util.ArrayList;
@@ -46,6 +48,7 @@ public class SubmissionController {
   private final SubmissionMonitor submissionMonitor;
   private final DiagnosisKeyService diagnosisKeyService;
   private final TanVerifier tanVerifier;
+  private final EventTanVerifier eventTanVerifier;
   private final Integer retentionDays;
   private final Integer randomKeyPaddingMultiplier;
   private final FakeDelayManager fakeDelayManager;
@@ -54,10 +57,12 @@ public class SubmissionController {
   private final TrlDerivations trlDerivations;
 
   SubmissionController(DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier,
-      FakeDelayManager fakeDelayManager, SubmissionServiceConfig submissionServiceConfig,
-      SubmissionMonitor submissionMonitor, EventCheckinFacade eventCheckinFacade) {
+      EventTanVerifier eventTanVerifier, FakeDelayManager fakeDelayManager,
+      SubmissionServiceConfig submissionServiceConfig, SubmissionMonitor submissionMonitor,
+      EventCheckinFacade eventCheckinFacade) {
     this.diagnosisKeyService = diagnosisKeyService;
     this.tanVerifier = tanVerifier;
+    this.eventTanVerifier = eventTanVerifier;
     this.submissionMonitor = submissionMonitor;
     this.fakeDelayManager = fakeDelayManager;
     this.submissionServiceConfig = submissionServiceConfig;
@@ -81,7 +86,7 @@ public class SubmissionController {
       @RequestHeader("cwa-authorization") String tan) {
     submissionMonitor.incrementRequestCounter();
     submissionMonitor.incrementRealRequestCounter();
-    return buildRealDeferredResult(exposureKeys, tan);
+    return buildRealDeferredResult(exposureKeys, tan, tanVerifier);
   }
 
   /**
@@ -103,9 +108,7 @@ public class SubmissionController {
     submissionMonitor.incrementRequestCounter();
     submissionMonitor.incrementRealRequestCounter();
     // TODO Validate payload specially
-    // TODO Check response header `X-CWA-TELETAN-TYPE` of TAN-validation
-    // otherwise continue as normal
-    return buildRealDeferredResult(submissionPayload, tan);
+    return buildRealDeferredResult(submissionPayload, tan, eventTanVerifier);
   }
 
   /**
@@ -116,13 +119,13 @@ public class SubmissionController {
    * @return DeferredResult.
    */
   private DeferredResult<ResponseEntity<Void>> buildRealDeferredResult(SubmissionPayload submissionPayload,
-      String tan) {
+      String tan, TanVerificationService tanVerifier) {
     DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
 
     StopWatch stopWatch = new StopWatch();
     stopWatch.start();
     try {
-      if (!this.tanVerifier.verifyTan(tan)) {
+      if (!tanVerifier.verifyTan(tan)) {
         submissionMonitor.incrementInvalidTanRequestCounter();
         deferredResult.setResult(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
       } else {

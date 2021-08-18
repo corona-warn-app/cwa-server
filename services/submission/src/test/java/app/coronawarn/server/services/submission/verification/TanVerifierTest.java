@@ -9,6 +9,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.fail;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
 import app.coronawarn.server.common.federation.client.hostname.NoopHostnameVerifierProvider;
@@ -123,5 +124,11 @@ class TanVerifierTest {
             .willReturn(aResponse().withStatus(HttpStatus.OK.value()).withFixedDelay(1000)));
 
     assertThatExceptionOfType(FeignException.class).isThrownBy(() -> tanVerifier.verifyTan(randomUUID));
+  }
+
+  @Test
+  void checkPiwTanFails() {
+    fail("TODO Implement: a PIW Tan should result in a failed TAN attempt, "
+        + "as PIW Tans can only be used for 'submission on behalf', not normal submissions.");
   }
 }
