@@ -1,16 +1,5 @@
 package app.coronawarn.server.services.callback.registration;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.put;
-import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
-import static org.mockito.Mockito.verify;
-import static org.mockito.internal.verification.VerificationModeFactory.times;
-import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
-
 import app.coronawarn.server.common.federation.client.callback.RegistrationResponse;
 import app.coronawarn.server.common.shared.util.HashUtils;
 import app.coronawarn.server.services.callback.config.CallbackServiceConfig;
@@ -18,24 +7,33 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.HttpHeaders;
-import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import java.util.List;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
+import static org.mockito.Mockito.verify;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+
+@SpringBootTest
 @ActiveProfiles({"callback-registration"})
 @DirtiesContext
 class CallbackRegistrationRunnerIntegrationTest {
 
-  private static WireMockServer server;
+  private static WireMockServer server = new WireMockServer(options().port(1234));
 
+  @MockBean
+  TestRestTemplate testRestTemplate;
   @SpyBean
   private CallbackServiceConfig callbackServiceConfig;
 
@@ -44,7 +42,7 @@ class CallbackRegistrationRunnerIntegrationTest {
     RegistrationResponse registrationResponse1 = new RegistrationResponse(HashUtils.md5DigestAsHex("url1"), "url1");
     List<RegistrationResponse> responses = List.of(registrationResponse1);
 
-    server = new WireMockServer(options().port(1234));
+
     server.start();
     server.stubFor(
         get(urlEqualTo("/diagnosiskeys/callback"))
