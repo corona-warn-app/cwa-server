@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
+import java.util.List;
 
 public class EventTanVerifier extends TanVerificationService {
 
@@ -31,9 +32,10 @@ public class EventTanVerifier extends TanVerificationService {
     try {
       logger.info("Calling Verification Service for TAN verification ...");
       ResponseEntity<Void> result = verificationServerClient.verifyTan(tan);
-      if (!CWA_TELETAN_TYPE_EVENT.equals(result.getHeaders().get(CWA_TELETAN_TYPE_RESPONSE_HEADER))) {
+      List<String> typeHeaders = result.getHeaders().get(CWA_TELETAN_TYPE_RESPONSE_HEADER);
+      if (typeHeaders == null || !typeHeaders.contains(CWA_TELETAN_TYPE_EVENT)) {
         // TODO Which is the correct way to log a security incident?
-        logger.warn("Given TAN should have been regular submission, but was of type {}.", CWA_TELETAN_TYPE_EVENT);
+        logger.warn("Given TAN should have been for submission-on-behalf (type EVENT), but was of type {}.", typeHeaders);
         return false;
       }
       logger.info("Received response from Verification Service: {}", result);

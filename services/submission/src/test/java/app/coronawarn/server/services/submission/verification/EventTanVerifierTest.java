@@ -1,24 +1,12 @@
 
 package app.coronawarn.server.services.submission.verification;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.fail;
-import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
-
 import app.coronawarn.server.common.federation.client.hostname.NoopHostnameVerifierProvider;
 import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
 import app.coronawarn.server.common.persistence.domain.config.TrlDerivations;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import feign.FeignException;
-import java.util.UUID;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,18 +21,25 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import java.util.UUID;
 
-@SpringBootTest(classes = { TanVerifier.class, CloudFeignClientProvider.class, TekFieldDerivations.class,
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+
+@SpringBootTest(classes = { EventTanVerifier.class, CloudFeignClientProvider.class, TekFieldDerivations.class,
     TrlDerivations.class, NoopHostnameVerifierProvider.class })
 @ImportAutoConfiguration({ FeignAutoConfiguration.class, FeignTestConfiguration.class })
 @EnableConfigurationProperties(value = SubmissionServiceConfig.class)
 @EnableFeignClients
 @DirtiesContext
 @ActiveProfiles({ "feign", "disable-ssl-client-verification-verify-hostname" })
-class TanVerifierTest {
+class EventTanVerifierTest {
 
   @Autowired
-  private TanVerifier tanVerifier;
+  private EventTanVerifier eventTanVerifier;
 
   @Autowired
   private SubmissionServiceConfig submissionServiceConfig;
@@ -72,14 +67,16 @@ class TanVerifierTest {
   }
 
   @Test
-  void checkValidTan() {
+  void checkValidEventTan() {
     server.stubFor(
         post(urlEqualTo(verificationPath))
             .withRequestBody(matchingJsonPath("tan", equalTo(randomUUID)))
             .withHeader(CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
-            .willReturn(aResponse().withStatus(HttpStatus.OK.value())));
+            .willReturn(aResponse().withStatus(HttpStatus.OK.value())
+                .withHeader(TanVerificationService.CWA_TELETAN_TYPE_RESPONSE_HEADER,
+                    TanVerificationService.CWA_TELETAN_TYPE_EVENT)));
 
-    boolean tanVerificationResponse = tanVerifier.verifyTan(randomUUID);
+    boolean tanVerificationResponse = eventTanVerifier.verifyTan(randomUUID);
 
     assertThat(tanVerificationResponse).isTrue();
   }
@@ -90,7 +87,7 @@ class TanVerifierTest {
         post(urlEqualTo(verificationPath)).withHeader(CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
             .willReturn(aResponse().withStatus(HttpStatus.NOT_FOUND.value())));
 
-    boolean tanVerificationResponse = tanVerifier.verifyTan(randomUUID);
+    boolean tanVerificationResponse = eventTanVerifier.verifyTan(randomUUID);
 
     assertThat(tanVerificationResponse).isFalse();
   }
@@ -101,7 +98,7 @@ class TanVerifierTest {
         post(urlEqualTo(verificationPath)).withHeader(CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
             .willReturn(aResponse().withStatus(HttpStatus.NOT_FOUND.value())));
 
-    boolean tanVerificationResponse = tanVerifier.verifyTan(randomUUID + randomUUID);
+    boolean tanVerificationResponse = eventTanVerifier.verifyTan(randomUUID + randomUUID);
 
     assertThat(tanVerificationResponse).isFalse();
   }
@@ -112,7 +109,7 @@ class TanVerifierTest {
         post(urlEqualTo(verificationPath)).withHeader(CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
             .willReturn(aResponse().withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())));
 
-    assertThatExceptionOfType(FeignException.class).isThrownBy(() -> tanVerifier.verifyTan(randomUUID));
+    assertThatExceptionOfType(FeignException.class).isThrownBy(() -> eventTanVerifier.verifyTan(randomUUID));
   }
 
   @Test
@@ -123,20 +120,18 @@ class TanVerifierTest {
             .withHeader(CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
             .willReturn(aResponse().withStatus(HttpStatus.OK.value()).withFixedDelay(1000)));
 
-    assertThatExceptionOfType(FeignException.class).isThrownBy(() -> tanVerifier.verifyTan(randomUUID));
+    assertThatExceptionOfType(FeignException.class).isThrownBy(() -> eventTanVerifier.verifyTan(randomUUID));
   }
 
   @Test
-  void checkEventTanFails() {
+  void checkRegularTanFails() {
     server.stubFor(
         post(urlEqualTo(verificationPath))
             .withRequestBody(matchingJsonPath("tan", equalTo(randomUUID)))
             .withHeader(CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
-            .willReturn(aResponse().withStatus(HttpStatus.OK.value())
-                .withHeader(TanVerificationService.CWA_TELETAN_TYPE_RESPONSE_HEADER,
-                    TanVerificationService.CWA_TELETAN_TYPE_EVENT)));
+            .willReturn(aResponse().withStatus(HttpStatus.OK.value())));
 
-    boolean tanVerificationResponse = tanVerifier.verifyTan(randomUUID);
+    boolean tanVerificationResponse = eventTanVerifier.verifyTan(randomUUID);
 
     assertThat(tanVerificationResponse).isFalse();
   }
