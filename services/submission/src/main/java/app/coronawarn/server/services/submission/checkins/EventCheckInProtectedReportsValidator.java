@@ -4,6 +4,10 @@ import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.common.protocols.internal.pt.CheckInProtectedReport;
 import java.util.List;
 import javax.validation.ConstraintValidatorContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
@@ -13,6 +17,9 @@ public class EventCheckInProtectedReportsValidator {
   public static final int INIT_VECTOR_LENGTH = 16;
   public static final int LOCATION_ID_HASH_LENGTH = 32;
   public static final int ENCRYPTED_CHECK_IN_RECORD_LENGTH = 16;
+
+  private static final Logger logger = LoggerFactory.getLogger(EventCheckInProtectedReportsValidator.class);
+  private static final Marker SECURITY = MarkerFactory.getMarker("SECURITY");
 
   /**
    * Given the submission payload, it verifies whether user event checkInProtectedReports data is aligned with the
@@ -28,6 +35,25 @@ public class EventCheckInProtectedReportsValidator {
             && verifyIvLength(checkInProtectedReport, validatorContext)
             && verifyEncryptedCheckInRecordLength(checkInProtectedReport, validatorContext))
         .allMatch(checkInValidation -> Boolean.valueOf(checkInValidation).equals(Boolean.TRUE));
+  }
+
+  /**
+   * Given a submission in the context of host warnings (submission on behalf) check if all protected checkins share the
+   * same location id.
+   *
+   * @param submissionPayload the submission paylaod to validate.
+   * @param context           the validator context for keeping track of the constrain violations.
+   * @return whether the protected checkins of this submission payload contain all the same location id.
+   */
+  public boolean verifySubmissionOnBehalf(SubmissionPayload submissionPayload, ConstraintValidatorContext context) {
+    final boolean checkInsHaveSameLocationId =
+        submissionPayload.getCheckInProtectedReportsList().stream().map(CheckInProtectedReport::getLocationIdHash)
+            .distinct().count() == 1;
+    if (!checkInsHaveSameLocationId) {
+      logger.warn(SECURITY, "Checkins must contain items that all share the same location id");
+      addViolation(context, "Checkins protected reports must contain items that all share the same location id hash.s");
+    }
+    return checkInsHaveSameLocationId;
   }
 
   boolean verifyLocationIdHashLength(CheckInProtectedReport checkInProtectedReport,

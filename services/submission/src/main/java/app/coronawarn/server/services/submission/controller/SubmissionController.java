@@ -10,6 +10,7 @@ import app.coronawarn.server.services.submission.checkins.EventCheckinFacade;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
 import app.coronawarn.server.services.submission.normalization.SubmissionKeyNormalizer;
+import app.coronawarn.server.services.submission.validation.ValidSubmissionOnBehalfPayload;
 import app.coronawarn.server.services.submission.validation.ValidSubmissionPayload;
 import app.coronawarn.server.services.submission.verification.EventTanVerifier;
 import app.coronawarn.server.services.submission.verification.TanVerificationService;
@@ -90,19 +91,18 @@ public class SubmissionController {
   }
 
   /**
-   * Handles "submission on behalf" requests.
-   * The basic idea is, that public health departments
-   * should be enabled to warn all participants of a certain event
-   * although the department didn't join the event - it's like: "warn on behalf of ..."
+   * Handles "submission on behalf" requests. The basic idea is, that public health departments should be enabled to
+   * warn all participants of a certain event although the department didn't join the event - it's like: "warn on behalf
+   * of ..."
    *
    * @param submissionPayload The unmarshalled protocol buffers submission payload.
-   * @param tan          A tan for diagnosis verification.
+   * @param tan               A tan for diagnosis verification.
    * @return An empty response body.
    */
   @PostMapping(value = SUBMISSION_ON_BEHALF_ROUTE, headers = {"cwa-fake=0"})
   @Timed(description = "Time spent handling submission.")
   public DeferredResult<ResponseEntity<Void>> submissionOnBehalf(
-      @ValidSubmissionPayload @RequestBody SubmissionPayload submissionPayload,
+      @ValidSubmissionOnBehalfPayload @RequestBody SubmissionPayload submissionPayload,
       @RequestHeader("cwa-authorization") String tan) {
     // TODO How to handle the submission monitor for "submission of behalf"?
     submissionMonitor.incrementRequestCounter();
