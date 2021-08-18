@@ -3,12 +3,12 @@
 package app.coronawarn.server.services.submission.verification;
 
 import feign.FeignException;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
-import java.util.List;
 
 /**
  * The TanVerifier performs the verification of submission TANs.
@@ -31,8 +31,8 @@ public class TanVerifier extends TanVerificationService {
    * Queries the configured verification service to validate the provided TAN.
    *
    * @param tan Submission Authorization TAN
-   * @return {@literal true} if verification service is able to verify the provided TAN
-   *    and the TAN is no 'submission on behalf' TAN, {@literal false} otherwise
+   * @return {@literal true} if verification service is able to verify the provided TAN and the TAN is no 'submission on
+   * behalf' TAN, {@literal false} otherwise
    * @throws RestClientException if http status code is neither 2xx nor 404
    */
   boolean verifyWithVerificationService(Tan tan) {
@@ -41,8 +41,7 @@ public class TanVerifier extends TanVerificationService {
       ResponseEntity<Void> result = verificationServerClient.verifyTan(tan);
       List<String> typeHeaders = result.getHeaders().get(CWA_TELETAN_TYPE_RESPONSE_HEADER);
       if (typeHeaders != null && typeHeaders.contains(CWA_TELETAN_TYPE_EVENT)) {
-        // TODO Which is the correct way to log a security incident?
-        logger.warn("Given TAN should have been regular submission, but was of type {}.", typeHeaders);
+        logger.warn(SECURITY, "Given TAN should have been regular submission, but was of type {}.", typeHeaders);
         return false;
       }
       logger.info("Received response from Verification Service: {}", result);

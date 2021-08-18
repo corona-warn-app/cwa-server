@@ -605,20 +605,4 @@ class SubmissionControllerTest {
   private static Stream<Arguments> validVisitedCountries() {
   return Stream.of(Arguments.of(List.of("DE")), Arguments.of(List.of("DE", "FR")));
   }
-
-  class SubmissionOnBehalfTest{
-    void checkSubmissionPayloadSuccessfullyProcessed() {}
-    void failIfSpecifiedTanIsInvalid() {}
-    void failIfTeleTanTypeNotEvent() {}
-    void checkInternalServerError() {}
-
-    void failIfKeysNotEmpty() {}
-    void failIfVisitedCountriesNotEmpty() {}
-    void failIfConsentedToFederation() {}
-    void failIfSubmissionTypeNotHostWarning() {}
-    void failIfCheckInsDifferInLocationId() {}
-    void checkInsCanBeEmpty() {}
-    void checkInProtectedReportsMustNotBeEmpty() {}
-    void checkInProtectedReportsMustShareSameLocationIdHash() {}
-  }
 }

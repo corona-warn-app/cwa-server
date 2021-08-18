@@ -2,12 +2,16 @@ package app.coronawarn.server.services.submission.verification;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 import org.springframework.web.client.RestClientException;
 
 public abstract class TanVerificationService {
 
-  public static final String CWA_TELETAN_TYPE_RESPONSE_HEADER = "CWA-TELETAN-TYPE";
+  public static final String CWA_TELETAN_TYPE_RESPONSE_HEADER = "X-CWA-TELETAN-TYPE";
   public static final String CWA_TELETAN_TYPE_EVENT = "EVENT";
+  protected static final Marker SECURITY = MarkerFactory.getMarker("SECURITY");
+
 
   private static final Logger logger = LoggerFactory.getLogger(TanVerifier.class);
   final VerificationServerClient verificationServerClient;
@@ -31,7 +35,6 @@ public abstract class TanVerificationService {
   public boolean verifyTan(String tanString) {
     try {
       Tan tan = Tan.of(tanString);
-
       return verifyWithVerificationService(tan);
     } catch (IllegalArgumentException e) {
       logger.error("TAN Syntax check failed for TAN: {}, length: {}",
