@@ -66,6 +66,21 @@ public @interface ValidSubmissionOnBehalfPayload {
       this.eventCheckInProtectedReportsValidator = eventCheckInProtectedReportsValidator;
     }
 
+
+    /**
+     * Checks whether a submission on behalf is valid or not. The following constraints need to be enforced.
+     * <p>`keys` must be an empty set</p>
+     * <p>`visitedCountries` must be an empty set</p>
+     * <p>`consentToFederation` must be `false`</p>
+     * <p>`submissionType` must be `SUBMISSION_TYPE_HOST_WARNING`</p>
+     * <p>`checkIns` must contain items that all share the same `locationId` (note that `checkIns` may be empty)</p>
+     * <p>`checkInProtectedReports` must not be empty</p>
+     * <p>`checkInProtectedReports` must contain items that all share the same `locationIdHash`</p>
+     *
+     * @param submissionPayload the submission on behalf that will be verified.
+     * @param context           constraint validator context for enabling violation messages.
+     * @return whether the payload is valid or not.
+     */
     @Override
     public boolean isValid(SubmissionPayload submissionPayload, ConstraintValidatorContext context) {
       return diagnosisKeysAreEmpty(submissionPayload, context)
