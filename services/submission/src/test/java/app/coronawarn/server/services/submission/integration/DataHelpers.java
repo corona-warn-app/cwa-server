@@ -1,11 +1,5 @@
 package app.coronawarn.server.services.submission.integration;
 
-import static app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification.TEN_MINUTE_INTERVAL_DERIVATION;
-import static app.coronawarn.server.common.shared.util.HashUtils.generateSecureRandomByteArrayData;
-import static app.coronawarn.server.services.submission.SubmissionPayloadGenerator.buildTemporaryExposureKeyWithoutMultiplying;
-import static app.coronawarn.server.services.submission.SubmissionPayloadGenerator.buildTemporaryExposureKeys;
-import static java.time.ZoneOffset.UTC;
-
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
@@ -18,6 +12,12 @@ import com.google.protobuf.ByteString;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification.TEN_MINUTE_INTERVAL_DERIVATION;
+import static app.coronawarn.server.common.shared.util.HashUtils.generateSecureRandomByteArrayData;
+import static app.coronawarn.server.services.submission.SubmissionPayloadGenerator.buildTemporaryExposureKeyWithoutMultiplying;
+import static app.coronawarn.server.services.submission.SubmissionPayloadGenerator.buildTemporaryExposureKeys;
+import static java.time.ZoneOffset.UTC;
 
 public class DataHelpers {
 
@@ -61,6 +61,12 @@ public class DataHelpers {
         ByteString.copyFrom(generateSecureRandomByteArrayData(32)));
   }
 
+  public static CheckInProtectedReport buildDefaultEncryptedCheckIn(byte[] locationIdHash) {
+    return buildEncryptedCheckIn(ByteString.copyFrom(generateSecureRandomByteArrayData(16)),
+        ByteString.copyFrom(generateSecureRandomByteArrayData(16)),
+        ByteString.copyFrom(locationIdHash));
+  }
+
   public static CheckIn buildCheckIn(int startInterval, int endInterval, int transmissionRiskLevel,
       ByteString locationIdHash) {
     return CheckIn.newBuilder().setStartIntervalNumber(startInterval)
@@ -77,6 +83,15 @@ public class DataHelpers {
             .apply(LocalDateTime.ofInstant(Instant.now(), UTC).toEpochSecond(UTC)),
         3,
         EventCheckinDataValidatorTest.CORRECT_LOCATION_ID);
+  }
+
+  public static CheckIn buildDefaultCheckIn(byte[] locationId) {
+    return buildCheckIn(TEN_MINUTE_INTERVAL_DERIVATION
+            .apply(LocalDateTime.ofInstant(Instant.now(), UTC).minusDays(1).toEpochSecond(UTC)),
+        TEN_MINUTE_INTERVAL_DERIVATION
+            .apply(LocalDateTime.ofInstant(Instant.now(), UTC).toEpochSecond(UTC)),
+        3,
+        ByteString.copyFrom(locationId));
   }
 
 
