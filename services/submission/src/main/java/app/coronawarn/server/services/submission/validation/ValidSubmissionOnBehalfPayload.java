@@ -125,8 +125,7 @@ public @interface ValidSubmissionOnBehalfPayload {
 
     private boolean submissionTypeIsHostWarning(SubmissionPayload submissionPayload,
         ConstraintValidatorContext context) {
-      // TODO FR need new protobufs ( merge request is already open but for main) and change submissiontype to HOST warning
-      if (!submissionPayload.getSubmissionType().equals(SubmissionType.SUBMISSION_TYPE_PCR_TEST)) {
+      if (!submissionPayload.getSubmissionType().equals(SubmissionType.SUBMISSION_TYPE_HOST_WARNING)) {
         logger.warn(SECURITY, "Submission type must be host warning.");
         addViolation(context, "Submission type must be host warning.");
         return false;
