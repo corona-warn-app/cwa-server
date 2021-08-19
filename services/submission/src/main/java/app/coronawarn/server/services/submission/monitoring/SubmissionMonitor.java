@@ -24,6 +24,7 @@ public class SubmissionMonitor {
   private BatchCounter realRequests;
   private BatchCounter fakeRequests;
   private BatchCounter invalidTanRequests;
+  private BatchCounter submissionOnBehalfRequests;
 
   /**
    * Constructor for {@link SubmissionMonitor}. Initializes all counters to 0 upon being called.
@@ -47,6 +48,7 @@ public class SubmissionMonitor {
    *    <li> As part of all, the number of requests that are not fake.
    *    <li> As part of all, the number of requests that are fake.
    *    <li> As part of all, the number of requests for that the TAN-validation failed.
+   *    <li> As part of all, the number of requests for submission on behalf.
    *  </ul>
    */
   private void initializeCounters() {
@@ -54,6 +56,7 @@ public class SubmissionMonitor {
     realRequests = new BatchCounter(meterRegistry, batchSize, "real");
     fakeRequests = new BatchCounter(meterRegistry, batchSize, "fake");
     invalidTanRequests = new BatchCounter(meterRegistry, batchSize, "invalidTan");
+    submissionOnBehalfRequests = new BatchCounter(meterRegistry, batchSize, "submissionOnBehalf");
   }
 
   /**
@@ -83,5 +86,9 @@ public class SubmissionMonitor {
 
   public void incrementInvalidTanRequestCounter() {
     invalidTanRequests.increment();
+  }
+
+  public void incrementSubmissionOnBehalfCounter() {
+    submissionOnBehalfRequests.increment();
   }
 }

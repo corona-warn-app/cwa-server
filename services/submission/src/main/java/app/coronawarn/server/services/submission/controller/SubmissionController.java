@@ -104,9 +104,9 @@ public class SubmissionController {
   public DeferredResult<ResponseEntity<Void>> submissionOnBehalf(
       @ValidSubmissionOnBehalfPayload @RequestBody SubmissionPayload submissionPayload,
       @RequestHeader("cwa-authorization") String tan) {
-    // TODO How to handle the submission monitor for "submission of behalf"?
     submissionMonitor.incrementRequestCounter();
     submissionMonitor.incrementRealRequestCounter();
+    submissionMonitor.incrementSubmissionOnBehalfCounter();
     return buildRealDeferredResult(submissionPayload, tan, eventTanVerifier);
   }
 
