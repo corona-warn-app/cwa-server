@@ -42,7 +42,7 @@ public class EventCheckinDataValidator {
 
   /**
    * Given a submission in the context of host warnings (submission on behalf) check if all checkins share the same
-   * location id.
+   * location id or additionally checks if empty (thats why <= 1).
    *
    * @param submissionPayload the submission paylaod to validate.
    * @param context           the validator context for keeping track of the constrain violations.
