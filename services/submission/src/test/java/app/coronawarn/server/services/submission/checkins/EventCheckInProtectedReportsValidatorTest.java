@@ -141,7 +141,7 @@ public class EventCheckInProtectedReportsValidatorTest {
     SubmissionPayload submissionPayload = SubmissionPayload.newBuilder()
         .addAllCheckInProtectedReports(protectedReports)
         .build();
-    final boolean isValid = underTest.verifySubmissionOnBehalf(submissionPayload, mockValidatorContext);
+    final boolean isValid = underTest.verifyHaveSameLocationIdHash(submissionPayload, mockValidatorContext);
     AssertionsForClassTypes.assertThat(isValid).isTrue();
   }
 
@@ -159,7 +159,7 @@ public class EventCheckInProtectedReportsValidatorTest {
         .build();
     when(mockValidatorContext.buildConstraintViolationWithTemplate(any())).thenReturn(constraintViolationBuilder);
 
-    final boolean isValid = underTest.verifySubmissionOnBehalf(submissionPayload, mockValidatorContext);
+    final boolean isValid = underTest.verifyHaveSameLocationIdHash(submissionPayload, mockValidatorContext);
     AssertionsForClassTypes.assertThat(isValid).isFalse();
   }
 

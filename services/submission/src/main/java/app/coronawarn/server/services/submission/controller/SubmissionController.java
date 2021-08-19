@@ -107,7 +107,6 @@ public class SubmissionController {
     // TODO How to handle the submission monitor for "submission of behalf"?
     submissionMonitor.incrementRequestCounter();
     submissionMonitor.incrementRealRequestCounter();
-    // TODO Validate payload specially
     return buildRealDeferredResult(submissionPayload, tan, eventTanVerifier);
   }
 

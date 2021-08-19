@@ -37,7 +37,7 @@ public class EventCheckinDataValidator {
         .map(checkin -> verifyTransmissionRiskLevel(checkin, validatorContext)
             && verifyLocationIdLength(checkin, validatorContext) && verifyStartIntervalNumber(checkin, validatorContext)
             && verifyEndIntervalNumber(checkin, validatorContext))
-        .allMatch(checkinValidation -> Boolean.valueOf(checkinValidation).equals(Boolean.TRUE));
+        .allMatch(checkinValidation -> checkinValidation.equals(Boolean.TRUE));
   }
 
   /**
@@ -48,7 +48,7 @@ public class EventCheckinDataValidator {
    * @param context           the validator context for keeping track of the constrain violations.
    * @return whether the checkins of this submission payload contain all the same location id.
    */
-  public boolean verifySubmissionOnBehalf(SubmissionPayload submissionPayload, ConstraintValidatorContext context) {
+  public boolean verifyHaveSameLocationId(SubmissionPayload submissionPayload, ConstraintValidatorContext context) {
     final boolean checkInsHaveSameLocationId =
         submissionPayload.getCheckInsList().stream().map(CheckIn::getLocationId).distinct().count() <= 1;
     if (!checkInsHaveSameLocationId) {

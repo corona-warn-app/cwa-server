@@ -11,6 +11,7 @@ import app.coronawarn.server.services.submission.validation.ValidSubmissionOnBeh
 import app.coronawarn.server.services.submission.validation.ValidSubmissionPayload.SubmissionPayloadValidator;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import java.util.stream.Stream;
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -83,13 +84,16 @@ public @interface ValidSubmissionOnBehalfPayload {
      */
     @Override
     public boolean isValid(SubmissionPayload submissionPayload, ConstraintValidatorContext context) {
-      return diagnosisKeysAreEmpty(submissionPayload, context)
-          && visitedCountriesAreEmpty(submissionPayload, context)
-          && consentToFederationIsFalse(submissionPayload, context)
-          && submissionTypeIsHostWarning(submissionPayload, context)
-          && checkInsHaveSameLocationId(submissionPayload, context)
-          && protectedCheckInsAreNotEmpty(submissionPayload, context)
-          && protectedCheckInsHaveSameLocationId(submissionPayload, context);
+      return Stream.of(diagnosisKeysAreEmpty(submissionPayload, context),
+          visitedCountriesAreEmpty(submissionPayload, context),
+          consentToFederationIsFalse(submissionPayload, context),
+          submissionTypeIsHostWarning(submissionPayload, context),
+          eventCheckInValidator.verify(submissionPayload, context),
+          eventCheckInValidator.verifyHaveSameLocationId(submissionPayload, context),
+          protectedCheckInsAreNotEmpty(submissionPayload, context),
+          eventCheckInProtectedReportsValidator.verifyHaveSameLocationIdHash(submissionPayload, context),
+          eventCheckInProtectedReportsValidator.verify(submissionPayload, context))
+          .allMatch(it -> it.equals(Boolean.TRUE));
     }
 
     private boolean diagnosisKeysAreEmpty(SubmissionPayload submissionPayload,
@@ -133,12 +137,6 @@ public @interface ValidSubmissionOnBehalfPayload {
       return true;
     }
 
-    private boolean checkInsHaveSameLocationId(SubmissionPayload submissionPayload,
-        ConstraintValidatorContext context) {
-      return eventCheckInValidator.verifySubmissionOnBehalf(submissionPayload, context);
-    }
-
-
     private boolean protectedCheckInsAreNotEmpty(SubmissionPayload submissionPayload,
         ConstraintValidatorContext context) {
       if (submissionPayload.getCheckInProtectedReportsList().isEmpty()) {
@@ -147,11 +145,6 @@ public @interface ValidSubmissionOnBehalfPayload {
         return false;
       }
       return true;
-    }
-
-    private boolean protectedCheckInsHaveSameLocationId(SubmissionPayload submissionPayload,
-        ConstraintValidatorContext context) {
-      return eventCheckInProtectedReportsValidator.verifySubmissionOnBehalf(submissionPayload, context);
     }
 
     private void addViolation(ConstraintValidatorContext validatorContext, String message) {

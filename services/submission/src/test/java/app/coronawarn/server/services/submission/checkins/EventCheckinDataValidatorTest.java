@@ -176,7 +176,7 @@ public class EventCheckinDataValidatorTest {
     SubmissionPayload submissionPayload = SubmissionPayload.newBuilder()
         .addAllCheckIns(checkIns)
         .build();
-    final boolean isValid = validator.verifySubmissionOnBehalf(submissionPayload, mockValidatorContext);
+    final boolean isValid = validator.verifyHaveSameLocationId(submissionPayload, mockValidatorContext);
     assertThat(isValid).isTrue();
   }
 
@@ -190,7 +190,7 @@ public class EventCheckinDataValidatorTest {
     SubmissionPayload submissionPayload = SubmissionPayload.newBuilder()
         .addAllCheckIns(checkIns)
         .build();
-    final boolean isValid = validator.verifySubmissionOnBehalf(submissionPayload, mockValidatorContext);
+    final boolean isValid = validator.verifyHaveSameLocationId(submissionPayload, mockValidatorContext);
     assertThat(isValid).isFalse();
   }
 }

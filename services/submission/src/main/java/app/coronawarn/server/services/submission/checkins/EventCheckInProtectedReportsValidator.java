@@ -34,7 +34,7 @@ public class EventCheckInProtectedReportsValidator {
         .map(checkInProtectedReport -> verifyLocationIdHashLength(checkInProtectedReport, validatorContext)
             && verifyIvLength(checkInProtectedReport, validatorContext)
             && verifyEncryptedCheckInRecordLength(checkInProtectedReport, validatorContext))
-        .allMatch(checkInValidation -> Boolean.valueOf(checkInValidation).equals(Boolean.TRUE));
+        .allMatch(checkInValidation -> checkInValidation.equals(Boolean.TRUE));
   }
 
   /**
@@ -45,7 +45,7 @@ public class EventCheckInProtectedReportsValidator {
    * @param context           the validator context for keeping track of the constrain violations.
    * @return whether the protected checkins of this submission payload contain all the same location id.
    */
-  public boolean verifySubmissionOnBehalf(SubmissionPayload submissionPayload, ConstraintValidatorContext context) {
+  public boolean verifyHaveSameLocationIdHash(SubmissionPayload submissionPayload, ConstraintValidatorContext context) {
     final boolean checkInsHaveSameLocationId =
         submissionPayload.getCheckInProtectedReportsList().stream().map(CheckInProtectedReport::getLocationIdHash)
             .distinct().count() == 1;

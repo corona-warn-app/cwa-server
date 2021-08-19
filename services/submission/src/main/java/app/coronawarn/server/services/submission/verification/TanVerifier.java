@@ -4,6 +4,7 @@ package app.coronawarn.server.services.submission.verification;
 
 import feign.FeignException;
 import java.util.List;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -40,8 +41,14 @@ public class TanVerifier extends TanVerificationService {
       logger.info("Calling Verification Service for TAN verification ...");
       ResponseEntity<Void> result = verificationServerClient.verifyTan(tan);
       List<String> typeHeaders = result.getHeaders().get(CWA_TELETAN_TYPE_RESPONSE_HEADER);
-      if (typeHeaders != null && typeHeaders.contains(CWA_TELETAN_TYPE_EVENT)) {
-        logger.warn(SECURITY, "Given TAN should have been regular submission, but was of type {}.", typeHeaders);
+
+      final Optional<String> teleTanHeader = typeHeaders.stream().findFirst();
+      if (teleTanHeader.isEmpty()) {
+        logger.warn(SECURITY, "Given TAN should have been for regular submission, but was missing.");
+        return false;
+      } else if (teleTanHeader.get().equalsIgnoreCase(CWA_TELETAN_TYPE_EVENT)) {
+        logger.warn(SECURITY, "Given TAN should have been for regular submission, but was of type {} .",
+            teleTanHeader.get());
         return false;
       }
       logger.info("Received response from Verification Service: {}", result);
