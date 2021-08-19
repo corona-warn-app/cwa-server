@@ -38,6 +38,7 @@ class TanVerifierTest {
 
   private String verificationPath;
   private String randomUUID;
+
   private static WireMockServer server = new WireMockServer(options().port(1234));
 
   @BeforeAll
@@ -93,6 +94,21 @@ class TanVerifierTest {
   }
 
   @Test
+  void checkEventTanFails() {
+    server.stubFor(
+        post(urlEqualTo(verificationPath))
+            .withRequestBody(matchingJsonPath("tan", equalTo(randomUUID)))
+            .withHeader(CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(ok()
+                .withHeader(EventTanVerifier.CWA_TELETAN_TYPE_RESPONSE_HEADER,
+                    EventTanVerifier.CWA_TELETAN_TYPE_EVENT)));
+
+    boolean tanVerificationResponse = underTest.verifyTan(randomUUID);
+
+    assertThat(tanVerificationResponse).isFalse();
+  }
+
+  @Test
   void checkInternalServerError() {
     server.stubFor(
         post(urlEqualTo(verificationPath)).withHeader(CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON_VALUE))
@@ -112,18 +128,5 @@ class TanVerifierTest {
     assertThatExceptionOfType(FeignException.class).isThrownBy(() -> underTest.verifyTan(randomUUID));
   }
 
-  @Test
-  void checkEventTanFails() {
-    server.stubFor(
-        post(urlEqualTo(verificationPath))
-            .withRequestBody(matchingJsonPath("tan", equalTo(randomUUID)))
-            .withHeader(CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
-            .willReturn(ok()
-                .withHeader(TanVerificationService.CWA_TELETAN_TYPE_RESPONSE_HEADER,
-                    TanVerificationService.CWA_TELETAN_TYPE_EVENT)));
 
-    boolean tanVerificationResponse = underTest.verifyTan(randomUUID);
-
-    assertThat(tanVerificationResponse).isFalse();
-  }
 }
