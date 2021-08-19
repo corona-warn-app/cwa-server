@@ -38,7 +38,7 @@ class TanVerifierTest {
 
   private String verificationPath;
   private String randomUUID;
-  private static final WireMockServer server = new WireMockServer(options().port(1234));
+  private static WireMockServer server = new WireMockServer(options().port(1234));
 
   @BeforeAll
   static void setupWireMock() {
@@ -62,8 +62,8 @@ class TanVerifierTest {
     server.stubFor(
         post(urlEqualTo(verificationPath))
             .withRequestBody(matchingJsonPath("tan", equalTo(randomUUID)))
-            .withHeader(CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
-            .willReturn(aResponse().withStatus(HttpStatus.OK.value())));
+            .withHeader(CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON_VALUE))
+            .willReturn(ok()));
 
     boolean tanVerificationResponse = underTest.verifyTan(randomUUID);
 
@@ -73,8 +73,8 @@ class TanVerifierTest {
   @Test
   void checkInvalidTan() {
     server.stubFor(
-        post(urlEqualTo(verificationPath)).withHeader(CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
-            .willReturn(aResponse().withStatus(HttpStatus.NOT_FOUND.value())));
+        post(urlEqualTo(verificationPath)).withHeader(CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON_VALUE))
+            .willReturn(notFound()));
 
     boolean tanVerificationResponse = underTest.verifyTan(randomUUID);
 
@@ -84,8 +84,8 @@ class TanVerifierTest {
   @Test
   void checkTooLongTan() {
     server.stubFor(
-        post(urlEqualTo(verificationPath)).withHeader(CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
-            .willReturn(aResponse().withStatus(HttpStatus.NOT_FOUND.value())));
+        post(urlEqualTo(verificationPath)).withHeader(CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON_VALUE))
+            .willReturn(notFound()));
 
     boolean tanVerificationResponse = underTest.verifyTan(randomUUID + randomUUID);
 
@@ -95,7 +95,7 @@ class TanVerifierTest {
   @Test
   void checkInternalServerError() {
     server.stubFor(
-        post(urlEqualTo(verificationPath)).withHeader(CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+        post(urlEqualTo(verificationPath)).withHeader(CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON_VALUE))
             .willReturn(aResponse().withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())));
 
     assertThatExceptionOfType(FeignException.class).isThrownBy(() -> underTest.verifyTan(randomUUID));
@@ -107,7 +107,7 @@ class TanVerifierTest {
         post(urlEqualTo(verificationPath))
             .withRequestBody(matchingJsonPath("tan", equalTo(randomUUID)))
             .withHeader(CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
-            .willReturn(aResponse().withStatus(HttpStatus.OK.value()).withFixedDelay(1000)));
+            .willReturn(ok().withFixedDelay(1000)));
 
     assertThatExceptionOfType(FeignException.class).isThrownBy(() -> underTest.verifyTan(randomUUID));
   }
@@ -118,7 +118,7 @@ class TanVerifierTest {
         post(urlEqualTo(verificationPath))
             .withRequestBody(matchingJsonPath("tan", equalTo(randomUUID)))
             .withHeader(CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
-            .willReturn(aResponse().withStatus(HttpStatus.OK.value())
+            .willReturn(ok()
                 .withHeader(TanVerificationService.CWA_TELETAN_TYPE_RESPONSE_HEADER,
                     TanVerificationService.CWA_TELETAN_TYPE_EVENT)));
 
