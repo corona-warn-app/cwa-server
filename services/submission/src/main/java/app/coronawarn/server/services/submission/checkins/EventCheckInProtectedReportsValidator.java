@@ -41,7 +41,7 @@ public class EventCheckInProtectedReportsValidator {
    * Given a submission in the context of host warnings (submission on behalf) check if all protected checkins share the
    * same location id.
    *
-   * @param submissionPayload the submission paylaod to validate.
+   * @param submissionPayload the submission payload to validate.
    * @param context           the validator context for keeping track of the constrain violations.
    * @return whether the protected checkins of this submission payload contain all the same location id.
    */
@@ -50,8 +50,8 @@ public class EventCheckInProtectedReportsValidator {
         submissionPayload.getCheckInProtectedReportsList().stream().map(CheckInProtectedReport::getLocationIdHash)
             .distinct().count() == 1;
     if (!checkInsHaveSameLocationId) {
-      logger.warn(SECURITY, "Checkins must contain items that all share the same location id");
-      addViolation(context, "Checkins protected reports must contain items that all share the same location id hash.s");
+      logger.warn(SECURITY, "Checkins protected reports must contain items that all share the same location id");
+      addViolation(context, "Checkins protected reports must contain items that all share the same location id hash.");
     }
     return checkInsHaveSameLocationId;
   }
