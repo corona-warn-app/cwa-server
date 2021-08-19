@@ -63,6 +63,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.data.Index;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -85,89 +86,89 @@ import org.springframework.test.annotation.DirtiesContext;
 @SuppressWarnings("unchecked")
 class SubmissionControllerTest {
 
-    @MockBean
-    private DiagnosisKeyService diagnosisKeyService;
+  @MockBean
+  private DiagnosisKeyService diagnosisKeyService;
 
-    @MockBean
-    private SubmissionMonitor submissionMonitor;
+  @MockBean
+  private SubmissionMonitor submissionMonitor;
 
-    @MockBean
-    private FakeDelayManager fakeDelayManager;
+  @MockBean
+  private FakeDelayManager fakeDelayManager;
 
-    @Autowired
-    private RequestExecutor executor;
+  @Autowired
+  private RequestExecutor executor;
 
-    @Autowired
-    private SubmissionServiceConfig config;
+  @Autowired
+  private SubmissionServiceConfig config;
 
-    @Autowired
-    private TraceTimeIntervalWarningRepository traceTimeIntervalWarningRepository;
+  @Autowired
+  private TraceTimeIntervalWarningRepository traceTimeIntervalWarningRepository;
 
-    private void assertDSOSCorrectlyComputedFromTRL(final SubmissionServiceConfig config,
-        final Collection<TemporaryExposureKey> submittedTEKs, final Collection<DiagnosisKey> diagnosisKeys) {
-      submittedTEKs.stream().map(tek -> Pair.of(tek, findDiagnosisKeyMatch(tek, diagnosisKeys))).forEach(pair -> {
-        final int tekTRL = pair.getLeft().getTransmissionRiskLevel();
-        final int dkDSOS = pair.getRight().getDaysSinceOnsetOfSymptoms();
-        final Integer expectedDsos = config.getTekFieldDerivations()
-            .deriveDaysSinceSymptomsFromTransmissionRiskLevel(tekTRL);
-        Assertions.assertEquals(expectedDsos, dkDSOS);
-      });
-    }
+  private void assertDSOSCorrectlyComputedFromTRL(final SubmissionServiceConfig config,
+      final Collection<TemporaryExposureKey> submittedTEKs, final Collection<DiagnosisKey> diagnosisKeys) {
+    submittedTEKs.stream().map(tek -> Pair.of(tek, findDiagnosisKeyMatch(tek, diagnosisKeys))).forEach(pair -> {
+      final int tekTRL = pair.getLeft().getTransmissionRiskLevel();
+      final int dkDSOS = pair.getRight().getDaysSinceOnsetOfSymptoms();
+      final Integer expectedDsos = config.getTekFieldDerivations()
+          .deriveDaysSinceSymptomsFromTransmissionRiskLevel(tekTRL);
+      Assertions.assertEquals(expectedDsos, dkDSOS);
+    });
+  }
 
-    private void assertSubmissionPayloadKeysCorrespondToEachOther(
-        final Collection<TemporaryExposureKey> submittedTemporaryExposureKeys,
-        final Collection<DiagnosisKey> savedDiagnosisKeys, final SubmissionPayload submissionPayload) {
+  private void assertSubmissionPayloadKeysCorrespondToEachOther(
+      final Collection<TemporaryExposureKey> submittedTemporaryExposureKeys,
+      final Collection<DiagnosisKey> savedDiagnosisKeys, final SubmissionPayload submissionPayload) {
 
-      final Set<DiagnosisKey> submittedDiagnosisKeys = submittedTemporaryExposureKeys.stream()
-          .map(submittedTemporaryExposureKey -> DiagnosisKey.builder()
-              .fromTemporaryExposureKeyAndMetadata(submittedTemporaryExposureKey,
-                  SubmissionType.SUBMISSION_TYPE_PCR_TEST, submissionPayload.getVisitedCountriesList(),
-                  submissionPayload.getOrigin(), submissionPayload.getConsentToFederation())
-              .withConsentToFederation(submissionPayload.getConsentToFederation())
-              .withVisitedCountries(new HashSet<>(submissionPayload.getVisitedCountriesList()))
-              .withCountryCode(defaultIfBlank(submissionPayload.getOrigin(), config.getDefaultOriginCountry())).build())
-          .collect(Collectors.toSet());
+    final Set<DiagnosisKey> submittedDiagnosisKeys = submittedTemporaryExposureKeys.stream()
+        .map(submittedTemporaryExposureKey -> DiagnosisKey.builder()
+            .fromTemporaryExposureKeyAndMetadata(submittedTemporaryExposureKey,
+                SubmissionType.SUBMISSION_TYPE_PCR_TEST, submissionPayload.getVisitedCountriesList(),
+                submissionPayload.getOrigin(), submissionPayload.getConsentToFederation())
+            .withConsentToFederation(submissionPayload.getConsentToFederation())
+            .withVisitedCountries(new HashSet<>(submissionPayload.getVisitedCountriesList()))
+            .withCountryCode(defaultIfBlank(submissionPayload.getOrigin(), config.getDefaultOriginCountry())).build())
+        .collect(Collectors.toSet());
 
-      assertThat(savedDiagnosisKeys).hasSize(submittedDiagnosisKeys.size() * config.getRandomKeyPaddingMultiplier());
-      assertThat(savedDiagnosisKeys).containsAll(submittedDiagnosisKeys);
+    assertThat(savedDiagnosisKeys).hasSize(submittedDiagnosisKeys.size() * config.getRandomKeyPaddingMultiplier());
+    assertThat(savedDiagnosisKeys).containsAll(submittedDiagnosisKeys);
 
-      submittedDiagnosisKeys.forEach(submittedDiagnosisKey -> {
-        final List<DiagnosisKey> savedKeysForSingleSubmittedKey = savedDiagnosisKeys.stream()
-            .filter(savedDiagnosisKey -> savedDiagnosisKey.getRollingPeriod() == submittedDiagnosisKey.getRollingPeriod())
-            .filter(savedDiagnosisKey -> savedDiagnosisKey.getTransmissionRiskLevel() == submittedDiagnosisKey
-                .getTransmissionRiskLevel())
-            .filter(savedDiagnosisKey -> savedDiagnosisKey.getRollingStartIntervalNumber() == submittedDiagnosisKey
-                .getRollingStartIntervalNumber())
-            .collect(Collectors.toList());
+    submittedDiagnosisKeys.forEach(submittedDiagnosisKey -> {
+      final List<DiagnosisKey> savedKeysForSingleSubmittedKey = savedDiagnosisKeys.stream()
+          .filter(savedDiagnosisKey -> savedDiagnosisKey.getRollingPeriod() == submittedDiagnosisKey.getRollingPeriod())
+          .filter(savedDiagnosisKey -> savedDiagnosisKey.getTransmissionRiskLevel() == submittedDiagnosisKey
+              .getTransmissionRiskLevel())
+          .filter(savedDiagnosisKey -> savedDiagnosisKey.getRollingStartIntervalNumber() == submittedDiagnosisKey
+              .getRollingStartIntervalNumber())
+          .collect(Collectors.toList());
 
-        assertThat(savedKeysForSingleSubmittedKey).hasSize(config.getRandomKeyPaddingMultiplier());
-        assertThat(savedKeysForSingleSubmittedKey.stream()
-            .filter(savedKey -> Arrays.equals(savedKey.getKeyData(), submittedDiagnosisKey.getKeyData()))).hasSize(1);
-        assertThat(savedKeysForSingleSubmittedKey)
-            .allMatch(savedKey -> savedKey.getRollingPeriod() == submittedDiagnosisKey.getRollingPeriod());
-        assertThat(savedKeysForSingleSubmittedKey).allMatch(savedKey -> savedKey
-            .getRollingStartIntervalNumber() == submittedDiagnosisKey.getRollingStartIntervalNumber());
-        assertThat(savedKeysForSingleSubmittedKey).allMatch(
-            savedKey -> savedKey.getTransmissionRiskLevel() == submittedDiagnosisKey.getTransmissionRiskLevel());
-      });
-    }
+      assertThat(savedKeysForSingleSubmittedKey).hasSize(config.getRandomKeyPaddingMultiplier());
+      assertThat(savedKeysForSingleSubmittedKey.stream()
+          .filter(savedKey -> Arrays.equals(savedKey.getKeyData(), submittedDiagnosisKey.getKeyData()))).hasSize(1);
+      assertThat(savedKeysForSingleSubmittedKey)
+          .allMatch(savedKey -> savedKey.getRollingPeriod() == submittedDiagnosisKey.getRollingPeriod());
+      assertThat(savedKeysForSingleSubmittedKey).allMatch(savedKey -> savedKey
+          .getRollingStartIntervalNumber() == submittedDiagnosisKey.getRollingStartIntervalNumber());
+      assertThat(savedKeysForSingleSubmittedKey).allMatch(
+          savedKey -> savedKey.getTransmissionRiskLevel() == submittedDiagnosisKey.getTransmissionRiskLevel());
+    });
+  }
 
-    private void assertTraceWarningsHaveBeenSaved(final int numberOfExpectedWarningsSaved) {
-      final List<TraceTimeIntervalWarning> storedTimeIntervalWarnings = StreamSupport
-          .stream(traceTimeIntervalWarningRepository.findAll().spliterator(), false).collect(Collectors.toList());
-      assertEquals(numberOfExpectedWarningsSaved, storedTimeIntervalWarnings.size());
-    }
+  private void assertTraceWarningsHaveBeenSaved(final int numberOfExpectedWarningsSaved) {
+    final List<TraceTimeIntervalWarning> storedTimeIntervalWarnings = StreamSupport
+        .stream(traceTimeIntervalWarningRepository.findAll().spliterator(), false).collect(Collectors.toList());
+    assertEquals(numberOfExpectedWarningsSaved, storedTimeIntervalWarnings.size());
+  }
 
-    private void assertTRLCorrectlyComputedFromDSOS(final SubmissionServiceConfig config,
-        final Collection<TemporaryExposureKey> submittedTEKs, final Collection<DiagnosisKey> diagnosisKeys) {
-      submittedTEKs.stream().map(tek -> Pair.of(tek, findDiagnosisKeyMatch(tek, diagnosisKeys))).forEach(pair -> {
-        final int tekDSOS = pair.getLeft().getDaysSinceOnsetOfSymptoms();
-        final int dkTRL = pair.getRight().getTransmissionRiskLevel();
-        final Integer expectedTRL = config.getTekFieldDerivations()
-            .deriveTransmissionRiskLevelFromDaysSinceSymptoms(tekDSOS);
-        Assertions.assertEquals(expectedTRL, dkTRL);
-      });
-    }
+  private void assertTRLCorrectlyComputedFromDSOS(final SubmissionServiceConfig config,
+      final Collection<TemporaryExposureKey> submittedTEKs, final Collection<DiagnosisKey> diagnosisKeys) {
+    submittedTEKs.stream().map(tek -> Pair.of(tek, findDiagnosisKeyMatch(tek, diagnosisKeys))).forEach(pair -> {
+      final int tekDSOS = pair.getLeft().getDaysSinceOnsetOfSymptoms();
+      final int dkTRL = pair.getRight().getTransmissionRiskLevel();
+      final Integer expectedTRL = config.getTekFieldDerivations()
+          .deriveTransmissionRiskLevelFromDaysSinceSymptoms(tekDSOS);
+      Assertions.assertEquals(expectedTRL, dkTRL);
+    });
+  }
 
   private TemporaryExposureKey createOutdatedKey() {
     return TemporaryExposureKey.newBuilder().setKeyData(ByteString.copyFromUtf8(VALID_KEY_DATA_2))
@@ -183,6 +184,7 @@ class SubmissionControllerTest {
         .findFirst().orElseThrow();
   }
 
+  @Nested
   class RegularSubmissionTest {
 
     @MockBean
@@ -407,7 +409,8 @@ class SubmissionControllerTest {
     void testCheckinDataIsFilteredForFutureEvents() {
       final Instant thisInstant = Instant.now();
       final long eventCheckinInTheFuture = LocalDateTime.ofInstant(thisInstant, UTC).plusMinutes(11).toEpochSecond(UTC);
-      final long eventCheckoutInTheFuture = LocalDateTime.ofInstant(thisInstant, UTC).plusMinutes(20).toEpochSecond(UTC);
+      final long eventCheckoutInTheFuture = LocalDateTime.ofInstant(thisInstant, UTC).plusMinutes(20)
+          .toEpochSecond(UTC);
 
       final List<CheckIn> checkins = List
           .of(CheckIn.newBuilder().setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheFuture))
@@ -579,30 +582,30 @@ class SubmissionControllerTest {
   }
 
   public static SubmissionPayload buildPayloadWithInvalidKey() {
-  final TemporaryExposureKey invalidKey = buildTemporaryExposureKey(VALID_KEY_DATA_1,
-      createRollingStartIntervalNumber(2), 999, ReportType.CONFIRMED_TEST, 1);
-  return buildPayload(invalidKey);
+    final TemporaryExposureKey invalidKey = buildTemporaryExposureKey(VALID_KEY_DATA_1,
+        createRollingStartIntervalNumber(2), 999, ReportType.CONFIRMED_TEST, 1);
+    return buildPayload(invalidKey);
   }
 
   private static Stream<Arguments> createDeniedHttpMethods() {
-  return Arrays.stream(HttpMethod.values()).filter(method -> method != HttpMethod.POST)
-      .filter(method -> method != HttpMethod.PATCH) /* not supported by Rest Template */
-      .map(Arguments::of);
+    return Arrays.stream(HttpMethod.values()).filter(method -> method != HttpMethod.POST)
+        .filter(method -> method != HttpMethod.PATCH) /* not supported by Rest Template */
+        .map(Arguments::of);
   }
 
   private static Stream<Arguments> createIncompleteHeaders() {
-  return Stream.of(Arguments.of(HttpHeaderBuilder.builder().build()),
-      Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().build()),
-      Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().withoutCwaFake().build()),
-      Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().cwaAuth().build()));
+    return Stream.of(Arguments.of(HttpHeaderBuilder.builder().build()),
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().build()),
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().withoutCwaFake().build()),
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().cwaAuth().build()));
   }
 
   private static Stream<Arguments> invalidVisitedCountries() {
-  return Stream.of(Arguments.of(List.of("")), Arguments.of(List.of("D")), Arguments.of(List.of("FRE")),
-      Arguments.of(List.of("DE", "XX")), Arguments.of(List.of("DE", "FRE")));
+    return Stream.of(Arguments.of(List.of("")), Arguments.of(List.of("D")), Arguments.of(List.of("FRE")),
+        Arguments.of(List.of("DE", "XX")), Arguments.of(List.of("DE", "FRE")));
   }
 
   private static Stream<Arguments> validVisitedCountries() {
-  return Stream.of(Arguments.of(List.of("DE")), Arguments.of(List.of("DE", "FR")));
+    return Stream.of(Arguments.of(List.of("DE")), Arguments.of(List.of("DE", "FR")));
   }
 }
