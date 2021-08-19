@@ -76,5 +76,5 @@ feign:
   client:
     config:
       default:
-        connect-timeout: 500
-        read-timeout: 500
+        connect-timeout: 5000
+        read-timeout: 5000
