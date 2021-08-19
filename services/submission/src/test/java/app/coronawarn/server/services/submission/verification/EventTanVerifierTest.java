@@ -1,41 +1,34 @@
 
 package app.coronawarn.server.services.submission.verification;
 
-import app.coronawarn.server.common.federation.client.hostname.NoopHostnameVerifierProvider;
-import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
-import app.coronawarn.server.common.persistence.domain.config.TrlDerivations;
-import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
-import com.github.tomakehurst.wiremock.WireMockServer;
-import feign.FeignException;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.openfeign.EnableFeignClients;
-import org.springframework.cloud.openfeign.FeignAutoConfiguration;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
-import java.util.UUID;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
-@SpringBootTest(classes = { EventTanVerifier.class, CloudFeignClientProvider.class, TekFieldDerivations.class,
-    TrlDerivations.class, NoopHostnameVerifierProvider.class })
-@ImportAutoConfiguration({ FeignAutoConfiguration.class, FeignTestConfiguration.class })
-@EnableConfigurationProperties(value = SubmissionServiceConfig.class)
-@EnableFeignClients
+import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
+import com.github.tomakehurst.wiremock.WireMockServer;
+import feign.FeignException;
+import java.util.UUID;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
+
+@SpringBootTest
 @DirtiesContext
-@ActiveProfiles({ "feign", "disable-ssl-client-verification-verify-hostname" })
 class EventTanVerifierTest {
 
   @Autowired
@@ -43,6 +36,9 @@ class EventTanVerifierTest {
 
   @Autowired
   private SubmissionServiceConfig submissionServiceConfig;
+
+  @MockBean
+  TestRestTemplate testRestTemplate;
 
   private String verificationPath;
   private String randomUUID;

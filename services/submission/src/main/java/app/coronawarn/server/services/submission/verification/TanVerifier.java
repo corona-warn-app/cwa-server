@@ -40,13 +40,10 @@ public class TanVerifier extends TanVerificationService {
     try {
       logger.info("Calling Verification Service for TAN verification ...");
       ResponseEntity<Void> result = verificationServerClient.verifyTan(tan);
-      List<String> typeHeaders = result.getHeaders().get(CWA_TELETAN_TYPE_RESPONSE_HEADER);
+      List<String> typeHeaders = result.getHeaders().getOrEmpty(CWA_TELETAN_TYPE_RESPONSE_HEADER);
 
       final Optional<String> teleTanHeader = typeHeaders.stream().findFirst();
-      if (teleTanHeader.isEmpty()) {
-        logger.warn(SECURITY, "Given TAN should have been for regular submission, but was missing.");
-        return false;
-      } else if (teleTanHeader.get().equalsIgnoreCase(CWA_TELETAN_TYPE_EVENT)) {
+      if (teleTanHeader.isPresent() && teleTanHeader.get().equalsIgnoreCase(CWA_TELETAN_TYPE_EVENT)) {
         logger.warn(SECURITY, "Given TAN should have been for regular submission, but was of type {} .",
             teleTanHeader.get());
         return false;
