@@ -12,12 +12,14 @@ public interface CheckInProtectedReportsRepository extends PagingAndSortingRepos
 
   @Modifying
   @Query("INSERT INTO check_in_protected_reports (trace_location_id_hash, initialization_vector,"
-      + " encrypted_check_in_record, submission_timestamp)"
+      + " encrypted_check_in_record, submission_timestamp, mac)"
       + " VALUES (:trace_location_id_hash, :initialization_vector, :encrypted_check_in_record, "
-      + " :submission_timestamp) ON CONFLICT DO NOTHING")
-  boolean saveDoNothingOnConflict(@Param("trace_location_id_hash") byte[] traceLocationIdHash,
+      + " :submission_timestamp, :mac) ON CONFLICT DO NOTHING")
+  boolean saveDoNothingOnConflict(
+      @Param("trace_location_id_hash") byte[] traceLocationIdHash,
       @Param("initialization_vector") byte[] initializationVector,
       @Param("encrypted_check_in_record") byte[] encryptedCheckInRecord,
+      @Param("mac") byte[] mac,
       @Param("submission_timestamp") Integer submissionTimestamp);
 
   /**

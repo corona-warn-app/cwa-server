@@ -110,6 +110,7 @@ public class TraceTimeIntervalWarningService {
           .saveDoNothingOnConflict(checkInProtectedReports.getLocationIdHash().toByteArray(),
               checkInProtectedReports.getIv().toByteArray(),
               checkInProtectedReports.getEncryptedCheckInRecord().toByteArray(),
+              checkInProtectedReports.getMac().toByteArray(),
               submissionTimestamp);
 
       if (checkInProtectedInsertedSuccessfully) {
