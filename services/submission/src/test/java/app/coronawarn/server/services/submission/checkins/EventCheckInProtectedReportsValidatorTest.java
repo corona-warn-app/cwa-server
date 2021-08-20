@@ -49,6 +49,8 @@ public class EventCheckInProtectedReportsValidatorTest {
                     .copyFrom(generateSecureRandomByteArrayData(16)))
                 .setIv(ByteString
                     .copyFrom(generateSecureRandomByteArrayData(16)))
+                .setMac(ByteString
+                    .copyFrom(generateSecureRandomByteArrayData(32)))
                 .setLocationIdHash(ByteString
                     .copyFrom(generateSecureRandomByteArrayData(32)))
                 .build()))
@@ -121,6 +123,27 @@ public class EventCheckInProtectedReportsValidatorTest {
     when(mockValidatorContext.buildConstraintViolationWithTemplate(any())).thenReturn(constraintViolationBuilder);
 
     boolean result = underTest.verifyLocationIdHashLength(checkInProtectedReport, mockValidatorContext);
+    assertThat(result).isFalse();
+  }
+
+  @Test
+  void verifyMacLengthIsTrue() {
+    CheckInProtectedReport checkInProtectedReport = CheckInProtectedReport.newBuilder().setMac(
+        ByteString.copyFrom(generateSecureRandomByteArrayData(32))).build();
+
+    boolean result = underTest.verifyMacLength(checkInProtectedReport, mockValidatorContext);
+    assertThat(result).isTrue();
+  }
+
+  @ParameterizedTest
+  @MethodSource("generateWrongLengthByteStrings")
+  void verifyMacLengthIsFalse(ByteString e) {
+    CheckInProtectedReport checkInProtectedReport = CheckInProtectedReport.newBuilder().setMac(e).build();
+
+    when(constraintViolationBuilder.addConstraintViolation()).thenReturn(null);
+    when(mockValidatorContext.buildConstraintViolationWithTemplate(any())).thenReturn(constraintViolationBuilder);
+
+    boolean result = underTest.verifyMacLength(checkInProtectedReport, mockValidatorContext);
     assertThat(result).isFalse();
   }
 

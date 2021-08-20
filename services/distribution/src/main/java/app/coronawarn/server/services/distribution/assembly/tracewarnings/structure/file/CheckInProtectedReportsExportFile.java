@@ -50,9 +50,14 @@ public class CheckInProtectedReportsExportFile extends AbstractCheckInExportFile
         .map(
             checkInReports -> app.coronawarn.server.common.protocols.internal.pt.CheckInProtectedReport
                 .newBuilder()
+                .setMac(getMacValue(checkInReports))
                 .setLocationIdHash(ByteString.copyFrom(checkInReports.getTraceLocationIdHash()))
                 .setEncryptedCheckInRecord(ByteString.copyFrom(checkInReports.getEncryptedCheckInRecord()))
                 .setIv(ByteString.copyFrom(checkInReports.getInitializationVector())).build())
         .collect(Collectors.toList());
+  }
+
+  private static ByteString getMacValue(CheckInProtectedReports checkInReports) {
+    return checkInReports.getMac() == null ? ByteString.EMPTY : ByteString.copyFrom(checkInReports.getMac());
   }
 }
