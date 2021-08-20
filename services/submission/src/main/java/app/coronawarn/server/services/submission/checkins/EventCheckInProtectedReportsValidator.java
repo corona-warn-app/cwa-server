@@ -59,7 +59,7 @@ public class EventCheckInProtectedReportsValidator {
       ConstraintValidatorContext validatorContext) {
     if (ObjectUtils.isEmpty(checkInProtectedReport.getMac())
         || checkInProtectedReport.getMac().size() != MAC_LENGTH) {
-      addViolation(validatorContext, "CheckInProtectedReports iv must have 32 bytes not "
+      addViolation(validatorContext, "CheckInProtectedReports mac must have 32 bytes not "
           + (checkInProtectedReport.getMac() == null ? 0 : checkInProtectedReport.getMac().size()));
       return false;
     }
