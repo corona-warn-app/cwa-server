@@ -181,9 +181,9 @@ class TraceTimeIntervalWarningServiceTest {
   void testGetCheckInProtectedReports() {
     final byte[] data = {1};
 
-    protectedReportsRepository.saveDoNothingOnConflict(data, data, data, 100);
-    protectedReportsRepository.saveDoNothingOnConflict(data, data, data, 5);
-    protectedReportsRepository.saveDoNothingOnConflict(data, data, data, 800);
+    protectedReportsRepository.saveDoNothingOnConflict(data, data, data, data,100);
+    protectedReportsRepository.saveDoNothingOnConflict(data, data, data, data,5);
+    protectedReportsRepository.saveDoNothingOnConflict(data, data, data, data,800);
 
     final Collection<CheckInProtectedReports> checkInProtectedReports = traceWarningsService
         .getCheckInProtectedReports();
