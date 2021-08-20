@@ -10,7 +10,10 @@ import app.coronawarn.server.services.submission.checkins.EventCheckinFacade;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
 import app.coronawarn.server.services.submission.normalization.SubmissionKeyNormalizer;
+import app.coronawarn.server.services.submission.validation.ValidSubmissionOnBehalfPayload;
 import app.coronawarn.server.services.submission.validation.ValidSubmissionPayload;
+import app.coronawarn.server.services.submission.verification.EventTanVerifier;
+import app.coronawarn.server.services.submission.verification.TanVerificationService;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import io.micrometer.core.annotation.Timed;
 import java.util.ArrayList;
@@ -40,11 +43,13 @@ public class SubmissionController {
    * The route to the submission endpoint (version agnostic).
    */
   public static final String SUBMISSION_ROUTE = "/diagnosis-keys";
+  public static final String SUBMISSION_ON_BEHALF_ROUTE = "/submission-on-behalf";
   private static final Logger logger = LoggerFactory.getLogger(SubmissionController.class);
 
   private final SubmissionMonitor submissionMonitor;
   private final DiagnosisKeyService diagnosisKeyService;
   private final TanVerifier tanVerifier;
+  private final EventTanVerifier eventTanVerifier;
   private final Integer retentionDays;
   private final Integer randomKeyPaddingMultiplier;
   private final FakeDelayManager fakeDelayManager;
@@ -53,10 +58,12 @@ public class SubmissionController {
   private final TrlDerivations trlDerivations;
 
   SubmissionController(DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier,
-      FakeDelayManager fakeDelayManager, SubmissionServiceConfig submissionServiceConfig,
-      SubmissionMonitor submissionMonitor, EventCheckinFacade eventCheckinFacade) {
+      EventTanVerifier eventTanVerifier, FakeDelayManager fakeDelayManager,
+      SubmissionServiceConfig submissionServiceConfig, SubmissionMonitor submissionMonitor,
+      EventCheckinFacade eventCheckinFacade) {
     this.diagnosisKeyService = diagnosisKeyService;
     this.tanVerifier = tanVerifier;
+    this.eventTanVerifier = eventTanVerifier;
     this.submissionMonitor = submissionMonitor;
     this.fakeDelayManager = fakeDelayManager;
     this.submissionServiceConfig = submissionServiceConfig;
@@ -80,7 +87,27 @@ public class SubmissionController {
       @RequestHeader("cwa-authorization") String tan) {
     submissionMonitor.incrementRequestCounter();
     submissionMonitor.incrementRealRequestCounter();
-    return buildRealDeferredResult(exposureKeys, tan);
+    return buildRealDeferredResult(exposureKeys, tan, tanVerifier);
+  }
+
+  /**
+   * Handles "submission on behalf" requests. The basic idea is, that public health departments should be enabled to
+   * warn all participants of a certain event although the department didn't join the event - it's like: "warn on behalf
+   * of ..."
+   *
+   * @param submissionPayload The unmarshalled protocol buffers submission payload.
+   * @param tan               A tan for diagnosis verification.
+   * @return An empty response body.
+   */
+  @PostMapping(value = SUBMISSION_ON_BEHALF_ROUTE, headers = {"cwa-fake=0"})
+  @Timed(description = "Time spent handling submission.")
+  public DeferredResult<ResponseEntity<Void>> submissionOnBehalf(
+      @ValidSubmissionOnBehalfPayload @RequestBody SubmissionPayload submissionPayload,
+      @RequestHeader("cwa-authorization") String tan) {
+    submissionMonitor.incrementRequestCounter();
+    submissionMonitor.incrementRealRequestCounter();
+    submissionMonitor.incrementSubmissionOnBehalfCounter();
+    return buildRealDeferredResult(submissionPayload, tan, eventTanVerifier);
   }
 
   /**
@@ -91,13 +118,13 @@ public class SubmissionController {
    * @return DeferredResult.
    */
   private DeferredResult<ResponseEntity<Void>> buildRealDeferredResult(SubmissionPayload submissionPayload,
-      String tan) {
+      String tan, TanVerificationService tanVerifier) {
     DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
 
     StopWatch stopWatch = new StopWatch();
     stopWatch.start();
     try {
-      if (!this.tanVerifier.verifyTan(tan)) {
+      if (!tanVerifier.verifyTan(tan)) {
         submissionMonitor.incrementInvalidTanRequestCounter();
         deferredResult.setResult(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
       } else {
