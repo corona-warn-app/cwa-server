@@ -169,6 +169,7 @@ class TraceTimeIntervalWarningServiceTest {
             .setLocationIdHash(ByteString.EMPTY)
             .setEncryptedCheckInRecord(ByteString.EMPTY)
             .setIv(ByteString.EMPTY)
+            .setMac(ByteString.EMPTY)
             .build()
     );
 
