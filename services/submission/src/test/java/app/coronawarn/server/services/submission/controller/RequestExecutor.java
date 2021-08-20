@@ -22,6 +22,8 @@ import org.springframework.stereotype.Component;
 public class RequestExecutor {
 
   private static final URI SUBMISSION_URL = URI.create("/version/v1/diagnosis-keys");
+  private static final URI SUBMISSION_ON_BEHALF_URL = URI.create("/version/v1/submission-on-behalf");
+
 
   private final TestRestTemplate testRestTemplate;
 
@@ -31,6 +33,10 @@ public class RequestExecutor {
 
   public ResponseEntity<Void> execute(HttpMethod method, RequestEntity<SubmissionPayload> requestEntity) {
     return testRestTemplate.exchange(SUBMISSION_URL, method, requestEntity, Void.class);
+  }
+
+  public ResponseEntity<Void> executeSubmissionOnBehalf(HttpMethod method, RequestEntity<SubmissionPayload> requestEntity) {
+    return testRestTemplate.exchange(SUBMISSION_ON_BEHALF_URL, method, requestEntity, Void.class);
   }
 
   public ResponseEntity<Void> executePost(Collection<TemporaryExposureKey> keys, HttpHeaders headers) {
@@ -43,6 +49,14 @@ public class RequestExecutor {
 
   public ResponseEntity<Void> executePost(SubmissionPayload body, HttpHeaders headers) {
     return execute(HttpMethod.POST, new RequestEntity<>(body, headers, HttpMethod.POST, SUBMISSION_URL));
+  }
+
+  public ResponseEntity<Void> executeSubmissionOnBehalf(SubmissionPayload body, HttpHeaders headers) {
+    return executeSubmissionOnBehalf(HttpMethod.POST, new RequestEntity<>(body, headers, HttpMethod.POST, SUBMISSION_ON_BEHALF_URL));
+  }
+
+  public ResponseEntity<Void> executeSubmissionOnBehalf(SubmissionPayload body) {
+    return executeSubmissionOnBehalf(body, buildDefaultHeader());
   }
 
   public ResponseEntity<Void> executePost(SubmissionPayload body) {
