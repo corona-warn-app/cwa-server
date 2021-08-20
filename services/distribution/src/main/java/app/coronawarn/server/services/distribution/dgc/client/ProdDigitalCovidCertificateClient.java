@@ -91,7 +91,7 @@ public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificat
       logger.info(AUDIT,  "{} - {}", fetchEntityName, stringifyObject(response.getBody()));
       return response.getBody();
     } catch (Exception e) {
-      throw exceptionConverter.apply(fetchEntityName + " could not be fetched because of: ", e);
+      throw exceptionConverter.apply(fetchEntityName + " could not be fetched because of: " + e.getMessage(), e);
     }
   }
 
