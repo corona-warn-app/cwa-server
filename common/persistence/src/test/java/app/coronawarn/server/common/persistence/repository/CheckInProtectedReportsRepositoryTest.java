@@ -21,7 +21,7 @@ class CheckInProtectedReportsRepositoryTest {
     final byte[] guid = UUID.randomUUID().toString().getBytes();
     final long submissionTimestamp =
         CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION.apply(Instant.now().getEpochSecond());
-    CheckInProtectedReports checkInProtectedReports = new CheckInProtectedReports(guid, guid, guid,
+    CheckInProtectedReports checkInProtectedReports = new CheckInProtectedReports(guid, guid, guid, guid,
         submissionTimestamp);
     underTest.save(checkInProtectedReports);
 
@@ -33,6 +33,7 @@ class CheckInProtectedReportsRepositoryTest {
     assertThat(next.getTraceLocationIdHash()).isEqualTo(guid);
     assertThat(next.getInitializationVector()).isEqualTo(guid);
     assertThat(next.getEncryptedCheckInRecord()).isEqualTo(guid);
+    assertThat(next.getMac()).isEqualTo(guid);
     assertThat(next.getSubmissionTimestamp()).isEqualTo(submissionTimestamp);
   }
 

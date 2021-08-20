@@ -10,6 +10,7 @@ public class CheckInProtectedReports {
   private final byte[] traceLocationIdHash;
   private final byte[] initializationVector;
   private final byte[] encryptedCheckInRecord;
+  private final byte[] mac;
 
   @ValidSubmissionTimestamp
   private final long submissionTimestamp;
@@ -22,10 +23,11 @@ public class CheckInProtectedReports {
    * @param submissionTimestamp The time when the trace warning was stored on the server
    */
   public CheckInProtectedReports(byte[] traceLocationIdHash, byte[] initializationVector, byte[] encryptedCheckInRecord,
-      long submissionTimestamp) {
+      byte[] mac, long submissionTimestamp) {
     this.traceLocationIdHash = traceLocationIdHash;
     this.initializationVector = initializationVector;
     this.encryptedCheckInRecord = encryptedCheckInRecord;
+    this.mac = mac;
     this.submissionTimestamp = submissionTimestamp;
   }
 
@@ -47,5 +49,9 @@ public class CheckInProtectedReports {
 
   public long getSubmissionTimestamp() {
     return submissionTimestamp;
+  }
+
+  public byte[] getMac() {
+    return mac;
   }
 }

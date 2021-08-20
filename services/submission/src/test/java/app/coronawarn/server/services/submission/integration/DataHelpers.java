@@ -47,18 +47,21 @@ public class DataHelpers {
   }
 
   public static CheckInProtectedReport buildEncryptedCheckIn(ByteString checkInRecord, ByteString iv,
-      ByteString locationIdHash) {
+      ByteString locationIdHash, ByteString mac) {
     return CheckInProtectedReport.newBuilder()
         .setEncryptedCheckInRecord(checkInRecord)
         .setIv(iv)
         .setLocationIdHash(locationIdHash)
+        .setMac(mac)
         .build();
   }
 
   public static CheckInProtectedReport buildDefaultEncryptedCheckIn() {
     return buildEncryptedCheckIn(ByteString.copyFrom(generateSecureRandomByteArrayData(16)),
         ByteString.copyFrom(generateSecureRandomByteArrayData(16)),
-        ByteString.copyFrom(generateSecureRandomByteArrayData(32)));
+        ByteString.copyFrom(generateSecureRandomByteArrayData(32)),
+        ByteString.copyFrom(generateSecureRandomByteArrayData(32))
+        );
   }
 
   public static CheckIn buildCheckIn(int startInterval, int endInterval, int transmissionRiskLevel,
