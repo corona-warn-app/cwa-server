@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.submission.checkins;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -8,11 +9,13 @@ import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
+import app.coronawarn.server.services.submission.integration.DataHelpers;
 import com.google.protobuf.ByteString;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Random;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,7 +63,7 @@ public class EventCheckinDataValidatorTest {
   }
 
   @ParameterizedTest
-  @ValueSource(ints = { -1, 0 })
+  @ValueSource(ints = {-1, 0})
   void should_return_false_if_checkin_data_has_wrong_checkin_time_values(final int startTime) {
     final SubmissionPayload newPayload = SubmissionPayload.newBuilder()
         .addAllCheckIns(List.of(CheckIn.newBuilder().setStartIntervalNumber(startTime)
@@ -72,7 +75,7 @@ public class EventCheckinDataValidatorTest {
   }
 
   @ParameterizedTest
-  @ValueSource(ints = { 0, 9, 12 })
+  @ValueSource(ints = {0, 9, 12})
   void should_return_false_if_checkin_data_has_wrong_trl_values(final int wrongTrl) {
     final SubmissionPayload newPayload = SubmissionPayload.newBuilder()
         .addAllCheckIns(List.of(CheckIn.newBuilder().setStartIntervalNumber(CORRECT_CHECKIN_TIME)
@@ -103,7 +106,7 @@ public class EventCheckinDataValidatorTest {
   }
 
   @ParameterizedTest
-  @ValueSource(ints = { 1, 15, 30, 100 })
+  @ValueSource(ints = {1, 15, 30, 100})
   void should_return_true_if_checkin_data_has_correct_checkin_time_values(final int startTime) {
     final SubmissionPayload newPayload = SubmissionPayload.newBuilder()
         .addAllCheckIns(
@@ -116,7 +119,7 @@ public class EventCheckinDataValidatorTest {
   }
 
   @ParameterizedTest
-  @ValueSource(ints = { 1, 3, 5, 8 })
+  @ValueSource(ints = {1, 3, 5, 8})
   void should_return_true_if_checkin_data_has_correct_trl_values(final int correctTrl) {
     final SubmissionPayload newPayload = SubmissionPayload.newBuilder()
         .addAllCheckIns(List.of(CheckIn.newBuilder().setStartIntervalNumber(CORRECT_CHECKIN_TIME)
@@ -141,8 +144,8 @@ public class EventCheckinDataValidatorTest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = { "", "aac31", "09c488aac3104d556531ab79f10f98eb0a9bdc2",
-      "09c488aac3104d556531ab79f10f98eb0a9bdc209c488aac3104d556531ab79f10f98eb0a9bdc2" })
+  @ValueSource(strings = {"", "aac31", "09c488aac3104d556531ab79f10f98eb0a9bdc2",
+      "09c488aac3104d556531ab79f10f98eb0a9bdc209c488aac3104d556531ab79f10f98eb0a9bdc2"})
   void verifyLocationIdFalseLengthTest1(final String locationId) {
     final CheckIn checkIn = CheckIn.newBuilder()
         .setLocationId(ByteString.copyFrom(locationId.getBytes(StandardCharsets.UTF_8))).build();
@@ -160,5 +163,34 @@ public class EventCheckinDataValidatorTest {
   void verifyLocationIdTrueLengthTest() throws Exception {
     final CheckIn checkIn = CheckIn.newBuilder().setLocationId(CORRECT_LOCATION_ID).build();
     assertTrue(validator.verifyLocationIdLength(checkIn, mockValidatorContext));
+  }
+
+  @Test
+  void shouldReturnTrueIfCheckInsHaveSameLocationId() {
+    byte[] locationId = new byte[32];
+    new Random().nextBytes(locationId);
+
+    List<CheckIn> checkIns = List
+        .of(DataHelpers.buildDefaultCheckIn(locationId), DataHelpers.buildDefaultCheckIn(locationId));
+
+    SubmissionPayload submissionPayload = SubmissionPayload.newBuilder()
+        .addAllCheckIns(checkIns)
+        .build();
+    final boolean isValid = validator.verifyHaveSameLocationId(submissionPayload, mockValidatorContext);
+    assertThat(isValid).isTrue();
+  }
+
+  @Test
+  void shouldReturnFalseIfCheckInsHaveDifferentLocationId() {
+    byte[] locationId1 = new byte[]{1,2,3};
+    byte[] locationId2 = new byte[]{10,20,30};
+    List<CheckIn> checkIns = List
+        .of(DataHelpers.buildDefaultCheckIn(locationId1), DataHelpers.buildDefaultCheckIn(locationId2));
+
+    SubmissionPayload submissionPayload = SubmissionPayload.newBuilder()
+        .addAllCheckIns(checkIns)
+        .build();
+    final boolean isValid = validator.verifyHaveSameLocationId(submissionPayload, mockValidatorContext);
+    assertThat(isValid).isFalse();
   }
 }
