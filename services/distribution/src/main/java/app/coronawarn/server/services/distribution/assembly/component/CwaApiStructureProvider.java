@@ -25,7 +25,7 @@ public class CwaApiStructureProvider {
   private final DistributionServiceConfig distributionServiceConfig;
   private final TraceTimeIntervalWarningsStructureProvider traceWarningsStructureProvider;
   private final QrCodePosterTemplateStructureProvider qrCodeTemplateStructureProvider;
-  private final DigitalGreenCertificateStructureProvider dgcStructureProvider;
+  private final DigitalCertificatesStructureProvider dgcStructureProvider;
 
   /**
    * Creates a new CwaApiStructureProvider.
@@ -38,7 +38,7 @@ public class CwaApiStructureProvider {
       DiagnosisKeysStructureProvider diagnosisKeysStructureProvider,
       TraceTimeIntervalWarningsStructureProvider traceWarningsStructureProvider,
       QrCodePosterTemplateStructureProvider qrCodeTemplateStructureProvider,
-      DigitalGreenCertificateStructureProvider dgcStructureProvider,
+      DigitalCertificatesStructureProvider dgcStructureProvider,
       DistributionServiceConfig distributionServiceConfig) {
     this.appConfigurationStructureProvider = appConfigurationStructureProvider;
     this.appConfigurationV2StructureProvider = appConfigurationV2StructureProvider;

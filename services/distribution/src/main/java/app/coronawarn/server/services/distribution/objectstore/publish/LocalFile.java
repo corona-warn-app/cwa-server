@@ -1,9 +1,9 @@
 package app.coronawarn.server.services.distribution.objectstore.publish;
 
-import static app.coronawarn.server.services.distribution.assembly.component.DigitalGreenCertificateStructureProvider.ACCEPTANCE_RULES;
-import static app.coronawarn.server.services.distribution.assembly.component.DigitalGreenCertificateStructureProvider.DSCS;
-import static app.coronawarn.server.services.distribution.assembly.component.DigitalGreenCertificateStructureProvider.INVALIDATION_RULES;
-import static app.coronawarn.server.services.distribution.assembly.component.DigitalGreenCertificateStructureProvider.ONBOARDED_COUNTRIES;
+import static app.coronawarn.server.services.distribution.assembly.component.DigitalCertificatesStructureProvider.ACCEPTANCE_RULES;
+import static app.coronawarn.server.services.distribution.assembly.component.DigitalCertificatesStructureProvider.DSCS;
+import static app.coronawarn.server.services.distribution.assembly.component.DigitalCertificatesStructureProvider.INVALIDATION_RULES;
+import static app.coronawarn.server.services.distribution.assembly.component.DigitalCertificatesStructureProvider.ONBOARDED_COUNTRIES;
 
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDiskWithChecksum;
 import java.io.IOException;

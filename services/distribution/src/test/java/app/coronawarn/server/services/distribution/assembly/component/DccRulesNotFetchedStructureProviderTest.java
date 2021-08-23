@@ -165,7 +165,7 @@ class DccRulesNotFetchedStructureProviderTest {
   }
 
   private DirectoryOnDisk getStructureProviderDirectory() {
-    DigitalGreenCertificateStructureProvider underTest = new DigitalGreenCertificateStructureProvider(
+    DigitalCertificatesStructureProvider underTest = new DigitalCertificatesStructureProvider(
         distributionServiceConfig, cryptoProvider, dgcToProtobufMapping,
         dgcToCborMappingMock, digitalSigningCertificatesToProtobufMapping);
     DirectoryOnDisk digitalGreenCertificates = underTest.getDigitalGreenCertificates();
