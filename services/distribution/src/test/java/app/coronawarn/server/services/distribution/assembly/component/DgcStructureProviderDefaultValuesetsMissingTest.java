@@ -45,7 +45,7 @@ class DgcStructureProviderDefaultValuesetsMissingTest {
 
   @Test
   void default_value_missing_should_result_in_empty_dir() throws UnableToLoadFileException, FetchValueSetsException {
-    DigitalGreenCertificateStructureProvider underTest = new DigitalGreenCertificateStructureProvider(
+    DigitalCertificatesStructureProvider underTest = new DigitalCertificatesStructureProvider(
         distributionServiceConfig, cryptoProvider, dgcToProtobufMappingMock,
         dgcToCborMappingMock, digitalSigningCertificatesToProtobufMapping);
     when(dgcToProtobufMappingMock.constructProtobufMapping())
