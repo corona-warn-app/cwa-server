@@ -54,7 +54,7 @@ public class EventCheckInProtectedReportsValidatorTest {
                 .setIv(ByteString
                     .copyFrom(generateSecureRandomByteArrayData(16)))
                 .setMac(ByteString
-                    .copyFrom(generateSecureRandomByteArrayData(16)))
+                    .copyFrom(generateSecureRandomByteArrayData(32)))
                 .setLocationIdHash(ByteString
                     .copyFrom(generateSecureRandomByteArrayData(32)))
                 .build()))

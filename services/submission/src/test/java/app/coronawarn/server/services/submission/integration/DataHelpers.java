@@ -59,9 +59,16 @@ public class DataHelpers {
   public static CheckInProtectedReport buildDefaultEncryptedCheckIn() {
     return buildEncryptedCheckIn(ByteString.copyFrom(generateSecureRandomByteArrayData(16)),
         ByteString.copyFrom(generateSecureRandomByteArrayData(16)),
-        ByteString.copyFrom(generateSecureRandomByteArrayData(16)),
+        ByteString.copyFrom(generateSecureRandomByteArrayData(32)),
         ByteString.copyFrom(generateSecureRandomByteArrayData(32))
     );
+  }
+
+  public static CheckInProtectedReport buildDefaultEncryptedCheckIn(byte[] locationIdHash) {
+    return buildEncryptedCheckIn(ByteString.copyFrom(generateSecureRandomByteArrayData(16)),
+        ByteString.copyFrom(generateSecureRandomByteArrayData(16)),
+        ByteString.copyFrom(locationIdHash),
+        ByteString.copyFrom(generateSecureRandomByteArrayData(32)));
   }
 
   public static CheckIn buildCheckIn(int startInterval, int endInterval, int transmissionRiskLevel,
