@@ -247,8 +247,9 @@ public class Helpers {
     final byte[] traceLocationIdHash = UUID.randomUUID().toString().getBytes();
     final byte[] iv = UUID.randomUUID().toString().getBytes();
     final byte[] encryptedCheckIns = new byte[16];
+    final byte[] mac = new byte[32];
     new Random().nextBytes(encryptedCheckIns);
-    return new CheckInProtectedReports(traceLocationIdHash, iv, encryptedCheckIns, submissionHourSinceEpoch) {
+    return new CheckInProtectedReports(traceLocationIdHash, iv, encryptedCheckIns, mac, submissionHourSinceEpoch) {
       @Override
       public Long getId() {
         return Long.valueOf(Arrays.hashCode(traceLocationIdHash));
@@ -282,12 +283,14 @@ public class Helpers {
     final byte[] traceLocationIdHash = UUID.randomUUID().toString().getBytes();
     final byte[] iv = UUID.randomUUID().toString().getBytes();
     final byte[] encryptedCheckIns = new byte[16];
+    final byte[] mac = new byte[32];
     new Random().nextBytes(encryptedCheckIns);
 
     return CheckInProtectedReport.newBuilder()
         .setLocationIdHash(ByteString.copyFrom(traceLocationIdHash))
         .setIv(ByteString.copyFrom(iv))
         .setEncryptedCheckInRecord(ByteString.copyFrom(encryptedCheckIns))
+        .setMac(ByteString.copyFrom(mac))
         .build();
 
   }

@@ -53,9 +53,10 @@ class CheckInProtectedReportsExportFileTest {
     byte[] traceLocationId = new byte[]{1, 2, 3, 4};
     byte[] iv = new byte[]{1, 2, 3, 4};
     byte[] encryptedCheckInReport = new byte[]{1, 2, 3, 4};
+    byte[] mac = new byte[]{};
     long submissionTimeStamp = 1000L;
     CheckInProtectedReports checkInProtectedReport = new CheckInProtectedReports(traceLocationId, iv,
-        encryptedCheckInReport, submissionTimeStamp);
+        encryptedCheckInReport, mac, submissionTimeStamp);
     List<CheckInProtectedReports> checkInProtectedReports = Collections.singletonList(checkInProtectedReport);
     String country = "DE";
     int intervalNumber = 44;
@@ -75,6 +76,7 @@ class CheckInProtectedReportsExportFileTest {
     assertThat(extractedCheckInFromFile.getEncryptedCheckInRecord().toByteArray()).isEqualTo(encryptedCheckInReport);
     assertThat(extractedCheckInFromFile.getIv().toByteArray()).isEqualTo(iv);
     assertThat(extractedCheckInFromFile.getLocationIdHash().toByteArray()).isEqualTo(traceLocationId);
+    assertThat(extractedCheckInFromFile.getMac().toByteArray()).isEqualTo(mac);
   }
 
   @Test
