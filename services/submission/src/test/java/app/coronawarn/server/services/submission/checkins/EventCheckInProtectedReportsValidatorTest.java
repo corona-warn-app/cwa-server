@@ -1,17 +1,10 @@
 package app.coronawarn.server.services.submission.checkins;
 
-import static app.coronawarn.server.common.shared.util.HashUtils.generateSecureRandomByteArrayData;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.common.protocols.internal.pt.CheckInProtectedReport;
+import app.coronawarn.server.services.submission.integration.DataHelpers;
 import com.google.protobuf.ByteString;
-import java.util.Collections;
-import java.util.stream.Stream;
-import javax.validation.ConstraintValidatorContext;
-import javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder;
+import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -20,6 +13,17 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import javax.validation.ConstraintValidatorContext;
+import javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Stream;
+
+import static app.coronawarn.server.common.shared.util.HashUtils.generateSecureRandomByteArrayData;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class EventCheckInProtectedReportsValidatorTest {
@@ -50,7 +54,7 @@ public class EventCheckInProtectedReportsValidatorTest {
                 .setIv(ByteString
                     .copyFrom(generateSecureRandomByteArrayData(16)))
                 .setMac(ByteString
-                    .copyFrom(generateSecureRandomByteArrayData(32)))
+                    .copyFrom(generateSecureRandomByteArrayData(16)))
                 .setLocationIdHash(ByteString
                     .copyFrom(generateSecureRandomByteArrayData(32)))
                 .build()))
@@ -145,6 +149,41 @@ public class EventCheckInProtectedReportsValidatorTest {
 
     boolean result = underTest.verifyMacLength(checkInProtectedReport, mockValidatorContext);
     assertThat(result).isFalse();
+  }
+
+
+  @Test
+  void shouldReturnTrueIfCheckInsHaveSameLocationId() {
+    byte[] locationId = new byte[32];
+    new Random().nextBytes(locationId);
+
+    List<CheckInProtectedReport> protectedReports = List
+        .of(DataHelpers.buildDefaultEncryptedCheckIn(locationId),
+            DataHelpers.buildDefaultEncryptedCheckIn(locationId));
+
+    SubmissionPayload submissionPayload = SubmissionPayload.newBuilder()
+        .addAllCheckInProtectedReports(protectedReports)
+        .build();
+    final boolean isValid = underTest.verifyHaveSameLocationIdHash(submissionPayload, mockValidatorContext);
+    AssertionsForClassTypes.assertThat(isValid).isTrue();
+  }
+
+  @Test
+  void shouldReturnFalseIfCheckInsHaveDifferentLocationId() {
+    byte[] locationId1 = new byte[]{1, 2, 3};
+    byte[] locationId2 = new byte[]{10, 20, 30};
+
+    List<CheckInProtectedReport> protectedReports = List
+        .of(DataHelpers.buildDefaultEncryptedCheckIn(locationId1),
+            DataHelpers.buildDefaultEncryptedCheckIn(locationId2));
+
+    SubmissionPayload submissionPayload = SubmissionPayload.newBuilder()
+        .addAllCheckInProtectedReports(protectedReports)
+        .build();
+    when(mockValidatorContext.buildConstraintViolationWithTemplate(any())).thenReturn(constraintViolationBuilder);
+
+    final boolean isValid = underTest.verifyHaveSameLocationIdHash(submissionPayload, mockValidatorContext);
+    AssertionsForClassTypes.assertThat(isValid).isFalse();
   }
 
   private static Stream<Arguments> generateWrongLengthByteStrings() {
