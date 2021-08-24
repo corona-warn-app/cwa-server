@@ -47,17 +47,27 @@ public class DataHelpers {
   }
 
   public static CheckInProtectedReport buildEncryptedCheckIn(ByteString checkInRecord, ByteString iv,
-      ByteString locationIdHash) {
+      ByteString locationIdHash, ByteString mac) {
     return CheckInProtectedReport.newBuilder()
         .setEncryptedCheckInRecord(checkInRecord)
         .setIv(iv)
         .setLocationIdHash(locationIdHash)
+        .setMac(mac)
         .build();
   }
 
   public static CheckInProtectedReport buildDefaultEncryptedCheckIn() {
     return buildEncryptedCheckIn(ByteString.copyFrom(generateSecureRandomByteArrayData(16)),
+        ByteString.copyFrom(generateSecureRandomByteArrayData(16)),
         ByteString.copyFrom(generateSecureRandomByteArrayData(32)),
+        ByteString.copyFrom(generateSecureRandomByteArrayData(32))
+    );
+  }
+
+  public static CheckInProtectedReport buildDefaultEncryptedCheckIn(byte[] locationIdHash) {
+    return buildEncryptedCheckIn(ByteString.copyFrom(generateSecureRandomByteArrayData(16)),
+        ByteString.copyFrom(generateSecureRandomByteArrayData(16)),
+        ByteString.copyFrom(locationIdHash),
         ByteString.copyFrom(generateSecureRandomByteArrayData(32)));
   }
 
@@ -77,6 +87,15 @@ public class DataHelpers {
             .apply(LocalDateTime.ofInstant(Instant.now(), UTC).toEpochSecond(UTC)),
         3,
         EventCheckinDataValidatorTest.CORRECT_LOCATION_ID);
+  }
+
+  public static CheckIn buildDefaultCheckIn(byte[] locationId) {
+    return buildCheckIn(TEN_MINUTE_INTERVAL_DERIVATION
+            .apply(LocalDateTime.ofInstant(Instant.now(), UTC).minusDays(1).toEpochSecond(UTC)),
+        TEN_MINUTE_INTERVAL_DERIVATION
+            .apply(LocalDateTime.ofInstant(Instant.now(), UTC).toEpochSecond(UTC)),
+        3,
+        ByteString.copyFrom(locationId));
   }
 
 

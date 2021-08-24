@@ -1,20 +1,30 @@
 # CWA-Server Submission Service
 
-The submission service's only task is to process uploaded diagnosis keys and persist them to the database after the TAN has been verified.
+The submission service's only task is to process uploaded diagnosis keys and check-ins and persist them to the database after the TAN has been verified.
 The actual task of the verification is handed over to the verification server, which provides the verification result back to CWA.
 After verification was successfully done, the diagnosis keys are persisted in the database, and will be published in the next batch for distribution to the CWA CDN
 and to the Federation Gateway for keys that are applicable.
 
-The payload to be sent by the mobile applications is defined in the [submission_payload.proto](../common/protocols/src/main/proto/app/coronawarn/server/common/protocols/internal/submission_payload.proto)
+The payload to be sent by the mobile applications is defined in the [submission_payload.proto](../common/protocols/src/main/proto/app/coronawarn/server/common/protocols/internal/submission_payload.proto) and
+[temporary_exposure_key_export.proto](../common/protocols/src/main/proto/app/coronawarn/server/common/protocols/external/exposurenotification/temporary_exposure_key_export.proto) and
+[check_in.proto](../common/protocols/src/main/proto/app/coronawarn/server/common/protocols/internal/pt/check_in.proto)
+[check_in_protected_report.proto](../common/protocols/src/main/proto/app/coronawarn/server/common/protocols/internal/pt/check_in.proto)
 
 ```protobuf
   message SubmissionPayload {
     repeated app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey keys = 1;
-    optional bytes padding = 2;
+    optional bytes requestPadding = 2;
     repeated string visitedCountries = 3;
     optional string origin = 4;
-    optional app.coronawarn.server.common.protocols.external.exposurenotification.ReportType reportType = 5 [default = CONFIRMED_CLINICAL_DIAGNOSIS];
-    optional bool consentToFederation = 6;
+    optional bool consentToFederation = 5;
+    repeated app.coronawarn.server.common.protocols.internal.pt.CheckIn checkIns = 6 [deprecated = true];
+    optional SubmissionType submissionType = 7 [default = SUBMISSION_TYPE_PCR_TEST];
+    repeated app.coronawarn.server.common.protocols.internal.pt.CheckInProtectedReport checkInProtectedReports = 8;
+
+    enum SubmissionType {
+      SUBMISSION_TYPE_PCR_TEST = 0;
+      SUBMISSION_TYPE_RAPID_TEST = 1;
+    }
   }
 
   message TemporaryExposureKey {
@@ -27,6 +37,25 @@ The payload to be sent by the mobile applications is defined in the [submission_
     // Increments of 10 minutes describing how long a key is valid
     optional int32 rolling_period = 4
         [default = 144]; // defaults to 24 hours
+    // Type of diagnosis associated with a key.
+    optional ReportType report_type = 5 [default = CONFIRMED_TEST];
+    // Number of days elapsed between symptom onset and the TEK being used.
+    // E.g. 2 means TEK is 2 days after onset of symptoms.
+    optional sint32 days_since_onset_of_symptoms = 6;
+  }
+
+  message CheckIn {
+    bytes locationId = 1;
+    uint32 startIntervalNumber = 2;
+    uint32 endIntervalNumber = 3;
+    uint32 transmissionRiskLevel = 4;
+  }
+
+  message CheckInProtectedReport {
+    bytes locationIdHash = 1;
+    bytes iv = 2;
+    bytes encryptedCheckInRecord = 3;
+    bytes mac = 4;
 }
 ```
 
@@ -35,6 +64,13 @@ Additionally, the endpoint requires the following headers to be set:
 ```http
 CWA-Authorization: TAN <TAN>
 CWA-Fake: <0 or 1>
+```
+
+The response headers returned by this endpoint include the number of check-ins that were successfully saved and the number of check-ins that were filtered out before further processing.
+
+```http response headers
+cwa-filtered-checkins: "number" <String>
+cwa-saved-checkins: "number" <String>
 ```
 
 There is currently no official specification for publishing diagnosis keys to the server.
@@ -153,3 +189,16 @@ From a distribution service perspective, generated keys are indistinguishable fr
 
 Key padding is implemented in [`SubmissionController`](https://github.com/corona-warn-app/cwa-server/blob/d6edd528e0ea3eafcda26fc7ae6d026fee5b4f0c/services/submission/src/main/java/app/coronawarn/server/services/submission/controller/SubmissionController.java#L203)
 and happens after TAN verification, but before we persist sumitted keys on the CWA server.
+
+## Submission Application Properties
+
+Starting with version 2.8 there is now the possibility to submit encrypted check-ins. For this a new property ```unencrypted-checkins-enabled```is included.
+This flag is used to control whether check-ins ( which is the current default) are still allowed or not accepted anymore.
+
+```yaml
+unencrypted-checkins-enabled: <true or false>
+```
+
+### Additional Note
+
+**Not to be confused** with [```EVREG_UNENCRYPTED_CHECKINS_ENABLED```](../services/distribution/src/main/resources/application.yaml) from the distribution service which indicates for the mobile clients which feature is enabled and is of type ```Integer```.

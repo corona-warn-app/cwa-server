@@ -24,12 +24,12 @@ import org.springframework.stereotype.Component;
 
 /**
  * Reads configuration parameters from the respective files in the class path or from DCC client and build a {@link
- * DigitalGreenCertificateStructureProvider} with them.
+ * DigitalCertificatesStructureProvider} with them.
  */
 @Component
-public class DigitalGreenCertificateStructureProvider {
+public class DigitalCertificatesStructureProvider {
 
-  private static final Logger logger = LoggerFactory.getLogger(DigitalGreenCertificateStructureProvider.class);
+  private static final Logger logger = LoggerFactory.getLogger(DigitalCertificatesStructureProvider.class);
 
   public static final String ONBOARDED_COUNTRIES = "onboarded-countries";
   public static final String DSCS = "dscs";
@@ -47,7 +47,7 @@ public class DigitalGreenCertificateStructureProvider {
   /**
    * Create an instance.
    */
-  public DigitalGreenCertificateStructureProvider(DistributionServiceConfig distributionServiceConfig,
+  public DigitalCertificatesStructureProvider(DistributionServiceConfig distributionServiceConfig,
       CryptoProvider cryptoProvider, DigitalGreenCertificateToProtobufMapping dgcToProtobufMapping,
       DigitalGreenCertificateToCborMapping dgcToCborMapping,
       DigitalSigningCertificatesToProtobufMapping digitalSigningCertificatesToProtobufMapping) {
