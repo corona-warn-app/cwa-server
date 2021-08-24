@@ -90,7 +90,7 @@ class ValueSetsNotFetchedfStructureProviderTest {
 
   @Test
   void should_not_contain_valuesets_if_any_is_not_fetched() throws FetchValueSetsException {
-    DigitalGreenCertificateStructureProvider underTest = new DigitalGreenCertificateStructureProvider(
+    DigitalCertificatesStructureProvider underTest = new DigitalCertificatesStructureProvider(
         distributionServiceConfig, cryptoProvider, dgcToProtobufMapping, dgcToCborMappingMock,
         digitalSigningCertificatesToProtobufMapping);
     DirectoryOnDisk digitalGreenCertificates = underTest.getDigitalGreenCertificates();

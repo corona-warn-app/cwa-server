@@ -35,7 +35,6 @@ public class DigitalCertificatesStructureProvider {
   public static final String DSCS = "dscs";
   public static final String ACCEPTANCE_RULES = "acceptance-rules";
   public static final String INVALIDATION_RULES = "invalidation-rules";
-  public static final String EMPTY_STRING = "";
   public static final String EXPORT_BIN = "export.bin";
 
   private final DistributionServiceConfig distributionServiceConfig;
