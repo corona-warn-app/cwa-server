@@ -49,7 +49,7 @@ public class DccSignatureValidator {
     } catch (NoSuchAlgorithmException e) {
       throw new DigitalCovidCertificateSignatureException("Specified algorithm is not available for Key Factory.", e);
     } catch (InvalidKeySpecException | InvalidKeyException e) {
-      throw new DigitalCovidCertificateSignatureException("DCC Public key generation throwed an error.", e);
+      throw new DigitalCovidCertificateSignatureException("DCC Public key generation threw an error.", e);
     } catch (SignatureException e) {
       throw signatureExceptionConverter().apply(e, "Invalid signature.");
     }

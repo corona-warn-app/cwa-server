@@ -169,6 +169,7 @@ class TraceTimeIntervalWarningServiceTest {
             .setLocationIdHash(ByteString.EMPTY)
             .setEncryptedCheckInRecord(ByteString.EMPTY)
             .setIv(ByteString.EMPTY)
+            .setMac(ByteString.EMPTY)
             .build()
     );
 
@@ -181,9 +182,9 @@ class TraceTimeIntervalWarningServiceTest {
   void testGetCheckInProtectedReports() {
     final byte[] data = {1};
 
-    protectedReportsRepository.saveDoNothingOnConflict(data, data, data, 100);
-    protectedReportsRepository.saveDoNothingOnConflict(data, data, data, 5);
-    protectedReportsRepository.saveDoNothingOnConflict(data, data, data, 800);
+    protectedReportsRepository.saveDoNothingOnConflict(data, data, data, data,100);
+    protectedReportsRepository.saveDoNothingOnConflict(data, data, data, data,5);
+    protectedReportsRepository.saveDoNothingOnConflict(data, data, data, data,800);
 
     final Collection<CheckInProtectedReports> checkInProtectedReports = traceWarningsService
         .getCheckInProtectedReports();

@@ -16,7 +16,9 @@ public class EventCheckInProtectedReportsValidator {
 
   public static final int INIT_VECTOR_LENGTH = 16;
   public static final int LOCATION_ID_HASH_LENGTH = 32;
+  public static final int MAC_LENGTH = 32;
   public static final int ENCRYPTED_CHECK_IN_RECORD_LENGTH = 16;
+
 
   private static final Logger logger = LoggerFactory.getLogger(EventCheckInProtectedReportsValidator.class);
   private static final Marker SECURITY = MarkerFactory.getMarker("SECURITY");
@@ -33,6 +35,7 @@ public class EventCheckInProtectedReportsValidator {
     return checkInProtectedReportsList.stream()
         .map(checkInProtectedReport -> verifyLocationIdHashLength(checkInProtectedReport, validatorContext)
             && verifyIvLength(checkInProtectedReport, validatorContext)
+            && verifyMacLength(checkInProtectedReport, validatorContext)
             && verifyEncryptedCheckInRecordLength(checkInProtectedReport, validatorContext))
         .allMatch(checkInValidation -> checkInValidation.equals(Boolean.TRUE));
   }
@@ -74,6 +77,17 @@ public class EventCheckInProtectedReportsValidator {
         || checkInProtectedReport.getIv().size() != INIT_VECTOR_LENGTH) {
       addViolation(validatorContext, "CheckInProtectedReports iv must have 32 bytes not "
           + (checkInProtectedReport.getIv() == null ? 0 : checkInProtectedReport.getIv().size()));
+      return false;
+    }
+    return true;
+  }
+
+  boolean verifyMacLength(CheckInProtectedReport checkInProtectedReport,
+      ConstraintValidatorContext validatorContext) {
+    if (ObjectUtils.isEmpty(checkInProtectedReport.getMac())
+        || checkInProtectedReport.getMac().size() != MAC_LENGTH) {
+      addViolation(validatorContext, "CheckInProtectedReports mac must have 32 bytes not "
+          + (checkInProtectedReport.getMac() == null ? 0 : checkInProtectedReport.getMac().size()));
       return false;
     }
     return true;
