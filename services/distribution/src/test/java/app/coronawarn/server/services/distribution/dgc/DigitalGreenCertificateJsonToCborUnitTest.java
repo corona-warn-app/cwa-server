@@ -10,21 +10,14 @@ import static org.mockito.Mockito.when;
 import app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleType;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Collections;
-import java.util.Optional;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
-import org.junit.BeforeClass;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.PathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
@@ -52,9 +45,9 @@ class DigitalGreenCertificateJsonToCborUnitTest {
   @Test
   void shouldThrowWhenRuleByHashAndCountryIsNotFetched() throws FetchBusinessRulesException {
     when(digitalCovidCertificateClient.getRules()).thenReturn(Collections.singletonList(mockBusinessRuleItem()));
-    when(digitalCovidCertificateClient.getCountryRuleByHash(any(),any())).thenReturn(Optional.empty());
+    when(digitalCovidCertificateClient.getCountryRuleByHash(any(),any())).thenThrow(FetchBusinessRulesException.class);
 
-    assertThatExceptionOfType(DigitalCovidCertificateException.class).isThrownBy(
+    assertThatExceptionOfType(FetchBusinessRulesException.class).isThrownBy(
         () -> digitalGreenCertificateToCborMapping.constructRules(RuleType.Acceptance));
   }
 
@@ -64,10 +57,10 @@ class DigitalGreenCertificateJsonToCborUnitTest {
 
     when(resourceLoader.getResource(any())).thenReturn(validationSchema);
     when(digitalCovidCertificateClient.getRules()).thenReturn(Collections.singletonList(mockBusinessRuleItem()));
-    when(digitalCovidCertificateClient.getCountryRuleByHash(any(),any())).thenReturn(Optional.of(mockBusinessRule()));
+    when(digitalCovidCertificateClient.getCountryRuleByHash(any(),any())).thenReturn(mockBusinessRule());
 
     DigitalCovidCertificateException exception = assertThrows(DigitalCovidCertificateException.class,
-            () -> digitalGreenCertificateToCborMapping.constructRules(RuleType.Acceptance));
+        () -> digitalGreenCertificateToCborMapping.constructRules(RuleType.Acceptance));
     assertThat(exception.getMessage()).contains("is not valid");
   }
 
@@ -77,7 +70,7 @@ class DigitalGreenCertificateJsonToCborUnitTest {
 
     when(resourceLoader.getResource(any())).thenReturn(validationSchema);
     when(digitalCovidCertificateClient.getRules()).thenReturn(Collections.singletonList(mockBusinessRuleItem()));
-    when(digitalCovidCertificateClient.getCountryRuleByHash(any(),any())).thenReturn(Optional.of(mockBusinessRule()));
+    when(digitalCovidCertificateClient.getCountryRuleByHash(any(),any())).thenReturn(mockBusinessRule());
 
     DigitalCovidCertificateException exception = assertThrows(DigitalCovidCertificateException.class,
         () -> digitalGreenCertificateToCborMapping.constructRules(RuleType.Acceptance));

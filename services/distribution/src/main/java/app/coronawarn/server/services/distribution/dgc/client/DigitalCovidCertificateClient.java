@@ -20,9 +20,9 @@ public interface DigitalCovidCertificateClient {
 
   List<ValueSetMetadata> getValueSets() throws FetchValueSetsException;
 
-  Optional<ValueSet> getValueSet(String hash) throws FetchValueSetsException;
+  ValueSet getValueSet(String hash) throws FetchValueSetsException;
 
   List<BusinessRuleItem> getRules() throws FetchBusinessRulesException;
 
-  Optional<BusinessRule> getCountryRuleByHash(String country, String hash) throws FetchBusinessRulesException;
+  BusinessRule getCountryRuleByHash(String country, String hash) throws FetchBusinessRulesException;
 }

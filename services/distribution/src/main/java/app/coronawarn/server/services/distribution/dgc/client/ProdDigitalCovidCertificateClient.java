@@ -10,7 +10,6 @@ import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRu
 import app.coronawarn.server.services.distribution.dgc.exception.FetchValueSetsException;
 import app.coronawarn.server.services.distribution.dgc.exception.ThirdPartyServiceException;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import org.slf4j.Logger;
@@ -30,8 +29,8 @@ import org.springframework.stereotype.Component;
 public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificateClient {
 
   private static final Logger logger = LoggerFactory.getLogger(ProdDigitalCovidCertificateClient.class);
-  
-  public static final Marker AUDIT = MarkerFactory.getMarker("AUDIT"); 
+
+  public static final Marker AUDIT = MarkerFactory.getMarker("AUDIT");
 
   private final DigitalCovidCertificateFeignClient digitalCovidCertificateClient;
 
@@ -54,13 +53,11 @@ public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificat
   }
 
   @Override
-  public Optional<ValueSet> getValueSet(String hash) throws FetchValueSetsException {
-    return Optional.ofNullable(
-        getResponseAndTreatExceptions(
-            () -> digitalCovidCertificateClient.getValueSet(hash),
+  public ValueSet getValueSet(String hash) throws FetchValueSetsException {
+    return getResponseAndTreatExceptions(
+        () -> digitalCovidCertificateClient.getValueSet(hash),
         "value set",
-        FetchValueSetsException::new)
-    );
+        FetchValueSetsException::new);
   }
 
   @Override
@@ -71,16 +68,14 @@ public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificat
   }
 
   @Override
-  public Optional<BusinessRule> getCountryRuleByHash(String country, String hash) throws FetchBusinessRulesException {
-    return Optional.ofNullable(
-        getResponseAndTreatExceptions(
-            () -> digitalCovidCertificateClient.getCountryRule(country, hash),
-            "country rule",
-            FetchBusinessRulesException::new)
-    );
+  public BusinessRule getCountryRuleByHash(String country, String hash) throws FetchBusinessRulesException {
+    return getResponseAndTreatExceptions(
+        () -> digitalCovidCertificateClient.getCountryRule(country, hash),
+        "country rule",
+        FetchBusinessRulesException::new);
   }
 
-  private <T,E extends ThirdPartyServiceException> T getResponseAndTreatExceptions(
+  private <T, E extends ThirdPartyServiceException> T getResponseAndTreatExceptions(
       Supplier<ResponseEntity<T>> responseSupplier,
       String fetchEntityName,
       BiFunction<String, Exception, E> exceptionConverter)
@@ -88,7 +83,13 @@ public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificat
     logger.debug("Get " + fetchEntityName + " from DCC");
     try {
       ResponseEntity<T> response = responseSupplier.get();
-      logger.info(AUDIT,  "{} - {}", fetchEntityName, stringifyObject(response.getBody()));
+
+      if (response.getBody() == null) {
+        throw exceptionConverter.apply("Response body for " + fetchEntityName + " is null",
+            new NullPointerException());
+      }
+
+      logger.info(AUDIT, "{} - {}", fetchEntityName, stringifyObject(response.getBody()));
       return response.getBody();
     } catch (Exception e) {
       throw exceptionConverter.apply(fetchEntityName + " could not be fetched because of: " + e.getMessage(), e);

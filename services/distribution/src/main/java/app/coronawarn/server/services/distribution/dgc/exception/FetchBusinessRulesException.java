@@ -7,4 +7,8 @@ public class FetchBusinessRulesException extends ThirdPartyServiceException {
   public FetchBusinessRulesException(String message, Throwable cause) {
     super(message, cause);
   }
+
+  public FetchBusinessRulesException(String message) {
+    super(message);
+  }
 }

@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dgc.ApacheHttpTestConfiguration;
+import app.coronawarn.server.services.distribution.dgc.BusinessRule;
 import app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleType;
 import app.coronawarn.server.services.distribution.dgc.BusinessRuleItem;
 import app.coronawarn.server.services.distribution.dgc.ValueSet;
@@ -17,8 +18,6 @@ import app.coronawarn.server.services.distribution.dgc.client.signature.DccSigna
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchValueSetsException;
 import java.util.List;
-import java.util.Optional;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
@@ -52,12 +51,12 @@ public class DigitalCovidCertificateIT {
     assertThat(rules).isNotEmpty();
 
     for (BusinessRuleItem businessRuleItem : rules) {
-      digitalCovidCertificateClient.getCountryRuleByHash(businessRuleItem.getCountry(), businessRuleItem.getHash())
-          .ifPresent(businessRule -> {
-            assertThat(businessRule.getCountry()).isEqualTo(businessRuleItem.getCountry());
-            assertThat(businessRule.getIdentifier()).isNotEmpty();
-            assertTrue(isAcceptanceOrInvalidation(businessRule.getType()));
-          });
+      BusinessRule businessRule = digitalCovidCertificateClient
+          .getCountryRuleByHash(businessRuleItem.getCountry(), businessRuleItem.getHash());
+
+      assertThat(businessRule.getCountry()).isEqualTo(businessRuleItem.getCountry());
+      assertThat(businessRule.getIdentifier()).isNotEmpty();
+      assertTrue(isAcceptanceOrInvalidation(businessRule.getType()));
     }
   }
 
@@ -68,7 +67,6 @@ public class DigitalCovidCertificateIT {
   }
 
   @Test
-  @Disabled("X-SIGNATURE header not implemented yet")
   public void shouldFetchAllValuesetsMetadataAndEachValuesetAfter() throws FetchValueSetsException {
     List<ValueSetMetadata> valuesets = digitalCovidCertificateClient.getValueSets();
     assertThat(valuesets).isNotEmpty();
@@ -76,10 +74,10 @@ public class DigitalCovidCertificateIT {
     int counter = 0;
     for (ValueSetMetadata valueSetMetadata : valuesets) {
       try {
-        Optional<ValueSet> valueSetOptional = digitalCovidCertificateClient.getValueSet(valueSetMetadata.getHash());
-        assertThat(valueSetOptional).isPresent();
-        assertThat(valueSetOptional.get().getValueSetId()).isNotEmpty();
-        assertThat(valueSetOptional.get().getValueSetValues()).isNotEmpty();
+        ValueSet valueSet = digitalCovidCertificateClient.getValueSet(valueSetMetadata.getHash());
+        assertThat(valueSet).isNotNull();
+        assertThat(valueSet.getValueSetId()).isNotEmpty();
+        assertThat(valueSet.getValueSetValues()).isNotEmpty();
         counter++;
       } catch (final FetchValueSetsException e) {
         logger.warn("Hash: '" + valueSetMetadata.getHash() + "' throwed exception!", e.getCause());

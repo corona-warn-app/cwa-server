@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.junit.Rule;
@@ -141,9 +140,9 @@ class DccRulesNotFetchedStructureProviderTest {
 
     when(digitalCovidCertificateClient.getRules()).thenReturn(Arrays.asList(businessRuleItem, businessRuleItem2));
     when(digitalCovidCertificateClient.getCountryRuleByHash(eq("test1"), eq("test1")))
-        .thenReturn(Optional.of(businessRule));
+        .thenReturn(businessRule);
     when(digitalCovidCertificateClient.getCountryRuleByHash(eq("test2"), eq("test2")))
-        .thenReturn(Optional.of(businessRule));
+        .thenReturn(businessRule);
     when(digitalCovidCertificateClient.getCountryList()).thenReturn(Arrays.asList("DE", "RO"));
 
     DirectoryOnDisk digitalGreenCertificates = getStructureProviderDirectory();
