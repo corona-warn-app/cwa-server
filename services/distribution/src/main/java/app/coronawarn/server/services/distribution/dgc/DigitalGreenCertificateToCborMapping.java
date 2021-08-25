@@ -43,7 +43,7 @@ public class DigitalGreenCertificateToCborMapping {
    *
    * @param ruleType - rule type for which the business rules will be retrieved.
    * @return - business rules
-   * @throws DigitalCovidCertificateException - thrown if json validation schema is not found or the validationfails for
+   * @throws DigitalCovidCertificateException - thrown if json validation schema is not found or the validation fails for
    *                                          a specific rule. This exception will propagate and will stop any archive
    *                                          to be published down in the execution.
    */
