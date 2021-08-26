@@ -1674,6 +1674,10 @@ public class DistributionServiceConfig {
 
     @NotNull
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
+    private String boosterNotificationDirectory;
+
+    @NotNull
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String valuesetsFileName;
 
     private String[] supportedLanguages;
@@ -1744,6 +1748,14 @@ public class DistributionServiceConfig {
 
     public void setDgcDirectory(String dgcDirectory) {
       this.dgcDirectory = dgcDirectory;
+    }
+
+    public String getBoosterNotificationDirectory() {
+      return boosterNotificationDirectory;
+    }
+
+    public void setBoosterNotificationDirectory(String boosterNotificationDirectory) {
+      this.boosterNotificationDirectory = boosterNotificationDirectory;
     }
 
     public String getValuesetsFileName() {

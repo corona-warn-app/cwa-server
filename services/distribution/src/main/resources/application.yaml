@@ -225,6 +225,7 @@ services:
       dgc-directory: ${DIGITAL_GREEN_CERTIFICATE_DIRECTORY:ehn-dgc}
       valuesets-file-name: ${DIGITAL_GREEN_CERTIFICATE_VALUESETS_FILE_NAME:value-sets}
       supported-languages: ${DIGITAL_GREEN_CERTIFICATE_SUPPORTED_LANGUAGES:DE, EN, BG, PL, RO, TR}
+      booster-notification-directory: ${BOOSTER_NOTIFICATION_DIRECTORY:booster-notification-rules}
       dsc-client:
         public-key: ${DSC_PUBLIC_KEY:MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETHfi8foQF4UtSNVxSFxeu7W+gMxdSGElhdo7825SD3Lyb+Sqh4G6Kra0ro1BdrM6Qx+hsUx4Qwdby7QY0pzxyA==}
         base-url: ${DSC_BASE_PATH:https://de.dscg.ubirch.com}

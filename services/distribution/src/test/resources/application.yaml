@@ -179,6 +179,7 @@ services:
         probability-to-fake-check-ins-if-no-check-ins: 0
         probability-to-fake-check-ins-if-some-check-ins: 0.005
     digital-green-certificate:
+      booster-notification-directory: booster-notification-rules
       dgc-directory: ehn-dgc
       valuesets-file-name: value-sets
       supported-languages: DE, EN, BG, PL, RO, TR
