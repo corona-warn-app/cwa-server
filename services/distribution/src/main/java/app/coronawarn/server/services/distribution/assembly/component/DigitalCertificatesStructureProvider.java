@@ -140,7 +140,7 @@ public class DigitalCertificatesStructureProvider {
   /**
    * Create business rules Archive. If any exception is thrown during fetching data and packaging process, an empty
    * Archive will be published in order to not override any previous archive on CDN with broken data. Provided rules are
-   * filtered by rule type parameter which could be 'Acceptance', 'Invalidation' or 'BoosterNotification'.
+   * filtered by rule type parameter which could be 'Acceptance' or 'Invalidation'.
    *
    * @param ruleType    - rule type to receive rules for
    * @param archiveName - archive name for packaging rules

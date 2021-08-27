@@ -26,34 +26,30 @@ import org.springframework.stereotype.Component;
 @Component
 public class BoosterNotificationStructureProvider {
 
-  private static final Logger logger = LoggerFactory.getLogger(DigitalCertificatesStructureProvider.class);
+  private static final Logger logger = LoggerFactory.getLogger(BoosterNotificationStructureProvider.class);
 
   public static final String EXPORT_BIN = "export.bin";
 
   private final DistributionServiceConfig distributionServiceConfig;
   private final CryptoProvider cryptoProvider;
   private final DigitalGreenCertificateToCborMapping dgcToCborMapping;
-  private final DigitalSigningCertificatesToProtobufMapping digitalSigningCertificatesToProtobufMapping;
 
   /**
    * Create an instance.
    */
   public BoosterNotificationStructureProvider(DistributionServiceConfig distributionServiceConfig,
-      CryptoProvider cryptoProvider, DigitalGreenCertificateToProtobufMapping dgcToProtobufMapping,
-      DigitalGreenCertificateToCborMapping dgcToCborMapping,
-      DigitalSigningCertificatesToProtobufMapping digitalSigningCertificatesToProtobufMapping) {
+      CryptoProvider cryptoProvider, DigitalGreenCertificateToCborMapping dgcToCborMapping) {
     this.distributionServiceConfig = distributionServiceConfig;
     this.cryptoProvider = cryptoProvider;
     this.dgcToCborMapping = dgcToCborMapping;
-    this.digitalSigningCertificatesToProtobufMapping = digitalSigningCertificatesToProtobufMapping;
   }
 
   /**
    * Returns the publishable archive with Booster Notification Business rules Cbor encoded structures.
    */
   public Writable<WritableOnDisk> getBoosterNotificationRules() {
-    return getRulesArchive(RuleType.BoosterNotification,
-        distributionServiceConfig.getDigitalGreenCertificate().getBoosterNotification()).get();
+    return getBnRulesArchive(RuleType.BoosterNotification,
+        distributionServiceConfig.getDigitalGreenCertificate().getBoosterNotification());
   }
 
   /**
@@ -65,21 +61,20 @@ public class BoosterNotificationStructureProvider {
    * @param archiveName - archive name for packaging rules
    * @return - business rules archive
    */
-  private Optional<Writable<WritableOnDisk>> getRulesArchive(RuleType ruleType, String archiveName) {
+  private Writable<WritableOnDisk> getBnRulesArchive(RuleType ruleType, String archiveName) {
     ArchiveOnDisk rulesArchive = new ArchiveOnDisk(archiveName);
 
     try {
       rulesArchive
-          .addWritable(new FileOnDisk("export.bin", dgcToCborMapping.constructCborRules(ruleType)));
+          .addWritable(new FileOnDisk(EXPORT_BIN, dgcToCborMapping.constructCborRules(ruleType)));
       logger.info(archiveName + " archive has been added to the DGC distribution folder");
-      return Optional.of(new DistributionArchiveSigningDecorator(rulesArchive, cryptoProvider,
-          distributionServiceConfig));
     } catch (DigitalCovidCertificateException e) {
       logger.error(archiveName + " archive was not overwritten because of:", e);
     } catch (FetchBusinessRulesException e) {
       logger.error(archiveName + " archive was not overwritten because business rules could not been fetched:", e);
     }
 
-    return Optional.empty();
+    return new DistributionArchiveSigningDecorator(rulesArchive, cryptoProvider,
+        distributionServiceConfig);
   }
 }
