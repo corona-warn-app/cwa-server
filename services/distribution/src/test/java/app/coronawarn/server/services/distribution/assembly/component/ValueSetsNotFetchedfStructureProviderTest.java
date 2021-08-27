@@ -97,10 +97,12 @@ class ValueSetsNotFetchedfStructureProviderTest {
     digitalGreenCertificates.prepare(new ImmutableStack<>());
 
     assertEquals("ehn-dgc", digitalGreenCertificates.getName());
-    List<String> supportedLanguages = digitalGreenCertificates.getWritables().stream().map(Writable::getName).collect(
-        Collectors.toList());
     List<String> expectedLanguages = Arrays.asList("de", "en", "bg", "pl", "ro", "tr");
-    assertTrue(supportedLanguages.stream().noneMatch(expectedLanguages::contains));
+    boolean areLanguageFoldersEmpty = digitalGreenCertificates.getWritables().stream()
+        .filter(writableOnDiskWritable -> expectedLanguages.contains(writableOnDiskWritable.getName()))
+        .filter(writableOnDiskWritable -> writableOnDiskWritable instanceof DirectoryOnDisk)
+        .noneMatch(directory -> ((DirectoryOnDisk) directory).getWritables().size() > 0);
+    assertTrue(areLanguageFoldersEmpty);
     verify(dgcToProtobufMapping, times(1)).constructProtobufMapping();
   }
 }
