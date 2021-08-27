@@ -40,6 +40,7 @@ class DigitalGreenCertificateJsonToCborSpringTest {
   public static final String ID_ACCEPTANCE_1 = "RR-NL-0000";
   public static final String ID_ACCEPTANCE_2 = "TR-DE-0003";
   public static final String ID_INVALIDATION_1 = "RR-NL-0003";
+  public static final String ID_BN_1 = "RR-NL-0004";
   public static final String RANDOM_STRING = "random_string";
   public static final String DE = "DE";
   public static final String BAD_IDENTIFIER = "BAD-IDENTIFIER";
@@ -58,6 +59,15 @@ class DigitalGreenCertificateJsonToCborSpringTest {
     assertThat(businessRules.stream().filter(filterByRuleType(RuleType.Acceptance))).hasSize(2);
     assertThat(businessRules.stream().filter(filterByRuleIdentifier(ID_ACCEPTANCE_1)).findAny()).isPresent();
     assertThat(businessRules.stream().filter(filterByRuleIdentifier(ID_ACCEPTANCE_2)).findAny()).isPresent();
+  }
+
+  @Test
+  void shouldConstructCorrectBnRules() throws DigitalCovidCertificateException, FetchBusinessRulesException {
+    List<BusinessRule> businessRules = digitalGreenCertificateToCborMapping.constructBnRules(RuleType.BoosterNotification);
+
+    assertThat(businessRules).hasSize(1);
+    assertThat(businessRules.stream().filter(filterByRuleType(RuleType.BoosterNotification))).hasSize(1);
+    assertThat(businessRules.stream().filter(filterByRuleIdentifier(ID_BN_1)).findAny()).isPresent();
   }
 
   @Test

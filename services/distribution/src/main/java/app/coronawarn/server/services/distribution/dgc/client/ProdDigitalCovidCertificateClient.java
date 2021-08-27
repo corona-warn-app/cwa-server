@@ -68,11 +68,19 @@ public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificat
   }
 
   @Override
+  public List<BusinessRuleItem> getBnRules() throws FetchBusinessRulesException {
+    return getResponseAndTreatExceptions(digitalCovidCertificateClient::getBnRules,
+        "business rules",
+        FetchBusinessRulesException::new);
+  }
+
+  @Override
   public BusinessRule getCountryRuleByHash(String country, String hash) throws FetchBusinessRulesException {
-    return getResponseAndTreatExceptions(
+    BusinessRule businessRule =  getResponseAndTreatExceptions(
         () -> digitalCovidCertificateClient.getCountryRule(country, hash),
         "country rule",
         FetchBusinessRulesException::new);
+    return businessRule;
   }
 
   private <T, E extends ThirdPartyServiceException> T getResponseAndTreatExceptions(

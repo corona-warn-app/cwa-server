@@ -26,6 +26,7 @@ public class CwaApiStructureProvider {
   private final TraceTimeIntervalWarningsStructureProvider traceWarningsStructureProvider;
   private final QrCodePosterTemplateStructureProvider qrCodeTemplateStructureProvider;
   private final DigitalCertificatesStructureProvider dgcStructureProvider;
+  private final BoosterNotificationStructureProvider boosterNotificationStructureProvider;
 
   /**
    * Creates a new CwaApiStructureProvider.
@@ -39,6 +40,7 @@ public class CwaApiStructureProvider {
       TraceTimeIntervalWarningsStructureProvider traceWarningsStructureProvider,
       QrCodePosterTemplateStructureProvider qrCodeTemplateStructureProvider,
       DigitalCertificatesStructureProvider dgcStructureProvider,
+      BoosterNotificationStructureProvider boosterNotificationStructureProvider,
       DistributionServiceConfig distributionServiceConfig) {
     this.appConfigurationStructureProvider = appConfigurationStructureProvider;
     this.appConfigurationV2StructureProvider = appConfigurationV2StructureProvider;
@@ -49,6 +51,7 @@ public class CwaApiStructureProvider {
     this.traceWarningsStructureProvider = traceWarningsStructureProvider;
     this.qrCodeTemplateStructureProvider = qrCodeTemplateStructureProvider;
     this.dgcStructureProvider = dgcStructureProvider;
+    this.boosterNotificationStructureProvider = boosterNotificationStructureProvider;
   }
 
   /**
@@ -76,6 +79,8 @@ public class CwaApiStructureProvider {
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.ofNullable(dgcStructureProvider.getDigitalGreenCertificates()));
     versionDirectory.addWritableToAll(
+        ignoredValue -> Optional.ofNullable(boosterNotificationStructureProvider.getBoosterNotificationRules()));
+    versionDirectory.addWritableToAll(
         ignoredValue -> Optional.of(diagnosisKeysStructureProvider.getDiagnosisKeys()));
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.of(traceWarningsStructureProvider.getTraceWarningsDirectory()));
@@ -85,6 +90,7 @@ public class CwaApiStructureProvider {
     localStatisticsStructureProvider.getLocalStatisticsList().forEach(archive -> {
       versionDirectory.addWritableToAll(ignoredValue -> Optional.ofNullable(archive));
     });
+
 
     return new IndexingDecoratorOnDisk<>(versionDirectory, distributionServiceConfig.getOutputFileName());
   }

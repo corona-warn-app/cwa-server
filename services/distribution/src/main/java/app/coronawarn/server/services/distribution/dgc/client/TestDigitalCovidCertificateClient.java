@@ -45,6 +45,7 @@ public class TestDigitalCovidCertificateClient implements DigitalCovidCertificat
   public static final String RULE_1_HASH = "7221d518570fe9f4417c482ff0d2582a7b6440f243a9034f812e0d71611b611f";
   public static final String RULE_2_HASH = "6821d518570fe9f4417c482ff0d2582a7b6440f243a9034f812e0d71611b611f";
   public static final String RULE_3_HASH = "7021d518570fe9f4417c482ff0d2582a7b6440f243a9034f812e0d71611b611f";
+  public static final String RULE_4_HASH = "7021d518570fe9f4417c482ff0d2582a7b6440f243a9034f812e0d71611b611l";
 
   private final ResourceLoader resourceLoader;
 
@@ -113,6 +114,17 @@ public class TestDigitalCovidCertificateClient implements DigitalCovidCertificat
   }
 
   @Override
+  public List<BusinessRuleItem> getBnRules() {
+    Optional<BusinessRuleItem[]> businessRuleItems = readConfiguredJsonOrDefault(resourceLoader, null,
+        "dgc/bnrules.json", BusinessRuleItem[].class);
+
+    if (businessRuleItems.isEmpty()) {
+      return Collections.emptyList();
+    }
+    return Arrays.asList(businessRuleItems.get());
+  }
+
+  @Override
   public BusinessRule getCountryRuleByHash(String country, String hash) throws FetchBusinessRulesException {
     switch (hash) {
       case RULE_1_HASH:
@@ -121,6 +133,8 @@ public class TestDigitalCovidCertificateClient implements DigitalCovidCertificat
         return getBusinessRuleOrThrow("dgc/rule_2.json");
       case RULE_3_HASH:
         return getBusinessRuleOrThrow("dgc/rule_3.json");
+      case RULE_4_HASH:
+        return getBusinessRuleOrThrow("dgc/rule_4.json");
       default:
         throw new FetchBusinessRulesException("No business rule found for hash: " + hash);
     }

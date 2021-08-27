@@ -1674,7 +1674,7 @@ public class DistributionServiceConfig {
 
     @NotNull
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
-    private String boosterNotificationDirectory;
+    private String boosterNotification;
 
     @NotNull
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
@@ -1750,12 +1750,12 @@ public class DistributionServiceConfig {
       this.dgcDirectory = dgcDirectory;
     }
 
-    public String getBoosterNotificationDirectory() {
-      return boosterNotificationDirectory;
+    public String getBoosterNotification() {
+      return boosterNotification;
     }
 
-    public void setBoosterNotificationDirectory(String boosterNotificationDirectory) {
-      this.boosterNotificationDirectory = boosterNotificationDirectory;
+    public void setBoosterNotification(String boosterNotification) {
+      this.boosterNotification = boosterNotification;
     }
 
     public String getValuesetsFileName() {
