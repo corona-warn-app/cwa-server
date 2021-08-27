@@ -63,7 +63,7 @@ class DigitalGreenCertificateJsonToCborSpringTest {
 
   @Test
   void shouldConstructCorrectBnRules() throws DigitalCovidCertificateException, FetchBusinessRulesException {
-    List<BusinessRule> businessRules = digitalGreenCertificateToCborMapping.constructBnRules(RuleType.BoosterNotification);
+    List<BusinessRule> businessRules = digitalGreenCertificateToCborMapping.constructRules(RuleType.BoosterNotification);
 
     assertThat(businessRules).hasSize(1);
     assertThat(businessRules.stream().filter(filterByRuleType(RuleType.BoosterNotification))).hasSize(1);
