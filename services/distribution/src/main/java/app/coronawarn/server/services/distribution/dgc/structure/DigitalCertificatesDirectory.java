@@ -12,10 +12,14 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DigitalCertificatesDirectory extends IndexDirectoryOnDisk<String> {
 
-  public static final String EXPORT_BIN = "export.bin";
+  private static final Logger logger = LoggerFactory.getLogger(DigitalCertificatesDirectory.class);
+
+  public static final String EXPORT_BINARY_FILENAME = "export.bin";
 
   private final DistributionServiceConfig distributionServiceConfig;
 
@@ -44,9 +48,11 @@ public class DigitalCertificatesDirectory extends IndexDirectoryOnDisk<String> {
   @Override
   public void prepare(ImmutableStack<Object> indices) {
     if (valueSets != null) {
-      this.addWritableToAll(ignoredValue -> {
+      this.addWritableToAll(lang -> {
         ArchiveOnDisk archiveToPublish = new ArchiveOnDisk(dgcConfig.getValuesetsFileName());
-        archiveToPublish.addWritable(new FileOnDisk(EXPORT_BIN, valueSets.toByteArray()));
+        archiveToPublish.addWritable(new FileOnDisk(EXPORT_BINARY_FILENAME, valueSets.toByteArray()));
+        logger.info("Writing digital green certificate value sets to {}/{}/{}.",
+            dgcConfig.getDgcDirectory(), lang, archiveToPublish.getName());
         return Optional.of(new DistributionArchiveSigningDecorator(
             archiveToPublish, cryptoProvider, distributionServiceConfig));
       });

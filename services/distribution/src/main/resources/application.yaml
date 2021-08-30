@@ -242,8 +242,8 @@ services:
         value-sets-path: ${BUSSINESS_RULES_VALUE_SETS_PATH:/valuesets}
         rules-path: ${BUSSINESS_RULES_RULES_PATH:/rules}
         ssl:
-          trust-store: ../../docker-compose-test-secrets/dcc_truststore
-          trust-store-password: 123456
+          trust-store: ${DCC_TRUST_STORE:../../docker-compose-test-secrets/dcc_truststore}
+          trust-store-password: ${DCC_TRUST_STORE_PASSWORD:123456}
 
 spring:
   main:
