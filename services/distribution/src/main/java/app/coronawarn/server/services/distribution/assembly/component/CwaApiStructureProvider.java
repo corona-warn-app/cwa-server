@@ -91,7 +91,6 @@ public class CwaApiStructureProvider {
       versionDirectory.addWritableToAll(ignoredValue -> Optional.ofNullable(archive));
     });
 
-
     return new IndexingDecoratorOnDisk<>(versionDirectory, distributionServiceConfig.getOutputFileName());
   }
 
