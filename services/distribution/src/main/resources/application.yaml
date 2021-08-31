@@ -241,11 +241,11 @@ services:
         base-url: ${BUSSINESS_RULES_BASE_PATH:https://distribution-dfe4f5c711db.dcc-rules.de/}
         country-list-path: ${BUSSINESS_RULES_COUNTRY_LIST_PATH:/countrylist}
         value-sets-path: ${BUSSINESS_RULES_VALUE_SETS_PATH:/valuesets}
-        rules-path: ${BUSSINESS_RULES_PATH:/rules}
-        bn-rules-path: ${BOOSTER_NOTIFICATION_RULES_PATH:/rules}
+        rules-path: ${BUSSINESS_RULES_RULES_PATH:/rules}
+        bn-rules-path: ${BUSSINESS_RULES_BN_RULES_PATH:/rules}
         ssl:
-          trust-store: ../../docker-compose-test-secrets/dcc_truststore
-          trust-store-password: 123456
+          trust-store: ${DSC_TRUST_STORE:../../docker-compose-test-secrets/dsc_truststore}
+            trust-store-password: ${DSC_TRUST_STORE_PASSWORD:123456}
 
 spring:
   main:
