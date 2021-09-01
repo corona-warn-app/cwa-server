@@ -47,7 +47,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
         DigitalSigningCertificatesToProtobufMapping.class, DigitalSigningCertificatesClient.class},
     initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles({"fake-dcc-client", "fake-dsc-client"})
-class ValueSetsNotFetchedfStructureProviderTest {
+class ValueSetsNotFetchedStructureProviderTest {
 
   private static final String PARENT_TEST_FOLDER = "parent";
 
@@ -101,7 +101,7 @@ class ValueSetsNotFetchedfStructureProviderTest {
     boolean areLanguageFoldersEmpty = digitalGreenCertificates.getWritables().stream()
         .filter(writableOnDiskWritable -> expectedLanguages.contains(writableOnDiskWritable.getName()))
         .filter(writableOnDiskWritable -> writableOnDiskWritable instanceof DirectoryOnDisk)
-        .noneMatch(directory -> ((DirectoryOnDisk) directory).getWritables().size() > 0);
+        .allMatch(directory -> ((DirectoryOnDisk) directory).getWritables().isEmpty());
     assertTrue(areLanguageFoldersEmpty);
     verify(dgcToProtobufMapping, times(1)).constructProtobufMapping();
   }

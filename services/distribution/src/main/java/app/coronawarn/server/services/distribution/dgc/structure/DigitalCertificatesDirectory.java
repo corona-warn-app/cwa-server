@@ -30,8 +30,8 @@ public class DigitalCertificatesDirectory extends IndexDirectoryOnDisk<String> {
   private ValueSets valueSets;
 
   /**
-   * Constructs a {@link IndexDirectoryOnDisk} instance that represents a directory, containing an index in the form of
-   * sub directories.
+   * Constructs a {@link IndexDirectoryOnDisk} instance that represents a directory, for a digital green certificates
+   * and writes valuesets to all supported countries by the dgc.
    */
   public DigitalCertificatesDirectory(DistributionServiceConfig distributionServiceConfig,
       DigitalGreenCertificate dgcConfig, CryptoProvider cryptoProvider) {
