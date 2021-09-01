@@ -9,11 +9,8 @@ import app.coronawarn.server.services.distribution.assembly.structure.file.FileO
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleType;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToCborMapping;
-import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
-import app.coronawarn.server.services.distribution.dgc.dsc.DigitalSigningCertificatesToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -28,7 +25,7 @@ public class BoosterNotificationStructureProvider {
 
   private static final Logger logger = LoggerFactory.getLogger(BoosterNotificationStructureProvider.class);
 
-  public static final String EXPORT_BIN = "export.bin";
+  public static final String EXPORT_BINARY_FILENAME = "export.bin";
 
   private final DistributionServiceConfig distributionServiceConfig;
   private final CryptoProvider cryptoProvider;
@@ -66,7 +63,7 @@ public class BoosterNotificationStructureProvider {
 
     try {
       rulesArchive
-          .addWritable(new FileOnDisk(EXPORT_BIN, dgcToCborMapping.constructCborRules(ruleType)));
+          .addWritable(new FileOnDisk(EXPORT_BINARY_FILENAME, dgcToCborMapping.constructCborRules(ruleType)));
       logger.info(archiveName + " archive has been added to the DGC distribution folder");
     } catch (DigitalCovidCertificateException e) {
       logger.error(archiveName + " archive was not overwritten because of:", e);
