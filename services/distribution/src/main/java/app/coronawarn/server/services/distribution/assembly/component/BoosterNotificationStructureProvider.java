@@ -45,7 +45,7 @@ public class BoosterNotificationStructureProvider {
    * Returns the publishable archive with Booster Notification Business rules Cbor encoded structures.
    */
   public Writable<WritableOnDisk> getBoosterNotificationRules() {
-    return getBnRulesArchive(RuleType.BoosterNotification,
+    return getBoosterNotificationRulesArchive(RuleType.BoosterNotification,
         distributionServiceConfig.getDigitalGreenCertificate().getBoosterNotification());
   }
 
@@ -58,7 +58,7 @@ public class BoosterNotificationStructureProvider {
    * @param archiveName - archive name for packaging rules
    * @return - business rules archive
    */
-  private Writable<WritableOnDisk> getBnRulesArchive(RuleType ruleType, String archiveName) {
+  private Writable<WritableOnDisk> getBoosterNotificationRulesArchive(RuleType ruleType, String archiveName) {
     ArchiveOnDisk rulesArchive = new ArchiveOnDisk(archiveName);
 
     try {

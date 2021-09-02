@@ -51,7 +51,7 @@ public class DigitalGreenCertificateToCborMapping {
       throws DigitalCovidCertificateException, FetchBusinessRulesException {
     List<BusinessRuleItem> businessRulesItems;
     if (ruleType.equals(RuleType.BoosterNotification)) {
-      businessRulesItems = digitalCovidCertificateClient.getBnRules();
+      businessRulesItems = digitalCovidCertificateClient.getBoosterNotificationRules();
     } else {
       businessRulesItems = digitalCovidCertificateClient.getRules();
     }

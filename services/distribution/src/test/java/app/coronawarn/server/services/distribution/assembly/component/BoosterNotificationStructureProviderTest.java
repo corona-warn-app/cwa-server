@@ -34,7 +34,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
         BoosterNotificationStructureProvider.class},
     initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles({"fake-dcc-client", "fake-dsc-client"})
-public class BoosterNotificationStructureProviderTest {
+class BoosterNotificationStructureProviderTest {
 
   @Autowired
   DistributionServiceConfig distributionServiceConfig;

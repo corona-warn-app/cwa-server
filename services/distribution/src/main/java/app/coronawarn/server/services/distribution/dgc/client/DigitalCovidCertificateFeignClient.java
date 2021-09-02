@@ -57,7 +57,7 @@ public interface DigitalCovidCertificateFeignClient {
    */
   @Timed
   @GetMapping(value = "${services.distribution.digital-green-certificate.client.bn-rules-path}")
-  ResponseEntity<List<BusinessRuleItem>> getBnRules();
+  ResponseEntity<List<BusinessRuleItem>> getBoosterNotificationRules();
   /**
    * HTTP GET to return a specific business rule based on its country and hash.
    *

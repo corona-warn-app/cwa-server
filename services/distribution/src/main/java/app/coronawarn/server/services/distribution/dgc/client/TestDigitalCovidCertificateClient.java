@@ -114,7 +114,7 @@ public class TestDigitalCovidCertificateClient implements DigitalCovidCertificat
   }
 
   @Override
-  public List<BusinessRuleItem> getBnRules() {
+  public List<BusinessRuleItem> getBoosterNotificationRules() {
     Optional<BusinessRuleItem[]> businessRuleItems = readConfiguredJsonOrDefault(resourceLoader, null,
         "dgc/bnrules.json", BusinessRuleItem[].class);
 
