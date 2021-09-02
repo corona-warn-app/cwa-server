@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.distribution.assembly.component;
 
+import app.coronawarn.server.common.protocols.internal.dgc.ValueSets;
 import app.coronawarn.server.common.shared.exception.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
@@ -17,6 +18,7 @@ import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCer
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchDscTrustListException;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchValueSetsException;
+import app.coronawarn.server.services.distribution.dgc.structure.DigitalCertificatesDirectory;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +37,7 @@ public class DigitalCertificatesStructureProvider {
   public static final String DSCS = "dscs";
   public static final String ACCEPTANCE_RULES = "acceptance-rules";
   public static final String INVALIDATION_RULES = "invalidation-rules";
-  public static final String EXPORT_BIN = "export.bin";
+
 
   private final DistributionServiceConfig distributionServiceConfig;
   private final CryptoProvider cryptoProvider;
@@ -65,21 +67,12 @@ public class DigitalCertificatesStructureProvider {
     return constructArchiveToPublish(distributionServiceConfig.getDigitalGreenCertificate());
   }
 
-  private DirectoryOnDisk constructArchiveToPublish(DigitalGreenCertificate dgcConfig) {
-    DirectoryOnDisk dgcDirectory = new DirectoryOnDisk(dgcConfig.getDgcDirectory());
-
+  private DigitalCertificatesDirectory constructArchiveToPublish(DigitalGreenCertificate dgcConfig) {
+    DigitalCertificatesDirectory dgcDirectory = new DigitalCertificatesDirectory(
+        distributionServiceConfig, dgcConfig, cryptoProvider);
     try {
-      for (String currentLanguage : dgcConfig.getSupportedLanguages()) {
-        ArchiveOnDisk archiveToPublish = new ArchiveOnDisk(dgcConfig.getValuesetsFileName());
-        archiveToPublish.addWritable(new FileOnDisk(EXPORT_BIN,
-            dgcToProtobufMapping.constructProtobufMapping().toByteArray()));
-        DirectoryOnDisk languageDirectory = new DirectoryOnDisk(currentLanguage.toLowerCase());
-        languageDirectory.addWritable(new DistributionArchiveSigningDecorator(
-            archiveToPublish, cryptoProvider, distributionServiceConfig));
-        dgcDirectory.addWritable(languageDirectory);
-        logger.info("Writing digital green certificate value sets to {}/{}/{}.",
-            dgcDirectory.getName(), languageDirectory.getName(), archiveToPublish.getName());
-      }
+      ValueSets valueSets = dgcToProtobufMapping.constructProtobufMapping();
+      dgcDirectory.addValueSetsToAll(valueSets);
     } catch (FetchValueSetsException e) {
       logger.error("Digital green certificate valuesets were not written because of: ", e);
     }
