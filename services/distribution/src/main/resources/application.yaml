@@ -225,23 +225,24 @@ services:
       dgc-directory: ${DIGITAL_GREEN_CERTIFICATE_DIRECTORY:ehn-dgc}
       valuesets-file-name: ${DIGITAL_GREEN_CERTIFICATE_VALUESETS_FILE_NAME:value-sets}
       supported-languages: ${DIGITAL_GREEN_CERTIFICATE_SUPPORTED_LANGUAGES:DE, EN, BG, PL, RO, TR}
+      booster-notification: ${BOOSTER_NOTIFICATION_DIRECTORY:booster-notification-rules}
       dsc-client:
-        public-key: ${DSC_PUBLIC_KEY:MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETHfi8foQF4UtSNVxSFxeu7W+gMxdSGElhdo7825SD3Lyb+Sqh4G6Kra0ro1BdrM6Qx+hsUx4Qwdby7QY0pzxyA==}
-        base-url: ${DSC_BASE_PATH:https://de.dscg.ubirch.com}
+        public-key: ${DSC_PUBLIC_KEY:MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIxHvrv8jQx9OEzTZbsx1prQVQn/3ex0gMYf6GyaNBW0QKLMjrSDeN6HwSPM0QzhvhmyQUixl6l88A7Zpu5OWSw==}
+        base-url: ${DSC_BASE_PATH:https://de.test.dscg.ubirch.com}
         dsc-list-path: ${DSC_LIST_PATH:/trustList/DSC/}
         ssl:
           trust-store: ${DSC_TRUST_STORE:../../docker-compose-test-secrets/dsc_truststore}
           trust-store-password: ${DSC_TRUST_STORE_PASSWORD:123456}
       client:
-        # Can be found e.g. at https://distribution.dcc-rules.de/publickey
         public-key: ${DCC_PUBLIC_KEY:MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEnQmn1s+sTWqFPuRhqFRide7HD52SrsD01ZdX4cxN1r0pnZ0Zh7JNwZxmXlOQW5NDVlPdHq2QcD06gmP/10QizA==}
-        retry-period: 5
-        max-retry-period: 30
-        max-retry-attempts: 5
-        base-url: ${BUSSINESS_RULES_BASE_PATH:https://distribution.dcc-rules.de}
+        retry-period: 2
+        max-retry-period: 5
+        max-retry-attempts: 2
+        base-url: ${BUSSINESS_RULES_BASE_PATH:https://distribution-dfe4f5c711db.dcc-rules.de/}
         country-list-path: ${BUSSINESS_RULES_COUNTRY_LIST_PATH:/countrylist}
         value-sets-path: ${BUSSINESS_RULES_VALUE_SETS_PATH:/valuesets}
         rules-path: ${BUSSINESS_RULES_RULES_PATH:/rules}
+        bn-rules-path: ${BUSSINESS_RULES_BN_RULES_PATH:/rules}
         ssl:
           trust-store: ${DCC_TRUST_STORE:../../docker-compose-test-secrets/dcc_truststore}
           trust-store-password: ${DCC_TRUST_STORE_PASSWORD:123456}
