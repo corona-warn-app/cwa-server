@@ -24,14 +24,15 @@
     "Identifier": {
       "type": "string",
       "description": "The unique rule name",
-      "pattern": "^(GR|VR|TR|RR|IR)-[A-Z]{2}-\\d{4}$"
+      "pattern": "^(GR|VR|TR|RR|IR|BNR)-[A-Z]{2}-\\d{4}$"
     },
     "Type": {
       "type": "string",
       "description": "Type of the rule",
       "enum": [
         "Acceptance",
-        "Invalidation"
+        "Invalidation",
+        "BoosterNotification"
       ]
     },
     "Country": {
@@ -134,8 +135,7 @@
       "items": {
         "type": "string",
         "description": "Affected field of payload"
-      },
-      "minItems": 1
+      }
     },
     "Logic": {
       "type": "object",

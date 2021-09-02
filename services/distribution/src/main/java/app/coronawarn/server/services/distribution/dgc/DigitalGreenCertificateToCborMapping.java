@@ -49,7 +49,12 @@ public class DigitalGreenCertificateToCborMapping {
    */
   public List<BusinessRule> constructRules(RuleType ruleType)
       throws DigitalCovidCertificateException, FetchBusinessRulesException {
-    List<BusinessRuleItem> businessRulesItems = digitalCovidCertificateClient.getRules();
+    List<BusinessRuleItem> businessRulesItems;
+    if (ruleType.equals(RuleType.BoosterNotification)) {
+      businessRulesItems = digitalCovidCertificateClient.getBoosterNotificationRules();
+    } else {
+      businessRulesItems = digitalCovidCertificateClient.getRules();
+    }
     List<BusinessRule> businessRules = new ArrayList<>();
 
     for (BusinessRuleItem businessRuleItem : businessRulesItems) {
@@ -74,6 +79,7 @@ public class DigitalGreenCertificateToCborMapping {
 
     return businessRules;
   }
+
 
   /**
    * CBOR encoding of {@code constructCountryList}.

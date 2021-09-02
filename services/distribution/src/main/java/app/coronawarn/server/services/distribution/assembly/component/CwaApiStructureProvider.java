@@ -26,6 +26,7 @@ public class CwaApiStructureProvider {
   private final TraceTimeIntervalWarningsStructureProvider traceWarningsStructureProvider;
   private final QrCodePosterTemplateStructureProvider qrCodeTemplateStructureProvider;
   private final DigitalCertificatesStructureProvider dgcStructureProvider;
+  private final BoosterNotificationStructureProvider boosterNotificationStructureProvider;
 
   /**
    * Creates a new CwaApiStructureProvider.
@@ -39,6 +40,7 @@ public class CwaApiStructureProvider {
       TraceTimeIntervalWarningsStructureProvider traceWarningsStructureProvider,
       QrCodePosterTemplateStructureProvider qrCodeTemplateStructureProvider,
       DigitalCertificatesStructureProvider dgcStructureProvider,
+      BoosterNotificationStructureProvider boosterNotificationStructureProvider,
       DistributionServiceConfig distributionServiceConfig) {
     this.appConfigurationStructureProvider = appConfigurationStructureProvider;
     this.appConfigurationV2StructureProvider = appConfigurationV2StructureProvider;
@@ -49,6 +51,7 @@ public class CwaApiStructureProvider {
     this.traceWarningsStructureProvider = traceWarningsStructureProvider;
     this.qrCodeTemplateStructureProvider = qrCodeTemplateStructureProvider;
     this.dgcStructureProvider = dgcStructureProvider;
+    this.boosterNotificationStructureProvider = boosterNotificationStructureProvider;
   }
 
   /**
@@ -75,6 +78,8 @@ public class CwaApiStructureProvider {
         ignoredValue -> Optional.ofNullable(qrCodeTemplateStructureProvider.getQrCodeTemplateForIos()));
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.ofNullable(dgcStructureProvider.getDigitalGreenCertificates()));
+    versionDirectory.addWritableToAll(
+        ignoredValue -> Optional.ofNullable(boosterNotificationStructureProvider.getBoosterNotificationRules()));
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.of(diagnosisKeysStructureProvider.getDiagnosisKeys()));
     versionDirectory.addWritableToAll(

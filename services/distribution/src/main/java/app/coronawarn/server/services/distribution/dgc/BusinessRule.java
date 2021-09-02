@@ -174,7 +174,8 @@ public class BusinessRule {
 
   public enum RuleType {
     Acceptance,
-    Invalidation
+    Invalidation,
+    BoosterNotification
   }
 
 }
