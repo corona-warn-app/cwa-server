@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "serialization_validation_test",
+  "title": "Validation test",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "testAttribute"
+  ],
+  "properties": {
+    "testAttribute": {
+      "type": "string",
+      "pattern": "^(TEST)-[A-Z]{2}$"
+    }
+  }
+}

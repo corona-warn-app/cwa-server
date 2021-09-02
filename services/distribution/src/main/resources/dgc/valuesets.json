@@ -1,0 +1,34 @@
+[
+  {
+    "id": "country-2-codes",
+    "hash": "923e4e556fe7936e4a3e92e76cfb3aa87be1bf30000b4df3b755247042eea0e7"
+  },
+  {
+    "id": "covid-19-lab-result",
+    "hash": "934e145e9bb1f560d1d3b1ec767ce3a4e9f86ae101260ed04a5cef8c1f5636c4"
+  },
+  {
+    "id": "covid-19-lab-test-manufacturer-and-name",
+    "hash": "9da3ed15d036c20339647f8db1cb67bfcfbd04575e10b0c0df8e55a76a173a97"
+  },
+  {
+    "id": "covid-19-lab-test-type",
+    "hash": "50ba87d7c774cd9d77e4d82f6ab34871119bc4ad51b5b6fa1100efa687be0094"
+  },
+  {
+    "id": "disease-agent-targeted",
+    "hash": "d4bfba1fd9f2eb29dfb2938220468ccb0b481d348f192e6015d36da4b911a83a"
+  },
+  {
+    "id": "sct-vaccines-covid-19",
+    "hash": "70505eab33ac1da351f782ee2e78e89451226c47360e7b89b8a6295bbb70eed6"
+  },
+  {
+    "id": "vaccines-covid-19-auth-holders",
+    "hash": "55af9c705a95ced1a7d9130043f71a7a01f72e168dbd451d23d1575962518ab6"
+  },
+  {
+    "id": "vaccines-covid-19-names",
+    "hash": "8651c3db9ed5332c8fa42943d4656d442a5264debc8482b6d11d4c9176149146"
+  }
+]

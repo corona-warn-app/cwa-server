@@ -2,12 +2,14 @@
 syntax = "proto3";
 package app.coronawarn.server.common.protocols.internal.pt;
 option java_multiple_files = true;
+import "app/coronawarn/server/common/protocols/internal/pt/check_in.proto";
 
 message TraceWarningPackage {
   // hours since UNIX Epoch
   uint32 intervalNumber = 1;
   string region = 2;
-  repeated TraceTimeIntervalWarning timeIntervalWarnings = 3;
+  repeated TraceTimeIntervalWarning timeIntervalWarnings = 3  [deprecated = true];
+  repeated CheckInProtectedReport checkInProtectedReports = 4;
 }
 
 message TraceTimeIntervalWarning {

@@ -1,6 +1,9 @@
-
-
 package app.coronawarn.server.services.distribution.objectstore.publish;
+
+import static app.coronawarn.server.services.distribution.assembly.component.DigitalCertificatesStructureProvider.ACCEPTANCE_RULES;
+import static app.coronawarn.server.services.distribution.assembly.component.DigitalCertificatesStructureProvider.DSCS;
+import static app.coronawarn.server.services.distribution.assembly.component.DigitalCertificatesStructureProvider.INVALIDATION_RULES;
+import static app.coronawarn.server.services.distribution.assembly.component.DigitalCertificatesStructureProvider.ONBOARDED_COUNTRIES;
 
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDiskWithChecksum;
 import java.io.IOException;
@@ -73,10 +76,11 @@ public abstract class LocalFile {
    * Value for the <code>content-type</code> header.
    *
    * @return Either <a href="https://www.iana.org/assignments/media-types/application/zip">zip</a> or
-   *     <a href="https://www.iana.org/assignments/media-types/application/json">json</a>.
+   *         <a href="https://www.iana.org/assignments/media-types/application/json">json</a>.
    */
   public String getContentType() {
-    if (isConfigFile() || isStatisticFile() || isKeyFile() || isQrPosterTemplate() || isVaccineValueSet()) {
+    if (isConfigFile() || isStatisticFile() || isKeyFile() || isQrPosterTemplate() || isVaccineValueSet()
+        || isDscFile()) {
       return "application/zip";
     }
     // list of versions, dates, hours
@@ -90,7 +94,7 @@ public abstract class LocalFile {
    * @return <code>true</code> if and only if the {@link #s3Key} ends with a digit, false otherwise.
    */
   public boolean isKeyFile() {
-    return s3Key.matches(".*\\d");
+    return s3Key.matches(".*\\d") && !isStatisticFile();
   }
 
   public boolean isQrPosterTemplate() {
@@ -102,10 +106,15 @@ public abstract class LocalFile {
   }
 
   private boolean isStatisticFile() {
-    return s3Key.endsWith("stats");
+    return s3Key.endsWith("stats") || s3Key.matches(".*local_stats_\\d");
   }
 
   private boolean isVaccineValueSet() {
     return s3Key.endsWith("value-sets");
+  }
+
+  private boolean isDscFile() {
+    return s3Key.endsWith(INVALIDATION_RULES) || s3Key.endsWith(ACCEPTANCE_RULES) || s3Key.endsWith(ONBOARDED_COUNTRIES)
+        || s3Key.endsWith(DSCS);
   }
 }

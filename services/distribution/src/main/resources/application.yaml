@@ -34,8 +34,9 @@ services:
     eu-package-name: EUR
     # Indicates whether the shifting and expiry policies are applied to all supported countries during distribution.
     apply-policies-for-all-countries: false
-    card-id-sequence: ${STATS_CARD_ID_SEQUENCE:[1,3,2,4,5,6,7]}
+    card-id-sequence: ${STATS_CARD_ID_SEQUENCE:[2,1,3,4,5,6,7]}
     # Local paths, that are used during the export creation.
+    connection-pool-size: 200
     paths:
       # The output path.
       output: out
@@ -65,7 +66,7 @@ services:
       app-config-v2-android-file-name: app_config_android
       app-config-v2-ios-file-name: app_config_ios
       statistics-file-name: stats
-      local-statistics-file-name: local-stats
+      local-statistics-file-name: local_stats
     # Signature configuration, used for signing the exports.
     signature:
       # The alias with which to identify public key to be used for verification.
@@ -103,7 +104,6 @@ services:
       hour-file-retention-days: 2
     # Configuration for the publishing of app statistics
     statistics:
-      trend-calculation-threshold: 0.05
       statistic-path: ${STATISTICS_FILE_NAME:json/v1/cwa_reporting_public_data.json}
       local-statistic-path: ${LOCAL_STATISTICS_FILE_NAME:json/v1/cwa_reporting_public_data_region.json}
       access-key: ${STATISTICS_FILE_ACCESS_KEY_ID:}
@@ -112,8 +112,8 @@ services:
       bucket: ${STATISTICS_FILE_S3_BUCKET:obs-cwa-public-dev}
 
     app-features:
-      - label: reserved
-        value: ${reserved:1}
+      - label: unencrypted-checkins-enabled
+        value: ${EVREG_UNENCRYPTED_CHECKINS_ENABLED:0}
     supported-countries: ${SUPPORTED_COUNTRIES}
     app-versions:
       latest-ios: ${IOS_LATEST_VERSION:1.5.3}
@@ -136,6 +136,7 @@ services:
           #   * >= 0
           #   * <= 60
           waitForRetryInSeconds: ${DGC_TC_WAIT_FOR_RETRY_IN_SECONDS:10}
+        expiration-threshold-in-days: ${DGC_EXPIRATION_THRESHOLD_IN_DAYS:28}
       ios-key-download-parameters:
         revoked-day-packages: ${KEY_DOWNLOAD_REVOKED_DAY_PACKAGES:[]}
         revoked-hour-packages: ${KEY_DOWNLOAD_REVOKED_HOUR_PACKAGES:[]}
@@ -224,6 +225,27 @@ services:
       dgc-directory: ${DIGITAL_GREEN_CERTIFICATE_DIRECTORY:ehn-dgc}
       valuesets-file-name: ${DIGITAL_GREEN_CERTIFICATE_VALUESETS_FILE_NAME:value-sets}
       supported-languages: ${DIGITAL_GREEN_CERTIFICATE_SUPPORTED_LANGUAGES:DE, EN, BG, PL, RO, TR}
+      booster-notification: ${BOOSTER_NOTIFICATION_DIRECTORY:booster-notification-rules}
+      dsc-client:
+        public-key: ${DSC_PUBLIC_KEY:MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIxHvrv8jQx9OEzTZbsx1prQVQn/3ex0gMYf6GyaNBW0QKLMjrSDeN6HwSPM0QzhvhmyQUixl6l88A7Zpu5OWSw==}
+        base-url: ${DSC_BASE_PATH:https://de.test.dscg.ubirch.com}
+        dsc-list-path: ${DSC_LIST_PATH:/trustList/DSC/}
+        ssl:
+          trust-store: ${DSC_TRUST_STORE:../../docker-compose-test-secrets/dsc_truststore}
+          trust-store-password: ${DSC_TRUST_STORE_PASSWORD:123456}
+      client:
+        public-key: ${DCC_PUBLIC_KEY:MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEnQmn1s+sTWqFPuRhqFRide7HD52SrsD01ZdX4cxN1r0pnZ0Zh7JNwZxmXlOQW5NDVlPdHq2QcD06gmP/10QizA==}
+        retry-period: 2
+        max-retry-period: 5
+        max-retry-attempts: 2
+        base-url: ${BUSSINESS_RULES_BASE_PATH:https://distribution-dfe4f5c711db.dcc-rules.de/}
+        country-list-path: ${BUSSINESS_RULES_COUNTRY_LIST_PATH:/countrylist}
+        value-sets-path: ${BUSSINESS_RULES_VALUE_SETS_PATH:/valuesets}
+        rules-path: ${BUSSINESS_RULES_RULES_PATH:/rules}
+        bn-rules-path: ${BUSSINESS_RULES_BN_RULES_PATH:/rules}
+        ssl:
+          trust-store: ${DCC_TRUST_STORE:../../docker-compose-test-secrets/dcc_truststore}
+          trust-store-password: ${DCC_TRUST_STORE_PASSWORD:123456}
 
 spring:
   main:

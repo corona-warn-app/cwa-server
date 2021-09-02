@@ -1,27 +1,44 @@
 package app.coronawarn.server.services.distribution.dgc;
 
-import static app.coronawarn.server.common.shared.util.SerializationUtils.deserializeJsonToSimpleType;
-
 import app.coronawarn.server.common.protocols.internal.dgc.ValueSetItem;
 import app.coronawarn.server.common.protocols.internal.dgc.ValueSets;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import java.io.IOException;
-import java.io.InputStream;
+import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
+import app.coronawarn.server.services.distribution.dgc.exception.FetchValueSetsException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ObjectUtils;
 
 
 @Component
 public class DigitalGreenCertificateToProtobufMapping {
 
+  static final String TEST_RESULT_ID = "covid-19-lab-result";
+  static final String TEST_MANF_ID = "covid-19-lab-test-manufacturer-and-name";
+  static final String TEST_TYPE_ID = "covid-19-lab-test-type";
+  static final String DISEASE_AGENT_TARGETED_ID = "disease-agent-targeted";
+  static final String VACCINE_PROPHYLAXIS_ID = "sct-vaccines-covid-19";
+  static final String VACCINE_MAH_ID = "vaccines-covid-19-auth-holders";
+  static final String VACCINE_MEDICINAL_PRODUCT_ID = "vaccines-covid-19-names";
+
+  public static final String DISEASE_AGENT_TARGETED_DEFAULT_PATH = "dgc/disease-agent-targeted.json";
+  public static final String VACCINE_MAH_DEFAULT_PATH = "dgc/vaccine-mah.json";
+  public static final String VACCINE_MEDICINAL_PRODUCT_DEFAULT_PATH = "dgc/vaccine-medicinal-product.json";
+  public static final String VACCINE_PROPHYLAXIS_DEFAULT_PATH = "dgc/vaccine-prophylaxis.json";
+  public static final String TEST_MANF_DEFAULT_PATH = "dgc/test-manf.json";
+  public static final String TEST_RESULT_DEFAULT_PATH = "dgc/test-result.json";
+  public static final String TEST_TYPE_DEFAULT_PATH = "dgc/test-type.json";
+
   private static final Logger logger = LoggerFactory.getLogger(DigitalGreenCertificateToProtobufMapping.class);
+
+  @Autowired
+  DigitalCovidCertificateClient dccClient;
 
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
@@ -29,15 +46,15 @@ public class DigitalGreenCertificateToProtobufMapping {
   @Autowired
   ResourceLoader resourceLoader;
 
+  private List<ValueSetMetadata> metadata;
+
   /**
    * Read the JSON for the marketing authorization holders.
    *
    * @return The corresponding JSON object.
    */
-  ValueSet readMahJson() throws DefaultValueSetsMissingException {
-    String path = distributionServiceConfig.getDigitalGreenCertificate().getMahJsonPath();
-    return readConfiguredJsonOrDefault(path, "dgc/vaccine-mah.json",
-        ValueSet.class);
+  ValueSet readMahJson() throws FetchValueSetsException {
+    return getValueSet(VACCINE_MAH_ID);
   }
 
   /**
@@ -45,10 +62,8 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  ValueSet readMedicinalProductJson() throws DefaultValueSetsMissingException {
-    String path = distributionServiceConfig.getDigitalGreenCertificate().getMedicinalProductsJsonPath();
-    return readConfiguredJsonOrDefault(path, "dgc/vaccine-medicinal-product.json",
-        ValueSet.class);
+  ValueSet readMedicinalProductJson() throws FetchValueSetsException {
+    return getValueSet(VACCINE_MEDICINAL_PRODUCT_ID);
   }
 
   /**
@@ -56,10 +71,8 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  ValueSet readProphylaxisJson() throws DefaultValueSetsMissingException {
-    String path = distributionServiceConfig.getDigitalGreenCertificate().getProphylaxisJsonPath();
-    return readConfiguredJsonOrDefault(path, "dgc/vaccine-prophylaxis.json",
-        ValueSet.class);
+  ValueSet readProphylaxisJson() throws FetchValueSetsException {
+    return getValueSet(VACCINE_PROPHYLAXIS_ID);
   }
 
   /**
@@ -67,10 +80,8 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  ValueSet readDiseaseAgentTargetedJson() throws DefaultValueSetsMissingException {
-    String path = distributionServiceConfig.getDigitalGreenCertificate().getDiseaseAgentTargetedJsonPath();
-    return readConfiguredJsonOrDefault(path, "dgc/disease-agent-targeted.json",
-        ValueSet.class);
+  ValueSet readDiseaseAgentTargetedJson() throws FetchValueSetsException {
+    return getValueSet(DISEASE_AGENT_TARGETED_ID);
   }
 
   /**
@@ -78,10 +89,8 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  ValueSet readTestManfJson() throws DefaultValueSetsMissingException {
-    String path = distributionServiceConfig.getDigitalGreenCertificate().getTestManfJsonPath();
-    return readConfiguredJsonOrDefault(path, "dgc/test-manf.json",
-        ValueSet.class);
+  ValueSet readTestManfJson() throws FetchValueSetsException {
+    return getValueSet(TEST_MANF_ID);
   }
 
   /**
@@ -89,10 +98,8 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  ValueSet readTestResultJson() throws DefaultValueSetsMissingException {
-    String path = distributionServiceConfig.getDigitalGreenCertificate().getTestResultJsonPath();
-    return readConfiguredJsonOrDefault(path, "dgc/test-result.json",
-        ValueSet.class);
+  ValueSet readTestResultJson() throws FetchValueSetsException {
+    return getValueSet(TEST_RESULT_ID);
   }
 
   /**
@@ -100,10 +107,8 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  ValueSet readTestTypeJson() throws DefaultValueSetsMissingException {
-    String path = distributionServiceConfig.getDigitalGreenCertificate().getTestTypeJsonPath();
-    return readConfiguredJsonOrDefault(path, "dgc/test-type.json",
-        ValueSet.class);
+  ValueSet readTestTypeJson() throws FetchValueSetsException {
+    return getValueSet(TEST_TYPE_ID);
   }
 
   /**
@@ -111,7 +116,7 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return the protobuf filled with values from JSON.
    */
-  public ValueSets constructProtobufMapping() throws DefaultValueSetsMissingException {
+  public ValueSets constructProtobufMapping() throws FetchValueSetsException {
     List<ValueSetItem> mahItems = toValueSetItems(readMahJson().getValueSetValues());
     List<ValueSetItem> productItems = toValueSetItems(readMedicinalProductJson().getValueSetValues());
     List<ValueSetItem> prophylaxisItems = toValueSetItems(readProphylaxisJson().getValueSetValues());
@@ -145,25 +150,37 @@ public class DigitalGreenCertificateToProtobufMapping {
         .collect(Collectors.toList());
   }
 
-  private <T> T readConfiguredJsonOrDefault(String path, String defaultPath, Class<T> rawType)
-      throws DefaultValueSetsMissingException {
-    if (!ObjectUtils.isEmpty(path)) {
-      try (InputStream jsonStream = resourceLoader.getResource(path).getInputStream()) {
-        logger.debug("Loading JSON from {}.", path);
-        return deserializeJsonToSimpleType(jsonStream, rawType);
-      } catch (IOException e) {
-        logger.error("Error reading {} from json {}.", rawType.getSimpleName(), path, e);
-      }
-    }
-    try (InputStream jsonStream = resourceLoader.getResource(defaultPath).getInputStream()) {
-      // fallback to default
-      logger.debug("JSON to load was empty or invalid, falling back to loading from {}.", defaultPath);
-      return deserializeJsonToSimpleType(jsonStream, rawType);
-    } catch (IOException e) {
-      logger.error("We could not load the default {}. This shouldn't happen!", defaultPath, e);
-      throw new DefaultValueSetsMissingException("Default valuesets is missing from the path " + defaultPath
-          + ". This shouldn't happen!", e);
+  /**
+   * Read the valueSetHash for the given ID from the metadata, and then the valueSet for the returned hash.
+   *
+   * @param valueSetId The ID of the valueSet to resolve.
+   * @return The ValueSet or empty.
+   */
+  private ValueSet getValueSet(String valueSetId) throws FetchValueSetsException {
+    Optional<String> hash = getValueSetHash(valueSetId);
+
+    if (hash.isPresent()) {
+      return dccClient.getValueSet(hash.get());
+    } else {
+      throw new FetchValueSetsException("Hash not found for value set id: " + valueSetId);
     }
   }
-}
 
+  /**
+   * Get the hash for the given ValueSetId from the metadata.
+   *
+   * @param valueSetId The valueSetId to get the hash for.
+   * @return The hash as contained in the metadata or empty.
+   */
+  private Optional<String> getValueSetHash(String valueSetId) throws FetchValueSetsException {
+    if (metadata == null) {
+      // feign client either returns a non-null metadata or throw FetchValueSetsException.
+      metadata = dccClient.getValueSets();
+    }
+
+    return metadata.stream()
+        .filter(metadataItem -> metadataItem.getId().equals(valueSetId))
+        .map(ValueSetMetadata::getHash)
+        .findFirst();
+  }
+}

@@ -47,7 +47,7 @@ class VerificationServiceHealthIndicatorTest {
 
   @Test
   void checkIsHealthyIfVerificationServerIsRunning() throws Exception {
-    when(verificationServerClient.verifyTan(any())).thenReturn("ok");
+    when(verificationServerClient.verifyTan(any())).thenReturn(null);
     mvc.perform(get("/actuator/health"))
         .andExpect(status().is2xxSuccessful()).andReturn();
   }

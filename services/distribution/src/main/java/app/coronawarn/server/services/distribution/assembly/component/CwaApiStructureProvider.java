@@ -25,7 +25,8 @@ public class CwaApiStructureProvider {
   private final DistributionServiceConfig distributionServiceConfig;
   private final TraceTimeIntervalWarningsStructureProvider traceWarningsStructureProvider;
   private final QrCodePosterTemplateStructureProvider qrCodeTemplateStructureProvider;
-  private final DigitalGreenCertificateStructureProvider dgcStructureProvider;
+  private final DigitalCertificatesStructureProvider dgcStructureProvider;
+  private final BoosterNotificationStructureProvider boosterNotificationStructureProvider;
 
   /**
    * Creates a new CwaApiStructureProvider.
@@ -38,7 +39,8 @@ public class CwaApiStructureProvider {
       DiagnosisKeysStructureProvider diagnosisKeysStructureProvider,
       TraceTimeIntervalWarningsStructureProvider traceWarningsStructureProvider,
       QrCodePosterTemplateStructureProvider qrCodeTemplateStructureProvider,
-      DigitalGreenCertificateStructureProvider dgcStructureProvider,
+      DigitalCertificatesStructureProvider dgcStructureProvider,
+      BoosterNotificationStructureProvider boosterNotificationStructureProvider,
       DistributionServiceConfig distributionServiceConfig) {
     this.appConfigurationStructureProvider = appConfigurationStructureProvider;
     this.appConfigurationV2StructureProvider = appConfigurationV2StructureProvider;
@@ -49,6 +51,7 @@ public class CwaApiStructureProvider {
     this.traceWarningsStructureProvider = traceWarningsStructureProvider;
     this.qrCodeTemplateStructureProvider = qrCodeTemplateStructureProvider;
     this.dgcStructureProvider = dgcStructureProvider;
+    this.boosterNotificationStructureProvider = boosterNotificationStructureProvider;
   }
 
   /**
@@ -62,6 +65,7 @@ public class CwaApiStructureProvider {
         ignoredValue -> Set.of(distributionServiceConfig.getApi().getVersionV1()),
         Object::toString);
 
+
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.of(appConfigurationStructureProvider.getAppConfiguration()));
     versionDirectory.addWritableToAll(
@@ -74,6 +78,8 @@ public class CwaApiStructureProvider {
         ignoredValue -> Optional.ofNullable(qrCodeTemplateStructureProvider.getQrCodeTemplateForIos()));
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.ofNullable(dgcStructureProvider.getDigitalGreenCertificates()));
+    versionDirectory.addWritableToAll(
+        ignoredValue -> Optional.ofNullable(boosterNotificationStructureProvider.getBoosterNotificationRules()));
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.of(diagnosisKeysStructureProvider.getDiagnosisKeys()));
     versionDirectory.addWritableToAll(
@@ -103,6 +109,8 @@ public class CwaApiStructureProvider {
         ignoredValue -> Optional.ofNullable(appConfigurationV2StructureProvider.getAppConfigurationV2ForAndroid()));
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.ofNullable(appConfigurationV2StructureProvider.getAppConfigurationV2ForIos()));
+    versionDirectory.addWritableToAll(
+        ignoredValue -> Optional.of(traceWarningsStructureProvider.getCheckInProtectedReportsDirectory()));
 
     return new IndexingDecoratorOnDisk<>(versionDirectory, distributionServiceConfig.getOutputFileNameV2());
   }

@@ -1,6 +1,10 @@
 package app.coronawarn.server.services.distribution.statistics.local;
 
-import static app.coronawarn.server.services.distribution.statistics.local.BuildLocalStatisticsHelper.*;
+import static app.coronawarn.server.services.distribution.statistics.local.BuildLocalStatisticsHelper.administrativeUnitEnhancer;
+import static app.coronawarn.server.services.distribution.statistics.local.BuildLocalStatisticsHelper.administrativeUnitSupplier;
+import static app.coronawarn.server.services.distribution.statistics.local.BuildLocalStatisticsHelper.federalStateEnhancer;
+import static app.coronawarn.server.services.distribution.statistics.local.BuildLocalStatisticsHelper.federalStateSupplier;
+import static app.coronawarn.server.services.distribution.statistics.local.BuildLocalStatisticsHelper.findFederalStateByProvinceCode;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
@@ -10,9 +14,6 @@ import app.coronawarn.server.common.shared.util.SerializationUtils;
 import app.coronawarn.server.common.shared.util.TimeUtils;
 import app.coronawarn.server.services.distribution.config.RegionMappingConfig;
 import app.coronawarn.server.services.distribution.statistics.StatisticType;
-import app.coronawarn.server.services.distribution.statistics.exceptions.BucketNotFoundException;
-import app.coronawarn.server.services.distribution.statistics.exceptions.ConnectionException;
-import app.coronawarn.server.services.distribution.statistics.exceptions.FilePathNotFoundException;
 import app.coronawarn.server.services.distribution.statistics.file.JsonFile;
 import app.coronawarn.server.services.distribution.statistics.file.StatisticJsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.validation.StatisticsJsonValidator;
@@ -73,7 +74,7 @@ public class LocalStatisticsToProtobufMapping {
       Optional<JsonFile> optionalFile = this.getFile();
 
       if (optionalFile.isEmpty()) {
-        logger.warn("Stats file is already updated to the latest version. Skipping generation.");
+        logger.warn("Local-Stats file is already updated to the latest version. Skipping generation.");
         return Collections.emptyMap();
       } else {
         JsonFile file = optionalFile.get();
@@ -104,7 +105,7 @@ public class LocalStatisticsToProtobufMapping {
         });
         this.updateETag(optionalFile.get().getETag());
       }
-    } catch (BucketNotFoundException | ConnectionException | FilePathNotFoundException | IOException ex) {
+    } catch (Exception ex) {
       logger.error("Local statistics file not generated!", ex);
     }
 
@@ -121,7 +122,7 @@ public class LocalStatisticsToProtobufMapping {
   }
 
   private void updateETag(String newETag) {
-    var currentTimestamp = TimeUtils.getCurrentUtcHour().toEpochSecond(ZoneOffset.UTC);
+    var currentTimestamp = TimeUtils.getNow().getEpochSecond();
     this.localStatisticsDownloadService.store(currentTimestamp, newETag);
   }
 
@@ -179,6 +180,7 @@ public class LocalStatisticsToProtobufMapping {
       List<LocalStatisticsJsonStringObject> jsonStringObjects) {
     List<LocalStatisticsJsonStringObject> onePerProvinceStatistics = new ArrayList<>();
     Map<String, List<LocalStatisticsJsonStringObject>> groupedByProvince = jsonStringObjects.stream()
+        .filter(LocalStatisticsJsonStringObject::isComplete)
         .collect(groupingBy(LocalStatisticsJsonStringObject::getProvinceCode, toList()));
 
     groupedByProvince.keySet().stream().forEach(key -> {
