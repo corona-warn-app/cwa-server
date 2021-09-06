@@ -38,6 +38,18 @@ class TimeUtilsTest {
   }
 
   @Test
+  void testSetNowToNullRestoresOrigin() throws InterruptedException {
+    Instant now = Instant.now();
+    TimeUtils.setNow(now);
+
+    assertEquals(TimeUtils.getNow(), now);
+
+    TimeUtils.setNow(null);
+    Thread.sleep(10);
+    assertNotEquals(now, TimeUtils.getNow());
+  }
+
+  @Test
   void testNowIsUpdated() throws InterruptedException {
     Instant now = TimeUtils.getNow();
     Thread.sleep(10);
