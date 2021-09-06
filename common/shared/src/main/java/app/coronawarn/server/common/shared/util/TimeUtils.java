@@ -66,7 +66,7 @@ public class TimeUtils {
    * @param instant an {@link Instant} as a fixed time to set.
    */
   public static void setNow(Instant instant) {
-    if (clock == null) {
+    if (instant == null) {
       clock = Clock.systemUTC();
       return;
     }
