@@ -4,14 +4,20 @@ package app.coronawarn.server.common.shared.util;
 
 import static java.time.ZoneOffset.UTC;
 
+import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TimeUtils {
 
-  private static Instant now;
+  private static final Logger logger = LoggerFactory
+      .getLogger(TimeUtils.class);
+
+  private static Clock clock = Clock.systemUTC();
 
   private TimeUtils() {
   }
@@ -40,19 +46,7 @@ public class TimeUtils {
    * @return current Instant
    */
   public static Instant getNow() {
-    if (now == null) {
-      now = Instant.now();
-    }
-    return now;
-  }
-
-  /**
-   * Injects UTC instant time value.
-   *
-   * @param instant an {@link Instant} object.
-   */
-  public static void setNow(Instant instant) {
-    now = instant;
+    return Instant.now(clock);
   }
 
   /**
@@ -64,4 +58,12 @@ public class TimeUtils {
     return localDate.atStartOfDay(UTC).toEpochSecond();
   }
 
+  public static void setNow(Instant instant) {
+    if (clock == null) {
+      clock = Clock.systemUTC();
+      return;
+    }
+    logger.warn("Setting the clock to a fixed time. THIS SHOULD NEVER BE USED IN PRODUCTION!");
+    clock = Clock.fixed(instant, UTC);
+  }
 }
