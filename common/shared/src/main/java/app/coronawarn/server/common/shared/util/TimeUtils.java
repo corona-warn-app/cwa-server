@@ -58,6 +58,13 @@ public class TimeUtils {
     return localDate.atStartOfDay(UTC).toEpochSecond();
   }
 
+  /**
+   * Injects UTC instant time value.<br />
+   *
+   * <strong>NOTE: THIS IS ONLY FOR TESTING PURPOSES!</strong>
+   *
+   * @param instant an {@link Instant} as a fixed time to set.
+   */
   public static void setNow(Instant instant) {
     if (clock == null) {
       clock = Clock.systemUTC();
