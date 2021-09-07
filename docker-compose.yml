@@ -83,6 +83,8 @@ services:
       STATISTICS_FILE_ACCESS_KEY_ID: fakeAccessKey
       STATISTICS_FILE_SECRET_ACCESS_KEY: secretKey
       STATISTICS_FILE_S3_ENDPOINT: https://localhost
+      DSC_TRUST_STORE: /secrets/dsc_truststore
+      DCC_TRUST_STORE: /secrets/dcc_truststore
     volumes:
       - ./docker-compose-test-secrets:/secrets
   download:
