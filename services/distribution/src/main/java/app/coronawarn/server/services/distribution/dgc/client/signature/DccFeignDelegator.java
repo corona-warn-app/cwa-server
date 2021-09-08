@@ -24,7 +24,7 @@ public class DccFeignDelegator implements Client {
   @Override
   public Response execute(Request request, Options options) throws IOException {
     Response response = apacheHttpClient.execute(request, options);
-    String body = new String(response.body().asInputStream().readAllBytes());
+    String body = new String(response.body().asInputStream().readAllBytes(), StandardCharsets.UTF_8);
     String signature = getSignature(response, request.url());
 
     dccSignatureValidator.checkSignature(signature, body);

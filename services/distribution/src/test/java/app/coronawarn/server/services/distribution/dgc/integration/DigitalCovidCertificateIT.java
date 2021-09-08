@@ -80,7 +80,7 @@ public class DigitalCovidCertificateIT {
         assertThat(valueSet.getValueSetValues()).isNotEmpty();
         counter++;
       } catch (final FetchValueSetsException e) {
-        logger.warn("Hash: '" + valueSetMetadata.getHash() + "' throwed exception!", e.getCause());
+        logger.warn("Hash: '" + valueSetMetadata.getHash() + "' threw exception!", e.getCause());
       }
     }
     assertTrue(counter > 0, "All valuesets failed!!!");
