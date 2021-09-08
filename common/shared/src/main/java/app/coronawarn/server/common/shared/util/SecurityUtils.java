@@ -49,7 +49,11 @@ public class SecurityUtils {
     signatureVerification.update(content);
 
     if (!signatureVerification.verify(encodedSignature)) {
-      throw new SignatureException("Signature verification failed");
+      throw new SignatureException("Signature verification " + signatureVerification.getAlgorithm()
+              + " for encoded signature " + Base64.getEncoder().encodeToString(encodedSignature)
+              + " with publicKey " + publicKey
+              + " and content " + Base64.getEncoder().encodeToString(content)
+              + " failed.");
     }
   }
 
