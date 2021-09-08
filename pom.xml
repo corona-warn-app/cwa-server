@@ -67,7 +67,7 @@
     <jackson.version>2.12.5</jackson.version>
     <test-containers.version>1.16.0</test-containers.version>
     <postgresql.version>42.2.23</postgresql.version>
-    <wiremock.version>2.30.1</wiremock.version>
+    <wiremock.version>2.31.0</wiremock.version>
     <httpclient.version>4.5.13</httpclient.version>
     <junit.version>4.13.2</junit.version>
     <tomcat-embed-core.version>9.0.52</tomcat-embed-core.version>
