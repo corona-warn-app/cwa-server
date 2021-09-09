@@ -1,33 +1,23 @@
 package app.coronawarn.server.services.distribution.dgc;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleType;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
-import org.json.JSONObject;
+import java.util.List;
+import java.util.function.Predicate;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
@@ -51,9 +41,14 @@ class DigitalGreenCertificateJsonToCborSpringTest {
   @Autowired
   DigitalGreenCertificateToCborMapping digitalGreenCertificateToCborMapping;
 
+  @Autowired
+  DigitalCovidCertificateClient digitalCovidCertificateClient;
+
   @Test
   void shouldConstructCorrectAcceptanceRules() throws DigitalCovidCertificateException, FetchBusinessRulesException {
-    List<BusinessRule> businessRules = digitalGreenCertificateToCborMapping.constructRules(RuleType.Acceptance);
+    List<BusinessRule> businessRules = digitalGreenCertificateToCborMapping
+        .constructRules(RuleType.Acceptance, digitalCovidCertificateClient::getRules,
+            digitalCovidCertificateClient::getCountryRuleByHash);
 
     assertThat(businessRules).hasSize(2);
     assertThat(businessRules.stream().filter(filterByRuleType(RuleType.Acceptance))).hasSize(2);
@@ -63,8 +58,9 @@ class DigitalGreenCertificateJsonToCborSpringTest {
 
   @Test
   void shouldConstructCorrectBnRules() throws DigitalCovidCertificateException, FetchBusinessRulesException {
-    List<BusinessRule> businessRules = digitalGreenCertificateToCborMapping.constructBnRules(RuleType.BoosterNotification);
-
+    List<BusinessRule> businessRules = digitalGreenCertificateToCborMapping
+        .constructRules(RuleType.BoosterNotification, digitalCovidCertificateClient::getBoosterNotificationRules,
+            digitalCovidCertificateClient::getBnRuleByHash);
     assertThat(businessRules).hasSize(1);
     assertThat(businessRules.stream().filter(filterByRuleType(RuleType.BoosterNotification))).hasSize(1);
     assertThat(businessRules.stream().filter(filterByRuleIdentifier(ID_BN_1)).findAny()).isPresent();
@@ -72,7 +68,9 @@ class DigitalGreenCertificateJsonToCborSpringTest {
 
   @Test
   void shouldConstructCorrectInvalidationRules() throws DigitalCovidCertificateException, FetchBusinessRulesException {
-    List<BusinessRule> businessRules = digitalGreenCertificateToCborMapping.constructRules(RuleType.Invalidation);
+    List<BusinessRule> businessRules = digitalGreenCertificateToCborMapping
+        .constructRules(RuleType.Invalidation, digitalCovidCertificateClient::getRules,
+            digitalCovidCertificateClient::getCountryRuleByHash);
 
     assertThat(businessRules).hasSize(1);
     assertThat(businessRules.stream().filter(filterByRuleType(RuleType.Invalidation))).hasSize(1);
@@ -81,7 +79,9 @@ class DigitalGreenCertificateJsonToCborSpringTest {
 
   @Test
   void shouldConstructCborAcceptanceRules() throws DigitalCovidCertificateException, FetchBusinessRulesException {
-    byte[] businessRules = digitalGreenCertificateToCborMapping.constructCborRules(RuleType.Acceptance);
+    byte[] businessRules = digitalGreenCertificateToCborMapping
+        .constructCborRules(RuleType.Acceptance, digitalCovidCertificateClient::getRules,
+            digitalCovidCertificateClient::getCountryRuleByHash);
 
     assertThat(businessRules).isNotEmpty();
   }

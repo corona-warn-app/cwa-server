@@ -8,13 +8,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.shared.collection.ImmutableStack;
-import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToCborMapping;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
+import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalSigningCertificatesClient;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalSigningCertificatesToProtobufMapping;
@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -73,6 +72,9 @@ class ValueSetsNotFetchedStructureProviderTest {
   DigitalSigningCertificatesClient digitalSigningCertificatesClient;
 
   @Autowired
+  DigitalCovidCertificateClient digitalCovidCertificateClient;
+
+  @Autowired
   ResourceLoader resourceLoader;
 
   @Rule
@@ -92,7 +94,7 @@ class ValueSetsNotFetchedStructureProviderTest {
   void should_not_contain_valuesets_if_any_is_not_fetched() throws FetchValueSetsException {
     DigitalCertificatesStructureProvider underTest = new DigitalCertificatesStructureProvider(
         distributionServiceConfig, cryptoProvider, dgcToProtobufMapping, dgcToCborMappingMock,
-        digitalSigningCertificatesToProtobufMapping);
+        digitalSigningCertificatesToProtobufMapping, digitalCovidCertificateClient);
     DirectoryOnDisk digitalGreenCertificates = underTest.getDigitalGreenCertificates();
     digitalGreenCertificates.prepare(new ImmutableStack<>());
 
