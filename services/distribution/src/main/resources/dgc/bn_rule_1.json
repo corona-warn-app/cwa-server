@@ -1,0 +1,97 @@
+{
+  "Identifier": "BNR-DE-3298",
+  "Type": "BoosterNotification",
+  "Country": "DE",
+  "Version": "1.0.0",
+  "SchemaVersion": "1.0.0",
+  "Engine": "CERTLOGIC",
+  "EngineVersion": "1.0.0",
+  "CertificateType": "General",
+  "Description": [
+    {
+      "lang": "en",
+      "desc": "Remember to get your second vaccine shot! Your first vaccination was more than 2 months ago."
+    },
+    {
+      "desc": "Denken Sie an ihre zweite Impfung um ihre Grundimmunisierung abzuschließen! Ihre Erstimpfung war vor mehr als 2 Monaten.",
+      "lang": "de"
+    }
+  ],
+  "ValidFrom": "2021-07-01T00:00:00Z",
+  "ValidTo": "2030-06-01T00:00:00Z",
+  "AffectedFields": [
+
+  ],
+  "Logic": {
+    "and": [
+      {
+        "===": [
+          {
+            "var": "payload.v.0.dn"
+          },
+          1
+        ]
+      },
+      {
+        "===": [
+          {
+            "var": "payload.v.0.sd"
+          },
+          2
+        ]
+      },
+      {
+        "before": [
+          {
+            "plusTime": [
+              {
+                "var": "payload.v.0.dt"
+              },
+              60,
+              "day"
+            ]
+          },
+          {
+            "plusTime": [
+              {
+                "var": "external.validationClock"
+              },
+              0,
+              "day"
+            ]
+          }
+        ]
+      },
+      {
+        "if": [
+          {
+            "var": "payload.r.0"
+          },
+          {
+            "before": [
+              {
+                "plusTime": [
+                  {
+                    "var": "payload.r.0.df"
+                  },
+                  0,
+                  "day"
+                ]
+              },
+              {
+                "plusTime": [
+                  {
+                    "var": "payload.v.0.dt"
+                  },
+                  0,
+                  "day"
+                ]
+              }
+            ]
+          },
+          true
+        ]
+      }
+    ]
+  }
+}

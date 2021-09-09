@@ -140,6 +140,11 @@ public class TestDigitalCovidCertificateClient implements DigitalCovidCertificat
     }
   }
 
+  @Override
+  public BusinessRule getBnRuleByHash(String hash) throws FetchBusinessRulesException {
+    return getBusinessRuleOrThrow("dgc/bn_rule_1.json");
+  }
+
   private BusinessRule getBusinessRuleOrThrow(String path) throws FetchBusinessRulesException {
     return readConfiguredJsonOrDefault(resourceLoader, null, path, BusinessRule.class)
         .orElseThrow(() -> new FetchBusinessRulesException("Business rule could not be found on path: " + path));

@@ -9,6 +9,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.file.FileO
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleType;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToCborMapping;
+import app.coronawarn.server.services.distribution.dgc.client.ProdDigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
 import org.slf4j.Logger;
@@ -30,15 +31,18 @@ public class BoosterNotificationStructureProvider {
   private final DistributionServiceConfig distributionServiceConfig;
   private final CryptoProvider cryptoProvider;
   private final DigitalGreenCertificateToCborMapping dgcToCborMapping;
-
+  private final ProdDigitalCovidCertificateClient digitalCovidCertificateClient;
   /**
    * Create an instance.
    */
+
   public BoosterNotificationStructureProvider(DistributionServiceConfig distributionServiceConfig,
-      CryptoProvider cryptoProvider, DigitalGreenCertificateToCborMapping dgcToCborMapping) {
+      CryptoProvider cryptoProvider, DigitalGreenCertificateToCborMapping dgcToCborMapping,
+      ProdDigitalCovidCertificateClient digitalCovidCertificateClient) {
     this.distributionServiceConfig = distributionServiceConfig;
     this.cryptoProvider = cryptoProvider;
     this.dgcToCborMapping = dgcToCborMapping;
+    this.digitalCovidCertificateClient = digitalCovidCertificateClient;
   }
 
   /**
@@ -63,7 +67,7 @@ public class BoosterNotificationStructureProvider {
 
     try {
       rulesArchive
-          .addWritable(new FileOnDisk(EXPORT_BINARY_FILENAME, dgcToCborMapping.constructCborRules(ruleType)));
+          .addWritable(new FileOnDisk(EXPORT_BINARY_FILENAME, dgcToCborMapping.constructCborBnRules(ruleType)));
       logger.info(archiveName + " archive has been added to the DGC distribution folder");
     } catch (DigitalCovidCertificateException e) {
       logger.error(archiveName + " archive was not overwritten because of:", e);

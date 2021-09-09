@@ -50,11 +50,8 @@ public class DigitalGreenCertificateToCborMapping {
   public List<BusinessRule> constructRules(RuleType ruleType)
       throws DigitalCovidCertificateException, FetchBusinessRulesException {
     List<BusinessRuleItem> businessRulesItems;
-    if (ruleType.equals(RuleType.BoosterNotification)) {
-      businessRulesItems = digitalCovidCertificateClient.getBoosterNotificationRules();
-    } else {
-      businessRulesItems = digitalCovidCertificateClient.getRules();
-    }
+    businessRulesItems = digitalCovidCertificateClient.getRules();
+
     List<BusinessRule> businessRules = new ArrayList<>();
 
     for (BusinessRuleItem businessRuleItem : businessRulesItems) {
@@ -80,6 +77,45 @@ public class DigitalGreenCertificateToCborMapping {
     return businessRules;
   }
 
+  /**
+   * Construct Booster Notification business rules retrieved from DCC client for CBOR encoding. Fetched rules are
+   * filtered by rule type parameter which could be 'BoosterNotification'.
+   *
+   * @param ruleType - rule type for which the business rules will be retrieved.
+   * @return - Booster Notification business rules
+   * @throws DigitalCovidCertificateException - thrown if json validation schema is not found or the validation fails
+   *                                          for a specific rule. This exception will propagate and will stop any
+   *                                          archive to be published down in the execution.
+   */
+  public List<BusinessRule> constructBnRules(RuleType ruleType)
+      throws DigitalCovidCertificateException, FetchBusinessRulesException {
+    List<BusinessRuleItem> businessRulesItems;
+    businessRulesItems = digitalCovidCertificateClient.getBoosterNotificationRules();
+
+    List<BusinessRule> businessRules = new ArrayList<>();
+
+    for (BusinessRuleItem businessRuleItem : businessRulesItems) {
+      BusinessRule businessRule =
+          digitalCovidCertificateClient.getBnRuleByHash(businessRuleItem.getHash());
+
+      if (businessRule.getType().equalsIgnoreCase(ruleType.name())) {
+        try (final InputStream in = resourceLoader.getResource(DCC_VALIDATION_RULE_JSON_CLASSPATH).getInputStream()) {
+          validateJsonSchema(businessRule, in);
+          businessRules.add(businessRule);
+        } catch (JsonProcessingException | ValidationException e) {
+          throw new DigitalCovidCertificateException(
+              "Booster Notification rule for country '" + businessRuleItem.getCountry() + "' having hash '"
+                  + businessRuleItem.getHash() + "' is not valid", e);
+        } catch (IOException e) {
+          throw new DigitalCovidCertificateException(
+              "Validation rules schema found at: " + DCC_VALIDATION_RULE_JSON_CLASSPATH + "could not be found", e);
+        }
+      }
+    }
+
+    return businessRules;
+  }
+
 
   /**
    * CBOR encoding of {@code constructCountryList}.
@@ -95,6 +131,14 @@ public class DigitalGreenCertificateToCborMapping {
   public byte[] constructCborRules(RuleType ruleType)
       throws DigitalCovidCertificateException, FetchBusinessRulesException {
     return cborEncodeOrElseThrow(constructRules(ruleType));
+  }
+
+  /**
+   * CBOR encoding of {@code constructRules}.
+   */
+  public byte[] constructCborBnRules(RuleType ruleType)
+      throws DigitalCovidCertificateException, FetchBusinessRulesException {
+    return cborEncodeOrElseThrow(constructBnRules(ruleType));
   }
 
   private byte[] cborEncodeOrElseThrow(Object subject) throws DigitalCovidCertificateException {
