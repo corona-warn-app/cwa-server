@@ -39,7 +39,6 @@ public class DigitalGreenCertificateToCborMapping {
     return digitalCovidCertificateClient.getCountryList();
   }
 
-
   /**
    * Construct business rules retrieved from DCC client for CBOR encoding. Fetched rules are filtered by rule type
    * parameter which could be 'Acceptance' or 'Invalidation' or 'BoosterNotification'.
@@ -82,7 +81,6 @@ public class DigitalGreenCertificateToCborMapping {
     return businessRules;
   }
 
-
   /**
    * CBOR encoding of {@code constructCountryList}.
    */
@@ -90,7 +88,6 @@ public class DigitalGreenCertificateToCborMapping {
       FetchBusinessRulesException {
     return cborEncodeOrElseThrow(constructCountryList());
   }
-
 
   /**
    * CBOR encoding of {@code constructRules}.
