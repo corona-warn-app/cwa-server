@@ -1,14 +1,16 @@
 package app.coronawarn.server.services.distribution.assembly.component;
 
 
+import static app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleType.BoosterNotification;
+
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.signing.DistributionArchiveSigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleType;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToCborMapping;
+import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
 import org.slf4j.Logger;
@@ -30,40 +32,43 @@ public class BoosterNotificationStructureProvider {
   private final DistributionServiceConfig distributionServiceConfig;
   private final CryptoProvider cryptoProvider;
   private final DigitalGreenCertificateToCborMapping dgcToCborMapping;
+  private final DigitalCovidCertificateClient digitalCovidCertificateClient;
 
   /**
    * Create an instance.
    */
   public BoosterNotificationStructureProvider(DistributionServiceConfig distributionServiceConfig,
-      CryptoProvider cryptoProvider, DigitalGreenCertificateToCborMapping dgcToCborMapping) {
+      CryptoProvider cryptoProvider, DigitalGreenCertificateToCborMapping dgcToCborMapping,
+      DigitalCovidCertificateClient digitalCovidCertificateClient) {
     this.distributionServiceConfig = distributionServiceConfig;
     this.cryptoProvider = cryptoProvider;
     this.dgcToCborMapping = dgcToCborMapping;
+    this.digitalCovidCertificateClient = digitalCovidCertificateClient;
   }
 
   /**
    * Returns the publishable archive with Booster Notification Business rules Cbor encoded structures.
    */
   public Writable<WritableOnDisk> getBoosterNotificationRules() {
-    return getBoosterNotificationRulesArchive(RuleType.BoosterNotification,
+    return getBoosterNotificationRulesArchive(
         distributionServiceConfig.getDigitalGreenCertificate().getBoosterNotification());
   }
 
   /**
    * Create business rules Archive. If any exception is thrown during fetching data and packaging process, an empty
-   * Archive will be published in order to not override any previous archive on CDN with broken data. Provided rules are
-   * filtered by rule type parameter which could be 'Acceptance', 'Invalidation' or 'BoosterNotification'.
+   * Archive will be published in order to not override any previous archive on CDN with broken data.
    *
-   * @param ruleType    - rule type to receive rules for
    * @param archiveName - archive name for packaging rules
    * @return - business rules archive
    */
-  private Writable<WritableOnDisk> getBoosterNotificationRulesArchive(RuleType ruleType, String archiveName) {
+  private Writable<WritableOnDisk> getBoosterNotificationRulesArchive(String archiveName) {
     ArchiveOnDisk rulesArchive = new ArchiveOnDisk(archiveName);
-
     try {
       rulesArchive
-          .addWritable(new FileOnDisk(EXPORT_BINARY_FILENAME, dgcToCborMapping.constructCborRules(ruleType)));
+          .addWritable(new FileOnDisk(EXPORT_BINARY_FILENAME,
+              dgcToCborMapping
+                  .constructCborRules(BoosterNotification, digitalCovidCertificateClient::getBoosterNotificationRules,
+                      digitalCovidCertificateClient::getBoosterNotificationRuleByHash)));
       logger.info(archiveName + " archive has been added to the DGC distribution folder");
     } catch (DigitalCovidCertificateException e) {
       logger.error(archiveName + " archive was not overwritten because of:", e);
