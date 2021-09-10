@@ -42,14 +42,14 @@ public class DigitalGreenCertificateToCborMapping {
 
   /**
    * Construct business rules retrieved from DCC client for CBOR encoding. Fetched rules are filtered by rule type
-   * parameter.
+   * parameter which could be 'Acceptance' or 'Invalidation' or 'BoosterNotification'.
    *
    * @param ruleType                 the corresponding rule type that is used for creating the business rules.
    * @param businessRuleItemSupplier a functional interface that provides a function that will provide a list of
    *                                 business rule items.
    * @param businessRuleSupplier     a functional interface that provides a function that will provide single business
    *                                 rules.
-   * @return - Booster Notification business rules
+   * @return - list of the constructed business rules.
    * @throws DigitalCovidCertificateException - thrown if json validation schema is not found or the validation fails
    *                                          for a specific rule. This exception will propagate and will stop any
    *                                          archive to be published down in the execution.
@@ -79,7 +79,6 @@ public class DigitalGreenCertificateToCborMapping {
         }
       }
     }
-
     return businessRules;
   }
 
