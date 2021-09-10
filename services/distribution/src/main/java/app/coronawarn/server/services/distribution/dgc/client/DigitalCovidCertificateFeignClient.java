@@ -70,10 +70,10 @@ public interface DigitalCovidCertificateFeignClient {
   ResponseEntity<BusinessRule> getCountryRule(@PathVariable String country, @PathVariable String hash);
 
   /**
-   * HTTP GET to return a specific business rule based on its country and hash.
+   * HTTP GET to return a specific business rule based on its hash.
    * @param hash - business rule hash
    */
   @Timed
   @GetMapping(value = "${services.distribution.digital-green-certificate.client.bn-rules-path}/{hash}")
-  ResponseEntity<BusinessRule> getBnRule(@PathVariable String hash);
+  ResponseEntity<BusinessRule> getBoosterNotificationRule(@PathVariable String hash);
 }

@@ -83,9 +83,9 @@ public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificat
   }
 
   @Override
-  public BusinessRule getBnRuleByHash(String country, String hash) throws FetchBusinessRulesException {
+  public BusinessRule getBoosterNotificationRuleByHash(String country, String hash) throws FetchBusinessRulesException {
     return getResponseAndTreatExceptions(
-        () -> digitalCovidCertificateClient.getBnRule(hash),
+        () -> digitalCovidCertificateClient.getBoosterNotificationRule(hash),
         "bn rule",
         FetchBusinessRulesException::new);
   }
