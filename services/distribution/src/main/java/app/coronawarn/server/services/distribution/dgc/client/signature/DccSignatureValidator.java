@@ -16,12 +16,17 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Base64;
 import java.util.function.BiFunction;
 import org.bouncycastle.util.encoders.Hex;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DccSignatureValidator {
+
+  private static final Logger logger = LoggerFactory.getLogger(DccSignatureValidator.class);
 
   private final DistributionServiceConfig distributionServiceConfig;
 
@@ -51,6 +56,8 @@ public class DccSignatureValidator {
     } catch (InvalidKeySpecException | InvalidKeyException e) {
       throw new DigitalCovidCertificateSignatureException("DCC Public key generation threw an error.", e);
     } catch (SignatureException e) {
+      logger.warn("Invalid signature {} with public key {} for body: {}", signature,
+          distributionServiceConfig.getDigitalGreenCertificate().getClient().getPublicKey(), body);
       throw signatureExceptionConverter().apply(e, "Invalid signature.");
     }
   }

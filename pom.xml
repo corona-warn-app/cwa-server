@@ -67,12 +67,12 @@
     <jackson.version>2.12.5</jackson.version>
     <test-containers.version>1.16.0</test-containers.version>
     <postgresql.version>42.2.23</postgresql.version>
-    <wiremock.version>2.30.1</wiremock.version>
+    <wiremock.version>2.31.0</wiremock.version>
     <httpclient.version>4.5.13</httpclient.version>
     <junit.version>4.13.2</junit.version>
     <tomcat-embed-core.version>9.0.52</tomcat-embed-core.version>
     <findify-s3mock.version>0.2.6</findify-s3mock.version>
-    <checkstyle.version>8.45.1</checkstyle.version>
+    <checkstyle.version>9.0</checkstyle.version>
   </properties>
 
   <dependencyManagement>
@@ -438,7 +438,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.3.0</version>
+          <version>3.3.1</version>
           <configuration>
             <bottom>
               <![CDATA[
