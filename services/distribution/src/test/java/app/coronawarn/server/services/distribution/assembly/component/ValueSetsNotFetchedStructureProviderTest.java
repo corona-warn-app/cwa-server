@@ -43,7 +43,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(
     classes = {DigitalGreenCertificateToProtobufMapping.class, DigitalGreenCertificateToCborMapping.class,
         CryptoProvider.class, DistributionServiceConfig.class, TestDigitalCovidCertificateClient.class,
-        DigitalSigningCertificatesToProtobufMapping.class, DigitalSigningCertificatesClient.class},
+        DigitalSigningCertificatesToProtobufMapping.class, DigitalSigningCertificatesClient.class,
+        BusinessRulesArchiveBuilder.class},
     initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles({"fake-dcc-client", "fake-dsc-client"})
 class ValueSetsNotFetchedStructureProviderTest {
@@ -61,6 +62,9 @@ class ValueSetsNotFetchedStructureProviderTest {
 
   @Autowired
   DigitalGreenCertificateToCborMapping dgcToCborMappingMock;
+
+  @Autowired
+  BusinessRulesArchiveBuilder businessRulesArchiveBuilder;
 
   @MockBean
   OutputDirectoryProvider outputDirectoryProvider;
@@ -94,7 +98,7 @@ class ValueSetsNotFetchedStructureProviderTest {
   void should_not_contain_valuesets_if_any_is_not_fetched() throws FetchValueSetsException {
     DigitalCertificatesStructureProvider underTest = new DigitalCertificatesStructureProvider(
         distributionServiceConfig, cryptoProvider, dgcToProtobufMapping, dgcToCborMappingMock,
-        digitalSigningCertificatesToProtobufMapping, digitalCovidCertificateClient);
+        digitalSigningCertificatesToProtobufMapping, digitalCovidCertificateClient, businessRulesArchiveBuilder);
     DirectoryOnDisk digitalGreenCertificates = underTest.getDigitalGreenCertificates();
     digitalGreenCertificates.prepare(new ImmutableStack<>());
 

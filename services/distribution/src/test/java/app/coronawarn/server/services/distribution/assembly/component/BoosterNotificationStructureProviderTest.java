@@ -3,6 +3,7 @@ package app.coronawarn.server.services.distribution.assembly.component;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
@@ -13,6 +14,7 @@ import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateTo
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalSigningCertificatesClient;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
@@ -31,7 +33,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
     classes = {DigitalGreenCertificateToCborMapping.class,
         CryptoProvider.class, DistributionServiceConfig.class,
         DigitalSigningCertificatesClient.class, DigitalCovidCertificateClient.class,
-        BoosterNotificationStructureProvider.class},
+        BoosterNotificationStructureProvider.class, BusinessRulesArchiveBuilder.class},
     initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles({"fake-dcc-client", "fake-dsc-client"})
 class BoosterNotificationStructureProviderTest {
@@ -56,13 +58,14 @@ class BoosterNotificationStructureProviderTest {
 
   @Test
   void shouldCreateCorrectFileStructureForBoosterNotificationBusinessRules() {
-    Writable<WritableOnDisk> boosterNotificationRules = underTest.getBoosterNotificationRules();
-    boosterNotificationRules.prepare(new ImmutableStack<>());
+    Optional<Writable<WritableOnDisk>> boosterNotificationRules = underTest.getBoosterNotificationRules();
+    assertTrue(boosterNotificationRules.isPresent());
+    boosterNotificationRules.get().prepare(new ImmutableStack<>());
 
-    assertEquals("booster-notification-rules", boosterNotificationRules.getName());
+    assertEquals("booster-notification-rules", boosterNotificationRules.get().getName());
 
     Collection<String> archiveContent;
-    archiveContent = ((Archive<WritableOnDisk>) boosterNotificationRules).getWritables().stream()
+    archiveContent = ((Archive<WritableOnDisk>) boosterNotificationRules.get()).getWritables().stream()
         .map(Writable::getName).collect(Collectors.toList());
     assertThat(archiveContent).containsAll(Set.of("export.bin", "export.sig"));
   }

@@ -5,16 +5,10 @@ import static app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleT
 
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.signing.DistributionArchiveSigningDecorator;
-import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToCborMapping;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
-import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
-import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,31 +19,28 @@ import org.springframework.stereotype.Component;
 @Component
 public class BoosterNotificationStructureProvider {
 
-  private static final Logger logger = LoggerFactory.getLogger(BoosterNotificationStructureProvider.class);
-
   public static final String EXPORT_BINARY_FILENAME = "export.bin";
 
   private final DistributionServiceConfig distributionServiceConfig;
-  private final CryptoProvider cryptoProvider;
-  private final DigitalGreenCertificateToCborMapping dgcToCborMapping;
   private final DigitalCovidCertificateClient digitalCovidCertificateClient;
+  private final BusinessRulesArchiveBuilder businessRulesArchiveBuilder;
 
   /**
    * Create an instance.
    */
   public BoosterNotificationStructureProvider(DistributionServiceConfig distributionServiceConfig,
       CryptoProvider cryptoProvider, DigitalGreenCertificateToCborMapping dgcToCborMapping,
-      DigitalCovidCertificateClient digitalCovidCertificateClient) {
+      DigitalCovidCertificateClient digitalCovidCertificateClient,
+      BusinessRulesArchiveBuilder businessRulesArchiveBuilder) {
     this.distributionServiceConfig = distributionServiceConfig;
-    this.cryptoProvider = cryptoProvider;
-    this.dgcToCborMapping = dgcToCborMapping;
     this.digitalCovidCertificateClient = digitalCovidCertificateClient;
+    this.businessRulesArchiveBuilder = businessRulesArchiveBuilder;
   }
 
   /**
    * Returns the publishable archive with Booster Notification Business rules Cbor encoded structures.
    */
-  public Writable<WritableOnDisk> getBoosterNotificationRules() {
+  public Optional<Writable<WritableOnDisk>> getBoosterNotificationRules() {
     return getBoosterNotificationRulesArchive(
         distributionServiceConfig.getDigitalGreenCertificate().getBoosterNotification());
   }
@@ -61,22 +52,13 @@ public class BoosterNotificationStructureProvider {
    * @param archiveName - archive name for packaging rules
    * @return - business rules archive
    */
-  private Writable<WritableOnDisk> getBoosterNotificationRulesArchive(String archiveName) {
-    ArchiveOnDisk rulesArchive = new ArchiveOnDisk(archiveName);
-    try {
-      rulesArchive
-          .addWritable(new FileOnDisk(EXPORT_BINARY_FILENAME,
-              dgcToCborMapping
-                  .constructCborRules(BoosterNotification, digitalCovidCertificateClient::getBoosterNotificationRules,
-                      digitalCovidCertificateClient::getBoosterNotificationRuleByHash)));
-      logger.info(archiveName + " archive has been added to the DGC distribution folder");
-    } catch (DigitalCovidCertificateException e) {
-      logger.error(archiveName + " archive was not overwritten because of:", e);
-    } catch (FetchBusinessRulesException e) {
-      logger.error(archiveName + " archive was not overwritten because business rules could not been fetched:", e);
-    }
-
-    return new DistributionArchiveSigningDecorator(rulesArchive, cryptoProvider,
-        distributionServiceConfig);
+  private Optional<Writable<WritableOnDisk>> getBoosterNotificationRulesArchive(String archiveName) {
+    return businessRulesArchiveBuilder
+        .setArchiveName(archiveName)
+        .setExportBinaryFilename(EXPORT_BINARY_FILENAME)
+        .setRuleType(BoosterNotification)
+        .setBusinessRuleItemSupplier(digitalCovidCertificateClient::getBoosterNotificationRules)
+        .setBusinessRuleSupplier(digitalCovidCertificateClient::getBoosterNotificationRuleByHash)
+        .build();
   }
 }

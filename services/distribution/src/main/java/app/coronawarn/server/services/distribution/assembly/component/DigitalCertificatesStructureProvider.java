@@ -1,5 +1,7 @@
 package app.coronawarn.server.services.distribution.assembly.component;
 
+import static app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleType.BoosterNotification;
+
 import app.coronawarn.server.common.protocols.internal.dgc.ValueSets;
 import app.coronawarn.server.common.shared.exception.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
@@ -10,7 +12,9 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.DigitalGreenCertificate;
+import app.coronawarn.server.services.distribution.dgc.BusinessRule;
 import app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleType;
+import app.coronawarn.server.services.distribution.dgc.BusinessRuleItem;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToCborMapping;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
@@ -19,7 +23,10 @@ import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCer
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchDscTrustListException;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchValueSetsException;
+import app.coronawarn.server.services.distribution.dgc.functions.BusinessRuleItemSupplier;
+import app.coronawarn.server.services.distribution.dgc.functions.BusinessRuleSupplier;
 import app.coronawarn.server.services.distribution.dgc.structure.DigitalCertificatesDirectory;
+import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +45,7 @@ public class DigitalCertificatesStructureProvider {
   public static final String DSCS = "dscs";
   public static final String ACCEPTANCE_RULES = "acceptance-rules";
   public static final String INVALIDATION_RULES = "invalidation-rules";
+  public static final String EXPORT_BINARY_FILENAME = "export.bin";
 
 
   private final DistributionServiceConfig distributionServiceConfig;
@@ -46,6 +54,7 @@ public class DigitalCertificatesStructureProvider {
   private final DigitalGreenCertificateToCborMapping dgcToCborMapping;
   private final DigitalSigningCertificatesToProtobufMapping digitalSigningCertificatesToProtobufMapping;
   private final DigitalCovidCertificateClient digitalCovidCertificateClient;
+  private final BusinessRulesArchiveBuilder businessRulesArchiveBuilder;
 
   /**
    * Create an instance.
@@ -54,13 +63,15 @@ public class DigitalCertificatesStructureProvider {
       CryptoProvider cryptoProvider, DigitalGreenCertificateToProtobufMapping dgcToProtobufMapping,
       DigitalGreenCertificateToCborMapping dgcToCborMapping,
       DigitalSigningCertificatesToProtobufMapping digitalSigningCertificatesToProtobufMapping,
-      DigitalCovidCertificateClient digitalCovidCertificateClient) {
+      DigitalCovidCertificateClient digitalCovidCertificateClient,
+      BusinessRulesArchiveBuilder businessRulesArchiveBuilder) {
     this.distributionServiceConfig = distributionServiceConfig;
     this.cryptoProvider = cryptoProvider;
     this.dgcToProtobufMapping = dgcToProtobufMapping;
     this.dgcToCborMapping = dgcToCborMapping;
     this.digitalSigningCertificatesToProtobufMapping = digitalSigningCertificatesToProtobufMapping;
     this.digitalCovidCertificateClient = digitalCovidCertificateClient;
+    this.businessRulesArchiveBuilder = businessRulesArchiveBuilder;
   }
 
   /**
@@ -143,23 +154,14 @@ public class DigitalCertificatesStructureProvider {
    * @param archiveName - archive name for packaging rules
    * @return - business rules archive
    */
-  private Optional<Writable<WritableOnDisk>> getRulesArchive(RuleType ruleType, String archiveName) {
-    ArchiveOnDisk rulesArchive = new ArchiveOnDisk(archiveName);
-
-    try {
-      rulesArchive
-          .addWritable(new FileOnDisk("export.bin", dgcToCborMapping
-              .constructCborRules(ruleType, digitalCovidCertificateClient::getRules,
-                  digitalCovidCertificateClient::getCountryRuleByHash)));
-      logger.info(archiveName + " archive has been added to the DGC distribution folder");
-      return Optional.of(new DistributionArchiveSigningDecorator(rulesArchive, cryptoProvider,
-          distributionServiceConfig));
-    } catch (DigitalCovidCertificateException e) {
-      logger.error(archiveName + " archive was not overwritten because of:", e);
-    } catch (FetchBusinessRulesException e) {
-      logger.error(archiveName + " archive was not overwritten because business rules could not been fetched:", e);
-    }
-
-    return Optional.empty();
+  private Optional<Writable<WritableOnDisk>> getRulesArchive(RuleType ruleType,
+      String archiveName) {
+    return businessRulesArchiveBuilder
+        .setArchiveName(archiveName)
+        .setExportBinaryFilename(EXPORT_BINARY_FILENAME)
+        .setRuleType(ruleType)
+        .setBusinessRuleItemSupplier(digitalCovidCertificateClient::getRules)
+        .setBusinessRuleSupplier(digitalCovidCertificateClient::getCountryRuleByHash)
+        .build();
   }
 }

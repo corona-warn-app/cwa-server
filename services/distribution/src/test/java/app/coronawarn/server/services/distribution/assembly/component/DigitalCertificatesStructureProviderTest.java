@@ -46,7 +46,8 @@ import static org.mockito.Mockito.when;
     classes = {DigitalCertificatesStructureProvider.class, DigitalGreenCertificateToProtobufMapping.class,
         DigitalGreenCertificateToCborMapping.class,
         CryptoProvider.class, DistributionServiceConfig.class, TestDigitalCovidCertificateClient.class,
-        DigitalSigningCertificatesToProtobufMapping.class, DigitalSigningCertificatesClient.class},
+        DigitalSigningCertificatesToProtobufMapping.class, DigitalSigningCertificatesClient.class,
+        BusinessRulesArchiveBuilder.class},
     initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles({"fake-dcc-client", "fake-dsc-client"})
 class DigitalCertificatesStructureProviderTest {
