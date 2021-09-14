@@ -242,7 +242,7 @@ services:
         country-list-path: ${BUSSINESS_RULES_COUNTRY_LIST_PATH:/countrylist}
         value-sets-path: ${BUSSINESS_RULES_VALUE_SETS_PATH:/valuesets}
         rules-path: ${BUSSINESS_RULES_RULES_PATH:/rules}
-        bn-rules-path: ${BUSSINESS_RULES_BN_RULES_PATH:/rules}
+        bn-rules-path: ${BUSSINESS_RULES_BN_RULES_PATH:/bnrules}
         ssl:
           trust-store: ${DCC_TRUST_STORE:../../docker-compose-test-secrets/dcc_truststore}
           trust-store-password: ${DCC_TRUST_STORE_PASSWORD:123456}

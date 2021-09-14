@@ -45,10 +45,12 @@ class DigitalGreenCertificateJsonToCborUnitTest {
   @Test
   void shouldThrowWhenRuleByHashAndCountryIsNotFetched() throws FetchBusinessRulesException {
     when(digitalCovidCertificateClient.getRules()).thenReturn(Collections.singletonList(mockBusinessRuleItem()));
-    when(digitalCovidCertificateClient.getCountryRuleByHash(any(),any())).thenThrow(FetchBusinessRulesException.class);
+    when(digitalCovidCertificateClient.getCountryRuleByHash(any(), any())).thenThrow(FetchBusinessRulesException.class);
 
     assertThatExceptionOfType(FetchBusinessRulesException.class).isThrownBy(
-        () -> digitalGreenCertificateToCborMapping.constructRules(RuleType.Acceptance));
+        () -> digitalGreenCertificateToCborMapping
+            .constructRules(RuleType.Acceptance, digitalCovidCertificateClient::getRules,
+                digitalCovidCertificateClient::getCountryRuleByHash));
   }
 
   @Test
@@ -57,10 +59,12 @@ class DigitalGreenCertificateJsonToCborUnitTest {
 
     when(resourceLoader.getResource(any())).thenReturn(validationSchema);
     when(digitalCovidCertificateClient.getRules()).thenReturn(Collections.singletonList(mockBusinessRuleItem()));
-    when(digitalCovidCertificateClient.getCountryRuleByHash(any(),any())).thenReturn(mockBusinessRule());
+    when(digitalCovidCertificateClient.getCountryRuleByHash(any(), any())).thenReturn(mockBusinessRule());
 
     DigitalCovidCertificateException exception = assertThrows(DigitalCovidCertificateException.class,
-        () -> digitalGreenCertificateToCborMapping.constructRules(RuleType.Acceptance));
+        () -> digitalGreenCertificateToCborMapping
+            .constructRules(RuleType.Acceptance, digitalCovidCertificateClient::getRules,
+                digitalCovidCertificateClient::getCountryRuleByHash));
     assertThat(exception.getMessage()).contains("is not valid");
   }
 
@@ -70,10 +74,12 @@ class DigitalGreenCertificateJsonToCborUnitTest {
 
     when(resourceLoader.getResource(any())).thenReturn(validationSchema);
     when(digitalCovidCertificateClient.getRules()).thenReturn(Collections.singletonList(mockBusinessRuleItem()));
-    when(digitalCovidCertificateClient.getCountryRuleByHash(any(),any())).thenReturn(mockBusinessRule());
+    when(digitalCovidCertificateClient.getCountryRuleByHash(any(), any())).thenReturn(mockBusinessRule());
 
     DigitalCovidCertificateException exception = assertThrows(DigitalCovidCertificateException.class,
-        () -> digitalGreenCertificateToCborMapping.constructRules(RuleType.Acceptance));
+        () -> digitalGreenCertificateToCborMapping
+            .constructRules(RuleType.Acceptance, digitalCovidCertificateClient::getRules,
+                digitalCovidCertificateClient::getCountryRuleByHash));
     assertThat(exception.getMessage()).contains("could not be found");
   }
 

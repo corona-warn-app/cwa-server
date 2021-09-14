@@ -7,12 +7,10 @@ import app.coronawarn.server.services.distribution.dgc.ValueSetMetadata;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchValueSetsException;
 import java.util.List;
-import java.util.Optional;
 
 /**
- * This is a wrapper interface retrieving Digital Covid Certificate data.
- * Used to make HTTP request to Digital Covid Certificate server.
- * Used to retrieve mock sample data from classpath.
+ * This is a wrapper interface retrieving Digital Covid Certificate data. Used to make HTTP request to Digital Covid
+ * Certificate server. Used to retrieve mock sample data from classpath.
  */
 public interface DigitalCovidCertificateClient {
 
@@ -27,4 +25,6 @@ public interface DigitalCovidCertificateClient {
   List<BusinessRuleItem> getBoosterNotificationRules() throws FetchBusinessRulesException;
 
   BusinessRule getCountryRuleByHash(String country, String hash) throws FetchBusinessRulesException;
+
+  BusinessRule getBoosterNotificationRuleByHash(String country, String hash) throws FetchBusinessRulesException;
 }

@@ -55,7 +55,7 @@ class BoosterNotificationStructureProviderTest {
   BoosterNotificationStructureProvider underTest;
 
   @Test
-  void should_create_correct_file_structure_for_booster_notification_business_rules() {
+  void shouldCreateCorrectFileStructureForBoosterNotificationBusinessRules() {
     Writable<WritableOnDisk> boosterNotificationRules = underTest.getBoosterNotificationRules();
     boosterNotificationRules.prepare(new ImmutableStack<>());
 

@@ -13,6 +13,7 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleType;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToCborMapping;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
+import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalSigningCertificatesToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
@@ -44,6 +45,7 @@ public class DigitalCertificatesStructureProvider {
   private final DigitalGreenCertificateToProtobufMapping dgcToProtobufMapping;
   private final DigitalGreenCertificateToCborMapping dgcToCborMapping;
   private final DigitalSigningCertificatesToProtobufMapping digitalSigningCertificatesToProtobufMapping;
+  private final DigitalCovidCertificateClient digitalCovidCertificateClient;
 
   /**
    * Create an instance.
@@ -51,12 +53,14 @@ public class DigitalCertificatesStructureProvider {
   public DigitalCertificatesStructureProvider(DistributionServiceConfig distributionServiceConfig,
       CryptoProvider cryptoProvider, DigitalGreenCertificateToProtobufMapping dgcToProtobufMapping,
       DigitalGreenCertificateToCborMapping dgcToCborMapping,
-      DigitalSigningCertificatesToProtobufMapping digitalSigningCertificatesToProtobufMapping) {
+      DigitalSigningCertificatesToProtobufMapping digitalSigningCertificatesToProtobufMapping,
+      DigitalCovidCertificateClient digitalCovidCertificateClient) {
     this.distributionServiceConfig = distributionServiceConfig;
     this.cryptoProvider = cryptoProvider;
     this.dgcToProtobufMapping = dgcToProtobufMapping;
     this.dgcToCborMapping = dgcToCborMapping;
     this.digitalSigningCertificatesToProtobufMapping = digitalSigningCertificatesToProtobufMapping;
+    this.digitalCovidCertificateClient = digitalCovidCertificateClient;
   }
 
   /**
@@ -144,7 +148,9 @@ public class DigitalCertificatesStructureProvider {
 
     try {
       rulesArchive
-          .addWritable(new FileOnDisk("export.bin", dgcToCborMapping.constructCborRules(ruleType)));
+          .addWritable(new FileOnDisk("export.bin", dgcToCborMapping
+              .constructCborRules(ruleType, digitalCovidCertificateClient::getRules,
+                  digitalCovidCertificateClient::getCountryRuleByHash)));
       logger.info(archiveName + " archive has been added to the DGC distribution folder");
       return Optional.of(new DistributionArchiveSigningDecorator(rulesArchive, cryptoProvider,
           distributionServiceConfig));

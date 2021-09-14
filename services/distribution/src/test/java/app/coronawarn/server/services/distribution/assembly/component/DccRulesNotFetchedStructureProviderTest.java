@@ -3,7 +3,6 @@ package app.coronawarn.server.services.distribution.assembly.component;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.shared.collection.ImmutableStack;
@@ -90,7 +89,7 @@ class DccRulesNotFetchedStructureProviderTest {
   }
 
   @Test
-  void should_not_contain_acceptance_or_invalidation_rules() throws FetchBusinessRulesException {
+  void shouldNotContainAcceptanceOrInvalidationRules() throws FetchBusinessRulesException {
     when(digitalCovidCertificateClient.getRules()).thenThrow(FetchBusinessRulesException.class);
     when(digitalCovidCertificateClient.getCountryList()).thenReturn(Arrays.asList("DE", "RO"));
 
@@ -106,7 +105,7 @@ class DccRulesNotFetchedStructureProviderTest {
   }
 
   @Test
-  void should_contain_empty_acceptance_or_invalidation_rules() throws FetchBusinessRulesException {
+  void shouldContainEmptyAcceptanceOrInvalidationRules() throws FetchBusinessRulesException {
     when(digitalCovidCertificateClient.getRules()).thenReturn(Collections.emptyList());
     when(digitalCovidCertificateClient.getCountryList()).thenReturn(Arrays.asList("DE", "RO"));
 
@@ -124,7 +123,7 @@ class DccRulesNotFetchedStructureProviderTest {
   }
 
   @Test
-  void should_contain_empty_invalidation_rules() throws FetchBusinessRulesException {
+  void shouldContainEmptyInvalidationRules() throws FetchBusinessRulesException {
     BusinessRuleItem businessRuleItem = new BusinessRuleItem();
     businessRuleItem.setHash("test1");
     businessRuleItem.setCountry("test1");
@@ -139,9 +138,9 @@ class DccRulesNotFetchedStructureProviderTest {
     businessRule2.setType(RuleType.Acceptance.name());
 
     when(digitalCovidCertificateClient.getRules()).thenReturn(Arrays.asList(businessRuleItem, businessRuleItem2));
-    when(digitalCovidCertificateClient.getCountryRuleByHash(eq("test1"), eq("test1")))
+    when(digitalCovidCertificateClient.getCountryRuleByHash("test1", "test1"))
         .thenReturn(businessRule);
-    when(digitalCovidCertificateClient.getCountryRuleByHash(eq("test2"), eq("test2")))
+    when(digitalCovidCertificateClient.getCountryRuleByHash("test2", "test2"))
         .thenReturn(businessRule);
     when(digitalCovidCertificateClient.getCountryList()).thenReturn(Arrays.asList("DE", "RO"));
 
@@ -166,7 +165,7 @@ class DccRulesNotFetchedStructureProviderTest {
   private DirectoryOnDisk getStructureProviderDirectory() {
     DigitalCertificatesStructureProvider underTest = new DigitalCertificatesStructureProvider(
         distributionServiceConfig, cryptoProvider, dgcToProtobufMapping,
-        dgcToCborMappingMock, digitalSigningCertificatesToProtobufMapping);
+        dgcToCborMappingMock, digitalSigningCertificatesToProtobufMapping, digitalCovidCertificateClient);
     DirectoryOnDisk digitalGreenCertificates = underTest.getDigitalGreenCertificates();
     digitalGreenCertificates.prepare(new ImmutableStack<>());
 
