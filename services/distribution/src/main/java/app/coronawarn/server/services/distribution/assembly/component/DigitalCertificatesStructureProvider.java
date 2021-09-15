@@ -1,7 +1,5 @@
 package app.coronawarn.server.services.distribution.assembly.component;
 
-import static app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleType.BoosterNotification;
-
 import app.coronawarn.server.common.protocols.internal.dgc.ValueSets;
 import app.coronawarn.server.common.shared.exception.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
@@ -12,9 +10,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.DigitalGreenCertificate;
-import app.coronawarn.server.services.distribution.dgc.BusinessRule;
 import app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleType;
-import app.coronawarn.server.services.distribution.dgc.BusinessRuleItem;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToCborMapping;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
@@ -23,10 +19,7 @@ import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCer
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchDscTrustListException;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchValueSetsException;
-import app.coronawarn.server.services.distribution.dgc.functions.BusinessRuleItemSupplier;
-import app.coronawarn.server.services.distribution.dgc.functions.BusinessRuleSupplier;
 import app.coronawarn.server.services.distribution.dgc.structure.DigitalCertificatesDirectory;
-import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +35,7 @@ public class DigitalCertificatesStructureProvider {
   private static final Logger logger = LoggerFactory.getLogger(DigitalCertificatesStructureProvider.class);
 
   public static final String ONBOARDED_COUNTRIES = "onboarded-countries";
-  public static final String DSCS = "dscs";
+  public static final String DIGITAL_CERTIFICATES_STRUCTURE_PROVIDER = "dscs";
   public static final String ACCEPTANCE_RULES = "acceptance-rules";
   public static final String INVALIDATION_RULES = "invalidation-rules";
   public static final String EXPORT_BINARY_FILENAME = "export.bin";
@@ -130,7 +123,7 @@ public class DigitalCertificatesStructureProvider {
    * @return - DSCs archive
    */
   private Optional<Writable<WritableOnDisk>> getDscsArchive() {
-    ArchiveOnDisk dscsArchive = new ArchiveOnDisk(DSCS);
+    ArchiveOnDisk dscsArchive = new ArchiveOnDisk(DIGITAL_CERTIFICATES_STRUCTURE_PROVIDER);
     try {
       dscsArchive
           .addWritable(new FileOnDisk("export.bin",

@@ -1,7 +1,7 @@
 package app.coronawarn.server.services.distribution.objectstore.publish;
 
 import static app.coronawarn.server.services.distribution.assembly.component.DigitalCertificatesStructureProvider.ACCEPTANCE_RULES;
-import static app.coronawarn.server.services.distribution.assembly.component.DigitalCertificatesStructureProvider.DSCS;
+import static app.coronawarn.server.services.distribution.assembly.component.DigitalCertificatesStructureProvider.DIGITAL_CERTIFICATES_STRUCTURE_PROVIDER;
 import static app.coronawarn.server.services.distribution.assembly.component.DigitalCertificatesStructureProvider.INVALIDATION_RULES;
 import static app.coronawarn.server.services.distribution.assembly.component.DigitalCertificatesStructureProvider.ONBOARDED_COUNTRIES;
 
@@ -115,6 +115,6 @@ public abstract class LocalFile {
 
   private boolean isDscFile() {
     return s3Key.endsWith(INVALIDATION_RULES) || s3Key.endsWith(ACCEPTANCE_RULES) || s3Key.endsWith(ONBOARDED_COUNTRIES)
-        || s3Key.endsWith(DSCS);
+        || s3Key.endsWith(DIGITAL_CERTIFICATES_STRUCTURE_PROVIDER);
   }
 }
