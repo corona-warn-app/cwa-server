@@ -184,6 +184,7 @@ services:
       dgc-directory: ehn-dgc
       valuesets-file-name: value-sets
       supported-languages: DE, EN, BG, PL, RO, TR
+      export-archive-name: ${DIGITAL_GREEN_CERTIFICATE_ARCHIVE_NAME:export.bin}
       dsc-client:
         public-key: ${DSC_PUBLIC_KEY:MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIxHvrv8jQx9OEzTZbsx1prQVQn/3ex0gMYf6GyaNBW0QKLMjrSDeN6HwSPM0QzhvhmyQUixl6l88A7Zpu5OWSw==}
         base-url: ${DSC_BASE_PATH:https://de.test.dscg.ubirch.com}

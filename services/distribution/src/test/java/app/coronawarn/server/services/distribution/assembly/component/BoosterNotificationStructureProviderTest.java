@@ -3,7 +3,6 @@ package app.coronawarn.server.services.distribution.assembly.component;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
@@ -59,14 +58,13 @@ class BoosterNotificationStructureProviderTest {
   @Test
   void shouldCreateCorrectFileStructureForBoosterNotificationBusinessRules() {
     Optional<Writable<WritableOnDisk>> boosterNotificationRules = underTest.getBoosterNotificationRules();
-    assertTrue(boosterNotificationRules.isPresent());
-    boosterNotificationRules.get().prepare(new ImmutableStack<>());
-
-    assertEquals("booster-notification-rules", boosterNotificationRules.get().getName());
-
     Collection<String> archiveContent;
+
+    boosterNotificationRules.get().prepare(new ImmutableStack<>());
     archiveContent = ((Archive<WritableOnDisk>) boosterNotificationRules.get()).getWritables().stream()
         .map(Writable::getName).collect(Collectors.toList());
+
+    assertEquals("booster-notification-rules", boosterNotificationRules.get().getName());
     assertThat(archiveContent).containsAll(Set.of("export.bin", "export.sig"));
   }
 }

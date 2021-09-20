@@ -19,10 +19,15 @@ import java.util.Optional;
 import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+/**
+ * Builder for Businuess Rules Archive.
+ * There are three types of notifications: Acceptance, Invalidation and Booster.
+ * The builder can build the archive containing rules of one the above types by using the business rules suppliers
+ * within the builder to supply the right type.
+ */
 @Component
 @Scope("prototype")
 public class BusinessRulesArchiveBuilder {
@@ -56,13 +61,13 @@ public class BusinessRulesArchiveBuilder {
   public Optional<Writable<WritableOnDisk>> build() {
     ArchiveOnDisk rulesArchive = new ArchiveOnDisk(
         Strings.isEmpty(archiveName) ? distributionServiceConfig.getDefaultArchiveName() : archiveName);
-
     try {
       rulesArchive
           .addWritable(new FileOnDisk(exportBinaryFilename,
               dgcToCborMapping.constructCborRules(ruleType, businessRuleItemSupplier, businessRuleSupplier)));
       logger.info(archiveName + " archive has been added to the DGC distribution folder");
 
+      reset();
       return Optional.of(
           new DistributionArchiveSigningDecorator(rulesArchive, cryptoProvider, distributionServiceConfig));
     } catch (DigitalCovidCertificateException e) {
@@ -71,7 +76,22 @@ public class BusinessRulesArchiveBuilder {
       logger.error(archiveName + " archive was not overwritten because business rules could not been fetched:", e);
     }
 
+    reset();
     return Optional.empty();
+  }
+
+  /**
+   * Resets each field of the builder.
+   * @return - this instance.
+   */
+  public BusinessRulesArchiveBuilder reset() {
+    this.archiveName = null;
+    this.exportBinaryFilename = null;
+    this.ruleType = null;
+    this.businessRuleSupplier = null;
+    this.businessRuleItemSupplier = null;
+
+    return this;
   }
 
   public BusinessRulesArchiveBuilder setArchiveName(String archiveName) {

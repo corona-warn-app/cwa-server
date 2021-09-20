@@ -1691,6 +1691,8 @@ public class DistributionServiceConfig {
 
     private String[] supportedLanguages;
 
+    private String exportArchiveName;
+
     private Client client;
 
     private Client dscClient;
@@ -1797,6 +1799,14 @@ public class DistributionServiceConfig {
 
     public void setDscClient(Client dscClient) {
       this.dscClient = dscClient;
+    }
+
+    public String getExportArchiveName() {
+      return exportArchiveName;
+    }
+
+    public void setExportArchiveName(String exportArchiveName) {
+      this.exportArchiveName = exportArchiveName;
     }
   }
 }

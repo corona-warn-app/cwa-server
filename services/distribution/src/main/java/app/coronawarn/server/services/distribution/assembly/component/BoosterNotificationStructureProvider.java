@@ -6,8 +6,8 @@ import static app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleT
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToCborMapping;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
+import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateFeignClient;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 
@@ -19,8 +19,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class BoosterNotificationStructureProvider {
 
-  public static final String EXPORT_BINARY_FILENAME = "export.bin";
-
   private final DistributionServiceConfig distributionServiceConfig;
   private final DigitalCovidCertificateClient digitalCovidCertificateClient;
   private final BusinessRulesArchiveBuilder businessRulesArchiveBuilder;
@@ -29,7 +27,6 @@ public class BoosterNotificationStructureProvider {
    * Create an instance.
    */
   public BoosterNotificationStructureProvider(DistributionServiceConfig distributionServiceConfig,
-      CryptoProvider cryptoProvider, DigitalGreenCertificateToCborMapping dgcToCborMapping,
       DigitalCovidCertificateClient digitalCovidCertificateClient,
       BusinessRulesArchiveBuilder businessRulesArchiveBuilder) {
     this.distributionServiceConfig = distributionServiceConfig;
@@ -38,7 +35,10 @@ public class BoosterNotificationStructureProvider {
   }
 
   /**
-   * Returns the publishable archive with Booster Notification Business rules Cbor encoded structures.
+   * Fetches the Booster Notification Rules using
+   * {@link DigitalCovidCertificateFeignClient#getBoosterNotificationRules()}.
+   * Encode them in CBOR format.
+   * Pack them in an archive signed and ready to be published on CDN.
    */
   public Optional<Writable<WritableOnDisk>> getBoosterNotificationRules() {
     return getBoosterNotificationRulesArchive(
@@ -55,7 +55,7 @@ public class BoosterNotificationStructureProvider {
   private Optional<Writable<WritableOnDisk>> getBoosterNotificationRulesArchive(String archiveName) {
     return businessRulesArchiveBuilder
         .setArchiveName(archiveName)
-        .setExportBinaryFilename(EXPORT_BINARY_FILENAME)
+        .setExportBinaryFilename(distributionServiceConfig.getDigitalGreenCertificate().getExportArchiveName())
         .setRuleType(BoosterNotification)
         .setBusinessRuleItemSupplier(digitalCovidCertificateClient::getBoosterNotificationRules)
         .setBusinessRuleSupplier(digitalCovidCertificateClient::getBoosterNotificationRuleByHash)

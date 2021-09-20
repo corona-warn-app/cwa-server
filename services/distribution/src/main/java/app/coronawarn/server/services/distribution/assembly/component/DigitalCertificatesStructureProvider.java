@@ -38,8 +38,6 @@ public class DigitalCertificatesStructureProvider {
   public static final String DIGITAL_CERTIFICATES_STRUCTURE_PROVIDER = "dscs";
   public static final String ACCEPTANCE_RULES = "acceptance-rules";
   public static final String INVALIDATION_RULES = "invalidation-rules";
-  public static final String EXPORT_BINARY_FILENAME = "export.bin";
-
 
   private final DistributionServiceConfig distributionServiceConfig;
   private final CryptoProvider cryptoProvider;
@@ -151,7 +149,7 @@ public class DigitalCertificatesStructureProvider {
       String archiveName) {
     return businessRulesArchiveBuilder
         .setArchiveName(archiveName)
-        .setExportBinaryFilename(EXPORT_BINARY_FILENAME)
+        .setExportBinaryFilename(distributionServiceConfig.getDigitalGreenCertificate().getExportArchiveName())
         .setRuleType(ruleType)
         .setBusinessRuleItemSupplier(digitalCovidCertificateClient::getRules)
         .setBusinessRuleSupplier(digitalCovidCertificateClient::getCountryRuleByHash)
