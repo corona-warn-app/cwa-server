@@ -39,6 +39,9 @@ public class BusinessRulesArchiveBuilder {
   private BusinessRuleItemSupplier<List<BusinessRuleItem>> businessRuleItemSupplier;
   private BusinessRuleSupplier<BusinessRule, String, String> businessRuleSupplier;
 
+  /**
+   * Creates an instance.
+   */
   public BusinessRulesArchiveBuilder(DigitalGreenCertificateToCborMapping dgcToCborMapping,
       CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig) {
     this.dgcToCborMapping = dgcToCborMapping;
