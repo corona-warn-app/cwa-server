@@ -7,6 +7,8 @@ import app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleType;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
+import app.coronawarn.server.services.distribution.dgc.functions.BusinessRuleItemSupplier;
+import app.coronawarn.server.services.distribution.dgc.functions.BusinessRuleSupplier;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,28 +41,28 @@ public class DigitalGreenCertificateToCborMapping {
 
   /**
    * Construct business rules retrieved from DCC client for CBOR encoding. Fetched rules are filtered by rule type
-   * parameter which could be 'Acceptance' or 'Invalidation'.
+   * parameter which could be 'Acceptance' or 'Invalidation' or 'BoosterNotification'.
    *
-   * @param ruleType - rule type for which the business rules will be retrieved.
-   * @return - business rules
+   * @param ruleType                 the corresponding rule type that is used for creating the business rules.
+   * @param businessRuleItemSupplier a functional interface that provides a function that will provide a list of
+   *                                 business rule items.
+   * @param businessRuleSupplier     a functional interface that provides a function that will provide single business
+   *                                 rules.
+   * @return - list of the constructed business rules.
    * @throws DigitalCovidCertificateException - thrown if json validation schema is not found or the validation fails
    *                                          for a specific rule. This exception will propagate and will stop any
    *                                          archive to be published down in the execution.
    */
-  public List<BusinessRule> constructRules(RuleType ruleType)
+  public List<BusinessRule> constructRules(RuleType ruleType,
+      BusinessRuleItemSupplier<List<BusinessRuleItem>> businessRuleItemSupplier,
+      BusinessRuleSupplier<BusinessRule, String, String> businessRuleSupplier)
       throws DigitalCovidCertificateException, FetchBusinessRulesException {
-    List<BusinessRuleItem> businessRulesItems;
-    if (ruleType.equals(RuleType.BoosterNotification)) {
-      businessRulesItems = digitalCovidCertificateClient.getBoosterNotificationRules();
-    } else {
-      businessRulesItems = digitalCovidCertificateClient.getRules();
-    }
-    List<BusinessRule> businessRules = new ArrayList<>();
+    List<BusinessRuleItem> businessRulesItems = businessRuleItemSupplier.get();
 
+    List<BusinessRule> businessRules = new ArrayList<>();
     for (BusinessRuleItem businessRuleItem : businessRulesItems) {
       BusinessRule businessRule =
-          digitalCovidCertificateClient.getCountryRuleByHash(
-              businessRuleItem.getCountry(), businessRuleItem.getHash());
+          businessRuleSupplier.get(businessRuleItem.getCountry(), businessRuleItem.getHash());
 
       if (businessRule.getType().equalsIgnoreCase(ruleType.name())) {
         try (final InputStream in = resourceLoader.getResource(DCC_VALIDATION_RULE_JSON_CLASSPATH).getInputStream()) {
@@ -76,10 +78,8 @@ public class DigitalGreenCertificateToCborMapping {
         }
       }
     }
-
     return businessRules;
   }
-
 
   /**
    * CBOR encoding of {@code constructCountryList}.
@@ -92,9 +92,11 @@ public class DigitalGreenCertificateToCborMapping {
   /**
    * CBOR encoding of {@code constructRules}.
    */
-  public byte[] constructCborRules(RuleType ruleType)
+  public byte[] constructCborRules(RuleType ruleType,
+      BusinessRuleItemSupplier<List<BusinessRuleItem>> businessRuleItemSupplier,
+      BusinessRuleSupplier<BusinessRule, String, String> getRuleSupplier)
       throws DigitalCovidCertificateException, FetchBusinessRulesException {
-    return cborEncodeOrElseThrow(constructRules(ruleType));
+    return cborEncodeOrElseThrow(constructRules(ruleType, businessRuleItemSupplier, getRuleSupplier));
   }
 
   private byte[] cborEncodeOrElseThrow(Object subject) throws DigitalCovidCertificateException {
