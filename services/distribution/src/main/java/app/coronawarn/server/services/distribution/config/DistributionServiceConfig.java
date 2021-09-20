@@ -73,6 +73,7 @@ public class DistributionServiceConfig {
   private PresenceTracingParameters presenceTracingParameters;
   private DigitalGreenCertificate digitalGreenCertificate;
   private Integer connectionPoolSize;
+  private String defaultArchiveName;
 
   public Paths getPaths() {
     return paths;
@@ -887,6 +888,14 @@ public class DistributionServiceConfig {
 
   public void setConnectionPoolSize(Integer connectionPoolSize) {
     this.connectionPoolSize = connectionPoolSize;
+  }
+
+  public String getDefaultArchiveName() {
+    return defaultArchiveName;
+  }
+
+  public void setDefaultArchiveName(String defaultArchiveName) {
+    this.defaultArchiveName = defaultArchiveName;
   }
 
   public static class ObjectStore {

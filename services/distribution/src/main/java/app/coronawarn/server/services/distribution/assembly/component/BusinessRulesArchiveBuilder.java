@@ -27,12 +27,11 @@ import org.springframework.stereotype.Component;
 @Scope("prototype")
 public class BusinessRulesArchiveBuilder {
 
-  private static final Logger logger = LoggerFactory.getLogger(BoosterNotificationStructureProvider.class);
-  public static final String DEFAULT_BINARY_FILENAME = "export.bin";
+  private static final Logger logger = LoggerFactory.getLogger(BusinessRulesArchiveBuilder.class);
 
-  private DigitalGreenCertificateToCborMapping dgcToCborMapping;
-  private CryptoProvider cryptoProvider;
-  private DistributionServiceConfig distributionServiceConfig;
+  private final DigitalGreenCertificateToCborMapping dgcToCborMapping;
+  private final CryptoProvider cryptoProvider;
+  private final DistributionServiceConfig distributionServiceConfig;
 
   private String archiveName;
   private String exportBinaryFilename;
@@ -40,13 +39,20 @@ public class BusinessRulesArchiveBuilder {
   private BusinessRuleItemSupplier<List<BusinessRuleItem>> businessRuleItemSupplier;
   private BusinessRuleSupplier<BusinessRule, String, String> businessRuleSupplier;
 
+  public BusinessRulesArchiveBuilder(DigitalGreenCertificateToCborMapping dgcToCborMapping,
+      CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig) {
+    this.dgcToCborMapping = dgcToCborMapping;
+    this.cryptoProvider = cryptoProvider;
+    this.distributionServiceConfig = distributionServiceConfig;
+  }
+
   /**
    * Builds a archive on disk containing business rules.
    * @return - optional archive on disk
    */
   public Optional<Writable<WritableOnDisk>> build() {
     ArchiveOnDisk rulesArchive = new ArchiveOnDisk(
-        Strings.isEmpty(archiveName) ? DEFAULT_BINARY_FILENAME : archiveName);
+        Strings.isEmpty(archiveName) ? distributionServiceConfig.getDefaultArchiveName() : archiveName);
 
     try {
       rulesArchive
@@ -90,21 +96,6 @@ public class BusinessRulesArchiveBuilder {
   public BusinessRulesArchiveBuilder setExportBinaryFilename(String exportBinaryFilename) {
     this.exportBinaryFilename = exportBinaryFilename;
     return this;
-  }
-
-  @Autowired
-  public void setDgcToCborMapping(DigitalGreenCertificateToCborMapping dgcToCborMapping) {
-    this.dgcToCborMapping = dgcToCborMapping;
-  }
-
-  @Autowired
-  public void setCryptoProvider(CryptoProvider cryptoProvider) {
-    this.cryptoProvider = cryptoProvider;
-  }
-
-  @Autowired
-  public void setDistributionServiceConfig(DistributionServiceConfig distributionServiceConfig) {
-    this.distributionServiceConfig = distributionServiceConfig;
   }
 
 }
