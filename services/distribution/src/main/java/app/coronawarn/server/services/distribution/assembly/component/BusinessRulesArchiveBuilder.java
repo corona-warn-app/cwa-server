@@ -15,6 +15,7 @@ import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRu
 import app.coronawarn.server.services.distribution.dgc.functions.BusinessRuleItemSupplier;
 import app.coronawarn.server.services.distribution.dgc.functions.BusinessRuleSupplier;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
@@ -23,8 +24,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 /**
- * Builder for Businuess Rules Archive.
- * There are three types of notifications: Acceptance, Invalidation and Booster.
+ * Builder for Businuess Rules Archive. There are three types of notifications: Acceptance, Invalidation and Booster.
  * The builder can build the archive containing rules of one the above types by using the business rules suppliers
  * within the builder to supply the right type.
  */
@@ -56,9 +56,11 @@ public class BusinessRulesArchiveBuilder {
 
   /**
    * Builds a archive on disk containing business rules.
+   *
    * @return - optional archive on disk
    */
   public Optional<Writable<WritableOnDisk>> build() {
+    checkFields();
     ArchiveOnDisk rulesArchive = new ArchiveOnDisk(
         Strings.isEmpty(archiveName) ? distributionServiceConfig.getDefaultArchiveName() : archiveName);
     try {
@@ -82,6 +84,7 @@ public class BusinessRulesArchiveBuilder {
 
   /**
    * Resets each field of the builder.
+   *
    * @return - this instance.
    */
   public BusinessRulesArchiveBuilder reset() {
@@ -120,5 +123,22 @@ public class BusinessRulesArchiveBuilder {
     this.exportBinaryFilename = exportBinaryFilename;
     return this;
   }
+
+  private void checkFields() {
+    checkFields(this.businessRuleItemSupplier,
+        this.businessRuleSupplier,
+        this.ruleType,
+        this.exportBinaryFilename);
+  }
+
+  private void checkFields(Object... fields) {
+    for (Object field : fields) {
+      if (Objects.isNull(field)) {
+        reset();
+        throw new NullPointerException("Cannot build business rules arhive because field is null: " + field);
+      }
+    }
+  }
+
 
 }
