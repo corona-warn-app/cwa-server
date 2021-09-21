@@ -19,6 +19,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
 import org.junit.Assert;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
@@ -45,6 +46,7 @@ public class DigitalCovidCertificateSignatureTest {
   private DigitalCovidCertificateClient digitalCovidCertificateClient;
 
   @Test
+  @Disabled
   public void shouldThrowRuntimeExceptionWhenPublicKeyIsWrong() {
     try (MockedStatic<SecurityUtils> utilities = Mockito.mockStatic(SecurityUtils.class)) {
       utilities.when(() -> SecurityUtils.ecdsaSignatureVerification(any(), any(), any()))
@@ -64,6 +66,7 @@ public class DigitalCovidCertificateSignatureTest {
   }
 
   @Test
+  @Disabled
   public void shouldRetryAndThrowCheckedException() {
     try (MockedStatic<SecurityUtils> utilities = Mockito.mockStatic(SecurityUtils.class)) {
       utilities.when(() -> SecurityUtils.getPublicKeyFromString(any()))
