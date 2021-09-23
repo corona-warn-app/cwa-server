@@ -4,8 +4,10 @@ import app.coronawarn.server.services.distribution.statistics.keyfigurecard.fact
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.FirstVaccinationCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.FullyVaccinatedCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.HeaderCardFactory;
+import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.HospitalizationIncidenceCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.IncidenceCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.InfectionsCardFactory;
+import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.IntensiveCareCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.KeySubmissionCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.ReproductionNumberCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.VaccinationDosesCardFactory;
@@ -43,7 +45,15 @@ public enum Cards {
   /**
    * Vaccination Doses Card.
    */
-  VACCINATION_DOSES_CARD(new VaccinationDosesCardFactory(), "Vaccination Doses Card");
+  VACCINATION_DOSES_CARD(new VaccinationDosesCardFactory(), "Vaccination Doses Card"),
+  /**
+   * Hospitalization Incidence Card.
+   */
+  HOSPITALIZATION_INCIDENCE_CARD(new HospitalizationIncidenceCardFactory(), "Hospitalization Incidence Card"),
+  /**
+   * Intensive Care Card.
+   */
+  INTENSIVE_CARE_CARD(new IntensiveCareCardFactory(), "Intensive Care Card");
 
   /**
    * Get card factory by ID.

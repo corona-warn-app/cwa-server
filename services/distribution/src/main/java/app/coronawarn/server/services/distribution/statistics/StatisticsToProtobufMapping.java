@@ -3,8 +3,10 @@ package app.coronawarn.server.services.distribution.statistics;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.EMPTY_CARD;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.FIRST_VACCINATION_CARD;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.FULLY_VACCINATED_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.HOSPITALIZATION_INCIDENCE_CARD;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.INCIDENCE_CARD;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.INFECTIONS_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.INTENSIVE_CARE_CARD;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.KEY_SUBMISSION_CARD;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.REPRODUCTION_NUMBER_CARD;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.VACCINATION_DOSES_CARD;
@@ -141,6 +143,8 @@ public class StatisticsToProtobufMapping {
     figureCardMap.put(FIRST_VACCINATION_CARD.ordinal(), Optional.empty());
     figureCardMap.put(FULLY_VACCINATED_CARD.ordinal(), Optional.empty());
     figureCardMap.put(VACCINATION_DOSES_CARD.ordinal(), Optional.empty());
+    figureCardMap.put(HOSPITALIZATION_INCIDENCE_CARD.ordinal(), Optional.empty());
+    figureCardMap.put(INTENSIVE_CARE_CARD.ordinal(), Optional.empty());
 
     List<StatisticsJsonStringObject> orderedList = jsonStringObjects.stream()
         .sorted(Comparator.comparing(a -> effectiveDateStringToLocalDate(a.getEffectiveDate())))
@@ -185,7 +189,9 @@ public class StatisticsToProtobufMapping {
         figureCardMap.get(REPRODUCTION_NUMBER_CARD.ordinal()).orElse(emptyCard),
         figureCardMap.get(FIRST_VACCINATION_CARD.ordinal()).orElse(emptyCard),
         figureCardMap.get(FULLY_VACCINATED_CARD.ordinal()).orElse(emptyCard),
-        figureCardMap.get(VACCINATION_DOSES_CARD.ordinal()).orElse(emptyCard)
+        figureCardMap.get(VACCINATION_DOSES_CARD.ordinal()).orElse(emptyCard),
+        figureCardMap.get(HOSPITALIZATION_INCIDENCE_CARD.ordinal()).orElse(emptyCard),
+        figureCardMap.get(INTENSIVE_CARE_CARD.ordinal()).orElse(emptyCard)
     );
   }
 }
