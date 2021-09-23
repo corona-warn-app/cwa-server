@@ -65,6 +65,10 @@
       <artifactId>junit-jupiter</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.github.tomakehurst</groupId>
+      <artifactId>wiremock-jre8</artifactId>
+    </dependency>
+    <dependency>
       <groupId>${project.parent.groupId}</groupId>
       <artifactId>jupiterHelpers</artifactId>
     </dependency>

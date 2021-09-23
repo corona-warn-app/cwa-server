@@ -10,20 +10,19 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BusinessRule {
 
-  private String type;
-  private String schemaVersion;
+  private List<String> affectedFields;
+  private String certificateType;
+  private String country;
+  private List<Description> description;
   private String engine;
   private String engineVersion;
-  private String certificateType;
-  private List<Description> description;
+  private String identifier;
+  private Object logic;
+  private String schemaVersion;
+  private String type;
   private String validFrom;
   private String validTo;
-  private List<String> affectedFields;
-  private Object logic;
-  private String identifier;
   private String version;
-  private String country;
-  private String hash;
 
   public String getIdentifier() {
     return identifier;
@@ -50,15 +49,6 @@ public class BusinessRule {
   @JsonProperty("Country")
   public void setCountry(String country) {
     this.country = country;
-  }
-
-  public String getHash() {
-    return hash;
-  }
-
-  @JsonProperty("Hash")
-  public void setHash(String hash) {
-    this.hash = hash;
   }
 
   public String getType() {
@@ -152,8 +142,8 @@ public class BusinessRule {
   }
 
   public static class Description {
-    private String lang;
     private String desc;
+    private String lang;
 
     public String getLang() {
       return lang;
