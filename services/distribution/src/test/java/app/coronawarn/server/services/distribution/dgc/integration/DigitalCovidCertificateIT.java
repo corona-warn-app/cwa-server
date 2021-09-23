@@ -68,7 +68,7 @@ public class DigitalCovidCertificateIT {
   public static final String RULE_SIGNATURE = "MEUCIF98aQgbmrEpV9iOwczJJeJD0S+7E99NN7SrDrkQO+rgAiEAglp4rtZXbQSioA1ur+I8ir+Qmx4J1Ltd/20jErIpzqI=";
   public static final String COUNTRIES_SIGNATURE = "MEYCIQCf5qB5VxZGLVem+whVin7PU5kIAguJ4QvdgVb1DifskwIhAObGjRjIiw1hQMYvnzZc1DJQl4flNnudDjBu5DNlonSz";
   public static final String VALUESETS_SIGNATURE = "MEUCIQCPgW4cRVm/jHZJc9usf1Bwy60pHrLwpxfiTod06j13JQIgAuZUi/APjjFimil27M0sS2YVkLXcrrFAVE+arCamIzE=";
-  public static final String VALUESET_SIGNATURE = "MEYCIQC392aU0wiB29Z39KwV3eqPWv5QMVeEK5PbBsiNq06W4wIhAOQNt8enMBuwV6U3cHGnSt0PjtMyZ420Ip7/AmBDkwEP";
+  public static final String VALUESET_SIGNATURE = "MEQCIHM3YLHGEuVPYqKo7nTd+y/X19aG9oh5TFP3dX/mXQrpAiB/UDN6Lz3MXeeMkgnxp2vj26OTLRuEGtAyUHIZ/yG9rw==";
 
   private static final WireMockServer wireMockServer = new WireMockServer(options().port(1234));
 
