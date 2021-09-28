@@ -42,6 +42,10 @@ public class DccSignatureValidator {
    * @throws IOException - thrown if error occurs.
    */
   public void checkSignature(String signature, String body) throws IOException {
+    logger.info("Trying to verify signature with the following content:");
+    logger.info("public key: " + distributionServiceConfig.getDigitalGreenCertificate().getClient().getPublicKey());
+    logger.info("signature: " + signature);
+    logger.info("content: " + body);
     try {
       PublicKey publicKey = getPublicKeyFromString(
           distributionServiceConfig.getDigitalGreenCertificate().getClient().getPublicKey());
