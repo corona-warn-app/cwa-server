@@ -148,10 +148,10 @@ public class DigitalCovidCertificateIT {
   }
 
   private void stubValueSets() {
-    when(resourceLoader.getResource(any())).thenReturn(new ClassPathResource("dgc/valuesets.json"));
+    when(resourceLoader.getResource(any())).thenReturn(new ClassPathResource("dgc/wiremock/valuesets.json"));
 
     Optional<ValueSetMetadata[]> valuesets =
-        readConfiguredJsonOrDefault(resourceLoader, null, "dgc/valuesets.json", ValueSetMetadata[].class);
+        readConfiguredJsonOrDefault(resourceLoader, null, "dgc/wiremock/aluesets.json", ValueSetMetadata[].class);
     List<ValueSetMetadata> valueSetsList = Arrays.asList(valuesets.get());
 
     wireMockServer.stubFor(
@@ -181,10 +181,10 @@ public class DigitalCovidCertificateIT {
   }
 
   private void stubRules() {
-    when(resourceLoader.getResource(any())).thenReturn(new ClassPathResource("dgc/rules.json"));
+    when(resourceLoader.getResource(any())).thenReturn(new ClassPathResource("dgc/wiremock/rules.json"));
 
     Optional<BusinessRuleItem[]> businessRuleList =
-        readConfiguredJsonOrDefault(resourceLoader, null, "dgc/rules.json", BusinessRuleItem[].class);
+        readConfiguredJsonOrDefault(resourceLoader, null, "dgc/wiremock/rules.json", BusinessRuleItem[].class);
     List<BusinessRuleItem> businessRuleItemList = Arrays.asList(businessRuleList.get());
 
     wireMockServer.stubFor(
