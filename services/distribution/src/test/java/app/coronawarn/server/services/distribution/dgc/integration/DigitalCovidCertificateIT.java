@@ -131,11 +131,11 @@ public class DigitalCovidCertificateIT {
   }
 
   private void stubValueSetByHash() throws IOException {
-    when(resourceLoader.getResource(any())).thenReturn(new ClassPathResource("dgc/valueset.json"));
-    String content = new String(new ClassPathResource("dgc/valueset.json").getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+    when(resourceLoader.getResource(any())).thenReturn(new ClassPathResource("dgc/wiremock/valueset.json"));
+    String content = new String(new ClassPathResource("dgc/wiremock/valueset.json").getInputStream().readAllBytes(), StandardCharsets.UTF_8);
 
     Optional<ValueSet> valueSet =
-        readConfiguredJsonOrDefault(resourceLoader, null, "dgc/valueset.json", ValueSet.class);
+        readConfiguredJsonOrDefault(resourceLoader, null, "dgc/wiremock/valueset.json", ValueSet.class);
 
     wireMockServer.stubFor(
         get(urlPathMatching("/valuesets/.*"))
@@ -165,10 +165,10 @@ public class DigitalCovidCertificateIT {
   }
 
   private void stubRuleByHash() {
-    when(resourceLoader.getResource(any())).thenReturn(new ClassPathResource("dgc/rule.json"));
+    when(resourceLoader.getResource(any())).thenReturn(new ClassPathResource("dgc/wiremock/rule.json"));
 
     Optional<BusinessRule> businessRule =
-        readConfiguredJsonOrDefault(resourceLoader, null, "dgc/rule.json", BusinessRule.class);
+        readConfiguredJsonOrDefault(resourceLoader, null, "dgc/wiremock/rule.json", BusinessRule.class);
 
     wireMockServer.stubFor(
         get(urlPathEqualTo("/rules/" + RULE_COUNTRY + "/" + RULE_HASH))
@@ -198,10 +198,10 @@ public class DigitalCovidCertificateIT {
   }
 
   private void stubCountries() {
-    when(resourceLoader.getResource(any())).thenReturn(new ClassPathResource("dgc/countries.json"));
+    when(resourceLoader.getResource(any())).thenReturn(new ClassPathResource("dgc/wiremock/countries.json"));
 
     Optional<String[]> countriesList =
-        readConfiguredJsonOrDefault(resourceLoader, null, "dgc/countries.json", String[].class);
+        readConfiguredJsonOrDefault(resourceLoader, null, "dgc/wiremock/countries.json", String[].class);
     List<String> countries = Arrays.asList(countriesList.get());
 
     wireMockServer.stubFor(
