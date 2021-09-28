@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 /**
- * Builder for Businuess Rules Archive. There are three types of notifications: Acceptance, Invalidation and Booster.
+ * Builder for Businuess Rules Archive. There are three types of rules: Acceptance, Invalidation and Booster.
  * The builder can build the archive containing rules of one the above types by using the business rules suppliers
  * within the builder to supply the right type.
  */
