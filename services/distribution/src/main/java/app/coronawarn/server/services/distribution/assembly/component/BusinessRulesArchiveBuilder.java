@@ -87,14 +87,12 @@ public class BusinessRulesArchiveBuilder {
    *
    * @return - this instance.
    */
-  public BusinessRulesArchiveBuilder reset() {
+  public void reset() {
     this.archiveName = null;
     this.exportBinaryFilename = null;
     this.ruleType = null;
     this.businessRuleSupplier = null;
     this.businessRuleItemSupplier = null;
-
-    return this;
   }
 
   public BusinessRulesArchiveBuilder setArchiveName(String archiveName) {
