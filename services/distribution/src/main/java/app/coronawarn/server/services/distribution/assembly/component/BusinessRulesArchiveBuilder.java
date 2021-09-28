@@ -135,7 +135,7 @@ public class BusinessRulesArchiveBuilder {
     for (Object field : fields) {
       if (Objects.isNull(field)) {
         reset();
-        throw new NullPointerException("Cannot build business rules arhive because field is null: " + field);
+        throw new NullPointerException("Cannot build business rules archive because field is null: " + field);
       }
     }
   }
