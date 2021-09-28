@@ -84,8 +84,6 @@ public class BusinessRulesArchiveBuilder {
 
   /**
    * Resets each field of the builder.
-   *
-   * @return - this instance.
    */
   public void reset() {
     this.archiveName = null;
