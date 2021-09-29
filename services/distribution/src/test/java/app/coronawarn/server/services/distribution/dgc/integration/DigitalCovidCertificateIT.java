@@ -75,7 +75,7 @@ public class DigitalCovidCertificateIT {
   @Autowired
   DigitalCovidCertificateClient digitalCovidCertificateClient;
 
-  @MockBean
+  @Autowired
   ResourceLoader resourceLoader;
 
   @BeforeAll
@@ -131,11 +131,7 @@ public class DigitalCovidCertificateIT {
   }
 
   private void stubValueSetByHash() throws IOException {
-    when(resourceLoader.getResource(any())).thenReturn(new ClassPathResource("dgc/wiremock/valueset.json"));
     String content = new String(new ClassPathResource("dgc/wiremock/valueset.json").getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-
-    Optional<ValueSet> valueSet =
-        readConfiguredJsonOrDefault(resourceLoader, null, "dgc/wiremock/valueset.json", ValueSet.class);
 
     wireMockServer.stubFor(
         get(urlPathMatching("/valuesets/.*"))
@@ -148,10 +144,8 @@ public class DigitalCovidCertificateIT {
   }
 
   private void stubValueSets() {
-    when(resourceLoader.getResource(any())).thenReturn(new ClassPathResource("dgc/wiremock/valuesets.json"));
-
     Optional<ValueSetMetadata[]> valuesets =
-        readConfiguredJsonOrDefault(resourceLoader, null, "dgc/wiremock/aluesets.json", ValueSetMetadata[].class);
+        readConfiguredJsonOrDefault(resourceLoader, null, "dgc/wiremock/valuesets.json", ValueSetMetadata[].class);
     List<ValueSetMetadata> valueSetsList = Arrays.asList(valuesets.get());
 
     wireMockServer.stubFor(
@@ -165,8 +159,6 @@ public class DigitalCovidCertificateIT {
   }
 
   private void stubRuleByHash() {
-    when(resourceLoader.getResource(any())).thenReturn(new ClassPathResource("dgc/wiremock/rule.json"));
-
     Optional<BusinessRule> businessRule =
         readConfiguredJsonOrDefault(resourceLoader, null, "dgc/wiremock/rule.json", BusinessRule.class);
 
@@ -181,8 +173,6 @@ public class DigitalCovidCertificateIT {
   }
 
   private void stubRules() {
-    when(resourceLoader.getResource(any())).thenReturn(new ClassPathResource("dgc/wiremock/rules.json"));
-
     Optional<BusinessRuleItem[]> businessRuleList =
         readConfiguredJsonOrDefault(resourceLoader, null, "dgc/wiremock/rules.json", BusinessRuleItem[].class);
     List<BusinessRuleItem> businessRuleItemList = Arrays.asList(businessRuleList.get());
@@ -198,8 +188,6 @@ public class DigitalCovidCertificateIT {
   }
 
   private void stubCountries() {
-    when(resourceLoader.getResource(any())).thenReturn(new ClassPathResource("dgc/wiremock/countries.json"));
-
     Optional<String[]> countriesList =
         readConfiguredJsonOrDefault(resourceLoader, null, "dgc/wiremock/countries.json", String[].class);
     List<String> countries = Arrays.asList(countriesList.get());

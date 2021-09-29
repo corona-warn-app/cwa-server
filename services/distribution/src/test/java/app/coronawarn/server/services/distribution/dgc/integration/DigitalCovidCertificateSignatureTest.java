@@ -67,7 +67,7 @@ public class DigitalCovidCertificateSignatureTest {
   @Autowired
   DigitalCovidCertificateClient digitalCovidCertificateClient;
 
-  @MockBean
+  @Autowired
   ResourceLoader resourceLoader;
 
   @BeforeAll
@@ -77,7 +77,6 @@ public class DigitalCovidCertificateSignatureTest {
 
   @Test
   public void shouldThrowRuntimeExceptionWhenPublicKeyIsWrong() {
-    when(resourceLoader.getResource(any())).thenReturn(new ClassPathResource("dgc/rules.json"));
     stubRules();
 
     try (MockedStatic<SecurityUtils> utilities = Mockito.mockStatic(SecurityUtils.class)) {
@@ -99,7 +98,6 @@ public class DigitalCovidCertificateSignatureTest {
 
   @Test
   public void shouldRetryAndThrowCheckedException() {
-    when(resourceLoader.getResource(any())).thenReturn(new ClassPathResource("dgc/rules.json"));
     stubRules();
 
     try (MockedStatic<SecurityUtils> utilities = Mockito.mockStatic(SecurityUtils.class)) {
