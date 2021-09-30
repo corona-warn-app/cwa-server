@@ -91,11 +91,11 @@ public class StatisticsJsonStringObject extends StatisticsTimeJsonObject {
   private Integer personsFullyVaccinatedCumulated;
   @JsonProperty("persons_fully_vaccinated_ratio")
   private Double personsFullyVaccinatedRatio;
-  @JsonProperty("seven_day_hospitalization_reported_daily")
+  @JsonProperty("seven_day_hospitalization_1st_reported_daily")
   private Double sevenDayHospitalizationReportedDaily;
-  @JsonProperty("seven_day_hospitalization_reported_growthrate")
+  @JsonProperty("seven_day_hospitalization_1st_reported_growthrate")
   private Double sevenDayHospitalizationReportedGrowthrate;
-  @JsonProperty("seven_day_hospitalization_reported_trend_1percent")
+  @JsonProperty("seven_day_hospitalization_1st_reported_trend_1percent")
   private Integer sevenDayHospitalizationReportedTrend1percent;
   @JsonProperty("occupied_intensive_care_beds_reported_daily_ratio")
   private Double occupiedIntensiveCareBedsReportedDailyRatio;
