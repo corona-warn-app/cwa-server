@@ -13,6 +13,7 @@ import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateTo
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalSigningCertificatesClient;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
@@ -31,7 +32,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
     classes = {DigitalGreenCertificateToCborMapping.class,
         CryptoProvider.class, DistributionServiceConfig.class,
         DigitalSigningCertificatesClient.class, DigitalCovidCertificateClient.class,
-        BoosterNotificationStructureProvider.class},
+        BoosterNotificationStructureProvider.class, BusinessRulesArchiveBuilder.class},
     initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles({"fake-dcc-client", "fake-dsc-client"})
 class BoosterNotificationStructureProviderTest {
@@ -56,14 +57,14 @@ class BoosterNotificationStructureProviderTest {
 
   @Test
   void shouldCreateCorrectFileStructureForBoosterNotificationBusinessRules() {
-    Writable<WritableOnDisk> boosterNotificationRules = underTest.getBoosterNotificationRules();
-    boosterNotificationRules.prepare(new ImmutableStack<>());
-
-    assertEquals("booster-notification-rules", boosterNotificationRules.getName());
-
+    Optional<Writable<WritableOnDisk>> boosterNotificationRules = underTest.getBoosterNotificationRules();
     Collection<String> archiveContent;
-    archiveContent = ((Archive<WritableOnDisk>) boosterNotificationRules).getWritables().stream()
+
+    boosterNotificationRules.get().prepare(new ImmutableStack<>());
+    archiveContent = ((Archive<WritableOnDisk>) boosterNotificationRules.get()).getWritables().stream()
         .map(Writable::getName).collect(Collectors.toList());
+
+    assertEquals("booster-notification-rules", boosterNotificationRules.get().getName());
     assertThat(archiveContent).containsAll(Set.of("export.bin", "export.sig"));
   }
 }

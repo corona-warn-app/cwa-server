@@ -79,7 +79,7 @@ public class CwaApiStructureProvider {
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.ofNullable(dgcStructureProvider.getDigitalGreenCertificates()));
     versionDirectory.addWritableToAll(
-        ignoredValue -> Optional.ofNullable(boosterNotificationStructureProvider.getBoosterNotificationRules()));
+        ignoredValue -> boosterNotificationStructureProvider.getBoosterNotificationRules());
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.of(diagnosisKeysStructureProvider.getDiagnosisKeys()));
     versionDirectory.addWritableToAll(

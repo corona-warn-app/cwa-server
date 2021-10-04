@@ -73,6 +73,7 @@ public class DistributionServiceConfig {
   private PresenceTracingParameters presenceTracingParameters;
   private DigitalGreenCertificate digitalGreenCertificate;
   private Integer connectionPoolSize;
+  private String defaultArchiveName;
 
   public Paths getPaths() {
     return paths;
@@ -889,6 +890,14 @@ public class DistributionServiceConfig {
     this.connectionPoolSize = connectionPoolSize;
   }
 
+  public String getDefaultArchiveName() {
+    return defaultArchiveName;
+  }
+
+  public void setDefaultArchiveName(String defaultArchiveName) {
+    this.defaultArchiveName = defaultArchiveName;
+  }
+
   public static class ObjectStore {
 
     @Pattern(regexp = NO_WHITESPACE_REGEX)
@@ -1682,6 +1691,8 @@ public class DistributionServiceConfig {
 
     private String[] supportedLanguages;
 
+    private String exportArchiveName;
+
     private Client client;
 
     private Client dscClient;
@@ -1788,6 +1799,14 @@ public class DistributionServiceConfig {
 
     public void setDscClient(Client dscClient) {
       this.dscClient = dscClient;
+    }
+
+    public String getExportArchiveName() {
+      return exportArchiveName;
+    }
+
+    public void setExportArchiveName(String exportArchiveName) {
+      this.exportArchiveName = exportArchiveName;
     }
   }
 }

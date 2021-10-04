@@ -35,10 +35,9 @@ public class DigitalCertificatesStructureProvider {
   private static final Logger logger = LoggerFactory.getLogger(DigitalCertificatesStructureProvider.class);
 
   public static final String ONBOARDED_COUNTRIES = "onboarded-countries";
-  public static final String DSCS = "dscs";
+  public static final String DIGITAL_CERTIFICATES_STRUCTURE_PROVIDER = "dscs";
   public static final String ACCEPTANCE_RULES = "acceptance-rules";
   public static final String INVALIDATION_RULES = "invalidation-rules";
-
 
   private final DistributionServiceConfig distributionServiceConfig;
   private final CryptoProvider cryptoProvider;
@@ -46,6 +45,7 @@ public class DigitalCertificatesStructureProvider {
   private final DigitalGreenCertificateToCborMapping dgcToCborMapping;
   private final DigitalSigningCertificatesToProtobufMapping digitalSigningCertificatesToProtobufMapping;
   private final DigitalCovidCertificateClient digitalCovidCertificateClient;
+  private final BusinessRulesArchiveBuilder businessRulesArchiveBuilder;
 
   /**
    * Create an instance.
@@ -54,13 +54,15 @@ public class DigitalCertificatesStructureProvider {
       CryptoProvider cryptoProvider, DigitalGreenCertificateToProtobufMapping dgcToProtobufMapping,
       DigitalGreenCertificateToCborMapping dgcToCborMapping,
       DigitalSigningCertificatesToProtobufMapping digitalSigningCertificatesToProtobufMapping,
-      DigitalCovidCertificateClient digitalCovidCertificateClient) {
+      DigitalCovidCertificateClient digitalCovidCertificateClient,
+      BusinessRulesArchiveBuilder businessRulesArchiveBuilder) {
     this.distributionServiceConfig = distributionServiceConfig;
     this.cryptoProvider = cryptoProvider;
     this.dgcToProtobufMapping = dgcToProtobufMapping;
     this.dgcToCborMapping = dgcToCborMapping;
     this.digitalSigningCertificatesToProtobufMapping = digitalSigningCertificatesToProtobufMapping;
     this.digitalCovidCertificateClient = digitalCovidCertificateClient;
+    this.businessRulesArchiveBuilder = businessRulesArchiveBuilder;
   }
 
   /**
@@ -119,7 +121,7 @@ public class DigitalCertificatesStructureProvider {
    * @return - DSCs archive
    */
   private Optional<Writable<WritableOnDisk>> getDscsArchive() {
-    ArchiveOnDisk dscsArchive = new ArchiveOnDisk(DSCS);
+    ArchiveOnDisk dscsArchive = new ArchiveOnDisk(DIGITAL_CERTIFICATES_STRUCTURE_PROVIDER);
     try {
       dscsArchive
           .addWritable(new FileOnDisk("export.bin",
@@ -143,23 +145,14 @@ public class DigitalCertificatesStructureProvider {
    * @param archiveName - archive name for packaging rules
    * @return - business rules archive
    */
-  private Optional<Writable<WritableOnDisk>> getRulesArchive(RuleType ruleType, String archiveName) {
-    ArchiveOnDisk rulesArchive = new ArchiveOnDisk(archiveName);
-
-    try {
-      rulesArchive
-          .addWritable(new FileOnDisk("export.bin", dgcToCborMapping
-              .constructCborRules(ruleType, digitalCovidCertificateClient::getRules,
-                  digitalCovidCertificateClient::getCountryRuleByHash)));
-      logger.info(archiveName + " archive has been added to the DGC distribution folder");
-      return Optional.of(new DistributionArchiveSigningDecorator(rulesArchive, cryptoProvider,
-          distributionServiceConfig));
-    } catch (DigitalCovidCertificateException e) {
-      logger.error(archiveName + " archive was not overwritten because of:", e);
-    } catch (FetchBusinessRulesException e) {
-      logger.error(archiveName + " archive was not overwritten because business rules could not been fetched:", e);
-    }
-
-    return Optional.empty();
+  private Optional<Writable<WritableOnDisk>> getRulesArchive(RuleType ruleType,
+      String archiveName) {
+    return businessRulesArchiveBuilder
+        .setArchiveName(archiveName)
+        .setExportBinaryFilename(distributionServiceConfig.getDigitalGreenCertificate().getExportArchiveName())
+        .setRuleType(ruleType)
+        .setBusinessRuleItemSupplier(digitalCovidCertificateClient::getRules)
+        .setBusinessRuleSupplier(digitalCovidCertificateClient::getCountryRuleByHash)
+        .build();
   }
 }

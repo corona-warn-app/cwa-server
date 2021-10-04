@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.shared.collection.ImmutableStack;
+import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
@@ -24,6 +25,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,7 +46,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(
     classes = {DigitalGreenCertificateToProtobufMapping.class, DigitalGreenCertificateToCborMapping.class,
         CryptoProvider.class, DistributionServiceConfig.class, TestDigitalCovidCertificateClient.class,
-        DigitalSigningCertificatesToProtobufMapping.class, DigitalSigningCertificatesClient.class},
+        DigitalSigningCertificatesToProtobufMapping.class, DigitalSigningCertificatesClient.class,
+        BusinessRulesArchiveBuilder.class},
     initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles({"fake-dcc-client", "fake-dsc-client"})
 class ValueSetsNotFetchedStructureProviderTest {
@@ -61,6 +65,9 @@ class ValueSetsNotFetchedStructureProviderTest {
 
   @Autowired
   DigitalGreenCertificateToCborMapping dgcToCborMappingMock;
+
+  @Autowired
+  BusinessRulesArchiveBuilder businessRulesArchiveBuilder;
 
   @MockBean
   OutputDirectoryProvider outputDirectoryProvider;
@@ -94,16 +101,25 @@ class ValueSetsNotFetchedStructureProviderTest {
   void should_not_contain_valuesets_if_any_is_not_fetched() throws FetchValueSetsException {
     DigitalCertificatesStructureProvider underTest = new DigitalCertificatesStructureProvider(
         distributionServiceConfig, cryptoProvider, dgcToProtobufMapping, dgcToCborMappingMock,
-        digitalSigningCertificatesToProtobufMapping, digitalCovidCertificateClient);
+        digitalSigningCertificatesToProtobufMapping, digitalCovidCertificateClient, businessRulesArchiveBuilder);
     DirectoryOnDisk digitalGreenCertificates = underTest.getDigitalGreenCertificates();
     digitalGreenCertificates.prepare(new ImmutableStack<>());
 
     assertEquals("ehn-dgc", digitalGreenCertificates.getName());
-    List<String> expectedLanguages = Arrays.asList("de", "en", "bg", "pl", "ro", "tr");
+
+    List<String> expectedLanguages = Arrays
+        .stream(distributionServiceConfig.getDigitalGreenCertificate().getSupportedLanguages())
+        .map(String::toLowerCase)
+        .collect(Collectors.toList());
+    List<String> writableNames = digitalGreenCertificates.getWritables()
+        .stream().map(Writable::getName).collect(Collectors.toList());
+    assertTrue(writableNames.containsAll(expectedLanguages));
+
     boolean areLanguageFoldersEmpty = digitalGreenCertificates.getWritables().stream()
         .filter(writableOnDiskWritable -> expectedLanguages.contains(writableOnDiskWritable.getName()))
         .filter(writableOnDiskWritable -> writableOnDiskWritable instanceof DirectoryOnDisk)
         .allMatch(directory -> ((DirectoryOnDisk) directory).getWritables().isEmpty());
+
     assertTrue(areLanguageFoldersEmpty);
     verify(dgcToProtobufMapping, times(1)).constructProtobufMapping();
   }

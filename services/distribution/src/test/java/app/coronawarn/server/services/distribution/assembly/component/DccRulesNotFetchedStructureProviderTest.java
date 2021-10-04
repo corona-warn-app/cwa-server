@@ -46,7 +46,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(
     classes = {DigitalGreenCertificateToProtobufMapping.class, DigitalGreenCertificateToCborMapping.class,
         CryptoProvider.class, DistributionServiceConfig.class, ProdDigitalCovidCertificateClient.class,
-        DigitalSigningCertificatesToProtobufMapping.class, DigitalSigningCertificatesClient.class},
+        DigitalSigningCertificatesToProtobufMapping.class, DigitalSigningCertificatesClient.class,
+        BusinessRulesArchiveBuilder.class},
     initializers = ConfigDataApplicationContextInitializer.class)
 class DccRulesNotFetchedStructureProviderTest {
 
@@ -66,6 +67,9 @@ class DccRulesNotFetchedStructureProviderTest {
 
   @Autowired
   DigitalSigningCertificatesToProtobufMapping digitalSigningCertificatesToProtobufMapping;
+
+  @Autowired
+  BusinessRulesArchiveBuilder businessRulesArchiveBuilder;
 
   @MockBean
   OutputDirectoryProvider outputDirectoryProvider;
@@ -165,7 +169,8 @@ class DccRulesNotFetchedStructureProviderTest {
   private DirectoryOnDisk getStructureProviderDirectory() {
     DigitalCertificatesStructureProvider underTest = new DigitalCertificatesStructureProvider(
         distributionServiceConfig, cryptoProvider, dgcToProtobufMapping,
-        dgcToCborMappingMock, digitalSigningCertificatesToProtobufMapping, digitalCovidCertificateClient);
+        dgcToCborMappingMock, digitalSigningCertificatesToProtobufMapping, digitalCovidCertificateClient,
+        businessRulesArchiveBuilder);
     DirectoryOnDisk digitalGreenCertificates = underTest.getDigitalGreenCertificates();
     digitalGreenCertificates.prepare(new ImmutableStack<>());
 

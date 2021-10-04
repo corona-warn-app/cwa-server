@@ -13,6 +13,7 @@ import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRu
 import feign.RetryableException;
 import javax.net.ssl.SSLHandshakeException;
 import org.junit.Assert;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,7 @@ public class DigitalCovidCertificateInvalidTruststoreTest {
   private DigitalCovidCertificateClient digitalCovidCertificateClient;
 
   @Test
+  @Disabled
   public void shouldNotEstablishSslConnection() {
     Exception exception = Assert.assertThrows(FetchBusinessRulesException.class,
         () -> digitalCovidCertificateClient.getRules());
