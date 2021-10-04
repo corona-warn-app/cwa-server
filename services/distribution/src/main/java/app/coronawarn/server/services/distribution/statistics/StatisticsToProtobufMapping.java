@@ -23,6 +23,7 @@ import app.coronawarn.server.services.distribution.statistics.exceptions.Connect
 import app.coronawarn.server.services.distribution.statistics.exceptions.FilePathNotFoundException;
 import app.coronawarn.server.services.distribution.statistics.file.JsonFile;
 import app.coronawarn.server.services.distribution.statistics.file.StatisticJsonFileLoader;
+import app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.MissingPropertyException;
 import app.coronawarn.server.services.distribution.statistics.validation.StatisticsJsonValidator;
@@ -30,6 +31,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -155,18 +157,20 @@ public class StatisticsToProtobufMapping {
 
     for (var stat : orderedList) {
       collectedJsonObjects.add(stat);
-      getAllCardIdSequence().forEach(id -> {
-        if (figureCardMap.get(id).isEmpty()) {
-          KeyFigureCard card;
-          try {
-            card = keyFigureCardFactory.createKeyFigureCard(stat, id);
-            logger.info("[{}] {} successfully created", stat.getEffectiveDate(), getNameFor(id));
-            figureCardMap.put(id, Optional.of(card));
-          } catch (MissingPropertyException ex) {
-            logger.warn("[{}] {}", stat.getEffectiveDate(), ex.getMessage());
-          }
-        }
-      });
+      Arrays.stream(Cards.values()).map(card -> card.ordinal())
+          .filter(e -> getAllCardIdSequence().contains(e.intValue()))
+          .forEach(id -> {
+            if (figureCardMap.get(id).isEmpty()) {
+              KeyFigureCard card;
+              try {
+                card = keyFigureCardFactory.createKeyFigureCard(stat, id);
+                logger.info("[{}] {} successfully created", stat.getEffectiveDate(), getNameFor(id));
+                figureCardMap.put(id, Optional.of(card));
+              } catch (MissingPropertyException ex) {
+                logger.warn("[{}] {}", stat.getEffectiveDate(), ex.getMessage());
+              }
+            }
+          });
 
       if (figureCardMap.values().stream().allMatch(Optional::isPresent)) {
         break;
