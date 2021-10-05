@@ -157,8 +157,10 @@ public class StatisticsToProtobufMapping {
 
     for (var stat : orderedList) {
       collectedJsonObjects.add(stat);
+      List<Integer> cardIdSequence = getAllCardIdSequence();
       Arrays.stream(Cards.values()).map(card -> card.ordinal())
-          .filter(e -> getAllCardIdSequence().contains(e.intValue()))
+          .filter(e -> cardIdSequence.contains(e))
+          .filter(idSequence -> figureCardMap.containsKey(idSequence))
           .forEach(id -> {
             if (figureCardMap.get(id).isEmpty()) {
               KeyFigureCard card;
