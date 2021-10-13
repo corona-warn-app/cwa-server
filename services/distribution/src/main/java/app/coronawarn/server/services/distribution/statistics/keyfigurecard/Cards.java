@@ -8,6 +8,7 @@ import app.coronawarn.server.services.distribution.statistics.keyfigurecard.fact
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.IncidenceCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.InfectionsCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.IntensiveCareCardFactory;
+import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.JoinedIncidenceCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.KeySubmissionCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.ReproductionNumberCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.VaccinationDosesCardFactory;
@@ -53,7 +54,11 @@ public enum Cards {
   /**
    * Intensive Care Card.
    */
-  INTENSIVE_CARE_CARD(new IntensiveCareCardFactory(), "Intensive Care Card");
+  INTENSIVE_CARE_CARD(new IntensiveCareCardFactory(), "Intensive Care Card"),
+  /**
+   * Joined Incidence Card.
+   */
+  JOINED_INCIDENCE_CARD(new JoinedIncidenceCardFactory(), "Joined incidence Card");
 
   /**
    * Get card factory by ID.
