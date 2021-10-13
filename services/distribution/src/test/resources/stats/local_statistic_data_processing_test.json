@@ -191,6 +191,18 @@
   {
     "update_timestamp": "2021-05-19T12:19:33,103",
     "effective_date": "2021-05-16",
+    "province_code": 12,
+    "province_name": "Brandenburg",
+    "seven_day_incidence_1st_reported_daily": 59.8,
+    "seven_day_incidence_1st_reported_growthrate": 0.9692058346839545,
+    "seven_day_incidence_1st_reported_trend_1percent": -1,
+    "seven_day_hospitalization_1st_reported_daily": 168.5,
+    "seven_day_hospitalization_1st_reported_growthrate": 0.86,
+    "seven_day_hospitalization_1st_reported_trend_1percent": 1
+  },
+  {
+    "update_timestamp": "2021-05-19T12:19:33,103",
+    "effective_date": "2021-05-16",
     "province_code": 12068,
     "province_name": "LK Ostprignitz-Ruppin",
     "seven_day_incidence_1st_reported_daily": 47.5,

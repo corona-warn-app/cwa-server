@@ -93,7 +93,13 @@ class LocalStatisticsJsonToProtobufTest {
         .containsExactly(8326,
             TimeUtils.toEpochSecondsUtc(LocalDate.of(2021, 5, 16)));
 
-
+    // Federal state 12 (group 1) is duplicated in JSON sample data. Should return the most recent one.
+    assertThat(localStatisticsMap.get(3).getFederalStateData(1))
+        .extracting(FederalStateData::getFederalState, FederalStateData::getUpdatedAt,
+            FederalStateData::getSevenDayHospitalizationIncidenceUpdatedAt)
+        .containsExactly(FederalState.FEDERAL_STATE_BB,
+            TimeUtils.toEpochSecondsUtc(LocalDate.of(2021, 5, 17)),
+            TimeUtils.toEpochSecondsUtc(LocalDate.of(2021, 5, 16)));
   }
 
 }
