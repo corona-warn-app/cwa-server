@@ -165,6 +165,9 @@
     "persons_with_first_dose_cumulated": null,
     "persons_with_first_dose_ratio": null,
     "persons_fully_vaccinated_cumulated": null,
-    "persons_fully_vaccinated_ratio": null
+    "persons_fully_vaccinated_ratio": null,
+    "seven_day_hospitalization_1st_reported_daily": 168.5,
+    "seven_day_hospitalization_1st_reported_growthrate": 0.86,
+    "seven_day_hospitalization_1st_reported_trend_1percent": 1
   }
 ]

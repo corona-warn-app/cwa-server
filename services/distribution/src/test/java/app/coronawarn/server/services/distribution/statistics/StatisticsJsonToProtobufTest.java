@@ -109,7 +109,7 @@ class StatisticsJsonToProtobufTest {
     void testGetCardIdSequenceFromConfig() throws IOException {
       Statistics stats = statisticsToProtobufMapping.constructProtobufStatistics();
 
-      assertThat(stats.getCardIdSequenceList().size()).isEqualTo(9);
+      assertThat(stats.getCardIdSequenceList().size()).isEqualTo(10);
     }
 
     @Test
@@ -296,10 +296,13 @@ class StatisticsJsonToProtobufTest {
     void testJoinedIncidenceCard() {
       assertThat(joinedIncidence.getHeader())
           .extracting(CardHeader::getCardId, CardHeader::getUpdatedAt)
-          .containsExactly(JOINED_INCIDENCE_CARD.ordinal(), dateToTimestamp(LocalDate.of(2021, 06, 24)));
+          .containsExactly(JOINED_INCIDENCE_CARD.ordinal(), dateToTimestamp(LocalDate.of(2020, 11, 7)));
       assertThat(joinedIncidence.getKeyFigures(0))
           .extracting(KeyFigure::getValue, KeyFigure::getTrend, KeyFigure::getTrendSemantic)
-          .containsExactly(1, Trend.UNSPECIFIED_TREND, TrendSemantic.UNSPECIFIED_TREND_SEMANTIC);
+          .containsExactly(168.5, Trend.DECREASING, TrendSemantic.POSITIVE);
+      assertThat(joinedIncidence.getKeyFigures(1))
+          .extracting(KeyFigure::getValue, KeyFigure::getTrend, KeyFigure::getTrendSemantic, KeyFigure::getUpdatedAt)
+          .containsExactly(168.5, Trend.INCREASING, TrendSemantic.NEGATIVE, dateToTimestamp(LocalDate.of(2020, 11, 7)));
     }
   }
 }

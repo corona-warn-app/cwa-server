@@ -216,9 +216,11 @@ public class StatisticsToProtobufMapping {
       AtomicReference<StatisticsJsonStringObject> joinedCardIncidence) {
     orderedList.forEach(obj -> {
       if (hasRequiredFieldsForIncidenceKeyFigure(obj)) {
-        if (joinedCardIncidence.get() == null) {
+        if (!isIncidenceCardAlreadyCreated(joinedCardIncidence)) {
           joinedCardIncidence.getAndSet(obj);
-        } else if (LocalDate.parse(joinedCardIncidence.get().getEffectiveDate())
+          joinedCardIncidence.get().setHospitalizationEffectiveDate("");
+        } else if (validKeyFigureNotFound(joinedCardIncidence.get().getEffectiveDate())
+            || LocalDate.parse(joinedCardIncidence.get().getEffectiveDate())
             .isBefore(LocalDate.parse(obj.getEffectiveDate()))) {
           joinedCardIncidence.get().setSevenDayIncidence(obj.getSevenDayIncidence());
           joinedCardIncidence.get().setSevenDayIncidenceTrend1percent(obj.getSevenDayIncidenceTrend1percent());
@@ -227,16 +229,13 @@ public class StatisticsToProtobufMapping {
         }
       }
       if (hasRequiredFieldsForHospitalizationKeyFigure(obj)) {
-        if (joinedCardIncidence == null) {
+        if (!isIncidenceCardAlreadyCreated(joinedCardIncidence)) {
+          joinedCardIncidence.getAndSet(obj);
           joinedCardIncidence.get()
-              .setSevenDayHospitalizationReportedDaily(obj.getSevenDayHospitalizationReportedDaily());
-          joinedCardIncidence.get()
-              .setSevenDayIncidenceGrowthrate(obj.getSevenDayHospitalizationReportedGrowthrate());
-          joinedCardIncidence.get()
-              .setSevenDayHospitalizationReportedTrend1percent(obj.getSevenDayHospitalizationReportedTrend1percent());
-          joinedCardIncidence.get()
-              .setHospitalizationEffectiveDate(obj.getHospitalizationEffectiveDate());
-        } else if (LocalDate.parse(joinedCardIncidence.get().getHospitalizationEffectiveDate())
+              .setHospitalizationEffectiveDate(obj.getEffectiveDate());
+          joinedCardIncidence.get().setEffectiveDate("");
+        } else if (validKeyFigureNotFound(joinedCardIncidence.get().getHospitalizationEffectiveDate())
+            || LocalDate.parse(joinedCardIncidence.get().getHospitalizationEffectiveDate())
             .isBefore(LocalDate.parse(obj.getEffectiveDate()))) {
           joinedCardIncidence.get()
               .setSevenDayHospitalizationReportedDaily(obj.getSevenDayHospitalizationReportedDaily());
@@ -245,10 +244,18 @@ public class StatisticsToProtobufMapping {
           joinedCardIncidence.get()
               .setSevenDayHospitalizationReportedTrend1percent(obj.getSevenDayHospitalizationReportedTrend1percent());
           joinedCardIncidence.get()
-              .setHospitalizationEffectiveDate(obj.getHospitalizationEffectiveDate());
+              .setHospitalizationEffectiveDate(obj.getEffectiveDate());
         }
       }
     });
+  }
+
+  private boolean validKeyFigureNotFound(String effectiveDate) {
+    return effectiveDate.isEmpty();
+  }
+
+  private boolean isIncidenceCardAlreadyCreated(AtomicReference<StatisticsJsonStringObject> joinedCardIncidence) {
+    return joinedCardIncidence.get() != null;
   }
 
   private boolean hasRequiredFieldsForHospitalizationKeyFigure(StatisticsJsonStringObject statJsonObject) {
