@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.distribution.statistics;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -103,6 +104,8 @@ public class StatisticsJsonStringObject extends StatisticsTimeJsonObject {
   private Double occupiedIntensiveCareBedsReportedDailyGrowthrate;
   @JsonProperty("occupied_intensive_care_beds_reported_daily_ratio_trend_1percent")
   private Integer occupiedIntensiveCareBedsReportedDaily1percent;
+  @JsonIgnore
+  private String hospitalizationEffectiveDate;
 
   public String getAppDownloads7DaysAvg() {
     return appDownloads7DaysAvg;
@@ -484,5 +487,13 @@ public class StatisticsJsonStringObject extends StatisticsTimeJsonObject {
   public void setOccupiedIntensiveCareBedsReportedDaily1percent(
       Integer occupiedIntensiveCareBedsReportedDaily1percent) {
     this.occupiedIntensiveCareBedsReportedDaily1percent = occupiedIntensiveCareBedsReportedDaily1percent;
+  }
+
+  public String getHospitalizationEffectiveDate() {
+    return hospitalizationEffectiveDate;
+  }
+
+  public void setHospitalizationEffectiveDate(String hospitalizationEffectiveDate) {
+    this.hospitalizationEffectiveDate = hospitalizationEffectiveDate;
   }
 }
