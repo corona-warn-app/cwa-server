@@ -185,26 +185,21 @@ public class LocalStatisticsToProtobufMapping {
       LocalStatisticsJsonStringObject mostRecentHospitalizationStatistic = null;
 
       for (LocalStatisticsJsonStringObject provinceStatistic : sameProvinceStatistics) {
-        if (mostRecentStatistic == null && mostRecentHospitalizationStatistic == null) {
+        if (hasEmptyMostRecentStatistics(mostRecentStatistic, mostRecentHospitalizationStatistic)) {
           mostRecentStatistic = provinceStatistic;
-          if (provinceStatistic.getSevenDayHospitalization1stReportedDaily() != null
-              && provinceStatistic.getSevenDayHospitalization1stReportedTrend1Percent() != null) {
+          if (hasSevenDayHospitalizationStatistics(provinceStatistic)) {
             mostRecentHospitalizationStatistic = provinceStatistic;
           }
         } else {
-          if (LocalDate.parse(mostRecentStatistic.getEffectiveDate())
-              .isBefore(LocalDate.parse(provinceStatistic.getEffectiveDate()))) {
+          if (isBeforeMostRecentStatistics(mostRecentStatistic, provinceStatistic)) {
             mostRecentStatistic = provinceStatistic;
           }
           if (mostRecentHospitalizationStatistic == null) {
-            if (provinceStatistic.getSevenDayHospitalization1stReportedDaily() != null
-                && provinceStatistic.getSevenDayHospitalization1stReportedTrend1Percent() != null) {
+            if (hasSevenDayHospitalizationStatistics(provinceStatistic)) {
               mostRecentHospitalizationStatistic = provinceStatistic;
             }
-          } else if (LocalDate.parse(mostRecentHospitalizationStatistic.getEffectiveDate())
-              .isBefore(LocalDate.parse(provinceStatistic.getEffectiveDate()))
-              && provinceStatistic.getSevenDayHospitalization1stReportedDaily() != null
-              && provinceStatistic.getSevenDayHospitalization1stReportedTrend1Percent() != null) {
+          } else if (isBeforeMostRecentStatistics(mostRecentHospitalizationStatistic, provinceStatistic)
+              && hasSevenDayHospitalizationStatistics(provinceStatistic)) {
             mostRecentHospitalizationStatistic = provinceStatistic;
           }
         }
@@ -214,6 +209,22 @@ public class LocalStatisticsToProtobufMapping {
     });
 
     return onePerProvinceStatistics;
+  }
+
+  private boolean isBeforeMostRecentStatistics(LocalStatisticsJsonStringObject mostRecentHospitalizationStatistic,
+      LocalStatisticsJsonStringObject provinceStatistic) {
+    return LocalDate.parse(mostRecentHospitalizationStatistic.getEffectiveDate())
+        .isBefore(LocalDate.parse(provinceStatistic.getEffectiveDate()));
+  }
+
+  private boolean hasSevenDayHospitalizationStatistics(LocalStatisticsJsonStringObject provinceStatistic) {
+    return provinceStatistic.getSevenDayHospitalization1stReportedDaily() != null
+        && provinceStatistic.getSevenDayHospitalization1stReportedTrend1Percent() != null;
+  }
+
+  private boolean hasEmptyMostRecentStatistics(LocalStatisticsJsonStringObject mostRecentStatistic,
+      LocalStatisticsJsonStringObject mostRecentHospitalizationStatistic) {
+    return mostRecentStatistic == null && mostRecentHospitalizationStatistic == null;
   }
 
   private LocalStatisticsJsonStringObject enhanceWithHospitalization(
@@ -230,7 +241,6 @@ public class LocalStatisticsToProtobufMapping {
         mostRecentHospitalizationStatistics.getSevenDayHospitalization1stReportedTrend1Percent());
     mostRecentStatistics.setHospitalizationEffectiveDate(mostRecentHospitalizationStatistics.getEffectiveDate());
     return mostRecentStatistics;
-
   }
 
   private List<LocalStatisticsJsonStringObject> deserializeAndValidate(JsonFile file) throws IOException {
