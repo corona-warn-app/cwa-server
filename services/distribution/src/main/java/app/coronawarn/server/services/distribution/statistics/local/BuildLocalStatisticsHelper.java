@@ -217,7 +217,8 @@ public class BuildLocalStatisticsHelper {
    * @param localStatisticsJsonStringObject - - local statistics json object.
    * @return - boolean true if data for Seven Day Hospitalization exists.
    */
-  private static boolean hasSevenDayHospitalizationStatistics(LocalStatisticsJsonStringObject localStatisticsJsonStringObject) {
+  private static boolean hasSevenDayHospitalizationStatistics(
+      LocalStatisticsJsonStringObject localStatisticsJsonStringObject) {
     return localStatisticsJsonStringObject.getSevenDayHospitalization1stReportedDaily() != null
         && localStatisticsJsonStringObject.getSevenDayHospitalization1stReportedTrend1Percent() != null;
   }
