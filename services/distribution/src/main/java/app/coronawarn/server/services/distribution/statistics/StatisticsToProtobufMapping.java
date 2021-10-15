@@ -216,10 +216,10 @@ public class StatisticsToProtobufMapping {
       AtomicReference<StatisticsJsonStringObject> joinedCardIncidence) {
     orderedList.forEach(obj -> {
       if (hasRequiredFieldsForIncidenceKeyFigure(obj)) {
-        if (!isIncidenceCardAlreadyCreated(joinedCardIncidence)) {
+        if (!isJoinedIncidenceCardAlreadyCreated(joinedCardIncidence)) {
           joinedCardIncidence.getAndSet(obj);
           joinedCardIncidence.get().setHospitalizationEffectiveDate("");
-        } else if (validKeyFigureNotFound(joinedCardIncidence.get().getEffectiveDate())
+        } else if (keyFigureNotSetForJoinedIncidenceCard(joinedCardIncidence.get().getEffectiveDate())
             || LocalDate.parse(joinedCardIncidence.get().getEffectiveDate())
             .isBefore(LocalDate.parse(obj.getEffectiveDate()))) {
           joinedCardIncidence.get().setSevenDayIncidence(obj.getSevenDayIncidence());
@@ -229,12 +229,12 @@ public class StatisticsToProtobufMapping {
         }
       }
       if (hasRequiredFieldsForHospitalizationKeyFigure(obj)) {
-        if (!isIncidenceCardAlreadyCreated(joinedCardIncidence)) {
+        if (!isJoinedIncidenceCardAlreadyCreated(joinedCardIncidence)) {
           joinedCardIncidence.getAndSet(obj);
           joinedCardIncidence.get()
               .setHospitalizationEffectiveDate(obj.getEffectiveDate());
           joinedCardIncidence.get().setEffectiveDate("");
-        } else if (validKeyFigureNotFound(joinedCardIncidence.get().getHospitalizationEffectiveDate())
+        } else if (keyFigureNotSetForJoinedIncidenceCard(joinedCardIncidence.get().getHospitalizationEffectiveDate())
             || LocalDate.parse(joinedCardIncidence.get().getHospitalizationEffectiveDate())
             .isBefore(LocalDate.parse(obj.getEffectiveDate()))) {
           joinedCardIncidence.get()
@@ -250,11 +250,11 @@ public class StatisticsToProtobufMapping {
     });
   }
 
-  private boolean validKeyFigureNotFound(String effectiveDate) {
+  private boolean keyFigureNotSetForJoinedIncidenceCard(String effectiveDate) {
     return effectiveDate.isEmpty();
   }
 
-  private boolean isIncidenceCardAlreadyCreated(AtomicReference<StatisticsJsonStringObject> joinedCardIncidence) {
+  private boolean isJoinedIncidenceCardAlreadyCreated(AtomicReference<StatisticsJsonStringObject> joinedCardIncidence) {
     return joinedCardIncidence.get() != null;
   }
 
