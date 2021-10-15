@@ -194,8 +194,7 @@ public class BuildLocalStatisticsHelper {
    */
   private static FederalStateData buildFederalStateData(int federalStateCode,
       LocalStatisticsJsonStringObject localStatisticsJsonStringObject) {
-    if (localStatisticsJsonStringObject.getSevenDayHospitalization1stReportedDaily() != null
-        && localStatisticsJsonStringObject.getSevenDayHospitalization1stReportedTrend1Percent() != null) {
+    if (hasSevenDayHospitalizationStatistics(localStatisticsJsonStringObject)) {
       return FederalStateData.newBuilder()
           .setFederalState(FederalState.forNumber(getFederalStateConfigIndex(federalStateCode)))
           .setSevenDayIncidence(buildSevenDaysIncidence(localStatisticsJsonStringObject))
@@ -210,6 +209,17 @@ public class BuildLocalStatisticsHelper {
           .setSevenDayIncidence(buildSevenDaysIncidence(localStatisticsJsonStringObject))
           .setUpdatedAt(toEpochSecondsUtc(LocalDate.parse(localStatisticsJsonStringObject.getEffectiveDate()))).build();
     }
+  }
+
+  /**
+   * Checks if {@link LocalStatisticsJsonStringObject} contains data for Seven Day Hospitalization.
+   *
+   * @param localStatisticsJsonStringObject - - local statistics json object.
+   * @return - boolean true if data for Seven Day Hospitalization exists.
+   */
+  private static boolean hasSevenDayHospitalizationStatistics(LocalStatisticsJsonStringObject localStatisticsJsonStringObject) {
+    return localStatisticsJsonStringObject.getSevenDayHospitalization1stReportedDaily() != null
+        && localStatisticsJsonStringObject.getSevenDayHospitalization1stReportedTrend1Percent() != null;
   }
 
   /**
