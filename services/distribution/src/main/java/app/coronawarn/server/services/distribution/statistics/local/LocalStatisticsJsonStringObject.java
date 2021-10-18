@@ -1,6 +1,7 @@
 package app.coronawarn.server.services.distribution.statistics.local;
 
 import app.coronawarn.server.services.distribution.statistics.StatisticsTimeJsonObject;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -24,6 +25,30 @@ public class LocalStatisticsJsonStringObject extends StatisticsTimeJsonObject {
 
   @JsonProperty("seven_day_incidence_1st_reported_trend_1percent")
   private Integer sevenDayIncidence1stReportedTrend1Percent;
+
+  @JsonProperty("seven_day_hospitalization_1st_reported_daily")
+  private Double sevenDayHospitalization1stReportedDaily;
+
+  @JsonProperty("seven_day_hospitalization_1st_reported_growthrate")
+  private Double sevenDayHospitalization1stReportedGrowthrate;
+
+  @JsonProperty("seven_day_hospitalization_1st_reported_trend_1percent")
+  private Integer sevenDayHospitalization1stReportedTrend1Percent;
+
+  @JsonIgnore
+  private String hospitalizationEffectiveDate;
+
+  public Double getSevenDayIncidence1stReportedGrowthrate() {
+    return sevenDayIncidence1stReportedGrowthrate;
+  }
+
+  public String getHospitalizationEffectiveDate() {
+    return hospitalizationEffectiveDate;
+  }
+
+  public void setHospitalizationEffectiveDate(String hospitalizationEffectiveDate) {
+    this.hospitalizationEffectiveDate = hospitalizationEffectiveDate;
+  }
 
   public String getProvinceCode() {
     return provinceCode;
@@ -62,9 +87,34 @@ public class LocalStatisticsJsonStringObject extends StatisticsTimeJsonObject {
     this.sevenDayIncidence1stReportedTrend1Percent = sevenDayIncidence1stReportedTrend1Percent;
   }
 
+  public Double getSevenDayHospitalization1stReportedDaily() {
+    return sevenDayHospitalization1stReportedDaily;
+  }
+
+  public void setSevenDayHospitalization1stReportedDaily(Double sevenDayHospitalization1stReportedDaily) {
+    this.sevenDayHospitalization1stReportedDaily = sevenDayHospitalization1stReportedDaily;
+  }
+
+  public Double getSevenDayHospitalization1stReportedGrowthrate() {
+    return sevenDayHospitalization1stReportedGrowthrate;
+  }
+
+  public void setSevenDayHospitalization1stReportedGrowthrate(Double sevenDayHospitalization1stReportedGrowthrate) {
+    this.sevenDayHospitalization1stReportedGrowthrate = sevenDayHospitalization1stReportedGrowthrate;
+  }
+
+  public Integer getSevenDayHospitalization1stReportedTrend1Percent() {
+    return sevenDayHospitalization1stReportedTrend1Percent;
+  }
+
+  public void setSevenDayHospitalization1stReportedTrend1Percent(
+      Integer sevenDayHospitalization1stReportedTrend1Percent) {
+    this.sevenDayHospitalization1stReportedTrend1Percent = sevenDayHospitalization1stReportedTrend1Percent;
+  }
+
   /**
    * Check if this object is valid and complete.
-   * 
+   *
    * @return <code>true</code> if and only it {@link #sevenDayIncidence1stReportedDaily} is NOT null and
    *         {@link #sevenDayIncidence1stReportedTrend1Percent} is NOT null.
    */

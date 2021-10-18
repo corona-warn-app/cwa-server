@@ -51,7 +51,10 @@
     "province_name": "LK Havelland",
     "seven_day_incidence_1st_reported_daily": 76.7,
     "seven_day_incidence_1st_reported_growthrate": 1.0972818311874106,
-    "seven_day_incidence_1st_reported_trend_1percent": 1
+    "seven_day_incidence_1st_reported_trend_1percent": 1,
+    "seven_day_hospitalization_1st_reported_daily": null,
+    "seven_day_hospitalization_1st_reported_growthrate": null,
+    "seven_day_hospitalization_1st_reported_trend_1percent": null
   },
   {
     "update_timestamp": "2021-05-19T12:19:33,103",
@@ -501,7 +504,10 @@
     "province_name": "Brandenburg",
     "seven_day_incidence_1st_reported_daily": 72.3,
     "seven_day_incidence_1st_reported_growthrate": 0.9475753604193972,
-    "seven_day_incidence_1st_reported_trend_1percent": -1
+    "seven_day_incidence_1st_reported_trend_1percent": -1,
+    "seven_day_hospitalization_1st_reported_daily": 168.5,
+    "seven_day_hospitalization_1st_reported_growthrate": 0.86,
+    "seven_day_hospitalization_1st_reported_trend_1percent": 1
   },
   {
     "update_timestamp": "2021-05-19T12:19:33,103",
@@ -15909,7 +15915,10 @@
     "province_name": "Brandenburg",
     "seven_day_incidence_1st_reported_daily": 60.4,
     "seven_day_incidence_1st_reported_growthrate": 1.0100334448160535,
-    "seven_day_incidence_1st_reported_trend_1percent": 1
+    "seven_day_incidence_1st_reported_trend_1percent": 1,
+    "seven_day_hospitalization_1st_reported_daily": 168.5,
+    "seven_day_hospitalization_1st_reported_growthrate": 0.86,
+    "seven_day_hospitalization_1st_reported_trend_1percent": 1
   },
   {
     "update_timestamp": "2021-05-19T12:19:33,103",

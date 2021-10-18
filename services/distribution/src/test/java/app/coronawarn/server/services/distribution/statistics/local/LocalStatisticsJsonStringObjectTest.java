@@ -27,6 +27,24 @@ class LocalStatisticsJsonStringObjectTest {
   }
 
   @Test
+  void testGetSevenDayHospitalization1stReportedDaily() {
+    LocalStatisticsJsonStringObject object = new LocalStatisticsJsonStringObject();
+    assertEquals(null, object.getSevenDayHospitalization1stReportedDaily());
+
+    object.setSevenDayHospitalization1stReportedDaily(32.0);
+    assertEquals(32.0, object.getSevenDayHospitalization1stReportedDaily());
+  }
+
+  @Test
+  void testGetSevenDayHospitalization1stReportedTrend1Percent() {
+    LocalStatisticsJsonStringObject object = new LocalStatisticsJsonStringObject();
+    assertEquals(null, object.getSevenDayHospitalization1stReportedTrend1Percent());
+
+    object.setSevenDayHospitalization1stReportedTrend1Percent(42);
+    assertEquals(42, object.getSevenDayHospitalization1stReportedTrend1Percent());
+  }
+
+  @Test
   void testIsComplete() {
     LocalStatisticsJsonStringObject object = new LocalStatisticsJsonStringObject();
     assertFalse(object.isComplete());
