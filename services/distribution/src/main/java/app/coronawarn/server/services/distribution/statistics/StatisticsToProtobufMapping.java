@@ -7,6 +7,7 @@ import static app.coronawarn.server.services.distribution.statistics.keyfigureca
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.INCIDENCE_CARD;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.INFECTIONS_CARD;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.INTENSIVE_CARE_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.JOINED_INCIDENCE_CARD;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.KEY_SUBMISSION_CARD;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.REPRODUCTION_NUMBER_CARD;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.VACCINATION_DOSES_CARD;
@@ -38,6 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -147,6 +149,7 @@ public class StatisticsToProtobufMapping {
     figureCardMap.put(VACCINATION_DOSES_CARD.ordinal(), Optional.empty());
     figureCardMap.put(HOSPITALIZATION_INCIDENCE_CARD.ordinal(), Optional.empty());
     figureCardMap.put(INTENSIVE_CARE_CARD.ordinal(), Optional.empty());
+    figureCardMap.put(JOINED_INCIDENCE_CARD.ordinal(), Optional.empty());
 
     List<StatisticsJsonStringObject> orderedList = jsonStringObjects.stream()
         .sorted(Comparator.comparing(a -> effectiveDateStringToLocalDate(a.getEffectiveDate())))
@@ -154,6 +157,13 @@ public class StatisticsToProtobufMapping {
     Collections.reverse(orderedList);
 
     List<StatisticsJsonStringObject> collectedJsonObjects = new ArrayList<>();
+    AtomicReference<StatisticsJsonStringObject> joinedCardIncidence = new AtomicReference<>();
+
+    createJoinedCardIncidence(orderedList, joinedCardIncidence);
+    StatisticsJsonStringObject joinedIncidenceObject = joinedCardIncidence.get();
+    if (joinedIncidenceObject != null && hasRequiredFieldsForJoinedCardIncidence(joinedIncidenceObject)) {
+      orderedList.add(joinedIncidenceObject);
+    }
 
     for (var stat : orderedList) {
       collectedJsonObjects.add(stat);
@@ -197,7 +207,68 @@ public class StatisticsToProtobufMapping {
         figureCardMap.get(FULLY_VACCINATED_CARD.ordinal()).orElse(emptyCard),
         figureCardMap.get(VACCINATION_DOSES_CARD.ordinal()).orElse(emptyCard),
         figureCardMap.get(HOSPITALIZATION_INCIDENCE_CARD.ordinal()).orElse(emptyCard),
-        figureCardMap.get(INTENSIVE_CARE_CARD.ordinal()).orElse(emptyCard)
+        figureCardMap.get(INTENSIVE_CARE_CARD.ordinal()).orElse(emptyCard),
+        figureCardMap.get(JOINED_INCIDENCE_CARD.ordinal()).orElse(emptyCard)
     );
+  }
+
+  private void createJoinedCardIncidence(List<StatisticsJsonStringObject> orderedList,
+      AtomicReference<StatisticsJsonStringObject> joinedCardIncidence) {
+    orderedList.forEach(obj -> {
+      if (hasRequiredFieldsForIncidenceKeyFigure(obj)) {
+        if (!isJoinedIncidenceCardAlreadyCreated(joinedCardIncidence)) {
+          joinedCardIncidence.getAndSet(obj);
+          joinedCardIncidence.get().setHospitalizationEffectiveDate("");
+        } else if (keyFigureNotSetForJoinedIncidenceCard(joinedCardIncidence.get().getEffectiveDate())
+            || LocalDate.parse(joinedCardIncidence.get().getEffectiveDate())
+            .isBefore(LocalDate.parse(obj.getEffectiveDate()))) {
+          joinedCardIncidence.get().setSevenDayIncidence(obj.getSevenDayIncidence());
+          joinedCardIncidence.get().setSevenDayIncidenceTrend1percent(obj.getSevenDayIncidenceTrend1percent());
+          joinedCardIncidence.get().setSevenDayIncidenceGrowthrate(obj.getSevenDayIncidenceGrowthrate());
+          joinedCardIncidence.get().setEffectiveDate(obj.getEffectiveDate());
+        }
+      }
+      if (hasRequiredFieldsForHospitalizationKeyFigure(obj)) {
+        if (!isJoinedIncidenceCardAlreadyCreated(joinedCardIncidence)) {
+          joinedCardIncidence.getAndSet(obj);
+          joinedCardIncidence.get()
+              .setHospitalizationEffectiveDate(obj.getEffectiveDate());
+          joinedCardIncidence.get().setEffectiveDate("");
+        } else if (keyFigureNotSetForJoinedIncidenceCard(joinedCardIncidence.get().getHospitalizationEffectiveDate())
+            || LocalDate.parse(joinedCardIncidence.get().getHospitalizationEffectiveDate())
+            .isBefore(LocalDate.parse(obj.getEffectiveDate()))) {
+          joinedCardIncidence.get()
+              .setSevenDayHospitalizationReportedDaily(obj.getSevenDayHospitalizationReportedDaily());
+          joinedCardIncidence.get()
+              .setSevenDayIncidenceGrowthrate(obj.getSevenDayHospitalizationReportedGrowthrate());
+          joinedCardIncidence.get()
+              .setSevenDayHospitalizationReportedTrend1percent(obj.getSevenDayHospitalizationReportedTrend1percent());
+          joinedCardIncidence.get()
+              .setHospitalizationEffectiveDate(obj.getEffectiveDate());
+        }
+      }
+    });
+  }
+
+  private boolean keyFigureNotSetForJoinedIncidenceCard(String effectiveDate) {
+    return effectiveDate.isEmpty();
+  }
+
+  private boolean isJoinedIncidenceCardAlreadyCreated(AtomicReference<StatisticsJsonStringObject> joinedCardIncidence) {
+    return joinedCardIncidence.get() != null;
+  }
+
+  private boolean hasRequiredFieldsForHospitalizationKeyFigure(StatisticsJsonStringObject statJsonObject) {
+    return statJsonObject.getSevenDayHospitalizationReportedDaily() != null
+        && statJsonObject.getSevenDayHospitalizationReportedTrend1percent() != null;
+  }
+
+  private boolean hasRequiredFieldsForIncidenceKeyFigure(StatisticsJsonStringObject statJsonObject) {
+    return statJsonObject.getSevenDayIncidence() != null && statJsonObject.getSevenDayIncidenceTrend1percent() != null;
+  }
+
+  private boolean hasRequiredFieldsForJoinedCardIncidence(StatisticsJsonStringObject statJsonObject) {
+    return hasRequiredFieldsForHospitalizationKeyFigure(statJsonObject)
+        && hasRequiredFieldsForIncidenceKeyFigure(statJsonObject);
   }
 }

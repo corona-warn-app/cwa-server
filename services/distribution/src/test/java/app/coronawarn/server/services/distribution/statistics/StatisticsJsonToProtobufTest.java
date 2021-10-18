@@ -109,14 +109,14 @@ class StatisticsJsonToProtobufTest {
     void testGetCardIdSequenceFromConfig() throws IOException {
       Statistics stats = statisticsToProtobufMapping.constructProtobufStatistics();
 
-      assertThat(stats.getCardIdSequenceList().size()).isEqualTo(9);
+      assertThat(stats.getCardIdSequenceList().size()).isEqualTo(10);
     }
 
     @Test
     void testKeyFigureCardContainsHeader() throws IOException {
       Statistics stats = statisticsToProtobufMapping.constructProtobufStatistics();
 
-      assertThat(stats.getKeyFigureCardsCount()).isEqualTo(9);
+      assertThat(stats.getKeyFigureCardsCount()).isEqualTo(10);
       stats.getKeyFigureCardsList().forEach(keyFigureCard -> {
         assertThat(keyFigureCard.getHeader()).isNotNull();
         assertThat(keyFigureCard.getHeader().getUpdatedAt()).isPositive();
@@ -212,6 +212,9 @@ class StatisticsJsonToProtobufTest {
     KeyFigureCard vaccinatedDoses;
     KeyFigureCard fullyVaccinated;
     KeyFigureCard firstVaccination;
+    KeyFigureCard hospitalizationIncidence;
+    KeyFigureCard intensiveCare;
+    KeyFigureCard joinedIncidence;
 
     @BeforeEach
     void setup() throws IOException {
@@ -223,6 +226,9 @@ class StatisticsJsonToProtobufTest {
       firstVaccination = result.getKeyFigureCards(4);
       fullyVaccinated = result.getKeyFigureCards(5);
       vaccinatedDoses = result.getKeyFigureCards(6);
+      hospitalizationIncidence = result.getKeyFigureCards(7);
+      intensiveCare = result.getKeyFigureCards(8);
+      joinedIncidence = result.getKeyFigureCards(9);
     }
 
     private long dateToTimestamp(LocalDate date) {
@@ -284,6 +290,19 @@ class StatisticsJsonToProtobufTest {
       assertThat(vaccinatedDoses.getKeyFigures(0))
           .extracting(KeyFigure::getValue, KeyFigure::getTrend, KeyFigure::getTrendSemantic)
           .containsExactly(969028.0, Trend.UNSPECIFIED_TREND, TrendSemantic.UNSPECIFIED_TREND_SEMANTIC);
+    }
+
+    @Test
+    void testJoinedIncidenceCard() {
+      assertThat(joinedIncidence.getHeader())
+          .extracting(CardHeader::getCardId, CardHeader::getUpdatedAt)
+          .containsExactly(JOINED_INCIDENCE_CARD.ordinal(), dateToTimestamp(LocalDate.of(2020, 11, 7)));
+      assertThat(joinedIncidence.getKeyFigures(0))
+          .extracting(KeyFigure::getValue, KeyFigure::getTrend, KeyFigure::getTrendSemantic)
+          .containsExactly(168.5, Trend.DECREASING, TrendSemantic.POSITIVE);
+      assertThat(joinedIncidence.getKeyFigures(1))
+          .extracting(KeyFigure::getValue, KeyFigure::getTrend, KeyFigure::getTrendSemantic, KeyFigure::getUpdatedAt)
+          .containsExactly(168.5, Trend.INCREASING, TrendSemantic.NEGATIVE, dateToTimestamp(LocalDate.of(2020, 11, 7)));
     }
   }
 }
