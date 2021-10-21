@@ -46,7 +46,7 @@ class BusinessRulesArchiveBuilderTest {
   BusinessRulesArchiveBuilder businessRulesArchiveBuilder;
 
   @Test
-  void rename() throws DigitalCovidCertificateException, FetchBusinessRulesException {
+  void businessRuleArchiveShouldBeEmptyIfException() throws DigitalCovidCertificateException, FetchBusinessRulesException {
     when(dgcToCborMapping.constructCborRules(any(), any(), any())).thenThrow(DigitalCovidCertificateException.class);
 
     Optional<Writable<WritableOnDisk>> businessRuleArchive = businessRulesArchiveBuilder
@@ -61,7 +61,7 @@ class BusinessRulesArchiveBuilderTest {
   }
 
   @Test
-  void rename2() throws DigitalCovidCertificateException, FetchBusinessRulesException {
+  void archiveShouldBeValid() throws DigitalCovidCertificateException, FetchBusinessRulesException {
     byte[] bytesToSign = new byte[]{1, 2, 3, 4};
     when(dgcToCborMapping.constructCborRules(any(), any(), any())).thenReturn(bytesToSign);
 
