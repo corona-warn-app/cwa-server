@@ -49,7 +49,7 @@ class BusinessRulesArchiveBuilderTest {
   void rename() throws DigitalCovidCertificateException, FetchBusinessRulesException {
     when(dgcToCborMapping.constructCborRules(any(), any(), any())).thenThrow(DigitalCovidCertificateException.class);
 
-    Optional<Writable<WritableOnDisk>> bussinessRuleArchive = businessRulesArchiveBuilder
+    Optional<Writable<WritableOnDisk>> businessRuleArchive = businessRulesArchiveBuilder
         .setArchiveName(ARCHIVE_NAME)
         .setRuleType(RuleType.BoosterNotification)
         .setExportBinaryFilename(EXPORT_BINARY_FILENAME)
@@ -57,15 +57,15 @@ class BusinessRulesArchiveBuilderTest {
         .setBusinessRuleSupplier(testDigitalCovidCertificateClient::getBoosterNotificationRuleByHash)
         .build();
 
-    assertTrue(bussinessRuleArchive.isEmpty());
+    assertTrue(businessRuleArchive.isEmpty());
   }
 
   @Test
-  void reame2() throws DigitalCovidCertificateException, FetchBusinessRulesException {
+  void rename2() throws DigitalCovidCertificateException, FetchBusinessRulesException {
     byte[] bytesToSign = new byte[]{1, 2, 3, 4};
     when(dgcToCborMapping.constructCborRules(any(), any(), any())).thenReturn(bytesToSign);
 
-    Optional<Writable<WritableOnDisk>> bussinessRuleArchive = businessRulesArchiveBuilder
+    Optional<Writable<WritableOnDisk>> businessRuleArchive = businessRulesArchiveBuilder
         .setArchiveName(ARCHIVE_NAME)
         .setRuleType(RuleType.BoosterNotification)
         .setExportBinaryFilename(EXPORT_BINARY_FILENAME)
@@ -73,13 +73,13 @@ class BusinessRulesArchiveBuilderTest {
         .setBusinessRuleSupplier(testDigitalCovidCertificateClient::getBoosterNotificationRuleByHash)
         .build();
 
-    assertTrue(bussinessRuleArchive.isPresent());
-    assertThat(bussinessRuleArchive.get()).isInstanceOf(DistributionArchiveSigningDecorator.class);
-    assertThat(bussinessRuleArchive.get()).isInstanceOf(SigningDecoratorOnDisk.class);
-    assertThat(((SigningDecoratorOnDisk) bussinessRuleArchive.get()).getBytesToSign()).isEqualTo(bytesToSign);
+    assertTrue(businessRuleArchive.isPresent());
+    assertThat(businessRuleArchive.get()).isInstanceOf(DistributionArchiveSigningDecorator.class);
+    assertThat(businessRuleArchive.get()).isInstanceOf(SigningDecoratorOnDisk.class);
+    assertThat(((SigningDecoratorOnDisk) businessRuleArchive.get()).getBytesToSign()).isEqualTo(bytesToSign);
 
-    assertTrue(bussinessRuleArchive.get().isArchive());
-    assertEquals(bussinessRuleArchive.get().getName(), ARCHIVE_NAME);
+    assertTrue(businessRuleArchive.get().isArchive());
+    assertEquals(businessRuleArchive.get().getName(), ARCHIVE_NAME);
   }
 
   @Test
