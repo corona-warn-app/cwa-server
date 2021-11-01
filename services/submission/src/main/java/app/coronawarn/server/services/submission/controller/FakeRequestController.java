@@ -2,8 +2,6 @@
 
 package app.coronawarn.server.services.submission.controller;
 
-import static app.coronawarn.server.services.submission.controller.SubmissionController.CWA_FILTERED_CHECKINS_HEADER;
-import static app.coronawarn.server.services.submission.controller.SubmissionController.CWA_SAVED_CHECKINS_HEADER;
 import static app.coronawarn.server.services.submission.controller.SubmissionController.SUBMISSION_ROUTE;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
@@ -47,11 +45,7 @@ public class FakeRequestController {
     submissionMonitor.incrementFakeRequestCounter();
     long delay = fakeDelayManager.getJitteredFakeDelay();
     DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
-    ResponseEntity response = ResponseEntity.ok()
-        .header(CWA_FILTERED_CHECKINS_HEADER, String.valueOf(0))
-        .header(CWA_SAVED_CHECKINS_HEADER, String.valueOf(0))
-        .build();
-    scheduledExecutor.schedule(() -> deferredResult.setResult(response), delay, MILLISECONDS);
+    scheduledExecutor.schedule(() -> deferredResult.setResult(ResponseEntity.ok().build()), delay, MILLISECONDS);
     return deferredResult;
   }
 }
