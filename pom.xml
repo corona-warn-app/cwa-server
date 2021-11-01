@@ -65,7 +65,7 @@
     <awssdk-s3.version>2.17.2</awssdk-s3.version>
     <guava.version>31.0.1-jre</guava.version>
     <jackson.version>2.13.0</jackson.version>
-    <test-containers.version>1.16.1</test-containers.version>
+    <test-containers.version>1.16.2</test-containers.version>
     <postgresql.version>42.3.0</postgresql.version>
     <wiremock.version>2.31.0</wiremock.version>
     <httpclient.version>4.5.13</httpclient.version>
