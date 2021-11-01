@@ -41,6 +41,8 @@ public class SubmissionController {
    */
   public static final String SUBMISSION_ROUTE = "/diagnosis-keys";
   private static final Logger logger = LoggerFactory.getLogger(SubmissionController.class);
+  public static final String CWA_FILTERED_CHECKINS_HEADER = "cwa-filtered-checkins";
+  public static final String CWA_SAVED_CHECKINS_HEADER = "cwa-saved-checkins";
 
   private final SubmissionMonitor submissionMonitor;
   private final DiagnosisKeyService diagnosisKeyService;
@@ -99,8 +101,8 @@ public class SubmissionController {
             .extractAndStoreEventCheckins(submissionPayload);
 
         deferredResult.setResult(ResponseEntity.ok()
-            .header("cwa-filtered-checkins", String.valueOf(checkinsStorageResult.getNumberOfFilteredCheckins()))
-            .header("cwa-saved-checkins", String.valueOf(checkinsStorageResult.getNumberOfSavedCheckins()))
+            .header(CWA_FILTERED_CHECKINS_HEADER, String.valueOf(checkinsStorageResult.getNumberOfFilteredCheckins()))
+            .header(CWA_SAVED_CHECKINS_HEADER, String.valueOf(checkinsStorageResult.getNumberOfSavedCheckins()))
             .build());
       }
     } catch (Exception e) {
