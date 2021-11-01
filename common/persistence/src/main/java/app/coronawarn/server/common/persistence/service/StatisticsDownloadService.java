@@ -2,7 +2,7 @@ package app.coronawarn.server.common.persistence.service;
 
 import static java.time.ZoneOffset.UTC;
 
-import app.coronawarn.server.common.persistence.domain.StatisticsDownload;
+import app.coronawarn.server.common.persistence.domain.StatisticsDownloaded;
 import app.coronawarn.server.common.persistence.repository.StatisticsDownloadRepository;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -42,12 +42,12 @@ public class StatisticsDownloadService {
   }
 
   /**
-   * Retrieves the latest {@link StatisticsDownload} stored. The order is determined by the counter field, which is
+   * Retrieves the latest {@link StatisticsDownloaded} stored. The order is determined by the counter field, which is
    * automatically incremented by the Database.
    *
-   * @return {@link StatisticsDownload} returns Optional.empty if no download entries are stored.
+   * @return {@link StatisticsDownloaded} returns Optional.empty if no download entries are stored.
    */
-  public Optional<StatisticsDownload> getMostRecentDownload() {
+  public Optional<StatisticsDownloaded> getMostRecentDownload() {
     return Optional.ofNullable(repository.getWithLatestETag());
   }
 

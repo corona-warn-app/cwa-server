@@ -4,34 +4,19 @@ package app.coronawarn.server.services.distribution.objectstore.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.objectstore.FailedObjectStoreOperationsCounter;
 import app.coronawarn.server.services.distribution.objectstore.ObjectStoreAccess;
 import app.coronawarn.server.services.distribution.objectstore.S3Publisher;
-import app.coronawarn.server.services.distribution.objectstore.client.ObjectStorePublishingConfig;
 import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {ObjectStoreAccess.class, ObjectStorePublishingConfig.class, S3Publisher.class})
-@EnableConfigurationProperties(value = DistributionServiceConfig.class)
-@DirtiesContext
-@Tag("s3-integration")
-@ActiveProfiles("integration-test")
 class S3PublisherTestIT extends BaseS3IntegrationTest {
 
   private final String rootTestFolder = "objectstore/publisher/";
@@ -52,7 +37,6 @@ class S3PublisherTestIT extends BaseS3IntegrationTest {
   public void setup() {
     objectStoreAccess.deleteObjectsWithPrefix("");
   }
-
 
   @Test
   void publishTestFolderOk() throws IOException {

@@ -1,0 +1,80 @@
+---
+logging:
+  level:
+    org:
+      springframework: off
+    root: off
+    app:
+      coronawarn:
+        server:
+          services:
+            submission:
+              integration: info
+spring:
+  main:
+    banner-mode: off
+  flyway:
+    enabled: true
+    locations: classpath:/db/migration, classpath:/db/specific/{vendor}
+    mixed: true
+  datasource:
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    url: jdbc:tc:postgresql:11.8:///databasename?TC_TMPFS=/testtmpfs:rw?TC_INITSCRIPT=file:src/test/java/V0__init_db.sql
+  test:
+    database:
+      replace: none
+services:
+  submission:
+    initial-fake-delay-milliseconds: 1
+    fake-delay-moving-average-samples: 1
+    retention-days: 14
+    random-key-padding-multiplier: 10
+    random-checkins-padding-multiplier: 1
+    random-checkins-padding-pepper: 0efbb3d683b713857750eec4b042ca1a7c50b5e4
+    max-allowed-checkins-per-day: 50
+    connection-pool-size: 200
+    maximum-request-size: 100KB
+    max-rolling-period: 144
+    min-rolling-period: 1
+    unencrypted-checkins-enabled: false
+    payload:
+      max-number-of-keys: 100
+      supported-countries: DE,FR,IT
+      default-origin-country: DE
+      checkins:
+        accepted-event-date-threshold-days: 15
+    verification:
+      base-url: http://localhost:1234
+      path: /version/v1/tan/verify
+    monitoring:
+      batch-size: 5
+    client:
+      ssl:
+        key-password: 123456
+        key-store: ../../docker-compose-test-secrets/ssl.p12
+        key-store-password: 123456
+        trust-store: ../../docker-compose-test-secrets/contains_efgs_truststore.jks
+        trust-store-password: 123456
+
+management:
+  endpoint:
+    health:
+      group:
+        readiness:
+          include: db, verificationService
+  endpoints:
+    web:
+      exposure:
+        include: 'health'
+  health:
+    livenessstate:
+      enabled: true
+    probes:
+      enabled: true
+
+feign:
+  client:
+    config:
+      default:
+        connect-timeout: 500
+        read-timeout: 500

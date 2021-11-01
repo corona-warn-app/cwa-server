@@ -83,6 +83,8 @@ services:
       STATISTICS_FILE_ACCESS_KEY_ID: fakeAccessKey
       STATISTICS_FILE_SECRET_ACCESS_KEY: secretKey
       STATISTICS_FILE_S3_ENDPOINT: https://localhost
+      DSC_TRUST_STORE: /secrets/dsc_truststore
+      DCC_TRUST_STORE: /secrets/dcc_truststore
     volumes:
       - ./docker-compose-test-secrets:/secrets
   download:
@@ -117,12 +119,10 @@ services:
     ports:
       - "8012:8080"
     environment:
-      SPRING_PROFILES_ACTIVE: disable-ssl-client-postgres,connect-chgs
+      SPRING_PROFILES_ACTIVE: disable-ssl-client-postgres, connect-efgs
       POSTGRESQL_SERVICE_PORT: '5432'
       POSTGRESQL_SERVICE_HOST: postgres
       POSTGRESQL_DATABASE: ${POSTGRES_DB}
-      POSTGRESQL_PASSWORD_CALLBACK: ${POSTGRES_CALLBACK_PASSWORD}
-      POSTGRESQL_USER_CALLBACK: ${POSTGRES_CALLBACK_USER}
       POSTGRESQL_PASSWORD_FLYWAY: ${POSTGRES_FLYWAY_PASSWORD}
       POSTGRESQL_USER_FLYWAY: ${POSTGRES_FLYWAY_USER}
       VAULT_EFGS_BATCHIGNING_SECRET: ${SECRET_PRIVATE}

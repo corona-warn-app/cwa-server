@@ -1,19 +1,25 @@
 package app.coronawarn.server.services.submission.integration;
 
-import static app.coronawarn.server.services.submission.SubmissionPayloadGenerator.buildTemporaryExposureKeys;
 import static app.coronawarn.server.services.submission.assertions.SubmissionAssertions.assertElementsCorrespondToEachOther;
+import static app.coronawarn.server.services.submission.integration.DataHelpers.buildDefaultCheckIn;
+import static app.coronawarn.server.services.submission.integration.DataHelpers.buildDefaultEncryptedCheckIn;
+import static app.coronawarn.server.services.submission.integration.DataHelpers.buildSubmissionPayload;
+import static app.coronawarn.server.services.submission.integration.DataHelpers.buildSubmissionPayloadWithCheckins;
+import static app.coronawarn.server.services.submission.integration.DataHelpers.createValidTemporaryExposureKeys;
 import static java.util.Collections.emptyList;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
+import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
-import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
-import app.coronawarn.server.common.protocols.internal.SubmissionPayload.Builder;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
+import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
+import app.coronawarn.server.common.protocols.internal.pt.CheckInProtectedReport;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.controller.FakeDelayManager;
 import app.coronawarn.server.services.submission.controller.RequestExecutor;
@@ -28,8 +34,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -45,13 +51,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext
+@ActiveProfiles("integration-test")
 @Sql(scripts = {"classpath:db/clean_db_state.sql"},
     executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
 class SubmissionPersistenceIT {
@@ -71,6 +84,12 @@ class SubmissionPersistenceIT {
   @Autowired
   private JdbcTemplate jdbcTemplate;
 
+  @Autowired
+  private TestRestTemplate testRestTemplate;
+
+  @Autowired
+  DiagnosisKeyRepository diagnosisKeyRepository;
+
   @MockBean
   private TanVerifier tanVerifier;
 
@@ -82,6 +101,38 @@ class SubmissionPersistenceIT {
     when(tanVerifier.verifyTan(anyString())).thenReturn(true);
     when(fakeDelayManager.getJitteredFakeDelay()).thenReturn(1000L);
   }
+
+  @Test
+  void testDiagnosisKeyRollingPeriodIsZeroShouldNotBeSaved() {
+
+    // given
+    List<TemporaryExposureKey> invalidKeys = createValidTemporaryExposureKeys(0);
+
+    List<TemporaryExposureKey> validKeys = createValidTemporaryExposureKeys(1);
+
+    SubmissionPayload invalidSubmissionPayload = buildSubmissionPayload(List.of("DE"), "DE", true,
+        invalidKeys, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
+    String tan = "tan";
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("cwa-fake", "0");
+    headers.add("cwa-authorization", tan);
+    headers.setContentType(MediaType.valueOf("Application/x-protobuf"));
+
+    SubmissionPayload validSubmissionPayload = buildSubmissionPayload(List.of("DE"), "DE", true,
+        validKeys, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
+
+    testRestTemplate
+        .postForEntity("/version/v1/diagnosis-keys", new HttpEntity<>(invalidSubmissionPayload, headers), Void.class);
+    assertEquals(0, diagnosisKeyRepository.count());
+
+    testRestTemplate
+        .postForEntity("/version/v1/diagnosis-keys", new HttpEntity<>(validSubmissionPayload, headers), Void.class);
+
+    final int expectedNumberOfKeys =
+        validSubmissionPayload.getKeysList().size() * config.getRandomKeyPaddingMultiplier();
+    assertEquals(expectedNumberOfKeys, diagnosisKeyRepository.count());
+  }
+
 
   @ParameterizedTest
   @ValueSource(strings = {PATH_MOBILE_CLIENT_PAYLOAD_PB + "/" + FILENAME_MOBILE_CLIENT_PAYLOAD_PB})
@@ -315,29 +366,30 @@ class SubmissionPersistenceIT {
     );
   }
 
-  private SubmissionPayload buildSubmissionPayload(List<String> visitedCountries, String originCountry,
-      Boolean consentToFederation, List<TemporaryExposureKey> temporaryExposureKeys,
-      SubmissionType submissionType) {
-    Builder submissionPayloadBuilder = SubmissionPayload
-        .newBuilder()
-        .addAllKeys(temporaryExposureKeys);
+  @Test
+  void unencryptedCheckInsEnabledShouldResultInSavingCorrectNumberOfCheckIns() {
+    // GIVEN:
+    List<String> visitedCountries = Collections.singletonList("DE");
+    String originCountry = "DE";
 
-    if (visitedCountries != null) {
-      submissionPayloadWithVisitedCountries(submissionPayloadBuilder, visitedCountries);
-    }
-    if (originCountry != null) {
-      submissionPayloadWithOriginCountry(submissionPayloadBuilder, originCountry);
-    }
-    if (consentToFederation != null) {
-      submissionPayloadWithConsentToFederation(submissionPayloadBuilder, consentToFederation);
-    }
-    if (submissionType != null) {
-      submissionPayloadWithSubmissionType(submissionPayloadBuilder, submissionType);
-    }
+    List<TemporaryExposureKey> temporaryExposureKeys = createValidTemporaryExposureKeys();
+    List<CheckInProtectedReport> protectedReports = Collections.singletonList(buildDefaultEncryptedCheckIn());
+    List<CheckIn> checkins = Collections.singletonList(
+        buildDefaultCheckIn());
+    SubmissionPayload submissionPayload = buildSubmissionPayloadWithCheckins(visitedCountries, originCountry,
+        true,
+        temporaryExposureKeys, SubmissionType.SUBMISSION_TYPE_PCR_TEST, protectedReports, checkins);
 
-    SubmissionPayload submissionPayload = submissionPayloadBuilder.build();
-    return submissionPayload;
+    // WHEN:
+    ResponseEntity<Void> result = executor.executePost(submissionPayload);
+
+    // THEN:
+    // For the one valid unencrypted checkin we generate one fake checkins and we also save the encrypted checkins
+    // which is 1+(1 Fake)+1 = 3 Saved checkins
+    assertThat(result.getHeaders().get("cwa-filtered-checkins").get(0)).isEqualTo("0");
+    assertThat(result.getHeaders().get("cwa-saved-checkins").get(0)).isEqualTo("3");
   }
+
 
   private String generateDebugSqlStatement(SubmissionPayload payload) {
     List<String> base64Keys = payload.getKeysList()
@@ -358,38 +410,5 @@ class SubmissionPersistenceIT {
     file.createNewFile();
     submissionPayload
         .writeTo(new FileOutputStream(PATH_MOBILE_CLIENT_PAYLOAD_PB + "/" + FILENAME_MOBILE_CLIENT_PAYLOAD_PB));
-  }
-
-  private List<TemporaryExposureKey> createValidTemporaryExposureKeys() {
-    int numberOfKeys = 10;
-    int transmissionRiskLevel = 6;
-    int rollingPeriod = 144; // 24*60/10
-    ReportType reportType = ReportType.CONFIRMED_TEST;
-    int daysSinceOnsetOfSymptoms = 0;
-
-    LocalDateTime now = LocalDateTime.now();
-    LocalDateTime todayMidnight = LocalDateTime
-        .of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 0, 0);
-    LocalDateTime todayMidnightMinusNumberOfKeys = todayMidnight.minusDays(numberOfKeys);
-
-    return buildTemporaryExposureKeys(numberOfKeys,
-        todayMidnightMinusNumberOfKeys,
-        transmissionRiskLevel, rollingPeriod, reportType, daysSinceOnsetOfSymptoms);
-  }
-
-  private Builder submissionPayloadWithOriginCountry(Builder submissionPayload, String originCountry) {
-    return submissionPayload.setOrigin(originCountry);
-  }
-
-  private Builder submissionPayloadWithVisitedCountries(Builder submissionPayload, List<String> visitedCountries) {
-    return submissionPayload.addAllVisitedCountries(visitedCountries);
-  }
-
-  private Builder submissionPayloadWithConsentToFederation(Builder submissionPayload, boolean consentToFederation) {
-    return submissionPayload.setConsentToFederation(consentToFederation);
-  }
-
-  private Builder submissionPayloadWithSubmissionType(Builder submissionPayload, SubmissionType submissionType) {
-    return submissionPayload.setSubmissionType(submissionType);
   }
 }

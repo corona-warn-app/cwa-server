@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.distribution.statistics;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -7,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class StatisticsJsonStringObject {
+public class StatisticsJsonStringObject extends StatisticsTimeJsonObject {
 
   @JsonProperty("app_downloads_7days_avg")
   private String appDownloads7DaysAvg;
@@ -21,8 +22,6 @@ public class StatisticsJsonStringObject {
   private Integer appDownloadsCumulated;
   @JsonProperty("app_downloads_daily")
   private Integer appDownloadsDaily;
-  @JsonProperty("effective_date")
-  private String effectiveDate;
   @JsonProperty("infections_effective_7days_avg")
   private Double infectionsReported7daysAvg;
   @JsonProperty("infections_effective_7days_avg_growthrate")
@@ -75,6 +74,38 @@ public class StatisticsJsonStringObject {
   private Integer testsTotalDaily;
   @JsonProperty("update_timestamp")
   private String updateTimestamp;
+  @JsonProperty("administered_doses_daily")
+  private Integer administeredDosesDaily;
+  @JsonProperty("administered_doses_7days_avg")
+  private Double administeredDoses7daysAvg;
+  @JsonProperty("administered_doses_cumulated")
+  private Integer administeredDosesCumulated;
+  @JsonProperty("administered_doses_7days_avg_growthrate")
+  private Double administeredDoses7daysAvgGrowthrate;
+  @JsonProperty("administered_doses_7days_avg_trend_5percent")
+  private Integer administeredDoses7daysAvgTrend5percent;
+  @JsonProperty("persons_with_first_dose_cumulated")
+  private Integer personsWithFirstDoseCumulated;
+  @JsonProperty("persons_with_first_dose_ratio")
+  private Double personsWithFirstDoseRatio;
+  @JsonProperty("persons_fully_vaccinated_cumulated")
+  private Integer personsFullyVaccinatedCumulated;
+  @JsonProperty("persons_fully_vaccinated_ratio")
+  private Double personsFullyVaccinatedRatio;
+  @JsonProperty("seven_day_hospitalization_1st_reported_daily")
+  private Double sevenDayHospitalizationReportedDaily;
+  @JsonProperty("seven_day_hospitalization_1st_reported_growthrate")
+  private Double sevenDayHospitalizationReportedGrowthrate;
+  @JsonProperty("seven_day_hospitalization_1st_reported_trend_1percent")
+  private Integer sevenDayHospitalizationReportedTrend1percent;
+  @JsonProperty("occupied_intensive_care_beds_reported_daily_ratio")
+  private Double occupiedIntensiveCareBedsReportedDailyRatio;
+  @JsonProperty("occupied_intensive_care_beds_reported_daily_ratio_growthrate")
+  private Double occupiedIntensiveCareBedsReportedDailyGrowthrate;
+  @JsonProperty("occupied_intensive_care_beds_reported_daily_ratio_trend_1percent")
+  private Integer occupiedIntensiveCareBedsReportedDaily1percent;
+  @JsonIgnore
+  private String hospitalizationEffectiveDate;
 
   public String getAppDownloads7DaysAvg() {
     return appDownloads7DaysAvg;
@@ -98,10 +129,6 @@ public class StatisticsJsonStringObject {
 
   public Integer getAppDownloadsDaily() {
     return appDownloadsDaily;
-  }
-
-  public String getEffectiveDate() {
-    return effectiveDate;
   }
 
   public Double getInfectionsReported7daysAvg() {
@@ -208,6 +235,42 @@ public class StatisticsJsonStringObject {
     return updateTimestamp;
   }
 
+  public Integer getAdministeredDosesDaily() {
+    return administeredDosesDaily;
+  }
+
+  public Double getAdministeredDoses7daysAvg() {
+    return administeredDoses7daysAvg;
+  }
+
+  public Integer getAdministeredDosesCumulated() {
+    return administeredDosesCumulated;
+  }
+
+  public Double getAdministeredDoses7daysAvgGrowthrate() {
+    return administeredDoses7daysAvgGrowthrate;
+  }
+
+  public Integer getAdministeredDoses7daysAvgTrend5percent() {
+    return administeredDoses7daysAvgTrend5percent;
+  }
+
+  public Integer getPersonsWithFirstDoseCumulated() {
+    return personsWithFirstDoseCumulated;
+  }
+
+  public Double getPersonsWithFirstDoseRatio() {
+    return personsWithFirstDoseRatio;
+  }
+
+  public Integer getPersonsFullyVaccinatedCumulated() {
+    return personsFullyVaccinatedCumulated;
+  }
+
+  public Double getPersonsFullyVaccinatedRatio() {
+    return personsFullyVaccinatedRatio;
+  }
+
   public void setAppDownloads7DaysAvg(String appDownloads7DaysAvg) {
     this.appDownloads7DaysAvg = appDownloads7DaysAvg;
   }
@@ -230,10 +293,6 @@ public class StatisticsJsonStringObject {
 
   public void setAppDownloadsDaily(Integer appDownloadsDaily) {
     this.appDownloadsDaily = appDownloadsDaily;
-  }
-
-  public void setEffectiveDate(String effectiveDate) {
-    this.effectiveDate = effectiveDate;
   }
 
   public void setInfectionsReported7daysAvg(Double infectionsReported7daysAvg) {
@@ -338,5 +397,103 @@ public class StatisticsJsonStringObject {
 
   public void setUpdateTimestamp(String updateTimestamp) {
     this.updateTimestamp = updateTimestamp;
+  }
+
+  public void setAdministeredDosesDaily(Integer administeredDosesDaily) {
+    this.administeredDosesDaily = administeredDosesDaily;
+  }
+
+  public void setAdministeredDoses7daysAvg(Double administeredDoses7daysAvg) {
+    this.administeredDoses7daysAvg = administeredDoses7daysAvg;
+  }
+
+  public void setAdministeredDosesCumulated(Integer administeredDosesCumulated) {
+    this.administeredDosesCumulated = administeredDosesCumulated;
+  }
+
+  public void setAdministeredDoses7daysAvgGrowthrate(Double administeredDoses7daysAvgGrowthrate) {
+    this.administeredDoses7daysAvgGrowthrate = administeredDoses7daysAvgGrowthrate;
+  }
+
+  public void setAdministeredDoses7daysAvgTrend5percent(Integer administeredDoses7daysAvgTrend5percent) {
+    this.administeredDoses7daysAvgTrend5percent = administeredDoses7daysAvgTrend5percent;
+  }
+
+  public void setPersonsWithFirstDoseCumulated(Integer personsWithFirstDoseCumulated) {
+    this.personsWithFirstDoseCumulated = personsWithFirstDoseCumulated;
+  }
+
+  public void setPersonsWithFirstDoseRatio(Double personsWithFirstDoseRatio) {
+    this.personsWithFirstDoseRatio = personsWithFirstDoseRatio;
+  }
+
+  public void setPersonsFullyVaccinatedCumulated(Integer personsFullyVaccinatedCumulated) {
+    this.personsFullyVaccinatedCumulated = personsFullyVaccinatedCumulated;
+  }
+
+  public void setPersonsFullyVaccinatedRatio(Double personsFullyVaccinatedRatio) {
+    this.personsFullyVaccinatedRatio = personsFullyVaccinatedRatio;
+  }
+
+  public Double getSevenDayRvaluepublishedDaily() {
+    return sevenDayRvaluepublishedDaily;
+  }
+
+  public Double getSevenDayHospitalizationReportedDaily() {
+    return sevenDayHospitalizationReportedDaily;
+  }
+
+  public void setSevenDayHospitalizationReportedDaily(Double sevenDayHospitalizationReportedDaily) {
+    this.sevenDayHospitalizationReportedDaily = sevenDayHospitalizationReportedDaily;
+  }
+
+  public Double getSevenDayHospitalizationReportedGrowthrate() {
+    return sevenDayHospitalizationReportedGrowthrate;
+  }
+
+  public void setSevenDayHospitalizationReportedGrowthrate(Double sevenDayHospitalizationReportedGrowthrate) {
+    this.sevenDayHospitalizationReportedGrowthrate = sevenDayHospitalizationReportedGrowthrate;
+  }
+
+  public Integer getSevenDayHospitalizationReportedTrend1percent() {
+    return sevenDayHospitalizationReportedTrend1percent;
+  }
+
+  public void setSevenDayHospitalizationReportedTrend1percent(Integer sevenDayHospitalizationReportedTrend1percent) {
+    this.sevenDayHospitalizationReportedTrend1percent = sevenDayHospitalizationReportedTrend1percent;
+  }
+
+  public Double getOccupiedIntensiveCareBedsReportedDailyRatio() {
+    return occupiedIntensiveCareBedsReportedDailyRatio;
+  }
+
+  public void setOccupiedIntensiveCareBedsReportedDailyRatio(Double occupiedIntensiveCareBedsReportedDailyRatio) {
+    this.occupiedIntensiveCareBedsReportedDailyRatio = occupiedIntensiveCareBedsReportedDailyRatio;
+  }
+
+  public Double getOccupiedIntensiveCareBedsReportedDailyGrowthrate() {
+    return occupiedIntensiveCareBedsReportedDailyGrowthrate;
+  }
+
+  public void setOccupiedIntensiveCareBedsReportedDailyGrowthrate(
+      Double occupiedIntensiveCareBedsReportedDailyGrowthrate) {
+    this.occupiedIntensiveCareBedsReportedDailyGrowthrate = occupiedIntensiveCareBedsReportedDailyGrowthrate;
+  }
+
+  public Integer getOccupiedIntensiveCareBedsReportedDaily1percent() {
+    return occupiedIntensiveCareBedsReportedDaily1percent;
+  }
+
+  public void setOccupiedIntensiveCareBedsReportedDaily1percent(
+      Integer occupiedIntensiveCareBedsReportedDaily1percent) {
+    this.occupiedIntensiveCareBedsReportedDaily1percent = occupiedIntensiveCareBedsReportedDaily1percent;
+  }
+
+  public String getHospitalizationEffectiveDate() {
+    return hospitalizationEffectiveDate;
+  }
+
+  public void setHospitalizationEffectiveDate(String hospitalizationEffectiveDate) {
+    this.hospitalizationEffectiveDate = hospitalizationEffectiveDate;
   }
 }

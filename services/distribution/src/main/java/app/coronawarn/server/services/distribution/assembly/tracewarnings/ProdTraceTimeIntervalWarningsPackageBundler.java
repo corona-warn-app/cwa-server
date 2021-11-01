@@ -2,6 +2,7 @@ package app.coronawarn.server.services.distribution.assembly.tracewarnings;
 
 import static app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION;
 
+import app.coronawarn.server.common.persistence.domain.CheckInProtectedReports;
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDateTime;
@@ -35,7 +36,9 @@ public class ProdTraceTimeIntervalWarningsPackageBundler extends TraceTimeInterv
    * @param traceTimeIntervalWarnings The {@link TraceTimeIntervalWarning traceTimeIntervalWarnings} contained by this
    *                                  {@link ProdTraceTimeIntervalWarningsPackageBundler}.
    * @param distributionTime          The {@link LocalDateTime} at which the distribution runs.
+   * @deprecated because trace time warnings are being replaced by protected reports.
    */
+  @Deprecated(since = "2.8")
   public void setTraceTimeIntervalWarnings(
       Collection<TraceTimeIntervalWarning> traceTimeIntervalWarnings,
       LocalDateTime distributionTime) {
@@ -43,6 +46,27 @@ public class ProdTraceTimeIntervalWarningsPackageBundler extends TraceTimeInterv
     createTraceWarningsDistributionMap(traceTimeIntervalWarnings);
   }
 
+  /**
+   * Sets the {@link CheckInProtectedReports}s to package.
+   *
+   * @param checkInProtectedReports The {@link CheckInProtectedReports traceTimeIntervalWarnings} contained by this
+   *                                {@link ProdTraceTimeIntervalWarningsPackageBundler}.
+   * @param distributionTime        The {@link LocalDateTime} at which the distribution runs.
+   */
+  public void setCheckInProtectedReports(
+      Collection<CheckInProtectedReports> checkInProtectedReports,
+      LocalDateTime distributionTime) {
+    this.distributionTime = distributionTime;
+    createCheckInProtectedReportsMap(checkInProtectedReports);
+  }
+
+  /**
+   * Create distribution map.
+   *
+   * @param traceTimeIntervalWarnings the base for creating the distribution map.
+   * @deprecated because trace time warnings are being replaced by protected reports.
+   */
+  @Deprecated(since = "2.8")
   protected void createTraceWarningsDistributionMap(
       Collection<TraceTimeIntervalWarning> traceTimeIntervalWarnings) {
     distributableTraceTimeIntervalWarnings.putAll(
@@ -51,6 +75,20 @@ public class ProdTraceTimeIntervalWarningsPackageBundler extends TraceTimeInterv
             .collect(Collectors.groupingBy(warning -> (int) warning.getSubmissionTimestamp(), Collectors.toList())));
   }
 
+  protected void createCheckInProtectedReportsMap(
+      Collection<CheckInProtectedReports> checkInProtectedReports) {
+    distributableCheckInProtectedReports.putAll(
+        checkInProtectedReports.stream()
+            .filter(this::filterByDistributionTime)
+            .collect(Collectors.groupingBy(checkIn -> (int) checkIn.getSubmissionTimestamp(), Collectors.toList())));
+  }
+
+  /**
+   * Filter by distribution time.
+   *
+   * @deprecated because trace time warnings are being replaced by protected reports.
+   */
+  @Deprecated(since = "2.8")
   private boolean filterByDistributionTime(TraceTimeIntervalWarning warning) {
     long oldestDateForCheckins =
         distributionTime.minusDays(daysInThePast).toEpochSecond(ZoneOffset.UTC);
@@ -58,5 +96,14 @@ public class ProdTraceTimeIntervalWarningsPackageBundler extends TraceTimeInterv
     long warningSubmissionTime = warning.getSubmissionTimestamp();
     return warningSubmissionTime > HOUR_SINCE_EPOCH_DERIVATION.apply(oldestDateForCheckins)
         && warningSubmissionTime < HOUR_SINCE_EPOCH_DERIVATION.apply(latestDateForCheckins);
+  }
+
+  private boolean filterByDistributionTime(CheckInProtectedReports checkInProtectedReports) {
+    long oldestDateForCheckInProtectedReports =
+        distributionTime.minusDays(daysInThePast).toEpochSecond(ZoneOffset.UTC);
+    long latestDateForCheckInProtectedReports = distributionTime.toEpochSecond(ZoneOffset.UTC);
+    long checkInSubmissionTime = checkInProtectedReports.getSubmissionTimestamp();
+    return checkInSubmissionTime > HOUR_SINCE_EPOCH_DERIVATION.apply(oldestDateForCheckInProtectedReports)
+        && checkInSubmissionTime < HOUR_SINCE_EPOCH_DERIVATION.apply(latestDateForCheckInProtectedReports);
   }
 }

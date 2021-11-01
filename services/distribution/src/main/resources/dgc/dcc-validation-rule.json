@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://webgate.acceptance.ec.europa.eu/dgcg-json-api/validation-rule.schema.json",
+  "title": "EU DCC Validation Rule",
+  "description": "Rule to validate an issued EU Digital Covid Certificate.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "AffectedFields",
+    "Country",
+    "CertificateType",
+    "Description",
+    "Engine",
+    "EngineVersion",
+    "Identifier",
+    "Logic",
+    "SchemaVersion",
+    "Type",
+    "ValidFrom",
+    "ValidTo",
+    "Version"
+  ],
+  "properties": {
+    "Identifier": {
+      "type": "string",
+      "description": "The unique rule name",
+      "pattern": "^(GR|VR|TR|RR|IR|BNR)-[A-Z]{2}-\\d{4}$"
+    },
+    "Type": {
+      "type": "string",
+      "description": "Type of the rule",
+      "enum": [
+        "Acceptance",
+        "Invalidation",
+        "BoosterNotification"
+      ]
+    },
+    "Country": {
+      "type": "string",
+      "description": "ISO Country Code of rule owner",
+      "pattern": "^[A-Z]{2}$"
+    },
+    "Region": {
+      "type": "string",
+      "description": "Additional Region property to precise country property.",
+      "pattern": "^[A-Z0-9]{0,5}$"
+    },
+    "Version": {
+      "type": "string",
+      "description": "Version of the rule (Semver)",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "SchemaVersion": {
+      "type": "string",
+      "description": "Version of the used schema (Semver)",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "Engine": {
+      "type": "string",
+      "description": "Type of the RuleEngine"
+    },
+    "EngineVersion": {
+      "type": "string",
+      "description": "Version of the used engine (Semver)",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "CertificateType": {
+      "type": "string",
+      "description": "Type of the certificate",
+      "enum": [
+        "General",
+        "Test",
+        "Vaccination",
+        "Recovery"
+      ]
+    },
+    "Description": {
+      "type": "array",
+      "description": "Array of human readable description of the rule",
+      "items": {
+        "type": "object",
+        "required": [
+          "lang",
+          "desc"
+        ],
+        "properties": {
+          "lang": {
+            "type": "string",
+            "description": "Language of the description",
+            "pattern": "^([a-z]{2}|[a-z]{2}-[a-z]{2})$"
+          },
+          "desc": {
+            "type": "string",
+            "description": "Description of this rule in specified language",
+            "minLength": 20
+          }
+        }
+      },
+      "contains": {
+        "type": "object",
+        "required": [
+          "lang",
+          "desc"
+        ],
+        "properties": {
+          "lang": {
+            "type": "string",
+            "description": "Language of the description",
+            "pattern": "^en$"
+          },
+          "desc": {
+            "type": "string",
+            "description": "Human readable description of this rule in English language",
+            "minLength": 20
+          }
+        }
+      },
+      "minItems": 1
+    },
+    "ValidFrom": {
+      "type": "string",
+      "description": "Start validity of the rule as ISO 8601 Timestamp (without ms, with timezone)",
+      "format": "date-time",
+      "pattern": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([-+][0-2]\\d:[0-5]\\d|Z)$"
+    },
+    "ValidTo": {
+      "type": "string",
+      "description": "End validity of the rule as ISO 8601 Timestamp (without ms, with timezone)",
+      "format": "date-time",
+      "pattern": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([-+][0-2]\\d:[0-5]\\d|Z)$"
+    },
+    "AffectedFields": {
+      "type": "array",
+      "description": "Fields of the payload which are used by the rule.",
+      "items": {
+        "type": "string",
+        "description": "Affected field of payload"
+      }
+    },
+    "Logic": {
+      "type": "object",
+      "description": "The logic payload in JSON",
+      "minProperties": 1
+    }
+  }
+}

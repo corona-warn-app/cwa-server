@@ -5,6 +5,7 @@ package app.coronawarn.server.services.submission.verification;
 import io.micrometer.core.annotation.Timed;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 
 /**
@@ -23,5 +24,5 @@ public interface VerificationServerClient {
    */
   @Timed
   @PostMapping(value = "${services.submission.verification.path}", consumes = MediaType.APPLICATION_JSON_VALUE)
-  String verifyTan(Tan tan);
+  ResponseEntity<Void> verifyTan(Tan tan);
 }

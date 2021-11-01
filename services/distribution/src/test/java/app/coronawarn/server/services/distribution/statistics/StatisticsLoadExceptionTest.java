@@ -9,7 +9,8 @@ import app.coronawarn.server.services.distribution.statistics.exceptions.BucketN
 import app.coronawarn.server.services.distribution.statistics.exceptions.ConnectionException;
 import app.coronawarn.server.services.distribution.statistics.exceptions.FilePathNotFoundException;
 import app.coronawarn.server.services.distribution.statistics.file.JsonFileLoader;
-import app.coronawarn.server.services.distribution.statistics.file.LocalStatisticJsonFileLoader;
+import app.coronawarn.server.services.distribution.statistics.file.MockStatisticJsonFileLoader;
+import app.coronawarn.server.services.distribution.statistics.file.StatisticJsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
 import java.util.Optional;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,12 +30,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ActiveProfiles({"local-json-stats"})
 @ContextConfiguration(classes = {StatisticsJsonToProtobufTest.class,
     StatisticsToProtobufMapping.class, KeyFigureCardFactory.class,
-    LocalStatisticJsonFileLoader.class
+    MockStatisticJsonFileLoader.class
 }, initializers = ConfigDataApplicationContextInitializer.class)
 class StatisticsLoadExceptionTest {
 
   @SpyBean
-  JsonFileLoader loader;
+  StatisticJsonFileLoader loader;
 
   @Autowired
   DistributionServiceConfig serviceConfig;

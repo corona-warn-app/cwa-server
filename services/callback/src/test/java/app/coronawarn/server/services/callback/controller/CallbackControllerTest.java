@@ -1,13 +1,17 @@
 package app.coronawarn.server.services.callback.controller;
 
+import static app.coronawarn.server.common.persistence.domain.FederationBatchSourceSystem.EFGS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 
+import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
+import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
+import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
+import app.coronawarn.server.services.callback.ServerApplication;
 import java.time.LocalDate;
 import java.util.UUID;
 import java.util.stream.Stream;
-import app.coronawarn.server.common.persistence.domain.FederationBatchSourceSystem;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -17,13 +21,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
-import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
-import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
-import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
-import app.coronawarn.server.services.callback.ServerApplication;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, //
-    classes = { ServerApplication.class, ClientCertificateTestConfig.class })
+    classes = {ServerApplication.class, ClientCertificateTestConfig.class})
 @DirtiesContext
 class CallbackControllerTest {
 
@@ -51,8 +52,8 @@ class CallbackControllerTest {
     ResponseEntity<Void> actResponse = executor.executeGet(batchTag, date.toString());
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
 
-    assertThat(spyFederationClient.findByStatus(FederationBatchStatus.UNPROCESSED))
-        .contains(new FederationBatchInfo(batchTag, date, FederationBatchSourceSystem.EFGS));
+    assertThat(spyFederationClient.findByStatus(FederationBatchStatus.UNPROCESSED, EFGS))
+        .contains(new FederationBatchInfo(batchTag, date, EFGS));
   }
 
   @ParameterizedTest

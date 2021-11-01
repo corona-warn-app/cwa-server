@@ -1,6 +1,8 @@
 package app.coronawarn.server.services.distribution.objectstore;
 
-import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
+import static app.coronawarn.server.common.shared.util.TimeUtils.getCurrentUtcHour;
+import static app.coronawarn.server.common.shared.util.TimeUtils.getUtcDate;
+
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.Api;
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreOperationFailedException;
@@ -67,7 +69,7 @@ public class S3RetentionPolicy {
     Set<String> countries = Set.of(originCountry, euPackageName);
     countries.forEach(country -> {
       List<S3Object> diagnosisKeysObjects = objectStoreAccess.getObjectsWithPrefix(getDiagnosisKeyPrefix(country));
-      final LocalDate cutOffDate = TimeUtils.getUtcDate().minusDays(retentionDays);
+      final LocalDate cutOffDate = getUtcDate().minusDays(retentionDays);
       diagnosisKeysObjects.stream()
           .filter(diagnosisKeysObject -> isDiagnosisKeyFilePathOlderThan(diagnosisKeysObject, cutOffDate))
           .forEach(this::deleteS3Object);
@@ -83,7 +85,7 @@ public class S3RetentionPolicy {
     Set<String> countries = Set.of(originCountry, euPackageName);
     countries.forEach(country -> {
       List<S3Object> diagnosisKeysObjects = objectStoreAccess.getObjectsWithPrefix(getDiagnosisKeyPrefix(country));
-      final LocalDate cutOffDate = TimeUtils.getUtcDate().minusDays(retentionDays - 1L);
+      final LocalDate cutOffDate = getUtcDate().minusDays(retentionDays - 1L);
       var deletableKeys = diagnosisKeysObjects.stream()
           .filter(diagnosisKeysObject -> isDiagnosisKeyFilePathOlderThan(diagnosisKeysObject, cutOffDate))
           .filter(this::isDiagnosisKeyFilePathOnHourFolder)
@@ -105,8 +107,8 @@ public class S3RetentionPolicy {
     countries.forEach(country -> {
       List<S3Object> traceTimeWarningsObjects = objectStoreAccess
           .getObjectsWithPrefix(getTraceTimeWarningPrefix(country));
-      final LocalDateTime cutOffTime = TimeUtils.getCurrentUtcHour().minusDays(retentionDays);
-      final LocalDate cutOffDate = TimeUtils.getUtcDate().minusDays(retentionDays - 1L);
+      final LocalDateTime cutOffTime = getCurrentUtcHour().minusDays(retentionDays);
+      final LocalDate cutOffDate = getUtcDate().minusDays(retentionDays - 1L);
       var deletableTraceTimeWarnings = traceTimeWarningsObjects.stream()
           .filter(traceTimeWarningsObject -> isTraceTimeWarningFilePathOlderThan(traceTimeWarningsObject, cutOffTime))
           .collect(Collectors.toList());

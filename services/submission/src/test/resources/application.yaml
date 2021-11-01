@@ -35,6 +35,8 @@ services:
     connection-pool-size: 200
     maximum-request-size: 100KB
     max-rolling-period: 144
+    min-rolling-period: 1
+    unencrypted-checkins-enabled: true
     payload:
       max-number-of-keys: 100
       supported-countries: DE,FR,IT
@@ -74,5 +76,5 @@ feign:
   client:
     config:
       default:
-        connect-timeout: 500
-        read-timeout: 500
+        connect-timeout: 900
+        read-timeout: 900

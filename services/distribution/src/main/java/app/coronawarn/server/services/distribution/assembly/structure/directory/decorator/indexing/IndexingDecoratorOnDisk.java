@@ -1,10 +1,10 @@
 package app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing;
 
+import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDiskWithChecksum;
-import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Set;

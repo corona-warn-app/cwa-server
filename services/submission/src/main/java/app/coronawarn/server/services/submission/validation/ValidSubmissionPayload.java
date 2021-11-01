@@ -7,6 +7,7 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.normalization.DiagnosisKeyNormalizer;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
+import app.coronawarn.server.services.submission.checkins.EventCheckInProtectedReportsValidator;
 import app.coronawarn.server.services.submission.checkins.EventCheckinDataValidator;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import java.lang.annotation.Documented;
@@ -29,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Constraint(validatedBy = ValidSubmissionPayload.SubmissionPayloadValidator.class)
-@Target({ ElementType.PARAMETER })
+@Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface ValidSubmissionPayload {
@@ -58,19 +59,37 @@ public @interface ValidSubmissionPayload {
   class SubmissionPayloadValidator implements ConstraintValidator<ValidSubmissionPayload, SubmissionPayload> {
 
     private final int maxNumberOfKeys;
+    private final int minRollingPeriod;
     private final int maxRollingPeriod;
     private final Collection<String> supportedCountries;
     private final String defaultOriginCountry;
+    
+    /**
+     * EventCheckinDataValidator.
+     *
+     * @deprecated in favor of {@link #eventCheckInProtectedReportsValidator}. 
+     */
+    @Deprecated(since = "2.8", forRemoval = true)
     private final EventCheckinDataValidator eventCheckinValidator;
+    private final EventCheckInProtectedReportsValidator eventCheckInProtectedReportsValidator;
     private static final Logger logger = LoggerFactory.getLogger(SubmissionPayloadValidator.class);
 
+    /**
+     * Constructor.
+     *
+     * @param submissionServiceConfig configuration.
+     * @param checkinDataValidator    validation.
+     */
     public SubmissionPayloadValidator(SubmissionServiceConfig submissionServiceConfig,
-        EventCheckinDataValidator checkinDataValidator) {
+        EventCheckinDataValidator checkinDataValidator,
+        EventCheckInProtectedReportsValidator checkInProtectedReportsValidator) {
       maxNumberOfKeys = submissionServiceConfig.getMaxNumberOfKeys();
       maxRollingPeriod = submissionServiceConfig.getMaxRollingPeriod();
+      minRollingPeriod = submissionServiceConfig.getMinRollingPeriod();
       supportedCountries = List.of(submissionServiceConfig.getSupportedCountries());
       defaultOriginCountry = submissionServiceConfig.getDefaultOriginCountry();
       eventCheckinValidator = checkinDataValidator;
+      eventCheckInProtectedReportsValidator = checkInProtectedReportsValidator;
     }
 
     /**
@@ -98,7 +117,9 @@ public @interface ValidSubmissionPayload {
           && checkRequiredFieldsNotMissing(exposureKeys, validatorContext)
           && checkTransmissionRiskLevelIsAcceptable(exposureKeys, validatorContext)
           && checkDaysSinceOnsetOfSymptomsIsInRange(exposureKeys, validatorContext)
-          && eventCheckinValidator.verify(submissionPayload, validatorContext);
+          && eventCheckinValidator.verify(submissionPayload, validatorContext)
+          && eventCheckInProtectedReportsValidator.verify(submissionPayload, validatorContext)
+          && checkRollingPeriodIsInRange(exposureKeys, validatorContext);
 
       if (!isValidPayload) {
         PrintableSubmissionPayload printableSubmissionPayload = new PrintableSubmissionPayload(submissionPayload);
@@ -222,6 +243,19 @@ public @interface ValidSubmissionPayload {
         addViolation(validatorContext, messageConstructor.apply(invalidTek));
       });
       return foundInvalid.get();
+    }
+
+    private boolean checkRollingPeriodIsInRange(List<TemporaryExposureKey> exposureKeys,
+        ConstraintValidatorContext validatorContext) {
+      for (TemporaryExposureKey exposureKey : exposureKeys) {
+        if (exposureKey.getRollingPeriod() < minRollingPeriod
+            || exposureKey.getRollingPeriod() > maxRollingPeriod) {
+          addViolation(validatorContext,
+              "The rolling period is not in range (" + minRollingPeriod + " - " + maxRollingPeriod + ").");
+          return false;
+        }
+      }
+      return true;
     }
   }
 }

@@ -30,6 +30,21 @@
     "seven_day_r_value_published_trend_1percent": -1,
     "seven_day_r_value_1st_reported_daily": 0.91,
     "seven_day_r_value_1st_reported_growthrate": 0.9578947368421054,
-    "seven_day_r_value_1st_reported_trend_1percent": -1
+    "seven_day_r_value_1st_reported_trend_1percent": -1,
+    "administered_doses_daily": 843978,
+    "administered_doses_7days_avg": 656704.8571428572,
+    "administered_doses_cumulated": 41517849,
+    "administered_doses_7days_avg_growthrate": 0.860829557981926,
+    "administered_doses_7days_avg_trend_5percent": -1,
+    "persons_with_first_dose_cumulated": 31678786,
+    "persons_with_first_dose_ratio": 0.38100001215934753,
+    "persons_fully_vaccinated_cumulated": 9901626,
+    "persons_fully_vaccinated_ratio": 0.11900000274181366,
+    "seven_day_hospitalization_1st_reported_daily": 168.5,
+    "seven_day_hospitalization_1st_reported_growthrate": 0.86,
+    "seven_day_hospitalization_1st_reported_trend_1percent": 1,
+    "occupied_intensive_care_beds_reported_daily_ratio": 0.11900000274181366,
+    "occupied_intensive_care_beds_reported_daily_ratio_growthrate": 0.86,
+    "occupied_intensive_care_beds_reported_daily_ratio_trend_1percent": 1
   }
 ]

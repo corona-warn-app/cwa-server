@@ -3,15 +3,19 @@ package app.coronawarn.server.services.distribution.common;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.YamlLoader.loadYamlIntoProtobufBuilder;
 import static java.io.File.separator;
 
+import app.coronawarn.server.common.persistence.domain.CheckInProtectedReports;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
-import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
+import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
+import app.coronawarn.server.common.protocols.internal.pt.CheckInProtectedReport;
+import app.coronawarn.server.common.shared.collection.ImmutableStack;
+import app.coronawarn.server.common.shared.exception.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
-import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import com.google.protobuf.ByteString;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -210,12 +214,21 @@ public class Helpers {
     return expectedFiles;
   }
 
+
+  public static List<TraceTimeIntervalWarning> buildTraceTimeIntervalWarning(
+      int startIntervalNumber, int endIntervalNumber, int submissionHourSinceEpoch, int numberOfWarnings) {
+    return IntStream.range(0, numberOfWarnings)
+        .mapToObj(ignoredValue -> buildTraceTimeIntervalWarning(startIntervalNumber, endIntervalNumber,
+            submissionHourSinceEpoch))
+        .collect(Collectors.toList());
+  }
+
   public static TraceTimeIntervalWarning buildTraceTimeIntervalWarning(int startIntervalNumber,
       int endIntervalNumber, int submissionHourSinceEpoch) {
     final byte[] guid = UUID.randomUUID().toString().getBytes();
     final int transmissionRiskLevel = 5;
     return new TraceTimeIntervalWarning(guid, startIntervalNumber, endIntervalNumber,
-        transmissionRiskLevel, submissionHourSinceEpoch, SubmissionType.SUBMISSION_TYPE_PCR_TEST){
+        transmissionRiskLevel, submissionHourSinceEpoch, SubmissionType.SUBMISSION_TYPE_PCR_TEST) {
       @Override
       public Long getId() {
         return Long.valueOf(Arrays.hashCode(guid));
@@ -223,10 +236,63 @@ public class Helpers {
     };
   }
 
-  public static List<TraceTimeIntervalWarning> buildTraceTimeIntervalWarning(
-      int startIntervalNumber, int endIntervalNumber, int submissionHourSinceEpoch, int numberOfWarnings) {
-    return IntStream.range(0, numberOfWarnings)
-        .mapToObj(ignoredValue -> buildTraceTimeIntervalWarning(startIntervalNumber, endIntervalNumber, submissionHourSinceEpoch))
+  public static List<CheckInProtectedReports> buildCheckInProtectedReports(int submissionHourSinceEpoch,
+      int numberOfCheckIns) {
+    return IntStream.range(0, numberOfCheckIns)
+        .mapToObj(ignoredValue -> buildCheckInProtectedReport(submissionHourSinceEpoch))
         .collect(Collectors.toList());
   }
+
+  public static CheckInProtectedReports buildCheckInProtectedReport(int submissionHourSinceEpoch) {
+    final byte[] traceLocationIdHash = UUID.randomUUID().toString().getBytes();
+    final byte[] iv = UUID.randomUUID().toString().getBytes();
+    final byte[] encryptedCheckIns = new byte[16];
+    final byte[] mac = new byte[32];
+    new Random().nextBytes(encryptedCheckIns);
+    return new CheckInProtectedReports(traceLocationIdHash, iv, encryptedCheckIns, mac, submissionHourSinceEpoch) {
+      @Override
+      public Long getId() {
+        return Long.valueOf(Arrays.hashCode(traceLocationIdHash));
+      }
+    };
+  }
+
+
+  public static List<CheckIn> buildCheckIns(int startIntervalNumber, int endIntervalNumber, int numberOfCheckIns) {
+    return IntStream.range(0, numberOfCheckIns).mapToObj(
+        index -> buildCheckIn(startIntervalNumber, endIntervalNumber)).collect(Collectors.toList());
+  }
+
+  public static CheckIn buildCheckIn(int startIntervalNumber, int endIntervalNumber) {
+    final byte[] guid = UUID.randomUUID().toString().getBytes();
+    return CheckIn.newBuilder()
+        .setStartIntervalNumber(startIntervalNumber)
+        .setEndIntervalNumber(endIntervalNumber)
+        .setLocationId(ByteString.copyFrom(guid))
+        .setTransmissionRiskLevel(5)
+        .build();
+  }
+
+  public static List<CheckInProtectedReport> buildCheckInProtectedReports(int numberOfCheckIns) {
+    return IntStream.range(0, numberOfCheckIns)
+        .mapToObj(ignoredValue -> buildCheckInProtectedReport())
+        .collect(Collectors.toList());
+  }
+
+  public static CheckInProtectedReport buildCheckInProtectedReport() {
+    final byte[] traceLocationIdHash = UUID.randomUUID().toString().getBytes();
+    final byte[] iv = UUID.randomUUID().toString().getBytes();
+    final byte[] encryptedCheckIns = new byte[16];
+    final byte[] mac = new byte[32];
+    new Random().nextBytes(encryptedCheckIns);
+
+    return CheckInProtectedReport.newBuilder()
+        .setLocationIdHash(ByteString.copyFrom(traceLocationIdHash))
+        .setIv(ByteString.copyFrom(iv))
+        .setEncryptedCheckInRecord(ByteString.copyFrom(encryptedCheckIns))
+        .setMac(ByteString.copyFrom(mac))
+        .build();
+
+  }
+
 }
