@@ -1,21 +1,18 @@
 package app.coronawarn.server.common.persistence.service;
 
-import static app.coronawarn.server.common.shared.util.HashUtils.Algorithms.SHA_256;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
-import app.coronawarn.server.common.persistence.domain.CheckInProtectedReports;
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
-import app.coronawarn.server.common.persistence.repository.CheckInProtectedReportsRepository;
 import app.coronawarn.server.common.persistence.repository.TraceTimeIntervalWarningRepository;
 import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
+import app.coronawarn.server.common.persistence.utils.hash.HashUtils;
+import app.coronawarn.server.common.persistence.utils.hash.HashUtils.MessageDigestAlgorithms;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
-import app.coronawarn.server.common.protocols.internal.pt.CheckInProtectedReport;
-import app.coronawarn.server.common.shared.util.HashUtils;
 import com.google.protobuf.ByteString;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -44,9 +41,6 @@ class TraceTimeIntervalWarningServiceTest {
   @Autowired
   TraceTimeIntervalWarningRepository traceWarningsRepository;
 
-  @Autowired
-  CheckInProtectedReportsRepository protectedReportsRepository;
-
   private int currentTimestamp;
 
   @BeforeEach
@@ -72,13 +66,13 @@ class TraceTimeIntervalWarningServiceTest {
   void testSortedRetrievalResult() {
     traceWarningsRepository
         .saveDoNothingOnConflict(
-            HashUtils.byteStringDigest(ByteString.copyFromUtf8("sorted-uuid2"), SHA_256),
+            HashUtils.byteStringDigest(ByteString.copyFromUtf8("sorted-uuid2"), MessageDigestAlgorithms.SHA_256),
             56, 10, 3,
             CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION.apply(Instant.now().getEpochSecond()),
             SubmissionType.SUBMISSION_TYPE_PCR_TEST.name());
     traceWarningsRepository
         .saveDoNothingOnConflict(
-            HashUtils.byteStringDigest(ByteString.copyFromUtf8("sorted-uuid1"), SHA_256),
+            HashUtils.byteStringDigest(ByteString.copyFromUtf8("sorted-uuid1"), MessageDigestAlgorithms.SHA_256),
             456, 20, 2,
             CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION.apply(Instant.now().getEpochSecond()) - 10,
             SubmissionType.SUBMISSION_TYPE_PCR_TEST.name());
@@ -108,7 +102,7 @@ class TraceTimeIntervalWarningServiceTest {
   public void testHashingOfTraceLocationId() {
     String locationId = "afa27b44d43b02a9fea41d13cedc2e4016cfcf87c5dbf990e593669aa8ce286d";
     byte[] locationIdByte = Hex.decode(locationId);
-    byte[] hashedLocationId = HashUtils.byteStringDigest(ByteString.copyFrom(locationIdByte), SHA_256);
+    byte[] hashedLocationId = HashUtils.byteStringDigest(ByteString.copyFrom(locationIdByte), MessageDigestAlgorithms.SHA_256);
 
     final byte[] encode = Hex.encode(hashedLocationId);
     String s = new String(encode);
@@ -162,37 +156,6 @@ class TraceTimeIntervalWarningServiceTest {
     assertThat(actKeys).isEmpty();
   }
 
-  @Test
-  void testSaveCheckInProtectedReports() {
-    List<CheckInProtectedReport> reports = Collections.singletonList(
-        CheckInProtectedReport.newBuilder()
-            .setLocationIdHash(ByteString.EMPTY)
-            .setEncryptedCheckInRecord(ByteString.EMPTY)
-            .setIv(ByteString.EMPTY)
-            .setMac(ByteString.EMPTY)
-            .build()
-    );
-
-    final int numberOfCheckInProtectedReports = traceWarningsService
-        .saveCheckInProtectedReports(reports, currentTimestamp);
-    assertThat(numberOfCheckInProtectedReports).isEqualTo(1);
-  }
-
-  @Test
-  void testGetCheckInProtectedReports() {
-    final byte[] data = {1};
-
-    protectedReportsRepository.saveDoNothingOnConflict(data, data, data, data,100);
-    protectedReportsRepository.saveDoNothingOnConflict(data, data, data, data,5);
-    protectedReportsRepository.saveDoNothingOnConflict(data, data, data, data,800);
-
-    final Collection<CheckInProtectedReports> checkInProtectedReports = traceWarningsService
-        .getCheckInProtectedReports();
-    assertThat(checkInProtectedReports).flatExtracting(CheckInProtectedReports::getSubmissionTimestamp)
-        .containsExactly(5L, 100L, 800L);
-
-  }
-
   private List<CheckIn> getRandomTestData() {
     return List.of(
         CheckIn.newBuilder().setStartIntervalNumber(0).setEndIntervalNumber(1)
@@ -228,7 +191,7 @@ class TraceTimeIntervalWarningServiceTest {
           warning.getTransmissionRiskLevel().intValue());
       assertEquals(checkin.getStartIntervalNumber(), warning.getStartIntervalNumber().intValue());
       assertEquals(checkin.getEndIntervalNumber() - checkin.getStartIntervalNumber(), warning.getPeriod().intValue());
-      assertArrayEquals(HashUtils.byteStringDigest(checkin.getLocationId(), SHA_256),
+      assertArrayEquals(HashUtils.byteStringDigest(checkin.getLocationId(), MessageDigestAlgorithms.SHA_256),
           warning.getTraceLocationId());
     }
   }

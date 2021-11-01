@@ -5,24 +5,11 @@ import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import java.util.List;
 import javax.validation.ConstraintValidatorContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
-/**
- * Validator to validate constraints for checkins.
- *
- * @deprecated because trace time warnings are being replaced by protected reports.
- */
 @Component
-@Deprecated(since = "2.8")
 public class EventCheckinDataValidator {
-
-  private static final Logger logger = LoggerFactory.getLogger(EventCheckinDataValidator.class);
-  private static final Marker SECURITY = MarkerFactory.getMarker("SECURITY");
 
   /**
    * Given the submission payload, it verifies whether user event checkin data is alligned with the application
@@ -37,25 +24,7 @@ public class EventCheckinDataValidator {
         .map(checkin -> verifyTransmissionRiskLevel(checkin, validatorContext)
             && verifyLocationIdLength(checkin, validatorContext) && verifyStartIntervalNumber(checkin, validatorContext)
             && verifyEndIntervalNumber(checkin, validatorContext))
-        .allMatch(checkinValidation -> checkinValidation.equals(Boolean.TRUE));
-  }
-
-  /**
-   * Given a submission in the context of host warnings (submission on behalf) check if all checkins share the same
-   * location id or additionally checks if empty (thats why <= 1).
-   *
-   * @param submissionPayload the submission paylaod to validate.
-   * @param context           the validator context for keeping track of the constrain violations.
-   * @return whether the checkins of this submission payload contain all the same location id.
-   */
-  public boolean verifyHaveSameLocationId(SubmissionPayload submissionPayload, ConstraintValidatorContext context) {
-    final boolean checkInsHaveSameLocationId =
-        submissionPayload.getCheckInsList().stream().map(CheckIn::getLocationId).distinct().count() <= 1;
-    if (!checkInsHaveSameLocationId) {
-      logger.warn(SECURITY, "Checkins must contain items that all share the same location id");
-      addViolation(context, "Checkins must contain items that all share the same location id");
-    }
-    return checkInsHaveSameLocationId;
+        .allMatch(checkinValidation -> Boolean.valueOf(checkinValidation).equals(Boolean.TRUE));
   }
 
   boolean verifyLocationIdLength(CheckIn checkin, ConstraintValidatorContext validatorContext) {

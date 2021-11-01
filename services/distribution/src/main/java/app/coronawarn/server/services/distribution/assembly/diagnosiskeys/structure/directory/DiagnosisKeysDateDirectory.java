@@ -2,11 +2,9 @@
 
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory;
 
-import static app.coronawarn.server.common.shared.util.TimeUtils.getUtcDate;
 import static java.lang.Boolean.FALSE;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
-import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator.HourIndexingDecorator;
@@ -19,6 +17,8 @@ import app.coronawarn.server.services.distribution.assembly.structure.archive.de
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
+import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
@@ -55,7 +55,7 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
     this.distributionServiceConfig = distributionServiceConfig;
 
     int hourRetentionDays = distributionServiceConfig.getObjectStore().getHourFileRetentionDays();
-    this.cutOffDate = getUtcDate().minusDays(hourRetentionDays);
+    this.cutOffDate = TimeUtils.getUtcDate().minusDays(hourRetentionDays);
   }
 
   private Optional<Writable<WritableOnDisk>> addHourDirectoryWritable(ImmutableStack<Object> indices) {

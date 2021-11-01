@@ -4,18 +4,15 @@
 
   <parent>
     <artifactId>server</artifactId>
-    <groupId>app.coronawarn.server</groupId>
+    <groupId>org.opencwa</groupId>
     <version>${revision}</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>common</artifactId>
-
   <packaging>pom</packaging>
 
   <modules>
-    <module>jupiterHelpers</module>
-    <module>shared</module>
     <module>protocols</module>
     <module>persistence</module>
     <module>federation</module>

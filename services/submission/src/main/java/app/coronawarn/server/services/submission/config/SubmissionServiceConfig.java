@@ -54,20 +54,9 @@ public class SubmissionServiceConfig {
   private Verification verification;
   private Monitoring monitoring;
   private Client client;
-  @Min(1)
+  @Min(0)
   @Max(144)
   private Integer maxRollingPeriod;
-  @Min(1)
-  @Max(144)
-  private Integer minRollingPeriod;
-
-  /**
-   * unencryptedCheckinsEnabled.
-   *
-   * @deprecated should be removed when false
-   */
-  @Deprecated
-  private Boolean unencryptedCheckinsEnabled;
 
   @Autowired
   private TekFieldDerivations tekFieldDerivations;
@@ -160,14 +149,6 @@ public class SubmissionServiceConfig {
     this.maxRollingPeriod = maxRollingPeriod;
   }
 
-  public Integer getMinRollingPeriod() {
-    return minRollingPeriod;
-  }
-
-  public void setMinRollingPeriod(Integer minRollingPeriod) {
-    this.minRollingPeriod = minRollingPeriod;
-  }
-
   public Integer getMaxNumberOfKeys() {
     return payload.getMaxNumberOfKeys();
   }
@@ -210,20 +191,6 @@ public class SubmissionServiceConfig {
 
   public void setTrlDerivations(TrlDerivations trlDerivations) {
     this.trlDerivations = trlDerivations;
-  }
-
-  /**
-   * unencryptedCheckinsEnabled.
-   *
-   * @deprecated should be removed when false
-   */
-  @Deprecated
-  public Boolean isUnencryptedCheckinsEnabled() {
-    return unencryptedCheckinsEnabled == null ? false : unencryptedCheckinsEnabled;
-  }
-
-  public void setUnencryptedCheckinsEnabled(Boolean unencryptedCheckinsEnabled) {
-    this.unencryptedCheckinsEnabled = unencryptedCheckinsEnabled;
   }
 
   public static class Payload {

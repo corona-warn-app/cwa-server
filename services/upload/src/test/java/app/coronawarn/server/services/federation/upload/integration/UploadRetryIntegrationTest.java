@@ -48,7 +48,7 @@ public class UploadRetryIntegrationTest {
 
   private Set<String> conflictKeys = new HashSet<>();
   private Set<String> errorKeys = new HashSet<>();
-  private Set<String> validKeysSkipped = new HashSet<>();
+  private Set<String> createdKeys = new HashSet<>();
 
   @BeforeEach
   public void setup() {
@@ -65,8 +65,7 @@ public class UploadRetryIntegrationTest {
           .stream()
           .map(k -> getKeyDataString(k))
           .collect(Collectors.toList()));
-      // These values are skipped because the batch contains error Keys
-      validKeysSkipped.addAll(originalKeys.subList(2000, 4000)
+      createdKeys.addAll(originalKeys.subList(2000, 4000)
           .stream()
           .map(k -> getKeyDataString(k))
           .collect(Collectors.toList()));
@@ -109,10 +108,10 @@ public class UploadRetryIntegrationTest {
         assertTrue("EFGS multi status error key was marked incorrectly with batch tag",
             key.getBatchTag() == null || key.getBatchTag().isEmpty());
       }
-      boolean wasOkKey = validKeysSkipped.contains(keyData);
+      boolean wasOkKey = createdKeys.contains(keyData);
       if (wasOkKey) {
         assertTrue("EFGS multi status created key was not marked with batch tag",
-            key.getBatchTag() == null || key.getBatchTag().isEmpty());
+            key.getBatchTag() != null && !key.getBatchTag().isEmpty());
       }
     }
   }

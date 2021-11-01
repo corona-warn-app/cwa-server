@@ -3,7 +3,6 @@
 package app.coronawarn.server.common.persistence;
 
 import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
-import app.coronawarn.server.common.persistence.repository.CheckInProtectedReportsRepository;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import app.coronawarn.server.common.persistence.repository.FederationBatchInfoRepository;
 import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRepository;
@@ -29,7 +28,7 @@ import org.springframework.context.annotation.Configuration;
 public class TestApplication {
 
   @Bean
-  ValidDiagnosisKeyFilter validDiagnosisKeyFilter() {
+  ValidDiagnosisKeyFilter validKeysFilter() {
     return new ValidDiagnosisKeyFilter();
   }
 
@@ -40,7 +39,7 @@ public class TestApplication {
 
   @Bean
   DiagnosisKeyService createDiagnosisKeyService(DiagnosisKeyRepository keyRepository) {
-    return new DiagnosisKeyService(keyRepository, validDiagnosisKeyFilter());
+    return new DiagnosisKeyService(keyRepository, validKeysFilter());
   }
 
   @Bean
@@ -50,7 +49,7 @@ public class TestApplication {
 
   @Bean
   FederationUploadKeyService createFederationUploadKeyService() {
-    return new FederationUploadKeyService(createFederationUploadKeyRepository(), validDiagnosisKeyFilter(),
+    return new FederationUploadKeyService(createFederationUploadKeyRepository(), validKeysFilter(),
         keySharingPoliciesChecker());
   }
 
@@ -65,10 +64,9 @@ public class TestApplication {
   }
 
   @Bean
-  TraceTimeIntervalWarningService traceTimeIntervalWarningService(
-      TraceTimeIntervalWarningRepository timeIntervalWarningRepository,
-      CheckInProtectedReportsRepository checkInProtectedReportsRepository) throws NoSuchAlgorithmException {
-    return new TraceTimeIntervalWarningService(timeIntervalWarningRepository, checkInProtectedReportsRepository);
+  TraceTimeIntervalWarningService traceTimeWarningService(
+      TraceTimeIntervalWarningRepository timeIntervalWarningRepository) throws NoSuchAlgorithmException {
+    return new TraceTimeIntervalWarningService(timeIntervalWarningRepository);
   }
 
   @Bean

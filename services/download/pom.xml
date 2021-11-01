@@ -4,12 +4,10 @@
 
   <parent>
     <artifactId>services</artifactId>
-    <groupId>app.coronawarn.server</groupId>
+    <groupId>org.opencwa</groupId>
     <version>${revision}</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-
-  <artifactId>download</artifactId>
 
   <properties>
     <start-class>app.coronawarn.server.services.download.Application</start-class>
@@ -26,5 +24,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <artifactId>download</artifactId>
 
 </project>

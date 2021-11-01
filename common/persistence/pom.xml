@@ -4,7 +4,7 @@
 
   <parent>
     <artifactId>common</artifactId>
-    <groupId>app.coronawarn.server</groupId>
+    <groupId>org.opencwa</groupId>
     <version>${revision}</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
@@ -13,16 +13,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>${project.parent.groupId}</groupId>
+      <groupId>org.opencwa</groupId>
       <artifactId>protocols</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>${project.parent.groupId}</groupId>
-      <artifactId>jupiterHelpers</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>${project.parent.groupId}</groupId>
-      <artifactId>shared</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>

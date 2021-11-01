@@ -89,14 +89,13 @@ class SubmissionControllerTest {
   private DiagnosisKeyService diagnosisKeyService;
 
   @MockBean
+  private TanVerifier tanVerifier;
+
+  @MockBean
   private SubmissionMonitor submissionMonitor;
 
   @MockBean
   private FakeDelayManager fakeDelayManager;
-
-
-  @MockBean
-  private TanVerifier tanVerifier;
 
   @Autowired
   private RequestExecutor executor;
@@ -106,15 +105,6 @@ class SubmissionControllerTest {
 
   @Autowired
   private TraceTimeIntervalWarningRepository traceTimeIntervalWarningRepository;
-
-
-  @BeforeEach
-  public void setUpMocks() {
-    traceTimeIntervalWarningRepository.deleteAll();
-    when(tanVerifier.verifyTan(anyString())).thenReturn(true);
-    when(fakeDelayManager.getJitteredFakeDelay()).thenReturn(1000L);
-  }
-
 
   private void assertDSOSCorrectlyComputedFromTRL(final SubmissionServiceConfig config,
       final Collection<TemporaryExposureKey> submittedTEKs, final Collection<DiagnosisKey> diagnosisKeys) {
@@ -181,21 +171,6 @@ class SubmissionControllerTest {
       Assertions.assertEquals(expectedTRL, dkTRL);
     });
   }
-
-  private TemporaryExposureKey createOutdatedKey() {
-    return TemporaryExposureKey.newBuilder().setKeyData(ByteString.copyFromUtf8(VALID_KEY_DATA_2))
-        .setRollingStartIntervalNumber(createRollingStartIntervalNumber(config.getRetentionDays() + 1))
-        .setRollingPeriod(DiagnosisKey.MAX_ROLLING_PERIOD).setTransmissionRiskLevel(5).build();
-  }
-
-  private DiagnosisKey findDiagnosisKeyMatch(final TemporaryExposureKey temporaryExposureKey,
-      final Collection<DiagnosisKey> diagnosisKeys) {
-    return diagnosisKeys.stream()
-        .filter(
-            diagnosisKey -> temporaryExposureKey.getKeyData().equals(ByteString.copyFrom(diagnosisKey.getKeyData())))
-        .findFirst().orElseThrow();
-  }
-
 
   @ParameterizedTest
   @MethodSource("createIncompleteHeaders")
@@ -329,6 +304,20 @@ class SubmissionControllerTest {
     assertTRLCorrectlyComputedFromDSOS(config, submittedKeys, values);
   }
 
+  private TemporaryExposureKey createOutdatedKey() {
+    return TemporaryExposureKey.newBuilder().setKeyData(ByteString.copyFromUtf8(VALID_KEY_DATA_2))
+        .setRollingStartIntervalNumber(createRollingStartIntervalNumber(config.getRetentionDays() + 1))
+        .setRollingPeriod(DiagnosisKey.MAX_ROLLING_PERIOD).setTransmissionRiskLevel(5).build();
+  }
+
+  private DiagnosisKey findDiagnosisKeyMatch(final TemporaryExposureKey temporaryExposureKey,
+      final Collection<DiagnosisKey> diagnosisKeys) {
+    return diagnosisKeys.stream()
+        .filter(
+            diagnosisKey -> temporaryExposureKey.getKeyData().equals(ByteString.copyFrom(diagnosisKey.getKeyData())))
+        .findFirst().orElseThrow();
+  }
+
   @Test
   void invalidTanHandling() {
     when(tanVerifier.verifyTan(anyString())).thenReturn(false);
@@ -353,6 +342,13 @@ class SubmissionControllerTest {
     verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
     submittedKeys.remove(outdatedKey);
     assertSubmissionPayloadKeysCorrespondToEachOther(submittedKeys, argument.getValue(), submissionPayload);
+  }
+
+  @BeforeEach
+  public void setUpMocks() {
+    traceTimeIntervalWarningRepository.deleteAll();
+    when(tanVerifier.verifyTan(anyString())).thenReturn(true);
+    when(fakeDelayManager.getJitteredFakeDelay()).thenReturn(1000L);
   }
 
   @Test
@@ -409,8 +405,7 @@ class SubmissionControllerTest {
   void testCheckinDataIsFilteredForFutureEvents() {
     final Instant thisInstant = Instant.now();
     final long eventCheckinInTheFuture = LocalDateTime.ofInstant(thisInstant, UTC).plusMinutes(11).toEpochSecond(UTC);
-    final long eventCheckoutInTheFuture = LocalDateTime.ofInstant(thisInstant, UTC).plusMinutes(20)
-        .toEpochSecond(UTC);
+    final long eventCheckoutInTheFuture = LocalDateTime.ofInstant(thisInstant, UTC).plusMinutes(20).toEpochSecond(UTC);
 
     final List<CheckIn> checkins = List
         .of(CheckIn.newBuilder().setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheFuture))
@@ -579,7 +574,6 @@ class SubmissionControllerTest {
     final ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithVisitedCountries(visitedCountries));
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
-
 
   public static SubmissionPayload buildPayloadWithInvalidKey() {
     final TemporaryExposureKey invalidKey = buildTemporaryExposureKey(VALID_KEY_DATA_1,

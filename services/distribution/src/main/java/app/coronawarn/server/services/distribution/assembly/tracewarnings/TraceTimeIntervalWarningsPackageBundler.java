@@ -1,6 +1,5 @@
 package app.coronawarn.server.services.distribution.assembly.tracewarnings;
 
-import app.coronawarn.server.common.persistence.domain.CheckInProtectedReports;
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
@@ -44,20 +43,10 @@ public abstract class TraceTimeIntervalWarningsPackageBundler {
    * basis on which they will be distributed to the CDN.
    *
    * @see CheckinsDateSpecification#HOUR_SINCE_EPOCH_DERIVATION
-   * @deprecated in favor of {@link #distributableCheckInProtectedReports}.
    */
-  @Deprecated(since = "2.8", forRemoval = true)
   protected final Map<Integer, List<TraceTimeIntervalWarning>> distributableTraceTimeIntervalWarnings =
       new HashMap<>();
 
-  /**
-   * A map containing check in protected reports, mapped by hours since epoch computed from their submission timestamp.
-   * This is the basis on which they will be distributed to the CDN.
-   *
-   * @see CheckinsDateSpecification#HOUR_SINCE_EPOCH_DERIVATION
-   */
-  protected final Map<Integer, List<CheckInProtectedReports>> distributableCheckInProtectedReports =
-      new HashMap<>();
 
   /**
    * Constructs a TraceWarningsPackageBundler based on the specified service configuration.
@@ -76,9 +65,7 @@ public abstract class TraceTimeIntervalWarningsPackageBundler {
    * @param traceTimeIntervalWarnings The {@link TraceTimeIntervalWarning traceTimeIntervalWarnings} contained by this
    *                                  {@link TraceTimeIntervalWarningsPackageBundler}.
    * @param distributionTime          The {@link LocalDateTime} at which the distribution runs.
-   * @deprecated because trace time warnings are being replaced by protected reports.
    */
-  @Deprecated(since = "2.8")
   public void setTraceTimeIntervalWarnings(
       Collection<TraceTimeIntervalWarning> traceTimeIntervalWarnings,
       LocalDateTime distributionTime) {
@@ -87,25 +74,8 @@ public abstract class TraceTimeIntervalWarningsPackageBundler {
   }
 
   /**
-   * Sets the {@link CheckInProtectedReports}s to package.
-   *
-   * @param checkInProtectedReports The {@link CheckInProtectedReports traceTimeIntervalWarnings} contained by this
-   *                                {@link TraceTimeIntervalWarningsPackageBundler}.
-   * @param distributionTime        The {@link LocalDateTime} at which the distribution runs.
-   */
-  public void setCheckInProtectedReports(
-      Collection<CheckInProtectedReports> checkInProtectedReports,
-      LocalDateTime distributionTime) {
-    this.distributionTime = distributionTime;
-    createCheckInProtectedReportsMap(checkInProtectedReports);
-  }
-
-  /**
    * Returns all available hourly (since epoch) data for distribution.
-   *
-   * @deprecated because trace time warnings are being replaced by protected reports.
    */
-  @Deprecated(since = "2.8")
   public Set<Integer> getHoursForDistributableWarnings(String country) {
     if (isCountrySupported(country)) {
       final Optional<Integer> oldestOptional = getOldestHourWithDistributableWarnings(country);
@@ -120,29 +90,11 @@ public abstract class TraceTimeIntervalWarningsPackageBundler {
   }
 
   /**
-   * Returns all available hourly (since epoch) data for distribution.
-   */
-  public Set<Integer> getHoursForDistributableCheckInProtectedReports(String country) {
-    if (isCountrySupported(country)) {
-      final Optional<Integer> oldestOptional = getOldestHourWithDistributableCheckIns(country);
-      final Optional<Integer> latestOptional = getLatestHourWithDistributableCheckins(country);
-      if (oldestOptional.isPresent() && latestOptional.isPresent()) {
-        return IntStream.range(oldestOptional.get(), latestOptional.get() + 1).boxed()
-            .collect(Collectors.toSet());
-      }
-      return Collections.emptySet();
-    }
-    return Collections.emptySet();
-  }
-
-  /**
    * Fetch the oldest hour with distributable trace time interval warnings that is present in the distribution map.
    *
    * @param country support country.
    * @return optional containing the value of the min hour.
-   * @deprecated because trace time warnings are being replaced by protected reports.
    */
-  @Deprecated(since = "2.8")
   public Optional<Integer> getOldestHourWithDistributableWarnings(String country) {
     if (isCountrySupported(country)) {
       return this.distributableTraceTimeIntervalWarnings.keySet().stream().min(Integer::compareTo);
@@ -151,26 +103,11 @@ public abstract class TraceTimeIntervalWarningsPackageBundler {
   }
 
   /**
-   * Fetch the oldest hour with distributable check in protected reports that is present in the distribution map.
-   *
-   * @param country support country.
-   * @return optional containing the value of the min hour.
-   */
-  public Optional<Integer> getOldestHourWithDistributableCheckIns(String country) {
-    if (isCountrySupported(country)) {
-      return this.distributableCheckInProtectedReports.keySet().stream().min(Integer::compareTo);
-    }
-    return Optional.empty();
-  }
-
-  /**
    * Fetch the latest hour with distributable trace time interval warnings that is present in the distribution map.
    *
    * @param country support country.
    * @return optional containing the value of the max hour.
-   * @deprecated because trace time warnings are being replaced by protected reports.
    */
-  @Deprecated(since = "2.8")
   public Optional<Integer> getLatestHourWithDistributableWarnings(String country) {
     if (isCountrySupported(country)) {
       return this.distributableTraceTimeIntervalWarnings.keySet().stream().max(Integer::compareTo);
@@ -179,33 +116,10 @@ public abstract class TraceTimeIntervalWarningsPackageBundler {
   }
 
   /**
-   * Fetch the latest hour with distributable trace time interval warnings that is present in the distribution map.
-   *
-   * @param country support country.
-   * @return optional containing the value of the max hour.
-   */
-  public Optional<Integer> getLatestHourWithDistributableCheckins(String country) {
-    if (isCountrySupported(country)) {
-      return this.distributableCheckInProtectedReports.keySet().stream().max(Integer::compareTo);
-    }
-    return Optional.empty();
-  }
-
-  /**
    * Returns the trace time warnings ready to be distributed for the given hour since epoch.
-   *
-   * @deprecated because trace time warnings are being replaced by protected reports.
    */
-  @Deprecated(since = "2.8")
   public List<TraceTimeIntervalWarning> getTraceTimeWarningsForHour(Integer currentHourSinceEpoch) {
     return distributableTraceTimeIntervalWarnings.getOrDefault(currentHourSinceEpoch, Collections.emptyList());
-  }
-
-  /**
-   * Returns the trace time warnings ready to be distributed for the given hour since epoch.
-   */
-  public List<CheckInProtectedReports> getCheckInProtectedReportsForHour(Integer currentHourSinceEpoch) {
-    return distributableCheckInProtectedReports.getOrDefault(currentHourSinceEpoch, Collections.emptyList());
   }
 
   private boolean isCountrySupported(String country) {
@@ -216,16 +130,6 @@ public abstract class TraceTimeIntervalWarningsPackageBundler {
     return true;
   }
 
-  /**
-   * Create trace time warning distribution map.
-   *
-   * @param traceTimeIntervalWarnings the base for creating the distribution map.
-   * @deprecated because trace time warnings are being replaced by protected reports.
-   */
-  @Deprecated(since = "2.8")
   protected abstract void createTraceWarningsDistributionMap(
       Collection<TraceTimeIntervalWarning> traceTimeIntervalWarnings);
-
-  protected abstract void createCheckInProtectedReportsMap(
-      Collection<CheckInProtectedReports> traceTimeIntervalWarnings);
 }

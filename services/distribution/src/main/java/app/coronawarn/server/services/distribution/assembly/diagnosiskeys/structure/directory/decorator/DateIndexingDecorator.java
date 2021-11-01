@@ -1,11 +1,13 @@
+
+
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator;
 
-import static app.coronawarn.server.common.shared.util.TimeUtils.getUtcDate;
 import static java.util.function.Predicate.not;
 
-import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.DiagnosisKeysDateDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
 import java.util.Set;
@@ -28,7 +30,7 @@ public class DateIndexingDecorator extends IndexingDecoratorOnDisk<LocalDate> {
   @Override
   public Set<LocalDate> getIndex(ImmutableStack<Object> indices) {
     if (Boolean.FALSE.equals(distributionServiceConfig.getIncludeIncompleteDays())) {
-      LocalDate currentDate = getUtcDate();
+      LocalDate currentDate = TimeUtils.getUtcDate();
       return super.getIndex(indices).stream()
           .filter(not(currentDate::equals))
           .collect(Collectors.toSet());

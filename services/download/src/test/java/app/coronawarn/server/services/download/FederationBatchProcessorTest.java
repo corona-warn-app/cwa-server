@@ -1,5 +1,25 @@
 package app.coronawarn.server.services.download;
 
+import static app.coronawarn.server.common.persistence.domain.FederationBatchSourceSystem.EFGS;
+import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.ERROR;
+import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.ERROR_WONT_RETRY;
+import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.PROCESSED;
+import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.PROCESSED_WITH_ERROR;
+import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.UNPROCESSED;
+import static java.util.Collections.emptyList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.util.Lists.list;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import app.coronawarn.server.common.federation.client.FederationGatewayClient;
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
 import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
@@ -12,7 +32,18 @@ import app.coronawarn.server.services.download.config.DownloadServiceConfig;
 import app.coronawarn.server.services.download.validation.ValidFederationKeyFilter;
 import com.google.protobuf.ByteString;
 import feign.FeignException;
-import org.junit.jupiter.api.*;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneOffset;
+import java.util.List;
+import java.util.Optional;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
@@ -22,29 +53,12 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.ZoneOffset;
-import java.util.List;
-import java.util.Optional;
 
-import static app.coronawarn.server.common.persistence.domain.FederationBatchSourceSystem.EFGS;
-import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.*;
-import static java.util.Collections.emptyList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.util.Lists.list;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-
-@SuppressWarnings({"unchecked", "rawtypes"})
-@SpringBootTest(classes = {FederationBatchProcessor.class, FederationBatchInfoService.class, DiagnosisKeyService.class,
-    FederationGatewayClient.class, ValidFederationKeyFilter.class, TekFieldDerivations.class})
+@SuppressWarnings({ "unchecked", "rawtypes" })
+@SpringBootTest(classes = { FederationBatchProcessor.class, FederationBatchInfoService.class, DiagnosisKeyService.class,
+    FederationGatewayClient.class, ValidFederationKeyFilter.class, TekFieldDerivations.class })
 @DirtiesContext
 @EnableConfigurationProperties(value = DownloadServiceConfig.class)
-@ActiveProfiles("connect-efgs")
 class FederationBatchProcessorTest {
 
   private final LocalDate date = LocalDate.of(2020, 9, 1);
@@ -90,7 +104,7 @@ class FederationBatchProcessorTest {
 
       LocalDate date = LocalDate.now(ZoneOffset.UTC).minus(Period.ofDays(config.getEnforceDownloadOffsetDays()));
 
-      verify(batchInfoService, times(1)).deleteForDate(date, EFGS);
+      verify(batchInfoService, times(1)).deleteForDate(date);
       verify(batchProcessorSpy, times(1)).saveFirstBatchInfoForDate(date);
     }
 
@@ -100,7 +114,7 @@ class FederationBatchProcessorTest {
       config.setEnforceDateBasedDownload(false);
       batchProcessorSpy.prepareDownload();
 
-      verify(batchInfoService, never()).deleteForDate(any(), eq(EFGS));
+      verify(batchInfoService, never()).deleteForDate(any());
       verify(batchProcessorSpy, never()).saveFirstBatchInfoForDate(any());
     }
   }
@@ -143,7 +157,7 @@ class FederationBatchProcessorTest {
       config.setEnforceDateBasedDownload(true);
       batchProcessor.prepareDownload();
 
-      verify(batchInfoService, times(1)).deleteForDate(date, EFGS);
+      verify(batchInfoService, times(1)).deleteForDate(date);
     }
   }
 
@@ -153,7 +167,7 @@ class FederationBatchProcessorTest {
 
     @Test
     void testNoUnprocessedBatches() throws Exception {
-      when(batchInfoService.findByStatus(any(FederationBatchStatus.class), any())).thenReturn(emptyList());
+      when(batchInfoService.findByStatus(any(FederationBatchStatus.class))).thenReturn(emptyList());
       batchProcessor.processUnprocessedFederationBatches();
       verify(federationGatewayDownloadService, never()).downloadBatch(anyString(), any());
       verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
@@ -162,7 +176,7 @@ class FederationBatchProcessorTest {
     @Test
     void testOneUnprocessedBatchNoNextBatch() throws Exception {
       FederationBatchInfo federationBatchInfo = new FederationBatchInfo(batchTag1, date, UNPROCESSED, EFGS);
-      when(batchInfoService.findByStatus(UNPROCESSED, EFGS)).thenReturn(list(federationBatchInfo));
+      when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(list(federationBatchInfo));
       BatchDownloadResponse serverResponse = FederationBatchTestHelper.createBatchDownloadResponse(batchTag1,
           Optional.empty());
       when(federationGatewayDownloadService.downloadBatch(batchTag1, date)).thenReturn(serverResponse);
@@ -178,7 +192,7 @@ class FederationBatchProcessorTest {
       config.setEnforceDateBasedDownload(true);
       FederationBatchInfo batchInfo1 = new FederationBatchInfo(batchTag1, date, UNPROCESSED, EFGS);
       FederationBatchInfo batchInfo2 = new FederationBatchInfo(batchTag2, date, UNPROCESSED, EFGS);
-      when(batchInfoService.findByStatus(UNPROCESSED, EFGS)).thenReturn(list(batchInfo1));
+      when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(list(batchInfo1));
 
       BatchDownloadResponse serverResponse1 = FederationBatchTestHelper.createBatchDownloadResponse(batchTag1,
           Optional.of(batchTag2));
@@ -189,7 +203,7 @@ class FederationBatchProcessorTest {
 
       batchProcessor.processUnprocessedFederationBatches();
 
-      verify(batchInfoService, times(1)).findByStatus(UNPROCESSED, EFGS);
+      verify(batchInfoService, times(1)).findByStatus(UNPROCESSED);
 
       verify(federationGatewayDownloadService, times(1)).downloadBatch(batchTag1, date);
       verify(batchInfoService, times(1)).updateStatus(batchInfo1, PROCESSED);
@@ -202,13 +216,13 @@ class FederationBatchProcessorTest {
 
     @Test
     void testOneUnprocessedBatchFails() throws Exception {
-      when(batchInfoService.findByStatus(UNPROCESSED, EFGS))
+      when(batchInfoService.findByStatus(UNPROCESSED))
           .thenReturn(list(new FederationBatchInfo(batchTag1, date, UNPROCESSED, EFGS)));
       doThrow(BatchDownloadException.class).when(federationGatewayDownloadService).downloadBatch(batchTag1, date);
 
       batchProcessor.processUnprocessedFederationBatches();
 
-      verify(batchInfoService, times(1)).findByStatus(UNPROCESSED, EFGS);
+      verify(batchInfoService, times(1)).findByStatus(UNPROCESSED);
       verify(federationGatewayDownloadService, times(1)).downloadBatch(batchTag1, date);
       verify(batchInfoService, times(1)).updateStatus(any(FederationBatchInfo.class), eq(ERROR));
       verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
@@ -217,14 +231,14 @@ class FederationBatchProcessorTest {
     @Test
     void testOneUnprocessedBatchAuditFails() throws Exception {
       config.setBatchAuditEnabled(true);
-      when(batchInfoService.findByStatus(UNPROCESSED, EFGS))
+      when(batchInfoService.findByStatus(UNPROCESSED))
           .thenReturn(list(new FederationBatchInfo(batchTag1, date, UNPROCESSED, EFGS)));
       BatchDownloadResponse serverResponse = FederationBatchTestHelper.createBatchDownloadResponse(batchTag1,
           Optional.empty());
       when(federationGatewayDownloadService.downloadBatch(batchTag1, date)).thenReturn(serverResponse);
       doThrow(BatchAuditException.class).when(federationGatewayDownloadService).auditBatch(batchTag1, date);
       batchProcessor.processUnprocessedFederationBatches();
-      verify(batchInfoService, times(1)).findByStatus(UNPROCESSED, EFGS);
+      verify(batchInfoService, times(1)).findByStatus(UNPROCESSED);
       verify(federationGatewayDownloadService, times(1)).downloadBatch(batchTag1, date);
       verify(federationGatewayDownloadService, times(1)).auditBatch(batchTag1, date);
       verify(batchInfoService, times(1)).updateStatus(any(FederationBatchInfo.class), eq(ERROR));
@@ -235,14 +249,14 @@ class FederationBatchProcessorTest {
     @Test
     void testOneUnprocessedEmptyBatchNoAuditCall() throws Exception {
       config.setBatchAuditEnabled(true);
-      when(batchInfoService.findByStatus(UNPROCESSED, EFGS))
+      when(batchInfoService.findByStatus(UNPROCESSED))
           .thenReturn(list(new FederationBatchInfo(batchTag1, date, UNPROCESSED, EFGS)));
       BatchDownloadResponse serverResponse = FederationBatchTestHelper.createBatchDownloadResponse(batchTag1,
           Optional.empty());
       when(federationGatewayDownloadService.downloadBatch(batchTag1, date)).thenReturn(serverResponse);
       doThrow(BatchAuditException.class).when(federationGatewayDownloadService).auditBatch(batchTag1, date);
       batchProcessor.processUnprocessedFederationBatches();
-      verify(batchInfoService, times(1)).findByStatus(UNPROCESSED, EFGS);
+      verify(batchInfoService, times(1)).findByStatus(UNPROCESSED);
       verify(federationGatewayDownloadService, times(1)).downloadBatch(batchTag1, date);
       verify(federationGatewayDownloadService, times(1)).auditBatch(batchTag1, date);
       verify(batchInfoService, times(1)).updateStatus(any(FederationBatchInfo.class), eq(ERROR));
@@ -257,12 +271,12 @@ class FederationBatchProcessorTest {
       BatchDownloadResponse serverResponse = FederationBatchTestHelper.createBatchDownloadResponse(batchTag1,
           Optional.of(batchTag1));
 
-      when(batchInfoService.findByStatus(UNPROCESSED, EFGS)).thenReturn(list(batchInfo));
+      when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(list(batchInfo));
       when(federationGatewayDownloadService.downloadBatch(batchTag1, date)).thenReturn(serverResponse);
 
       Assertions.assertTimeoutPreemptively(Duration.ofSeconds(1),
           () -> batchProcessor.processUnprocessedFederationBatches());
-      verify(batchInfoService, times(1)).findByStatus(UNPROCESSED, EFGS);
+      verify(batchInfoService, times(1)).findByStatus(UNPROCESSED);
       verify(federationGatewayDownloadService, times(1)).downloadBatch(batchTag1, date);
       verify(batchInfoService, times(1)).updateStatus(batchInfo, PROCESSED);
     }
@@ -274,16 +288,16 @@ class FederationBatchProcessorTest {
 
     @Test
     void testNoErrorBatches() throws Exception {
-      when(batchInfoService.findByStatus(any(FederationBatchStatus.class), any())).thenReturn(emptyList());
+      when(batchInfoService.findByStatus(any(FederationBatchStatus.class))).thenReturn(emptyList());
       batchProcessor.processErrorFederationBatches();
-      verify(batchInfoService, times(1)).findByStatus(ERROR, EFGS);
+      verify(batchInfoService, times(1)).findByStatus(ERROR);
       verify(federationGatewayDownloadService, never()).downloadBatch(anyString(), any());
       verify(batchInfoService, never()).save(any(FederationBatchInfo.class));
     }
 
     @Test
     void testOneErrorBatchNoNextBatch() throws Exception {
-      when(batchInfoService.findByStatus(ERROR, EFGS))
+      when(batchInfoService.findByStatus(ERROR))
           .thenReturn(list(new FederationBatchInfo(batchTag1, date, ERROR, EFGS)));
       BatchDownloadResponse serverResponse = FederationBatchTestHelper.createBatchDownloadResponse(batchTag1,
           Optional.empty());
@@ -291,7 +305,7 @@ class FederationBatchProcessorTest {
 
       batchProcessor.processErrorFederationBatches();
 
-      verify(batchInfoService, times(1)).findByStatus(ERROR, EFGS);
+      verify(batchInfoService, times(1)).findByStatus(ERROR);
       verify(federationGatewayDownloadService, times(1)).downloadBatch(anyString(), any());
       verify(batchInfoService, times(1)).updateStatus(any(FederationBatchInfo.class), eq(PROCESSED));
       verify(diagnosisKeyService, times(1)).saveDiagnosisKeys(any());
@@ -302,7 +316,7 @@ class FederationBatchProcessorTest {
       FederationBatchInfo batchInfo1 = new FederationBatchInfo(batchTag1, date, ERROR, EFGS);
       FederationBatchInfo batchInfo2 = new FederationBatchInfo(batchTag2, date, UNPROCESSED, EFGS);
 
-      when(batchInfoService.findByStatus(ERROR, EFGS)).thenReturn(list(batchInfo1));
+      when(batchInfoService.findByStatus(ERROR)).thenReturn(list(batchInfo1));
 
       BatchDownloadResponse serverResponse1 = FederationBatchTestHelper.createBatchDownloadResponse(batchTag1,
           Optional.of(batchTag2));
@@ -313,7 +327,7 @@ class FederationBatchProcessorTest {
 
       batchProcessor.processErrorFederationBatches();
 
-      verify(batchInfoService, times(1)).findByStatus(ERROR, EFGS);
+      verify(batchInfoService, times(1)).findByStatus(ERROR);
       verify(federationGatewayDownloadService, times(1)).downloadBatch(batchTag1, date);
       verify(batchInfoService, times(1)).updateStatus(batchInfo1, PROCESSED);
 
@@ -323,13 +337,13 @@ class FederationBatchProcessorTest {
 
     @Test
     void testOneErrorBatchRetryNotFound() throws Exception {
-      when(batchInfoService.findByStatus(ERROR, EFGS))
+      when(batchInfoService.findByStatus(ERROR))
           .thenReturn(list(new FederationBatchInfo(batchTag1, date, ERROR, EFGS)));
       doThrow(FeignException.NotFound.class).when(federationGatewayDownloadService).downloadBatch(batchTag1, date);
 
       batchProcessor.processErrorFederationBatches();
 
-      verify(batchInfoService, times(1)).findByStatus(ERROR, EFGS);
+      verify(batchInfoService, times(1)).findByStatus(ERROR);
       verify(federationGatewayDownloadService, times(1)).downloadBatch(batchTag1, date);
       verify(batchInfoService, times(1)).updateStatus(any(FederationBatchInfo.class), eq(ERROR_WONT_RETRY));
       verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
@@ -337,7 +351,7 @@ class FederationBatchProcessorTest {
 
     @Test
     void testOneErrorBatchSavingNextBatchInfoFails() throws Exception {
-      when(batchInfoService.findByStatus(ERROR, EFGS))
+      when(batchInfoService.findByStatus(ERROR))
           .thenReturn(list(new FederationBatchInfo(batchTag1, date, ERROR, EFGS)));
       doThrow(RuntimeException.class).when(batchInfoService).save(any(FederationBatchInfo.class));
 
@@ -347,7 +361,7 @@ class FederationBatchProcessorTest {
 
       batchProcessor.processErrorFederationBatches();
 
-      verify(batchInfoService, times(1)).findByStatus(ERROR, EFGS);
+      verify(batchInfoService, times(1)).findByStatus(ERROR);
       verify(federationGatewayDownloadService, times(1)).downloadBatch(batchTag1, date);
       verify(batchInfoService, times(1)).updateStatus(any(FederationBatchInfo.class), eq(ERROR_WONT_RETRY));
       verify(diagnosisKeyService, times(1)).saveDiagnosisKeys(any());
@@ -361,7 +375,7 @@ class FederationBatchProcessorTest {
     @Test
     void testFailureKeysAreSkipped() throws Exception {
       FederationBatchInfo batchInfo = new FederationBatchInfo(batchTag1, date, UNPROCESSED, EFGS);
-      when(batchInfoService.findByStatus(UNPROCESSED, EFGS)).thenReturn(list(batchInfo));
+      when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(list(batchInfo));
 
       DiagnosisKey validKey = FederationBatchTestHelper.createBuilderForValidFederationDiagnosisKey().build();
       DiagnosisKey invalidKey = FederationBatchTestHelper
@@ -374,7 +388,7 @@ class FederationBatchProcessorTest {
       when(federationGatewayDownloadService.downloadBatch(batchTag1, date)).thenReturn(downloadResponse);
       batchProcessor.processUnprocessedFederationBatches();
 
-      verify(batchInfoService, times(1)).findByStatus(UNPROCESSED, EFGS);
+      verify(batchInfoService, times(1)).findByStatus(UNPROCESSED);
       verify(federationGatewayDownloadService, times(1)).downloadBatch(batchTag1, date);
       verify(batchInfoService, times(1)).updateStatus(batchInfo, PROCESSED_WITH_ERROR);
       verify(diagnosisKeyService, times(1)).saveDiagnosisKeys(any());
@@ -384,7 +398,7 @@ class FederationBatchProcessorTest {
     void testDiagnosisKeyPassesDownloadValidationButBuildingFails() throws Exception {
       FederationBatchInfo batchInfo = new FederationBatchInfo(batchTag1, date, UNPROCESSED, EFGS);
 
-      when(batchInfoService.findByStatus(UNPROCESSED, EFGS)).thenReturn(list(batchInfo));
+      when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(list(batchInfo));
 
       DiagnosisKey invalidKey = FederationBatchTestHelper.createBuilderForValidFederationDiagnosisKey()
           .setRollingPeriod(-5).build();
@@ -399,10 +413,10 @@ class FederationBatchProcessorTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {-15, -17, 4001})
+    @ValueSource(ints = { -15, -17, 4001 })
     void testFailureInvalidDSOS(int invalidDsos) throws Exception {
       FederationBatchInfo batchInfo = new FederationBatchInfo(batchTag1, date, UNPROCESSED, EFGS);
-      when(batchInfoService.findByStatus(UNPROCESSED, EFGS)).thenReturn(list(batchInfo));
+      when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(list(batchInfo));
 
       DiagnosisKey invalidKey = FederationBatchTestHelper.createBuilderForValidFederationDiagnosisKey()
           .setDaysSinceOnsetOfSymptoms(invalidDsos).build();
@@ -417,10 +431,10 @@ class FederationBatchProcessorTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {0, 15, 17, 20})
+    @ValueSource(ints = { 0, 15, 17, 20 })
     void testFailureInvalidKeyDataLength(int invalidKeyDataLength) throws Exception {
       FederationBatchInfo batchInfo = new FederationBatchInfo(batchTag1, date, UNPROCESSED, EFGS);
-      when(batchInfoService.findByStatus(UNPROCESSED, EFGS)).thenReturn(list(batchInfo));
+      when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(list(batchInfo));
 
       ByteString keyData = FederationBatchTestHelper.createByteStringOfLength(invalidKeyDataLength);
       DiagnosisKey invalidKey = FederationBatchTestHelper.createFederationDiagnosisKeyWithKeyData(keyData);
@@ -435,10 +449,10 @@ class FederationBatchProcessorTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {-1, 9, Integer.MAX_VALUE})
+    @ValueSource(ints = { -1, 9, Integer.MAX_VALUE })
     void testInvalidTRLTriggersNormalization(int invalidTrl) throws Exception {
       FederationBatchInfo batchInfo = new FederationBatchInfo(batchTag1, date, UNPROCESSED, EFGS);
-      when(batchInfoService.findByStatus(UNPROCESSED, EFGS)).thenReturn(list(batchInfo));
+      when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(list(batchInfo));
 
       DiagnosisKey invalidKey = FederationBatchTestHelper.createBuilderForValidFederationDiagnosisKey()
           .setTransmissionRiskLevel(invalidTrl).build();
@@ -451,7 +465,7 @@ class FederationBatchProcessorTest {
       batchProcessor.processUnprocessedFederationBatches();
 
       ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
-      verify(batchInfoService, times(1)).findByStatus(UNPROCESSED, EFGS);
+      verify(batchInfoService, times(1)).findByStatus(UNPROCESSED);
       verify(federationGatewayDownloadService, times(1)).downloadBatch(batchTag1, date);
       verify(batchInfoService, times(1)).updateStatus(batchInfo, PROCESSED);
       verify(diagnosisKeyService, times(1)).saveDiagnosisKeys(captor.capture());
@@ -459,10 +473,10 @@ class FederationBatchProcessorTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {-1, 145, 144000})
+    @ValueSource(ints = { -1, 145, 144000 })
     void testFailureInvalidRollingPeriod(int invalidRollingPeriod) throws Exception {
       FederationBatchInfo batchInfo = new FederationBatchInfo(batchTag1, date, UNPROCESSED, EFGS);
-      when(batchInfoService.findByStatus(UNPROCESSED, EFGS)).thenReturn(list(batchInfo));
+      when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(list(batchInfo));
 
       DiagnosisKey invalidKey = FederationBatchTestHelper.createBuilderForValidFederationDiagnosisKey()
           .setRollingPeriod(invalidRollingPeriod).build();
@@ -480,7 +494,7 @@ class FederationBatchProcessorTest {
   @Test
   void testProcessBachAndReturnNextBatchIdNotAuthenticated() throws Exception {
     FederationBatchInfo batchInfo = new FederationBatchInfo(batchTag1, date, UNPROCESSED, EFGS);
-    when(batchInfoService.findByStatus(UNPROCESSED, EFGS)).thenReturn(list(batchInfo));
+    when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(list(batchInfo));
     when(federationGatewayDownloadService.downloadBatch(batchTag1, date))
         .thenThrow(FatalFederationGatewayException.class);
 
@@ -491,7 +505,7 @@ class FederationBatchProcessorTest {
   public void verifyProcessedWithStatus(FederationBatchInfo federationBatchInfo, FederationBatchStatus expectedStatus)
       throws Exception {
     ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
-    verify(batchInfoService, times(1)).findByStatus(UNPROCESSED, EFGS);
+    verify(batchInfoService, times(1)).findByStatus(UNPROCESSED);
     verify(federationGatewayDownloadService, times(1)).downloadBatch(batchTag1, date);
     verify(batchInfoService, times(1)).updateStatus(federationBatchInfo, expectedStatus);
     verify(diagnosisKeyService, times(1)).saveDiagnosisKeys(captor.capture());

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
@@ -14,13 +15,11 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 @Profile("connect-efgs")
-public interface EfgsUploadKeyRepository extends FederationUploadKeyRepository {
+public interface EfgsUploadKeyRepository
+    extends PagingAndSortingRepository<FederationUploadKey, Long>, FederationUploadKeyRepository {
 
   @Query("SELECT * FROM federation_upload_key WHERE (batch_tag is null or batch_tag = '')")
   List<FederationUploadKey> findAllUploadableKeys();
-
-  @Query("SELECT * FROM federation_upload_key")
-  List<FederationUploadKey> findAll();
 
   @Modifying
   @Query("update federation_upload_key set batch_tag = :batchTag where key_data = :keyData")

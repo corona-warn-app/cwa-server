@@ -46,7 +46,7 @@ public abstract class HeaderCardFactory {
     }
   }
 
-  protected abstract int getCardId();
+  protected abstract Integer getCardId();
 
   protected abstract KeyFigureCard buildKeyFigureCard(StatisticsJsonStringObject stats,
       KeyFigureCard.Builder keyFigureBuilder);

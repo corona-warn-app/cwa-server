@@ -11,13 +11,11 @@ message SubmissionPayload {
   repeated string visitedCountries = 3;
   optional string origin = 4;
   optional bool consentToFederation = 5;
-  repeated app.coronawarn.server.common.protocols.internal.pt.CheckIn checkIns = 6 [deprecated = true];
+  repeated app.coronawarn.server.common.protocols.internal.pt.CheckIn checkIns = 6;
   optional SubmissionType submissionType = 7 [default = SUBMISSION_TYPE_PCR_TEST];
-  repeated app.coronawarn.server.common.protocols.internal.pt.CheckInProtectedReport checkInProtectedReports = 8;
 
   enum SubmissionType {
     SUBMISSION_TYPE_PCR_TEST = 0;
     SUBMISSION_TYPE_RAPID_TEST = 1;
-    SUBMISSION_TYPE_HOST_WARNING = 2;
   }
 }

@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
-import app.coronawarn.server.common.shared.util.HashUtils;
+import app.coronawarn.server.common.persistence.utils.hash.HashUtils;
 import com.google.protobuf.ByteString;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.ApplicationArguments;
@@ -52,7 +52,6 @@ class CommonDataGenerationTest {
           app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey.newBuilder()
               .addVisitedCountries("DE")
               .setRollingStartIntervalNumber(123123)
-              .setRollingPeriod(1)
               .setOrigin("DE")
               .setKeyData(ByteString.copyFrom(HashUtils.generateSecureRandomByteArrayData(16)))
               .setTransmissionRiskLevel(1)

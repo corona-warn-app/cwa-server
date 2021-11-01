@@ -2,14 +2,11 @@ package app.coronawarn.server.services.distribution.statistics.file;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClient;
-import app.coronawarn.server.services.distribution.statistics.StatisticType;
 import app.coronawarn.server.services.distribution.statistics.exceptions.BucketNotFoundException;
 import app.coronawarn.server.services.distribution.statistics.exceptions.ConnectionException;
 import app.coronawarn.server.services.distribution.statistics.exceptions.FilePathNotFoundException;
 import app.coronawarn.server.services.distribution.statistics.exceptions.NotModifiedException;
 import java.util.Optional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Profile;
 import org.springframework.retry.ExhaustedRetryException;
@@ -19,9 +16,7 @@ import software.amazon.awssdk.services.s3.model.S3Exception;
 
 @Component
 @Profile("!local-json-stats")
-public class RemoteStatisticJsonFileLoader implements StatisticJsonFileLoader {
-
-  private static final Logger logger = LoggerFactory.getLogger(RemoteStatisticJsonFileLoader.class);
+public class RemoteStatisticJsonFileLoader implements JsonFileLoader {
 
   ObjectStoreClient s3Stats;
   DistributionServiceConfig config;
@@ -32,8 +27,8 @@ public class RemoteStatisticJsonFileLoader implements StatisticJsonFileLoader {
   }
 
   /**
-   * Map parent retryable {@link ExhaustedRetryException} to cwa owned exceptions. The inner exception will be an S3
-   * AwsException.
+   * Map parent retryable exception {@link ExhaustedRetryException} to cwa owned exceptions. The inner exception will be
+   * an S3 AwsException.
    *
    * @param ex {@link software.amazon.awssdk.core.exception.SdkException} wrapped in a {@link ExhaustedRetryException}.
    * @return cwa owned RuntimeException.
@@ -55,12 +50,10 @@ public class RemoteStatisticJsonFileLoader implements StatisticJsonFileLoader {
    * @throws RuntimeException if errors found using AWS SDK.
    */
   @Override
-  public JsonFile getFile(StatisticType statisticType) {
-    String resourcePath = getResourcePath(statisticType);
-
+  public JsonFile getFile() {
     try {
       return s3Stats.getSingleObjectContent(config.getStatistics().getBucket(),
-          resourcePath);
+          config.getStatistics().getStatisticPath());
     } catch (ExhaustedRetryException ex) {
       throw mapException(ex);
     }
@@ -74,29 +67,17 @@ public class RemoteStatisticJsonFileLoader implements StatisticJsonFileLoader {
    * @throws RuntimeException if errors found using AWS SDK.
    */
   @Override
-  public Optional<JsonFile> getFileIfUpdated(StatisticType statisticType, String etag) {
-    String resourcePath = getResourcePath(statisticType);
-
+  public Optional<JsonFile> getFileIfUpdated(String etag) {
     try {
       var result = s3Stats.getSingleObjectContent(config.getStatistics().getBucket(),
-          resourcePath, etag);
+          config.getStatistics().getStatisticPath(), etag);
       return Optional.of(result);
     } catch (ExhaustedRetryException | NotModifiedException ex) {
       if (ex.getCause() instanceof NotModifiedException || ex instanceof NotModifiedException) {
-        logger.info("{} didn't change, etag is: {}", resourcePath, etag);
         return Optional.empty();
       } else {
         throw mapException((ExhaustedRetryException) ex);
       }
-    }
-  }
-
-  private String getResourcePath(StatisticType statisticType) {
-    switch (statisticType) {
-      case LOCAL:
-        return config.getStatistics().getLocalStatisticPath();
-      default:
-        return config.getStatistics().getStatisticPath();
     }
   }
 

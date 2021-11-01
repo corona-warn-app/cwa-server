@@ -3,7 +3,6 @@
 package app.coronawarn.server.common.persistence.service;
 
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
-import app.coronawarn.server.common.persistence.domain.FederationBatchSourceSystem;
 import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
 import app.coronawarn.server.common.persistence.repository.FederationBatchInfoRepository;
 import java.time.LocalDate;
@@ -44,7 +43,7 @@ public class FederationBatchInfoService {
    * Sets the status of the provided federation batch.
    *
    * @param federationBatchInfo batch information {@link FederationBatchInfo}
-   * @param status              batch status {@link FederationBatchStatus}
+   * @param status batch status {@link FederationBatchStatus}
    */
   public void updateStatus(FederationBatchInfo federationBatchInfo, FederationBatchStatus status) {
     String statusValue = status.name();
@@ -55,15 +54,13 @@ public class FederationBatchInfoService {
   }
 
   /**
-   * Returns all batch information entries with a given status filtered by source system..
+   * Returns all batch information entries with a given status.
    *
    * @param federationBatchStatus the status the batch information entries should have.
-   * @param sourceSystem          source system of the batch.
    * @return the list of batch information entries with the given status.
    */
-  public List<FederationBatchInfo> findByStatus(FederationBatchStatus federationBatchStatus,
-      final FederationBatchSourceSystem sourceSystem) {
-    return federationBatchInfoRepository.findByStatusAndSourceSystem(federationBatchStatus.name(), sourceSystem);
+  public List<FederationBatchInfo> findByStatus(FederationBatchStatus federationBatchStatus) {
+    return federationBatchInfoRepository.findByStatus(federationBatchStatus.name());
   }
 
   /**
@@ -74,17 +71,16 @@ public class FederationBatchInfoService {
    * @throws IllegalArgumentException if {@code daysToRetain} is negative.
    */
   @Transactional
-  public void applyRetentionPolicy(int daysToRetain,
-      final FederationBatchSourceSystem sourceSystem) {
+  public void applyRetentionPolicy(int daysToRetain) {
     if (daysToRetain < 0) {
       throw new IllegalArgumentException("Number of days to retain must be greater or equal to 0.");
     }
 
     LocalDate threshold = LocalDate.now(ZoneOffset.UTC).minus(Period.ofDays(daysToRetain));
-    int numberOfDeletions = federationBatchInfoRepository.countOlderThan(threshold, sourceSystem);
+    int numberOfDeletions = federationBatchInfoRepository.countOlderThan(threshold);
     logger.info("Deleting {} batch info(s) with a date older than {} day(s) ago.",
         numberOfDeletions, daysToRetain);
-    federationBatchInfoRepository.deleteOlderThan(threshold, sourceSystem);
+    federationBatchInfoRepository.deleteOlderThan(threshold);
   }
 
   /**
@@ -93,11 +89,10 @@ public class FederationBatchInfoService {
    * @param date The date for which the batch information entries should be deleted.
    */
   @Transactional
-  public void deleteForDate(LocalDate date,
-      final FederationBatchSourceSystem sourceSystem) {
-    int numberOfDeletions = federationBatchInfoRepository.countForDateAndSourceSystem(date, sourceSystem);
+  public void deleteForDate(LocalDate date) {
+    int numberOfDeletions = federationBatchInfoRepository.countForDate(date);
     logger.info("Deleting {} batch info(s) for date {}.",
         numberOfDeletions, date);
-    federationBatchInfoRepository.deleteForDate(date, sourceSystem);
+    federationBatchInfoRepository.deleteForDate(date);
   }
 }

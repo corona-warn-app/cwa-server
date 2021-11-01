@@ -2,11 +2,10 @@
 
 package app.coronawarn.server.services.distribution.assembly.structure.file;
 
-
-import app.coronawarn.server.common.shared.collection.ImmutableStack;
-import app.coronawarn.server.common.shared.util.IoUtils;
+import app.coronawarn.server.services.distribution.assembly.io.IO;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 
 /**
  * A {@link File} that can be written to disk.
@@ -26,8 +25,8 @@ public class FileOnDisk extends WritableOnDisk implements File<WritableOnDisk> {
    */
   @Override
   public void write() {
-    IoUtils.makeNewFile(getRoot(), this.getName());
-    IoUtils.writeBytesToFile(this.getBytes(), this.getFileOnDisk());
+    IO.makeNewFile(getRoot(), this.getName());
+    IO.writeBytesToFile(this.getBytes(), this.getFileOnDisk());
   }
 
   protected java.io.File getRoot() {

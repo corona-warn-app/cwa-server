@@ -2,7 +2,6 @@
 
 package app.coronawarn.server.common.persistence.service;
 
-import static app.coronawarn.server.common.persistence.domain.FederationBatchSourceSystem.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -42,30 +41,30 @@ class FederationBatchInfoServiceTest {
 
   @Test
   void testRetrievalForEmptyDb() {
-    var actKeys = federationBatchInfoService.findByStatus(FederationBatchStatus.UNPROCESSED, EFGS);
+    var actKeys = federationBatchInfoService.findByStatus(FederationBatchStatus.UNPROCESSED);
     assertThat(actKeys).isEmpty();
   }
 
   @Test
   void testSaveAndRetrieve() {
-    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(batchTag, date, EFGS);
+    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(batchTag, date, FederationBatchSourceSystem.EFGS);
     federationBatchInfoService.save(federationBatchInfo);
-    var actualKeys = federationBatchInfoService.findByStatus(FederationBatchStatus.UNPROCESSED,EFGS);
+    var actualKeys = federationBatchInfoService.findByStatus(FederationBatchStatus.UNPROCESSED);
     assertThat(actualKeys.size()).isEqualTo(1);
     assertThat(actualKeys.get(0)).isEqualTo(federationBatchInfo);
   }
 
   @Test
   void testSaveAndRetrieveDifferentStatus() {
-    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(batchTag, date, EFGS);
+    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(batchTag, date, FederationBatchSourceSystem.EFGS);
     federationBatchInfoService.save(federationBatchInfo);
-    var actualKeys = federationBatchInfoService.findByStatus(FederationBatchStatus.ERROR,EFGS);
+    var actualKeys = federationBatchInfoService.findByStatus(FederationBatchStatus.ERROR);
     assertThat(actualKeys).isEmpty();
   }
 
   @Test
   void testDoesNotPersistOnConflict() {
-    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(batchTag, date, EFGS);
+    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(batchTag, date, FederationBatchSourceSystem.EFGS);
     assertThat(federationBatchInfoService.save(federationBatchInfo)).isTrue();
     assertThat(federationBatchInfoService.save(federationBatchInfo)).isFalse();
   }
@@ -73,33 +72,33 @@ class FederationBatchInfoServiceTest {
   @Test
   void testUpdateStatus() {
     FederationBatchInfo federationBatchInfo = new FederationBatchInfo(batchTag, date,
-        FederationBatchStatus.UNPROCESSED, EFGS);
+        FederationBatchStatus.UNPROCESSED, FederationBatchSourceSystem.EFGS);
     federationBatchInfoService.updateStatus(federationBatchInfo, FederationBatchStatus.PROCESSED);
 
-    var actualUnprocessedKeys = federationBatchInfoService.findByStatus(FederationBatchStatus.UNPROCESSED,EFGS);
+    var actualUnprocessedKeys = federationBatchInfoService.findByStatus(FederationBatchStatus.UNPROCESSED);
     assertThat(actualUnprocessedKeys).isEmpty();
 
-    var actualProcessedKeys = federationBatchInfoService.findByStatus(FederationBatchStatus.PROCESSED,EFGS);
+    var actualProcessedKeys = federationBatchInfoService.findByStatus(FederationBatchStatus.PROCESSED);
     assertThat(actualProcessedKeys.size()).isEqualTo(1);
     assertThat(actualProcessedKeys.get(0))
         .isEqualTo(
-            new FederationBatchInfo(batchTag, date, FederationBatchStatus.PROCESSED, EFGS));
+            new FederationBatchInfo(batchTag, date, FederationBatchStatus.PROCESSED, FederationBatchSourceSystem.EFGS));
   }
 
   @Test
   void testSaveAndRetrieveOnConflict() {
     FederationBatchInfo federationBatchInfo1 =
-        new FederationBatchInfo(batchTag, date, FederationBatchStatus.UNPROCESSED, EFGS);
+        new FederationBatchInfo(batchTag, date, FederationBatchStatus.UNPROCESSED, FederationBatchSourceSystem.EFGS);
     federationBatchInfoService.save(federationBatchInfo1);
 
     FederationBatchInfo federationBatchInfo2 = new FederationBatchInfo(batchTag, date, FederationBatchStatus.ERROR,
-        EFGS);
+        FederationBatchSourceSystem.EFGS);
     federationBatchInfoService.save(federationBatchInfo2);
 
-    var actualErrorKeys = federationBatchInfoService.findByStatus(FederationBatchStatus.ERROR,EFGS);
+    var actualErrorKeys = federationBatchInfoService.findByStatus(FederationBatchStatus.ERROR);
     assertThat(actualErrorKeys).isEmpty();
 
-    var actualKeys = federationBatchInfoService.findByStatus(FederationBatchStatus.UNPROCESSED,EFGS);
+    var actualKeys = federationBatchInfoService.findByStatus(FederationBatchStatus.UNPROCESSED);
     assertThat(actualKeys.size()).isEqualTo(1);
     assertThat(actualKeys.get(0)).isEqualTo(federationBatchInfo1);
   }
@@ -107,25 +106,25 @@ class FederationBatchInfoServiceTest {
   @ValueSource(ints = {0, 28})
   @ParameterizedTest
   void testApplyRetentionPolicyForValidNumberOfDays(int daysToRetain) {
-    assertThatCode(() -> federationBatchInfoService.applyRetentionPolicy(daysToRetain, EFGS))
+    assertThatCode(() -> federationBatchInfoService.applyRetentionPolicy(daysToRetain))
         .doesNotThrowAnyException();
   }
 
   @Test
   void testApplyRetentionPolicyForNegativeNumberOfDays() {
-    assertThat(catchThrowable(() -> federationBatchInfoService.applyRetentionPolicy(-1, EFGS)))
+    assertThat(catchThrowable(() -> federationBatchInfoService.applyRetentionPolicy(-1)))
         .isInstanceOf(IllegalArgumentException.class);
   }
 
   @Test
   void testApplyRetentionPolicyForOneNotApplicableEntry() {
     LocalDate date = LocalDate.now(ZoneOffset.UTC).minus(Period.ofDays(2));
-    FederationBatchInfo expectedBatchInfo = new FederationBatchInfo(batchTag, date, EFGS);
+    FederationBatchInfo expectedBatchInfo = new FederationBatchInfo(batchTag, date, FederationBatchSourceSystem.EFGS);
 
     federationBatchInfoService.save(expectedBatchInfo);
-    federationBatchInfoService.applyRetentionPolicy(2, EFGS);
+    federationBatchInfoService.applyRetentionPolicy(2);
     List<FederationBatchInfo> actualBatchInfos =
-        federationBatchInfoService.findByStatus(FederationBatchStatus.UNPROCESSED,EFGS);
+        federationBatchInfoService.findByStatus(FederationBatchStatus.UNPROCESSED);
 
     assertThat(actualBatchInfos.size()).isEqualTo(1);
     assertThat(actualBatchInfos.get(0)).isEqualTo(expectedBatchInfo);
@@ -134,12 +133,12 @@ class FederationBatchInfoServiceTest {
   @Test
   void testApplyRetentionPolicyForOneApplicableEntry() {
     LocalDate date = LocalDate.now(ZoneOffset.UTC).minus(Period.ofDays(2));
-    FederationBatchInfo expectedBatchInfo = new FederationBatchInfo(batchTag, date, EFGS);
+    FederationBatchInfo expectedBatchInfo = new FederationBatchInfo(batchTag, date, FederationBatchSourceSystem.EFGS);
 
     federationBatchInfoService.save(expectedBatchInfo);
-    federationBatchInfoService.applyRetentionPolicy(1, EFGS);
+    federationBatchInfoService.applyRetentionPolicy(1);
     List<FederationBatchInfo> actualBatchInfos =
-        federationBatchInfoService.findByStatus(FederationBatchStatus.UNPROCESSED,EFGS);
+        federationBatchInfoService.findByStatus(FederationBatchStatus.UNPROCESSED);
 
     assertThat(actualBatchInfos).isEmpty();
   }
@@ -147,11 +146,11 @@ class FederationBatchInfoServiceTest {
   @Test
   void testDeleteForDay() {
     LocalDate date = LocalDate.now(ZoneOffset.UTC);
-    FederationBatchInfo expectedBatchInfo = new FederationBatchInfo(batchTag, date, EFGS);
+    FederationBatchInfo expectedBatchInfo = new FederationBatchInfo(batchTag, date, FederationBatchSourceSystem.EFGS);
     federationBatchInfoService.save(expectedBatchInfo);
 
-    assertThat(federationBatchInfoService.findByStatus(FederationBatchStatus.UNPROCESSED,EFGS)).hasSize(1);
-    federationBatchInfoService.deleteForDate(date, EFGS);
-    assertThat(federationBatchInfoService.findByStatus(FederationBatchStatus.UNPROCESSED,EFGS)).isEmpty();
+    assertThat(federationBatchInfoService.findByStatus(FederationBatchStatus.UNPROCESSED)).hasSize(1);
+    federationBatchInfoService.deleteForDate(date);
+    assertThat(federationBatchInfoService.findByStatus(FederationBatchStatus.UNPROCESSED)).isEmpty();
   }
 }

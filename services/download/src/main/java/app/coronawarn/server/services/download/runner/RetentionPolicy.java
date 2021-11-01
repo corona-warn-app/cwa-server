@@ -1,3 +1,5 @@
+
+
 package app.coronawarn.server.services.download.runner;
 
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
@@ -20,7 +22,6 @@ public class RetentionPolicy implements ApplicationRunner {
   private static final Logger logger = LoggerFactory.getLogger(RetentionPolicy.class);
 
   private final FederationBatchInfoService federationBatchInfoService;
-  private final DownloadServiceConfig downloadServiceConfig;
   private final Integer retentionDays;
 
   /**
@@ -32,17 +33,16 @@ public class RetentionPolicy implements ApplicationRunner {
   public RetentionPolicy(FederationBatchInfoService federationBatchInfoService,
       DownloadServiceConfig downloadServiceConfig) {
     this.federationBatchInfoService = federationBatchInfoService;
-    this.downloadServiceConfig = downloadServiceConfig;
     this.retentionDays = downloadServiceConfig.getRetentionDays();
   }
 
   @Override
   public void run(ApplicationArguments args) {
     try {
-      federationBatchInfoService.applyRetentionPolicy(retentionDays, downloadServiceConfig.getSourceSystem());
-      logger.debug("Retention policy applied successfully.");
+      federationBatchInfoService.applyRetentionPolicy(retentionDays);
     } catch (Exception e) {
       logger.error("Application of retention policy failed.", e);
     }
+    logger.debug("Retention policy applied successfully.");
   }
 }

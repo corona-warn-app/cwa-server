@@ -5,9 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStringObject;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.test.context.ContextConfiguration;
@@ -19,7 +19,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
     initializers = ConfigDataApplicationContextInitializer.class)
 class StatisticsJsonValidatorTest {
 
-  static StatisticsJsonValidator<StatisticsJsonStringObject> validator;
+  @Autowired
+  StatisticsJsonValidator validator;
 
   StatisticsJsonStringObject jsonWithDate(String date) {
     var obj = new StatisticsJsonStringObject();
@@ -29,11 +30,6 @@ class StatisticsJsonValidatorTest {
 
   StatisticsJsonStringObject jsonWithoutDate() {
     return new StatisticsJsonStringObject();
-  }
-
-  @BeforeAll
-  static void setUpValidator() {
-    validator = new StatisticsJsonValidator<>();
   }
 
   @Test
