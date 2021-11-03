@@ -176,6 +176,13 @@
         <artifactId>feign-core</artifactId>
         <version>${feign.version}</version>
       </dependency>
+      <!-- upgraded the openfeign-core version to mitigate WhiteSource issue -->
+      <!-- delete this when springframework.cloud version will contain this version -->
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-openfeign-core</artifactId>
+        <version>3.0.5</version>
+      </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-math3</artifactId>
