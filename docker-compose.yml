@@ -186,7 +186,7 @@ services:
     depends_on:
       - objectstore
   verification-fake:
-    image: roesslerj/cwa-verification-fake:0.0.4
+    image: roesslerj/cwa-verification-fake:0.0.5
     restart: always
     ports:
       - "8004:8004"
