@@ -43,9 +43,6 @@ public class FederationGatewayConfig {
 
     private File keyStore;
     private String keyStorePassword;
-    private String certificateType;
-    private String certificateDn;
-    private String certificateSha;
     private File trustStore;
     private String trustStorePassword;
 
@@ -65,22 +62,6 @@ public class FederationGatewayConfig {
       this.trustStorePassword = trustStorePassword;
     }
 
-    public String getCertificateDn() {
-      return certificateDn;
-    }
-
-    public void setCertificateDn(String certificateDn) {
-      this.certificateDn = certificateDn;
-    }
-
-    public String getCertificateSha() {
-      return certificateSha;
-    }
-
-    public void setCertificateSha(String certificateSha) {
-      this.certificateSha = certificateSha;
-    }
-
     public File getKeyStore() {
       return keyStore;
     }
@@ -97,12 +78,5 @@ public class FederationGatewayConfig {
       this.keyStorePassword = keyStorePassword;
     }
 
-    public String getCertificateType() {
-      return certificateType;
-    }
-
-    public void setCertificateType(String certificateType) {
-      this.certificateType = certificateType;
-    }
   }
 }
