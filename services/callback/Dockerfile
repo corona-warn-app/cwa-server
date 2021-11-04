@@ -34,7 +34,7 @@ RUN ${WORK_DIR}/mvnw --batch-mode -P docker-image --file ${WORK_DIR}/pom.xml ${M
 RUN cp ${WORK_DIR}/services/${SERVICE}/target/*.jar /usr/sap/${SERVICE}-service/service.jar
 RUN cp ${WORK_DIR}/scripts/DpkgHelper.java /DpkgHelper.java
 
-FROM gcr.io/distroless/java-debian11:latest
+FROM gcr.io/distroless/java-debian11:11
 
 ARG SERVICE=callback
 
