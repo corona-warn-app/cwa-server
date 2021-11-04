@@ -18,7 +18,6 @@ class CloudFederationFeignHttpClientProviderSmokeTest {
     Ssl ssl = new Ssl();
     ssl.setKeyStore(new File("../../docker-compose-test-secrets/ssl.p12"));
     ssl.setKeyStorePassword("123456");
-    ssl.setCertificateType("PKCS12");
     ssl.setTrustStore(new File("../../docker-compose-test-secrets/contains_efgs_truststore.jks"));
     ssl.setTrustStorePassword("123456");
     FederationGatewayConfig config = new FederationGatewayConfig();
