@@ -191,7 +191,7 @@ services:
     ports:
       - "8004:8004"
   efgs-fake:
-    image: roesslerj/cwa-efgs-fake:0.0.4
+    image: roesslerj/cwa-efgs-fake:0.0.5
     restart: always
     ports:
       - "8014:8014"
