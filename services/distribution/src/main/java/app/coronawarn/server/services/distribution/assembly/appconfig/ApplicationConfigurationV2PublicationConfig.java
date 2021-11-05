@@ -553,7 +553,7 @@ public class ApplicationConfigurationV2PublicationConfig {
     return deserializedBlockedUvciChunks.stream().filter(dgcBlockedUvciChunk ->
         TimeUtils.getNow().getEpochSecond() >= dgcBlockedUvciChunk.getValidFrom())
         .map(deserializedBlockedUvciChunk -> DGCBlockedUVCIChunk.newBuilder()
-            .addAllIncides(deserializedBlockedUvciChunk.getIndices())
+            .addAllIndices(deserializedBlockedUvciChunk.getIndices())
             .setHash(ByteString.copyFrom(deserializedBlockedUvciChunk.getHash()))
             .build()).collect(Collectors.toList());
   }
