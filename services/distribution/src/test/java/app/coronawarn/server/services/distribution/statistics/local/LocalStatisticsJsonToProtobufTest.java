@@ -102,4 +102,34 @@ class LocalStatisticsJsonToProtobufTest {
             TimeUtils.toEpochSecondsUtc(LocalDate.of(2021, 5, 16)));
   }
 
+
+  @Test
+  void shouldReturnCorrectNumberOfAdministrativeUnits() {
+
+    // -> 3 administrative units: LK Rottweil, LK Schwarzwald-Baar-Kreis, LK Ortenaukreis.
+    assertThat(localStatisticsMap.get(1).getAdministrativeUnitData(0).getAdministrativeUnitShortId()).isEqualTo(8325);
+    assertThat(localStatisticsMap.get(1).getAdministrativeUnitData(1).getAdministrativeUnitShortId()).isEqualTo(8326);
+    assertThat(localStatisticsMap.get(1).getAdministrativeUnitData(2).getAdministrativeUnitShortId()).isEqualTo(8317);
+
+    // -> 0 administrative units
+    assertThat(localStatisticsMap.get(2).getAdministrativeUnitDataCount()).isEqualTo(0);
+
+    // -> 2 administrative units: LK Ostprignitz-Ruppin and SK Berlin Pankow
+    assertThat(localStatisticsMap.get(3).getAdministrativeUnitData(0).getAdministrativeUnitShortId()).isEqualTo(12068);
+    assertThat(localStatisticsMap.get(3).getAdministrativeUnitData(1).getAdministrativeUnitShortId()).isEqualTo(11003);
+
+    // -> 0 administrative units
+    assertThat(localStatisticsMap.get(4).getAdministrativeUnitDataCount()).isEqualTo(0);
+
+    // -> 2 administrative units: LK Märkischer Kreis and SK Oberhausen
+    assertThat(localStatisticsMap.get(5).getAdministrativeUnitData(0).getAdministrativeUnitShortId()).isEqualTo(5962);
+    assertThat(localStatisticsMap.get(5).getAdministrativeUnitData(1).getAdministrativeUnitShortId()).isEqualTo(5119);
+
+    // -> 2 administrative units: Wartburgkreis and Eisenach
+    assertThat(localStatisticsMap.get(6).getAdministrativeUnitData(0).getAdministrativeUnitShortId()).isEqualTo(16063);
+    assertThat(localStatisticsMap.get(6).getAdministrativeUnitData(1).getAdministrativeUnitShortId()).isEqualTo(16056);
+
+    // -> 0 administrative units
+    assertThat(localStatisticsMap.get(7).getAdministrativeUnitDataCount()).isEqualTo(0);
+  }
 }
