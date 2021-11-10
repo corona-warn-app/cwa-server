@@ -132,4 +132,17 @@ class LocalStatisticsJsonToProtobufTest {
     // -> 0 administrative units
     assertThat(localStatisticsMap.get(7).getAdministrativeUnitDataCount()).isEqualTo(0);
   }
+
+
+  @Test
+  void shouldCreateEisenAndGiveTheDefaultValuesFromWartburgkreis() {
+
+    AdministrativeUnitData eisenach = localStatisticsMap.get(6).getAdministrativeUnitData(0);
+    AdministrativeUnitData wartburgkreis = localStatisticsMap.get(6).getAdministrativeUnitData(1);
+
+    assertThat(eisenach.getSevenDayIncidence().getValue()).isEqualTo(wartburgkreis.getSevenDayIncidence().getValue());
+    assertThat(eisenach.getSevenDayIncidence().getTrend()).isEqualTo(wartburgkreis.getSevenDayIncidence().getTrend());
+
+    assertThat(eisenach.getUpdatedAt()).isEqualTo(wartburgkreis.getUpdatedAt());
+  }
 }

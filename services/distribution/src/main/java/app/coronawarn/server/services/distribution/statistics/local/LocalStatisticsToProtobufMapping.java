@@ -79,7 +79,7 @@ public class LocalStatisticsToProtobufMapping {
 
         List<LocalStatisticsJsonStringObject> onePerProvinceStatistics = deserializeAndValidate(file);
 
-        onePerProvinceStatistics.add(handleSpecialCase(onePerProvinceStatistics));
+        handleSpecialCase(onePerProvinceStatistics);
 
         onePerProvinceStatistics.forEach(localStatisticsJsonStringObject -> {
           if (localStatisticsJsonStringObject.getProvinceCode() != null) {
@@ -112,7 +112,7 @@ public class LocalStatisticsToProtobufMapping {
     return localStatisticsMap;
   }
 
-  private LocalStatisticsJsonStringObject handleSpecialCase(
+  private void handleSpecialCase(
       List<LocalStatisticsJsonStringObject> localStatisticsJsonStringObjects) {
 
     LocalStatisticsJsonStringObject eisenach = new LocalStatisticsJsonStringObject();
@@ -135,8 +135,8 @@ public class LocalStatisticsToProtobufMapping {
           wartburgkreis.getSevenDayHospitalization1stReportedGrowthrate());
       eisenach.setSevenDayHospitalization1stReportedTrend1Percent(
           wartburgkreis.getSevenDayHospitalization1stReportedTrend1Percent());
+      localStatisticsJsonStringObjects.add(eisenach);
     }
-    return eisenach;
   }
 
   private LocalStatisticsJsonStringObject localStatsBasedOnProvinceCode(
