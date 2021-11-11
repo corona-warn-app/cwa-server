@@ -14,7 +14,7 @@ jobs:
         -   name: Pull HaDoLint image
             run: docker pull hadolint/hadolint
         -   name: Lint Dockerfile
-            run: docker run --rm --interactive hadolint/hadolint < ./services/callback/Dockerfile
+            run: docker run --rm --interactive hadolint/hadolint hadolint --ignore DL3059 - < ./services/callback/Dockerfile
     hadolint-distribution:
         runs-on: ubuntu-latest
         steps:
@@ -22,7 +22,7 @@ jobs:
         -   name: Pull HaDoLint Image
             run: docker pull hadolint/hadolint
         -   name: Lint Dockerfile
-            run: docker run --rm --interactive hadolint/hadolint < ./services/distribution/Dockerfile
+            run: docker run --rm --interactive hadolint/hadolint hadolint --ignore DL3059 - < ./services/distribution/Dockerfile
     hadolint-download:
         runs-on: ubuntu-latest
         steps:
@@ -30,7 +30,7 @@ jobs:
         -   name: Pull HaDoLint Image
             run: docker pull hadolint/hadolint
         -   name: Lint Dockerfile
-            run: docker run --rm --interactive hadolint/hadolint < ./services/download/Dockerfile
+            run: docker run --rm --interactive hadolint/hadolint hadolint --ignore DL3059 - < ./services/download/Dockerfile
     hadolint-submission:
         runs-on: ubuntu-latest
         steps:
@@ -38,7 +38,7 @@ jobs:
         -   name: Pull HaDoLint Image
             run: docker pull hadolint/hadolint
         -   name: Lint Dockerfile
-            run: docker run --rm --interactive hadolint/hadolint < ./services/submission/Dockerfile
+            run: docker run --rm --interactive hadolint/hadolint hadolint --ignore DL3059 - < ./services/submission/Dockerfile
     hadolint-upload:
         runs-on: ubuntu-latest
         steps:
@@ -46,4 +46,4 @@ jobs:
         -   name: Pull HaDoLint Image
             run: docker pull hadolint/hadolint
         -   name: Lint Dockerfile
-            run: docker run --rm --interactive hadolint/hadolint < ./services/upload/Dockerfile
+            run: docker run --rm --interactive hadolint/hadolint hadolint --ignore DL3059 - < ./services/upload/Dockerfile
