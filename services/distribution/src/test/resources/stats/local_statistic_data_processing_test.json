@@ -346,5 +346,17 @@
     "seven_day_hospitalization_1st_reported_daily": null,
     "seven_day_hospitalization_1st_reported_growthrate": null,
     "seven_day_hospitalization_1st_reported_trend_1percent": null
+  },
+  {
+    "update_timestamp": "2021-05-19T12:19:33,103",
+    "effective_date": "2021-05-20",
+    "province_code": 16063,
+    "province_name": "Wartburgkreis",
+    "seven_day_incidence_1st_reported_daily": 75.555,
+    "seven_day_incidence_1st_reported_growthrate": 0.75,
+    "seven_day_incidence_1st_reported_trend_1percent": -1,
+    "seven_day_hospitalization_1st_reported_daily": null,
+    "seven_day_hospitalization_1st_reported_growthrate": null,
+    "seven_day_hospitalization_1st_reported_trend_1percent": null
   }
 ]

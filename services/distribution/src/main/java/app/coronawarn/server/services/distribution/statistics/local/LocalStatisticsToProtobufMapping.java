@@ -79,6 +79,8 @@ public class LocalStatisticsToProtobufMapping {
 
         List<LocalStatisticsJsonStringObject> onePerProvinceStatistics = deserializeAndValidate(file);
 
+        handleSpecialCase(onePerProvinceStatistics);
+
         onePerProvinceStatistics.forEach(localStatisticsJsonStringObject -> {
           if (localStatisticsJsonStringObject.getProvinceCode() != null) {
             int provinceCode = Integer.parseInt(localStatisticsJsonStringObject.getProvinceCode());
@@ -108,6 +110,46 @@ public class LocalStatisticsToProtobufMapping {
     }
 
     return localStatisticsMap;
+  }
+
+  private void handleSpecialCase(
+      List<LocalStatisticsJsonStringObject> localStatisticsJsonStringObjects) {
+
+    LocalStatisticsJsonStringObject eisenach = new LocalStatisticsJsonStringObject();
+    LocalStatisticsJsonStringObject wartburgkreis = localStatsBasedOnProvinceCode(localStatisticsJsonStringObjects,
+        "16063");
+
+    if (wartburgkreis != null) {
+      eisenach.setUpdateTimestamp(wartburgkreis.getUpdateTimestamp());
+      eisenach.setEffectiveDate(wartburgkreis.getEffectiveDate());
+      eisenach.setProvinceCode("16056");
+      eisenach.setProvinceName("Eisenach");
+
+      eisenach.setSevenDayIncidence1stReportedDaily(wartburgkreis.getSevenDayIncidence1stReportedDaily());
+      eisenach.setSevenDayIncidence1stReportedGrowthrate(wartburgkreis.getSevenDayIncidence1stReportedGrowthrate());
+      eisenach
+          .setSevenDayIncidence1stReportedTrend1Percent(wartburgkreis.getSevenDayIncidence1stReportedTrend1Percent());
+
+      eisenach.setSevenDayHospitalization1stReportedDaily(wartburgkreis.getSevenDayHospitalization1stReportedDaily());
+      eisenach.setSevenDayHospitalization1stReportedGrowthrate(
+          wartburgkreis.getSevenDayHospitalization1stReportedGrowthrate());
+      eisenach.setSevenDayHospitalization1stReportedTrend1Percent(
+          wartburgkreis.getSevenDayHospitalization1stReportedTrend1Percent());
+      localStatisticsJsonStringObjects.add(eisenach);
+    }
+  }
+
+  private LocalStatisticsJsonStringObject localStatsBasedOnProvinceCode(
+      List<LocalStatisticsJsonStringObject> localStatisticsJsonStringObjects, String provinceCode) {
+
+    LocalStatisticsJsonStringObject resultedLocalStatsJsonStringObject = null;
+
+    for (LocalStatisticsJsonStringObject localStatisticsJsonStringObject : localStatisticsJsonStringObjects) {
+      if (localStatisticsJsonStringObject.getProvinceCode().equals(provinceCode)) {
+        resultedLocalStatsJsonStringObject = localStatisticsJsonStringObject;
+      }
+    }
+    return resultedLocalStatsJsonStringObject;
   }
 
   private Optional<JsonFile> getFile() {
