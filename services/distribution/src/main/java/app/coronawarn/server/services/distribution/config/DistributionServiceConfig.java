@@ -12,6 +12,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
+import org.bouncycastle.util.encoders.Hex;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
@@ -1608,6 +1609,8 @@ public class DistributionServiceConfig {
       @Max(100)
       private Integer expirationThresholdInDays;
 
+      private DgcBlocklistParameters blockListParameters;
+
       public DgcTestCertificateParameters getTestCertificateParameters() {
         return dgcTestCertificateParameters;
       }
@@ -1622,6 +1625,14 @@ public class DistributionServiceConfig {
 
       public void setExpirationThresholdInDays(Integer expirationThresholdInDays) {
         this.expirationThresholdInDays = expirationThresholdInDays;
+      }
+
+      public DgcBlocklistParameters getBlockListParameters() {
+        return blockListParameters;
+      }
+
+      public void setBlockListParameters(DgcBlocklistParameters blockListParameters) {
+        this.blockListParameters = blockListParameters;
       }
 
       public static class DgcTestCertificateParameters {
@@ -1651,6 +1662,56 @@ public class DistributionServiceConfig {
         }
       }
 
+      public static class DgcBlocklistParameters {
+
+        private String blockedUvciChunks;
+
+        /**
+         * Parse String from application.yaml parameter.
+         *
+         * @return parsed string in a list of DgcBlockedUvciChunk.
+         */
+        public List<DgcBlockedUvciChunk> getBlockedUvciChunks() {
+          return SerializationUtils.deserializeJson(blockedUvciChunks,
+              typeFactory -> typeFactory
+                  .constructCollectionType(List.class, DgcBlockedUvciChunk.class));
+        }
+
+        public void setBlockedUvciChunks(String blockedUvciChunks) {
+          this.blockedUvciChunks = blockedUvciChunks;
+        }
+
+        public static class DgcBlockedUvciChunk {
+
+          List<Integer> indices;
+          String hash;
+          Integer validFrom;
+
+          public List<Integer> getIndices() {
+            return indices;
+          }
+
+          public void setIndices(List<Integer> indices) {
+            this.indices = indices;
+          }
+
+          public byte[] getHash() {
+            return Hex.decode(hash);
+          }
+
+          public void setHash(String hash) {
+            this.hash = hash;
+          }
+
+          public Integer getValidFrom() {
+            return validFrom;
+          }
+
+          public void setValidFrom(Integer validFrom) {
+            this.validFrom = validFrom;
+          }
+        }
+      }
     }
   }
 

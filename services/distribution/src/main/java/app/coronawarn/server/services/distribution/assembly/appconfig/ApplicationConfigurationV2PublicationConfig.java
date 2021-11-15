@@ -6,6 +6,8 @@ import app.coronawarn.server.common.protocols.internal.v2.AppFeatures;
 import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationAndroid;
 import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationIOS;
 import app.coronawarn.server.common.protocols.internal.v2.CoronaTestParameters;
+import app.coronawarn.server.common.protocols.internal.v2.DGCBlockedUVCIChunk;
+import app.coronawarn.server.common.protocols.internal.v2.DGCBlocklistParameters;
 import app.coronawarn.server.common.protocols.internal.v2.DGCParameters;
 import app.coronawarn.server.common.protocols.internal.v2.DGCTestCertificateParameters;
 import app.coronawarn.server.common.protocols.internal.v2.DailySummariesConfig;
@@ -33,6 +35,7 @@ import app.coronawarn.server.common.protocols.internal.v2.PresenceTracingParamet
 import app.coronawarn.server.common.protocols.internal.v2.RiskCalculationParameters;
 import app.coronawarn.server.common.protocols.internal.v2.SemanticVersion;
 import app.coronawarn.server.common.shared.exception.UnableToLoadFileException;
+import app.coronawarn.server.common.shared.util.TimeUtils;
 import app.coronawarn.server.services.distribution.assembly.appconfig.parsing.v2.DeserializedDailySummariesConfig;
 import app.coronawarn.server.services.distribution.assembly.appconfig.parsing.v2.DeserializedDiagnosisKeysDataMapping;
 import app.coronawarn.server.services.distribution.assembly.appconfig.parsing.v2.DeserializedExposureConfiguration;
@@ -45,10 +48,12 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.AndroidPrivacyPreservingAnalyticsParameters;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.DeserializedDayPackageMetadata;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.DeserializedHourPackageMetadata;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.DgcParameters.DgcBlocklistParameters.DgcBlockedUvciChunk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.IosEventDrivenUserSurveyParameters;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.IosExposureDetectionParameters;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.IosKeyDownloadParameters;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.IosPrivacyPreservingAnalyticsParameters;
+import com.google.protobuf.ByteString;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -536,6 +541,20 @@ public class ApplicationConfigurationV2PublicationConfig {
         .setTestCertificateParameters(testCertificateParameters)
         .setExpirationThresholdInDays(distributionServiceConfig.getAppConfigParameters()
             .getDgcParameters().getExpirationThresholdInDays())
+        .setBlockListParameters(DGCBlocklistParameters.newBuilder()
+            .addAllBlockedUvciChunks(buildBlockedUvciChunks(distributionServiceConfig.getAppConfigParameters()
+                .getDgcParameters().getBlockListParameters().getBlockedUvciChunks()))
+            .build())
         .build();
+  }
+
+  private List<DGCBlockedUVCIChunk> buildBlockedUvciChunks(
+      List<DgcBlockedUvciChunk> deserializedBlockedUvciChunks) {
+    return deserializedBlockedUvciChunks.stream().filter(dgcBlockedUvciChunk ->
+        TimeUtils.getNow().getEpochSecond() >= dgcBlockedUvciChunk.getValidFrom())
+        .map(deserializedBlockedUvciChunk -> DGCBlockedUVCIChunk.newBuilder()
+            .addAllIndices(deserializedBlockedUvciChunk.getIndices())
+            .setHash(ByteString.copyFrom(deserializedBlockedUvciChunk.getHash()))
+            .build()).collect(Collectors.toList());
   }
 }

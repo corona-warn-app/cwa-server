@@ -138,6 +138,12 @@ services:
           #   * <= 60
           waitForRetryInSeconds: ${DGC_TC_WAIT_FOR_RETRY_IN_SECONDS:10}
         expiration-threshold-in-days: ${DGC_EXPIRATION_THRESHOLD_IN_DAYS:28}
+        block-list-parameters:
+          # the value shall be parsed as a JSON string to
+          # generate the individual items, e.g.
+          # '[{"indices":[0],"hash":"9B09CAFEC0A6808411C348880C9C2D920646DFB980B5C959DC6EBF8A19B98120","validFrom":1636040446},{"indices":[0,2],"hash":"7D5D5B336E903086D64D1207EC6E957A4B1301026699011026F84A5156317C2B","validFrom":1638369640}]'
+          # note that `hash` shall be parsed from a hex string to a byte sequence
+          blocked-uvci-chunks: ${DGC_BLOCKED_UVCI_CHUNKS:[]}
       ios-key-download-parameters:
         revoked-day-packages: ${KEY_DOWNLOAD_REVOKED_DAY_PACKAGES:[]}
         revoked-hour-packages: ${KEY_DOWNLOAD_REVOKED_HOUR_PACKAGES:[]}
