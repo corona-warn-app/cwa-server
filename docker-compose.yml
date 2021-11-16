@@ -24,7 +24,8 @@ services:
       SSL_FEDERATION_TRUSTSTORE_PASSWORD: 123456
       FEDERATION_GATEWAY_KEYSTORE_PATH: file:/secrets/ssl.p12
       FEDERATION_GATEWAY_KEYSTORE_PASS: 123456
-      FEDERATION_GATEWAY_BASE_URL: http://efgs-fake:8014
+      FEDERATION_GATEWAY_BASE_URL: https://efgs-fake:8014
+      # for local testing: FEDERATION_GATEWAY_BASE_URL: https://host.docker.internal:8014
     volumes:
       - ./docker-compose-test-secrets:/secrets
   submission:
