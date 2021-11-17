@@ -1750,6 +1750,18 @@ public class DistributionServiceConfig {
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String valuesetsFileName;
 
+    @NotNull
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
+    private String allowList;
+
+    @NotNull
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
+    private String allowListSignature;
+
+    @NotNull
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
+    private String allowListCertificate;
+
     private String[] supportedLanguages;
 
     private String exportArchiveName;
@@ -1844,6 +1856,30 @@ public class DistributionServiceConfig {
 
     public void setSupportedLanguages(String[] supportedLanguages) {
       this.supportedLanguages = supportedLanguages;
+    }
+
+    public String getAllowList() {
+      return allowList;
+    }
+
+    public void setAllowList(String allowList) {
+      this.allowList = allowList;
+    }
+
+    public byte[] getAllowListSignature() {
+      return Hex.decode(allowListSignature);
+    }
+
+    public void setAllowListSignature(String allowListSignature) {
+      this.allowListSignature = allowListSignature;
+    }
+
+    public String getAllowListCertificate() {
+      return allowListCertificate;
+    }
+
+    public void setAllowListCertificate(String allowListCertificate) {
+      this.allowListCertificate = allowListCertificate;
     }
 
     public Client getClient() {
