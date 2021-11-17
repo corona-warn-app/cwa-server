@@ -8,7 +8,7 @@ in the future.
 The high level overview of CWA can be found in the [cwa-documentation](https://github.com/corona-warn-app/cwa-documentation)
 repository. The [solution architecture](https://github.com/corona-warn-app/cwa-documentation/blob/HEAD/solution_architecture.md)
 is outlined in detail.
-![Solution Architecture](https://raw.githubusercontent.com/corona-warn-app/cwa-documentation/HEAD/images/solution_architecture/figure_1.svg)
+![Solution Architecture](https://raw.githubusercontent.com/corona-warn-app/cwa-documentation/HEAD/images/solution_architecture/high_level_architecture.svg)
 
 The above illustration shows all components of the CWA project. This repository reflects the `Corona-Warn-App Server`
 component, which can be found in the left bottom corner. This document explains in more detail how this component
