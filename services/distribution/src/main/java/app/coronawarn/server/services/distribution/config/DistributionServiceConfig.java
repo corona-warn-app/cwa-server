@@ -1750,16 +1750,10 @@ public class DistributionServiceConfig {
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String valuesetsFileName;
 
-    @NotNull
-    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String allowList;
 
-    @NotNull
-    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String allowListSignature;
 
-    @NotNull
-    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String allowListCertificate;
 
     private String[] supportedLanguages;
