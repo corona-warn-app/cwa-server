@@ -1,6 +1,7 @@
 package app.coronawarn.server.services.distribution.dgc;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AllowList;
 import app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,7 +32,7 @@ public class DccValidationAllowListSignatureTest {
 
 
     byte[] signature = distributionServiceConfig.getDigitalGreenCertificate().getAllowListSignature();
-    String content = distributionServiceConfig.getDigitalGreenCertificate().getAllowList();
+    AllowList content = distributionServiceConfig.getDigitalGreenCertificate().getAllowList();
     PublicKey publicKey = getPublicKeyFromString(
         distributionServiceConfig.getDigitalGreenCertificate().getAllowListCertificate());
 

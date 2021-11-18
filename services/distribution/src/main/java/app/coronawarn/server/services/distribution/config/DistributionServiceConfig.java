@@ -12,6 +12,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.DgcParameters.DgcBlocklistParameters.DgcBlockedUvciChunk;
 import org.bouncycastle.util.encoders.Hex;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
@@ -1852,8 +1853,10 @@ public class DistributionServiceConfig {
       this.supportedLanguages = supportedLanguages;
     }
 
-    public String getAllowList() {
-      return allowList;
+    public AllowList getAllowList() {
+      return SerializationUtils.deserializeJson(allowList,
+          typeFactory -> typeFactory
+              .constructType(AllowList.class));
     }
 
     public void setAllowList(String allowList) {
@@ -1898,6 +1901,48 @@ public class DistributionServiceConfig {
 
     public void setExportArchiveName(String exportArchiveName) {
       this.exportArchiveName = exportArchiveName;
+    }
+  }
+
+  public static class AllowList {
+    private List<CertificateAllowList> certificates;
+
+    public List<CertificateAllowList> getCertificates() {
+        return certificates;
+    }
+
+    public void setCertificates(List<CertificateAllowList> certificates) {
+      this.certificates = certificates;
+    }
+
+    public static class CertificateAllowList {
+      private String serviceProvider;
+      private String hostname;
+      private String fingerprint256;
+
+      public String getServiceProvider() {
+        return serviceProvider;
+      }
+
+      public void setServiceProvider(String serviceProvider) {
+        this.serviceProvider = serviceProvider;
+      }
+
+      public String getHostname() {
+        return hostname;
+      }
+
+      public void setHostname(String hostname) {
+        this.hostname = hostname;
+      }
+
+      public String getFingerprint256() {
+        return fingerprint256;
+      }
+
+      public void setFingerprint256(String fingerprint256) {
+        this.fingerprint256 = fingerprint256;
+      }
     }
   }
 }
