@@ -19,6 +19,7 @@ import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateTo
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.client.ProdDigitalCovidCertificateClient;
+import app.coronawarn.server.services.distribution.dgc.dsc.DigitalCovidValidationCertificateToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalSigningCertificatesClient;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalSigningCertificatesToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
@@ -44,10 +45,16 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @EnableConfigurationProperties(value = {DistributionServiceConfig.class})
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(
-    classes = {DigitalGreenCertificateToProtobufMapping.class, DigitalGreenCertificateToCborMapping.class,
-        CryptoProvider.class, DistributionServiceConfig.class, ProdDigitalCovidCertificateClient.class,
-        DigitalSigningCertificatesToProtobufMapping.class, DigitalSigningCertificatesClient.class,
-        BusinessRulesArchiveBuilder.class},
+    classes = {
+        DigitalGreenCertificateToProtobufMapping.class,
+        DigitalGreenCertificateToCborMapping.class,
+        CryptoProvider.class, DistributionServiceConfig.class,
+        ProdDigitalCovidCertificateClient.class,
+        DigitalSigningCertificatesToProtobufMapping.class,
+        DigitalCovidValidationCertificateToProtobufMapping.class,
+        DigitalSigningCertificatesClient.class,
+        BusinessRulesArchiveBuilder.class
+    },
     initializers = ConfigDataApplicationContextInitializer.class)
 class DccRulesNotFetchedStructureProviderTest {
 
@@ -67,6 +74,9 @@ class DccRulesNotFetchedStructureProviderTest {
 
   @Autowired
   DigitalSigningCertificatesToProtobufMapping digitalSigningCertificatesToProtobufMapping;
+
+  @Autowired
+  DigitalCovidValidationCertificateToProtobufMapping digitalCovidValidationCertificateToProtobufMapping;
 
   @Autowired
   BusinessRulesArchiveBuilder businessRulesArchiveBuilder;
@@ -169,7 +179,8 @@ class DccRulesNotFetchedStructureProviderTest {
   private DirectoryOnDisk getStructureProviderDirectory() {
     DigitalCertificatesStructureProvider underTest = new DigitalCertificatesStructureProvider(
         distributionServiceConfig, cryptoProvider, dgcToProtobufMapping,
-        dgcToCborMappingMock, digitalSigningCertificatesToProtobufMapping, digitalCovidCertificateClient,
+        dgcToCborMappingMock, digitalSigningCertificatesToProtobufMapping,
+        digitalCovidValidationCertificateToProtobufMapping, digitalCovidCertificateClient,
         businessRulesArchiveBuilder);
     DirectoryOnDisk digitalGreenCertificates = underTest.getDigitalGreenCertificates();
     digitalGreenCertificates.prepare(new ImmutableStack<>());

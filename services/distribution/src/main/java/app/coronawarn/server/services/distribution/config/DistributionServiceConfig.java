@@ -12,7 +12,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
-import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.DgcParameters.DgcBlocklistParameters.DgcBlockedUvciChunk;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.bouncycastle.util.encoders.Hex;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
@@ -1853,10 +1856,19 @@ public class DistributionServiceConfig {
       this.supportedLanguages = supportedLanguages;
     }
 
+    /**
+     * getAllowList.
+     *
+     * @return AllowList
+     */
     public AllowList getAllowList() {
       return SerializationUtils.deserializeJson(allowList,
           typeFactory -> typeFactory
               .constructType(AllowList.class));
+    }
+
+    public String getAllowListAsString() {
+      return allowList;
     }
 
     public void setAllowList(String allowList) {
@@ -1908,13 +1920,16 @@ public class DistributionServiceConfig {
     private List<CertificateAllowList> certificates;
 
     public List<CertificateAllowList> getCertificates() {
-        return certificates;
+      return certificates;
     }
 
+    @JsonProperty("certificates")
     public void setCertificates(List<CertificateAllowList> certificates) {
       this.certificates = certificates;
     }
 
+    @JsonInclude(Include.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class CertificateAllowList {
       private String serviceProvider;
       private String hostname;
@@ -1924,6 +1939,7 @@ public class DistributionServiceConfig {
         return serviceProvider;
       }
 
+      @JsonProperty("serviceProvider")
       public void setServiceProvider(String serviceProvider) {
         this.serviceProvider = serviceProvider;
       }
@@ -1932,6 +1948,7 @@ public class DistributionServiceConfig {
         return hostname;
       }
 
+      @JsonProperty("hostname")
       public void setHostname(String hostname) {
         this.hostname = hostname;
       }
@@ -1940,6 +1957,7 @@ public class DistributionServiceConfig {
         return fingerprint256;
       }
 
+      @JsonProperty("fingerprint256")
       public void setFingerprint256(String fingerprint256) {
         this.fingerprint256 = fingerprint256;
       }

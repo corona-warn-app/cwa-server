@@ -1,0 +1,88 @@
+package app.coronawarn.server.services.distribution.dgc.dsc;
+
+import static app.coronawarn.server.common.shared.util.SecurityUtils.ecdsaSignatureVerification;
+import static app.coronawarn.server.common.shared.util.SecurityUtils.getPublicKeyFromString;
+import static app.coronawarn.server.common.shared.util.SerializationUtils.validateJsonSchema;
+
+import app.coronawarn.server.common.protocols.internal.dgc.ValidationServiceAllowlist;
+import app.coronawarn.server.common.protocols.internal.dgc.ValidationServiceAllowlistItem;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AllowList;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.security.PublicKey;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AllowList.CertificateAllowList;
+import com.google.protobuf.ByteString;
+import org.everit.json.schema.ValidationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.stereotype.Component;
+
+@Component
+public class DigitalCovidValidationCertificateToProtobufMapping {
+  private static final Logger LOGGER = LoggerFactory
+      .getLogger(DigitalCovidValidationCertificateToProtobufMapping.class);
+
+  public static final String DCC_VALIDATION_RULE_JSON_CLASSPATH = "dgc/dcc-validation-service-allowlist-rule.json";
+
+  private final DistributionServiceConfig distributionServiceConfig;
+  private final ResourceLoader resourceLoader;
+
+  public DigitalCovidValidationCertificateToProtobufMapping(
+      DistributionServiceConfig distributionServiceConfig, ResourceLoader resourceLoader) {
+    this.distributionServiceConfig = distributionServiceConfig;
+    this.resourceLoader = resourceLoader;
+  }
+
+  public boolean validateSchema(AllowList allowList) {
+    try (final InputStream in = resourceLoader.getResource(DCC_VALIDATION_RULE_JSON_CLASSPATH).getInputStream()) {
+      validateJsonSchema(allowList, in);
+      return true;
+    } catch (ValidationException | IOException e) {
+      LOGGER.error(e.getMessage(), e);
+      return false;
+    }
+  }
+
+  public boolean validateCertificate() {
+    String content = distributionServiceConfig.getDigitalGreenCertificate().getAllowListAsString();
+    byte[] signature = distributionServiceConfig.getDigitalGreenCertificate().getAllowListSignature();
+
+    try {
+      PublicKey publicKey = getPublicKeyFromString(
+          distributionServiceConfig.getDigitalGreenCertificate().getAllowListCertificate());
+      ecdsaSignatureVerification(
+          signature,
+          publicKey,
+          content.getBytes(StandardCharsets.UTF_8));
+      return true;
+    } catch(Exception e) {
+      LOGGER.error(e.getMessage(), e);
+      return false;
+    }
+  }
+
+  public Optional<ValidationServiceAllowlist> constructProtobufMapping() {
+    AllowList allowList = distributionServiceConfig.getDigitalGreenCertificate().getAllowList();
+    if(!validateSchema(allowList) || !validateCertificate()) {
+      return Optional.empty();
+    }
+    List<ValidationServiceAllowlistItem> validationServiceAllowlistItemList = new ArrayList<>();
+    for(CertificateAllowList certificateAllowList : allowList.getCertificates()) {
+      validationServiceAllowlistItemList.add(
+          ValidationServiceAllowlistItem.newBuilder()
+              .setHostname(certificateAllowList.getHostname())
+              .setServiceProvider(certificateAllowList.getServiceProvider())
+              .setFingerprint256(ByteString.copyFrom(certificateAllowList.getFingerprint256(), StandardCharsets.UTF_8))
+              .build());
+    }
+    return Optional.of(ValidationServiceAllowlist.newBuilder()
+        .addAllCertificates(validationServiceAllowlistItemList)
+        .build());
+  }
+}

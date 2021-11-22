@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.distribution.assembly.component;
 
+import app.coronawarn.server.common.protocols.internal.dgc.ValidationServiceAllowlist;
 import app.coronawarn.server.common.protocols.internal.dgc.ValueSets;
 import app.coronawarn.server.common.shared.exception.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
@@ -14,6 +15,7 @@ import app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleType;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToCborMapping;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
+import app.coronawarn.server.services.distribution.dgc.dsc.DigitalCovidValidationCertificateToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalSigningCertificatesToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
@@ -39,11 +41,15 @@ public class DigitalCertificatesStructureProvider {
   public static final String ACCEPTANCE_RULES = "acceptance-rules";
   public static final String INVALIDATION_RULES = "invalidation-rules";
 
+  public static final String VALIDATION_SERVICES = "validation-services";
+  public static final String EXPORT_BIN = "export.bin";
+
   private final DistributionServiceConfig distributionServiceConfig;
   private final CryptoProvider cryptoProvider;
   private final DigitalGreenCertificateToProtobufMapping dgcToProtobufMapping;
   private final DigitalGreenCertificateToCborMapping dgcToCborMapping;
   private final DigitalSigningCertificatesToProtobufMapping digitalSigningCertificatesToProtobufMapping;
+  private final DigitalCovidValidationCertificateToProtobufMapping digitalCovidValidationCertificateToProtobufMapping;
   private final DigitalCovidCertificateClient digitalCovidCertificateClient;
   private final BusinessRulesArchiveBuilder businessRulesArchiveBuilder;
 
@@ -54,6 +60,7 @@ public class DigitalCertificatesStructureProvider {
       CryptoProvider cryptoProvider, DigitalGreenCertificateToProtobufMapping dgcToProtobufMapping,
       DigitalGreenCertificateToCborMapping dgcToCborMapping,
       DigitalSigningCertificatesToProtobufMapping digitalSigningCertificatesToProtobufMapping,
+      DigitalCovidValidationCertificateToProtobufMapping digitalCovidValidationCertificateToProtobufMapping,
       DigitalCovidCertificateClient digitalCovidCertificateClient,
       BusinessRulesArchiveBuilder businessRulesArchiveBuilder) {
     this.distributionServiceConfig = distributionServiceConfig;
@@ -61,6 +68,7 @@ public class DigitalCertificatesStructureProvider {
     this.dgcToProtobufMapping = dgcToProtobufMapping;
     this.dgcToCborMapping = dgcToCborMapping;
     this.digitalSigningCertificatesToProtobufMapping = digitalSigningCertificatesToProtobufMapping;
+    this.digitalCovidValidationCertificateToProtobufMapping = digitalCovidValidationCertificateToProtobufMapping;
     this.digitalCovidCertificateClient = digitalCovidCertificateClient;
     this.businessRulesArchiveBuilder = businessRulesArchiveBuilder;
   }
@@ -87,6 +95,7 @@ public class DigitalCertificatesStructureProvider {
     getRulesArchive(RuleType.Acceptance, ACCEPTANCE_RULES).ifPresent(dgcDirectory::addWritable);
     getRulesArchive(RuleType.Invalidation, INVALIDATION_RULES).ifPresent(dgcDirectory::addWritable);
     getDscsArchive().ifPresent(dgcDirectory::addWritable);
+    getValidationServiceAllowListArchive().ifPresent(dgcDirectory::addWritable);
 
     return dgcDirectory;
   }
@@ -101,7 +110,7 @@ public class DigitalCertificatesStructureProvider {
     ArchiveOnDisk onboardedCountries = new ArchiveOnDisk(ONBOARDED_COUNTRIES);
     try {
       onboardedCountries
-          .addWritable(new FileOnDisk("export.bin", dgcToCborMapping.constructCborCountries()));
+          .addWritable(new FileOnDisk(EXPORT_BIN, dgcToCborMapping.constructCborCountries()));
       logger.info("Onboarded countries archive has been added to the DGC distribution folder");
 
       return Optional.of(new DistributionArchiveSigningDecorator(onboardedCountries, cryptoProvider,
@@ -124,11 +133,36 @@ public class DigitalCertificatesStructureProvider {
     ArchiveOnDisk dscsArchive = new ArchiveOnDisk(DIGITAL_CERTIFICATES_STRUCTURE_PROVIDER);
     try {
       dscsArchive
-          .addWritable(new FileOnDisk("export.bin",
+          .addWritable(new FileOnDisk(EXPORT_BIN,
               digitalSigningCertificatesToProtobufMapping.constructProtobufMapping().toByteArray()));
       logger.info("Digital signing certificate archive has been added to the DGC distribution folder");
     } catch (UnableToLoadFileException | FetchDscTrustListException e) {
       logger.error("Digital signing certificate archive was not overwritten because of:", e);
+      return Optional.empty();
+    }
+
+    return Optional.of(new DistributionArchiveSigningDecorator(dscsArchive, cryptoProvider,
+        distributionServiceConfig));
+  }
+
+  /**
+   * Create validation service allow-list archive.
+   *
+   * @return - validation service allow-list archive
+   */
+  private Optional<Writable<WritableOnDisk>> getValidationServiceAllowListArchive() {
+    ArchiveOnDisk dscsArchive = new ArchiveOnDisk(VALIDATION_SERVICES);
+    try {
+      Optional<ValidationServiceAllowlist> mapping =
+          digitalCovidValidationCertificateToProtobufMapping.constructProtobufMapping();
+      if(mapping.isEmpty()) {
+        return Optional.empty();
+      }
+      dscsArchive.addWritable(
+          new FileOnDisk(EXPORT_BIN, mapping.get().toByteArray()));
+      logger.info("Allow list has been added to the DGC distribution folder");
+    } catch (Exception e) {
+      logger.error("Allow list was not overwritten because of:", e);
       return Optional.empty();
     }
 
