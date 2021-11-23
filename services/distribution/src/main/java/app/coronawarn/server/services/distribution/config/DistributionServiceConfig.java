@@ -2,6 +2,10 @@ package app.coronawarn.server.services.distribution.config;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
 import app.coronawarn.server.common.shared.util.SerializationUtils;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,10 +16,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.bouncycastle.util.encoders.Hex;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
@@ -1917,6 +1917,7 @@ public class DistributionServiceConfig {
   }
 
   public static class AllowList {
+
     private List<CertificateAllowList> certificates;
 
     public List<CertificateAllowList> getCertificates() {
@@ -1931,6 +1932,7 @@ public class DistributionServiceConfig {
     @JsonInclude(Include.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class CertificateAllowList {
+
       private String serviceProvider;
       private String hostname;
       private String fingerprint256;

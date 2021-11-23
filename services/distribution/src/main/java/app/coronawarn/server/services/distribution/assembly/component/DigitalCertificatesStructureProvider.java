@@ -155,7 +155,7 @@ public class DigitalCertificatesStructureProvider {
     try {
       Optional<ValidationServiceAllowlist> mapping =
           digitalCovidValidationCertificateToProtobufMapping.constructProtobufMapping();
-      if(mapping.isEmpty()) {
+      if (mapping.isEmpty()) {
         return Optional.empty();
       }
       dscsArchive.addWritable(

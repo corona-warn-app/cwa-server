@@ -111,11 +111,13 @@ class DccRulesNotFetchedStructureProviderTest {
     assertEquals("ehn-dgc", digitalGreenCertificates.getName());
 
     List<Writable<WritableOnDisk>> businessRulesArchives = getBusinessRulesArchives(digitalGreenCertificates);
-    assertThat(businessRulesArchives).hasSize(2);
+    assertThat(businessRulesArchives).hasSize(3);
 
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("onboarded-countries"))).hasSize(1);
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("acceptance-rules"))).hasSize(0);
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("invalidation-rules"))).hasSize(0);
+    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("validation-services"))).hasSize(1);
+
   }
 
   @Test
@@ -127,12 +129,14 @@ class DccRulesNotFetchedStructureProviderTest {
     assertEquals("ehn-dgc", digitalGreenCertificates.getName());
 
     List<Writable<WritableOnDisk>> businessRulesArchives = getBusinessRulesArchives(digitalGreenCertificates);
-    assertThat(businessRulesArchives).hasSize(4);
+    assertThat(businessRulesArchives).hasSize(5);
 
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("onboarded-countries"))).hasSize(1);
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("acceptance-rules"))).hasSize(1);
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("invalidation-rules"))).hasSize(1);
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("dscs"))).hasSize(1);
+    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("validation-services"))).hasSize(1);
+
 
   }
 
@@ -162,13 +166,15 @@ class DccRulesNotFetchedStructureProviderTest {
     assertEquals("ehn-dgc", digitalGreenCertificates.getName());
 
     List<Writable<WritableOnDisk>> businessRulesArchives = getBusinessRulesArchives(digitalGreenCertificates);
-    assertThat(businessRulesArchives).hasSize(3);
+    assertThat(businessRulesArchives).hasSize(4);
 
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("onboarded-countries"))).hasSize(1);
     // acceptance rules are invalid, they do not pass validation schema, thus archive won't be overwritten.
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("acceptance-rules"))).hasSize(0);
     // there are no invalid rules, thus they will be overwritten.
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("invalidation-rules"))).hasSize(1);
+    // there are no invalid allowlist, thus they will be overwritten.
+    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("validation-services"))).hasSize(1);
 
   }
 
