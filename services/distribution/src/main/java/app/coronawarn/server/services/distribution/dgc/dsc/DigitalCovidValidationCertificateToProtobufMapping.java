@@ -51,9 +51,11 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
     try (final InputStream in = resourceLoader.getResource(DCC_VALIDATION_RULE_JSON_CLASSPATH).getInputStream()) {
       validateJsonSchema(allowList, in);
       return true;
-    } catch (ValidationException | IOException e) {
-      LOGGER.error(e.getMessage(), e);
+    } catch (ValidationException e) {
+      LOGGER.error("Schema invalid", e);
       return false;
+    } catch (IOException e) {
+      LOGGER.error("Could not read resource " + DCC_VALIDATION_RULE_JSON_CLASSPATH, e);
     }
   }
 
