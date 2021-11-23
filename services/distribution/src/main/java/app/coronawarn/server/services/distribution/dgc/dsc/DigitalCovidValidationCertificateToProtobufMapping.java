@@ -56,6 +56,7 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
       return false;
     } catch (IOException e) {
       LOGGER.error("Could not read resource " + DCC_VALIDATION_RULE_JSON_CLASSPATH, e);
+      return false;
     }
   }
 
