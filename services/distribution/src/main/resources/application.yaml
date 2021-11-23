@@ -258,7 +258,6 @@ services:
           trust-store: ${DCC_TRUST_STORE:../../docker-compose-test-secrets/dcc_truststore}
           trust-store-password: ${DCC_TRUST_STORE_PASSWORD:123456}
 
-
 spring:
   main:
     web-application-type: NONE
