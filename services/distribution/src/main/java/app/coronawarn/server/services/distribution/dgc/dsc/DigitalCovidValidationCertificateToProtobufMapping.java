@@ -52,7 +52,7 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
       validateJsonSchema(allowList, in);
       return true;
     } catch (ValidationException e) {
-      LOGGER.error("Schema invalid", e);
+      LOGGER.error("Json schema validation failed", e);
       return false;
     } catch (IOException e) {
       LOGGER.error("Could not read resource " + DCC_VALIDATION_RULE_JSON_CLASSPATH, e);
