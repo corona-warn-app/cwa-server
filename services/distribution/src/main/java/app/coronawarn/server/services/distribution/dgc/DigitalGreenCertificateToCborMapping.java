@@ -90,7 +90,7 @@ public class DigitalGreenCertificateToCborMapping {
   }
 
   /**
-   * CBOR encoding of {@codeDccValidationAllowListSignatureTest.java constructRules}.
+   * CBOR encoding of {@code constructRules}.
    */
   public byte[] constructCborRules(RuleType ruleType,
       BusinessRuleItemSupplier<List<BusinessRuleItem>> businessRuleItemSupplier,
