@@ -75,7 +75,7 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
           content.getBytes(StandardCharsets.UTF_8));
       return true;
     } catch (Exception e) {
-      LOGGER.error(e.getMessage(), e);
+      LOGGER.error("Failed to validate certificate", e);
       return false;
     }
   }
