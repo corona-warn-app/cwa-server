@@ -2,6 +2,10 @@ package app.coronawarn.server.services.distribution.config;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
 import app.coronawarn.server.common.shared.util.SerializationUtils;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -1750,6 +1754,12 @@ public class DistributionServiceConfig {
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String valuesetsFileName;
 
+    private String allowList;
+
+    private String allowListSignature;
+
+    private String allowListCertificate;
+
     private String[] supportedLanguages;
 
     private String exportArchiveName;
@@ -1846,6 +1856,41 @@ public class DistributionServiceConfig {
       this.supportedLanguages = supportedLanguages;
     }
 
+    /**
+     * getAllowList.
+     *
+     * @return AllowList
+     */
+    public AllowList getAllowList() {
+      return SerializationUtils.deserializeJson(allowList,
+          typeFactory -> typeFactory
+              .constructType(AllowList.class));
+    }
+
+    public String getAllowListAsString() {
+      return allowList;
+    }
+
+    public void setAllowList(String allowList) {
+      this.allowList = allowList;
+    }
+
+    public byte[] getAllowListSignature() {
+      return Hex.decode(allowListSignature);
+    }
+
+    public void setAllowListSignature(String allowListSignature) {
+      this.allowListSignature = allowListSignature;
+    }
+
+    public String getAllowListCertificate() {
+      return allowListCertificate;
+    }
+
+    public void setAllowListCertificate(String allowListCertificate) {
+      this.allowListCertificate = allowListCertificate;
+    }
+
     public Client getClient() {
       return client;
     }
@@ -1868,6 +1913,56 @@ public class DistributionServiceConfig {
 
     public void setExportArchiveName(String exportArchiveName) {
       this.exportArchiveName = exportArchiveName;
+    }
+  }
+
+  public static class AllowList {
+
+    private List<CertificateAllowList> certificates;
+
+    public List<CertificateAllowList> getCertificates() {
+      return certificates;
+    }
+
+    @JsonProperty("certificates")
+    public void setCertificates(List<CertificateAllowList> certificates) {
+      this.certificates = certificates;
+    }
+
+    @JsonInclude(Include.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class CertificateAllowList {
+
+      private String serviceProvider;
+      private String hostname;
+      private String fingerprint256;
+
+      public String getServiceProvider() {
+        return serviceProvider;
+      }
+
+      @JsonProperty("serviceProvider")
+      public void setServiceProvider(String serviceProvider) {
+        this.serviceProvider = serviceProvider;
+      }
+
+      public String getHostname() {
+        return hostname;
+      }
+
+      @JsonProperty("hostname")
+      public void setHostname(String hostname) {
+        this.hostname = hostname;
+      }
+
+      public String getFingerprint256() {
+        return fingerprint256;
+      }
+
+      @JsonProperty("fingerprint256")
+      public void setFingerprint256(String fingerprint256) {
+        this.fingerprint256 = fingerprint256;
+      }
     }
   }
 }

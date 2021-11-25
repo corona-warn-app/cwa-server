@@ -167,5 +167,4 @@ public class BusinessRule {
     Invalidation,
     BoosterNotification
   }
-
 }

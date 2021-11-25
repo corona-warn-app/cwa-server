@@ -19,6 +19,7 @@ import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateTo
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.client.ProdDigitalCovidCertificateClient;
+import app.coronawarn.server.services.distribution.dgc.dsc.DigitalCovidValidationCertificateToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalSigningCertificatesClient;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalSigningCertificatesToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
@@ -44,10 +45,16 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @EnableConfigurationProperties(value = {DistributionServiceConfig.class})
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(
-    classes = {DigitalGreenCertificateToProtobufMapping.class, DigitalGreenCertificateToCborMapping.class,
-        CryptoProvider.class, DistributionServiceConfig.class, ProdDigitalCovidCertificateClient.class,
-        DigitalSigningCertificatesToProtobufMapping.class, DigitalSigningCertificatesClient.class,
-        BusinessRulesArchiveBuilder.class},
+    classes = {
+        DigitalGreenCertificateToProtobufMapping.class,
+        DigitalGreenCertificateToCborMapping.class,
+        CryptoProvider.class, DistributionServiceConfig.class,
+        ProdDigitalCovidCertificateClient.class,
+        DigitalSigningCertificatesToProtobufMapping.class,
+        DigitalCovidValidationCertificateToProtobufMapping.class,
+        DigitalSigningCertificatesClient.class,
+        BusinessRulesArchiveBuilder.class
+    },
     initializers = ConfigDataApplicationContextInitializer.class)
 class DccRulesNotFetchedStructureProviderTest {
 
@@ -67,6 +74,9 @@ class DccRulesNotFetchedStructureProviderTest {
 
   @Autowired
   DigitalSigningCertificatesToProtobufMapping digitalSigningCertificatesToProtobufMapping;
+
+  @Autowired
+  DigitalCovidValidationCertificateToProtobufMapping digitalCovidValidationCertificateToProtobufMapping;
 
   @Autowired
   BusinessRulesArchiveBuilder businessRulesArchiveBuilder;
@@ -101,11 +111,13 @@ class DccRulesNotFetchedStructureProviderTest {
     assertEquals("ehn-dgc", digitalGreenCertificates.getName());
 
     List<Writable<WritableOnDisk>> businessRulesArchives = getBusinessRulesArchives(digitalGreenCertificates);
-    assertThat(businessRulesArchives).hasSize(2);
+    assertThat(businessRulesArchives).hasSize(3);
 
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("onboarded-countries"))).hasSize(1);
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("acceptance-rules"))).hasSize(0);
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("invalidation-rules"))).hasSize(0);
+    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("validation-services"))).hasSize(1);
+
   }
 
   @Test
@@ -117,12 +129,14 @@ class DccRulesNotFetchedStructureProviderTest {
     assertEquals("ehn-dgc", digitalGreenCertificates.getName());
 
     List<Writable<WritableOnDisk>> businessRulesArchives = getBusinessRulesArchives(digitalGreenCertificates);
-    assertThat(businessRulesArchives).hasSize(4);
+    assertThat(businessRulesArchives).hasSize(5);
 
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("onboarded-countries"))).hasSize(1);
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("acceptance-rules"))).hasSize(1);
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("invalidation-rules"))).hasSize(1);
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("dscs"))).hasSize(1);
+    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("validation-services"))).hasSize(1);
+
 
   }
 
@@ -152,13 +166,15 @@ class DccRulesNotFetchedStructureProviderTest {
     assertEquals("ehn-dgc", digitalGreenCertificates.getName());
 
     List<Writable<WritableOnDisk>> businessRulesArchives = getBusinessRulesArchives(digitalGreenCertificates);
-    assertThat(businessRulesArchives).hasSize(3);
+    assertThat(businessRulesArchives).hasSize(4);
 
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("onboarded-countries"))).hasSize(1);
     // acceptance rules are invalid, they do not pass validation schema, thus archive won't be overwritten.
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("acceptance-rules"))).hasSize(0);
     // there are no invalid rules, thus they will be overwritten.
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("invalidation-rules"))).hasSize(1);
+    // there are no invalid allowlist, thus they will be overwritten.
+    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("validation-services"))).hasSize(1);
 
   }
 
@@ -169,7 +185,8 @@ class DccRulesNotFetchedStructureProviderTest {
   private DirectoryOnDisk getStructureProviderDirectory() {
     DigitalCertificatesStructureProvider underTest = new DigitalCertificatesStructureProvider(
         distributionServiceConfig, cryptoProvider, dgcToProtobufMapping,
-        dgcToCborMappingMock, digitalSigningCertificatesToProtobufMapping, digitalCovidCertificateClient,
+        dgcToCborMappingMock, digitalSigningCertificatesToProtobufMapping,
+        digitalCovidValidationCertificateToProtobufMapping, digitalCovidCertificateClient,
         businessRulesArchiveBuilder);
     DirectoryOnDisk digitalGreenCertificates = underTest.getDigitalGreenCertificates();
     digitalGreenCertificates.prepare(new ImmutableStack<>());

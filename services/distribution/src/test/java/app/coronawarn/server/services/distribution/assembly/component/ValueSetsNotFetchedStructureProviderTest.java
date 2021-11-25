@@ -17,6 +17,7 @@ import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateTo
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient;
+import app.coronawarn.server.services.distribution.dgc.dsc.DigitalCovidValidationCertificateToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalSigningCertificatesClient;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalSigningCertificatesToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
@@ -44,10 +45,17 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @EnableConfigurationProperties(value = {DistributionServiceConfig.class})
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(
-    classes = {DigitalGreenCertificateToProtobufMapping.class, DigitalGreenCertificateToCborMapping.class,
-        CryptoProvider.class, DistributionServiceConfig.class, TestDigitalCovidCertificateClient.class,
-        DigitalSigningCertificatesToProtobufMapping.class, DigitalSigningCertificatesClient.class,
-        BusinessRulesArchiveBuilder.class},
+    classes = {
+        DigitalGreenCertificateToProtobufMapping.class,
+        DigitalGreenCertificateToCborMapping.class,
+        CryptoProvider.class,
+        DistributionServiceConfig.class,
+        TestDigitalCovidCertificateClient.class,
+        DigitalSigningCertificatesToProtobufMapping.class,
+        DigitalCovidValidationCertificateToProtobufMapping.class,
+        DigitalSigningCertificatesClient.class,
+        BusinessRulesArchiveBuilder.class
+    },
     initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles({"fake-dcc-client", "fake-dsc-client"})
 class ValueSetsNotFetchedStructureProviderTest {
@@ -75,6 +83,9 @@ class ValueSetsNotFetchedStructureProviderTest {
   @Autowired
   DigitalSigningCertificatesToProtobufMapping digitalSigningCertificatesToProtobufMapping;
 
+  @Autowired
+  DigitalCovidValidationCertificateToProtobufMapping digitalCovidValidationCertificateToProtobufMapping;
+
   @MockBean
   DigitalSigningCertificatesClient digitalSigningCertificatesClient;
 
@@ -101,7 +112,8 @@ class ValueSetsNotFetchedStructureProviderTest {
   void should_not_contain_valuesets_if_any_is_not_fetched() throws FetchValueSetsException {
     DigitalCertificatesStructureProvider underTest = new DigitalCertificatesStructureProvider(
         distributionServiceConfig, cryptoProvider, dgcToProtobufMapping, dgcToCborMappingMock,
-        digitalSigningCertificatesToProtobufMapping, digitalCovidCertificateClient, businessRulesArchiveBuilder);
+        digitalSigningCertificatesToProtobufMapping, digitalCovidValidationCertificateToProtobufMapping,
+        digitalCovidCertificateClient, businessRulesArchiveBuilder);
     DirectoryOnDisk digitalGreenCertificates = underTest.getDigitalGreenCertificates();
     digitalGreenCertificates.prepare(new ImmutableStack<>());
 

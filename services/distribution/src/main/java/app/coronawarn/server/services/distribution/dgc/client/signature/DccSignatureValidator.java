@@ -16,7 +16,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Base64;
 import java.util.function.BiFunction;
 import org.bouncycastle.util.encoders.Hex;
 import org.slf4j.Logger;

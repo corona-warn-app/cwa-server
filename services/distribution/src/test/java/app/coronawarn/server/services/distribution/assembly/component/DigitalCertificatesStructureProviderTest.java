@@ -12,6 +12,7 @@ import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateTo
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient;
+import app.coronawarn.server.services.distribution.dgc.dsc.DigitalCovidValidationCertificateToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalSigningCertificatesClient;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalSigningCertificatesToProtobufMapping;
 import org.junit.Rule;
@@ -44,7 +45,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(
     classes = {DigitalCertificatesStructureProvider.class, DigitalGreenCertificateToProtobufMapping.class,
-        DigitalGreenCertificateToCborMapping.class,
+        DigitalGreenCertificateToCborMapping.class, DigitalCovidValidationCertificateToProtobufMapping.class,
         CryptoProvider.class, DistributionServiceConfig.class, TestDigitalCovidCertificateClient.class,
         DigitalSigningCertificatesToProtobufMapping.class, DigitalSigningCertificatesClient.class,
         BusinessRulesArchiveBuilder.class},
@@ -71,6 +72,9 @@ class DigitalCertificatesStructureProviderTest {
 
   @Autowired
   DigitalSigningCertificatesToProtobufMapping digitalSigningCertificatesToProtobufMapping;
+
+  @Autowired
+  DigitalCovidValidationCertificateToProtobufMapping digitalCovidValidationCertificateToProtobufMapping;
 
   @MockBean
   DigitalSigningCertificatesClient digitalSigningCertificatesClient;
@@ -126,12 +130,14 @@ class DigitalCertificatesStructureProviderTest {
         .filter(writableOnDisk -> writableOnDisk instanceof DistributionArchiveSigningDecorator)
         .collect(Collectors.toList());
 
-    assertThat(businessRulesArchives).hasSize(4);
+    assertThat(businessRulesArchives).hasSize(5);
 
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("onboarded-countries"))).hasSize(1);
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("acceptance-rules"))).hasSize(1);
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("invalidation-rules"))).hasSize(1);
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("dscs"))).hasSize(1);
+    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("validation-services"))).hasSize(1);
+
   }
 
   private Predicate<Writable<WritableOnDisk>> filterByArchiveName(String archiveName) {
