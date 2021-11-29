@@ -1,6 +1,7 @@
 package app.coronawarn.server.services.distribution.config;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
+import app.coronawarn.server.common.protocols.internal.dgc.ValidationServicePublicKeyJWK;
 import app.coronawarn.server.common.shared.util.SerializationUtils;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -1936,7 +1937,7 @@ public class DistributionServiceConfig {
       private String serviceProvider;
       private String hostname;
       private String fingerprint256;
-      private SignKey signKey;
+      private ValidationServicePublicKeyJWK signKey;
 
       public String getServiceProvider() {
         return serviceProvider;
@@ -1965,19 +1966,19 @@ public class DistributionServiceConfig {
         this.fingerprint256 = fingerprint256;
       }
 
-      public SignKey getSignKey() {
+      public ValidationServicePublicKeyJWK getSignKey() {
         return signKey;
       }
 
       @JsonProperty("signKey")
-      public void setSignKey(SignKey signKey) {
+      public void setSignKey(ValidationServicePublicKeyJWK signKey) {
         this.signKey = signKey;
       }
     }
 
     @JsonInclude(Include.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class SignKey {
+    public static class ValidationServicePublicKeyJWK {
 
       List<String> x5c;
       String kid;
