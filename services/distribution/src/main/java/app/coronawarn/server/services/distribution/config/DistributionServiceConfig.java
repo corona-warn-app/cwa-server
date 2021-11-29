@@ -1936,6 +1936,7 @@ public class DistributionServiceConfig {
       private String serviceProvider;
       private String hostname;
       private String fingerprint256;
+      private SignKey signKey;
 
       public String getServiceProvider() {
         return serviceProvider;
@@ -1962,6 +1963,51 @@ public class DistributionServiceConfig {
       @JsonProperty("fingerprint256")
       public void setFingerprint256(String fingerprint256) {
         this.fingerprint256 = fingerprint256;
+      }
+
+      public SignKey getSignKey() {
+        return signKey;
+      }
+
+      @JsonProperty("signKey")
+      public void setSignKey(SignKey signKey) {
+        this.signKey = signKey;
+      }
+    }
+
+    @JsonInclude(Include.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class SignKey {
+
+      List<String> x5c;
+      String kid;
+      String alg;
+
+      public List<String> getX5c() {
+        return x5c;
+      }
+
+      @JsonProperty("x5c")
+      public void setX5c(List<String> x5c) {
+        this.x5c = x5c;
+      }
+
+      public String getKid() {
+        return kid;
+      }
+
+      @JsonProperty("kid")
+      public void setKid(String kid) {
+        this.kid = kid;
+      }
+
+      public String getAlg() {
+        return alg;
+      }
+
+      @JsonProperty("alg")
+      public void setAlg(String alg) {
+        this.alg = alg;
       }
     }
   }

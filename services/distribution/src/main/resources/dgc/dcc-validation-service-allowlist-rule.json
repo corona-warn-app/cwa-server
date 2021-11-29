@@ -17,7 +17,8 @@
         "required": [
           "serviceProvider",
           "hostname",
-          "fingerprint256"
+          "fingerprint256",
+          "signKey"
         ],
         "properties": {
           "serviceProvider": {
@@ -35,6 +36,33 @@
             "type": "string",
             "description": "Fingerprint of the certificate",
             "pattern": "^[0-9a-fA-F]{64}$"
+          },
+          "signKey": {
+            "type": "object",
+            "required": [
+              "x5c",
+              "kid",
+              "alg"
+            ],
+            "properties": {
+              "x5c": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[0-9a-zA-Z+/=]+$"
+                },
+                "minItems": 1,
+                "maxItems": 1
+              },
+              "kid": {
+                "type": "string",
+                "pattern": "^[0-9a-zA-Z+/=]{12}$"
+              },
+              "alg": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
           }
         }
       }
