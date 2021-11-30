@@ -93,7 +93,6 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
       return Optional.empty();
     }
     List<ValidationServiceAllowlistItem> validationServiceAllowlistItemList = new ArrayList<>();
-    List<String> x5c = new ArrayList<>();
 
     for (CertificateAllowList certificateAllowList : allowList.getCertificates()) {
       validationServiceAllowlistItemList.add(
@@ -102,13 +101,6 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
               .setServiceProvider(certificateAllowList.getServiceProvider())
               .setFingerprint256(ByteString.copyFrom(certificateAllowList.getFingerprint256(), StandardCharsets.UTF_8))
               .build());
-
-//          validationServiceAllowlistItemList.add(
-//            ValidationServiceAllowlistItem.newBuilder()
-//            .setSignKey(certificateAllowList.getSignKey().getX5c())
-//            .setSignKey(certificateAllowList.getSignKey().getKid())
-//            .setSignKey(certificateAllowList.getSignKey().getAlg())
-//            .build());
     }
     return Optional.of(ValidationServiceAllowlist.newBuilder()
         .addAllCertificates(validationServiceAllowlistItemList)

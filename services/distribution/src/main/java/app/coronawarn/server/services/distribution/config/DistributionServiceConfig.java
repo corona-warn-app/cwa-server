@@ -1,25 +1,18 @@
 package app.coronawarn.server.services.distribution.config;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
-import app.coronawarn.server.common.protocols.internal.dgc.ValidationServicePublicKeyJWK;
 import app.coronawarn.server.common.shared.util.SerializationUtils;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.io.File;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.PositiveOrZero;
-import javax.validation.constraints.Size;
 import org.bouncycastle.util.encoders.Hex;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
+import javax.validation.constraints.*;
+import java.io.File;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @ConfigurationProperties(prefix = "services.distribution")
 @Validated
@@ -1937,7 +1930,9 @@ public class DistributionServiceConfig {
       private String serviceProvider;
       private String hostname;
       private String fingerprint256;
-      private ValidationServicePublicKeyJWK signKey;
+
+      @JsonProperty("serviceProviderAllowlistEndpoint")
+      private String serviceProviderAllowlistEndpoint;
 
       public String getServiceProvider() {
         return serviceProvider;
@@ -1966,49 +1961,12 @@ public class DistributionServiceConfig {
         this.fingerprint256 = fingerprint256;
       }
 
-      public ValidationServicePublicKeyJWK getSignKey() {
-        return signKey;
+      public String getServiceProviderAllowlistEndpoint() {
+        return serviceProviderAllowlistEndpoint;
       }
 
-      @JsonProperty("signKey")
-      public void setSignKey(ValidationServicePublicKeyJWK signKey) {
-        this.signKey = signKey;
-      }
-    }
-
-    @JsonInclude(Include.NON_NULL)
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class ValidationServicePublicKeyJWK {
-
-      List<String> x5c;
-      String kid;
-      String alg;
-
-      public List<String> getX5c() {
-        return x5c;
-      }
-
-      @JsonProperty("x5c")
-      public void setX5c(List<String> x5c) {
-        this.x5c = x5c;
-      }
-
-      public String getKid() {
-        return kid;
-      }
-
-      @JsonProperty("kid")
-      public void setKid(String kid) {
-        this.kid = kid;
-      }
-
-      public String getAlg() {
-        return alg;
-      }
-
-      @JsonProperty("alg")
-      public void setAlg(String alg) {
-        this.alg = alg;
+      public void setServiceProviderAllowlistEndpoint(String serviceProviderAllowlistEndpoint) {
+        this.serviceProviderAllowlistEndpoint = serviceProviderAllowlistEndpoint;
       }
     }
   }
