@@ -1,33 +1,64 @@
 package app.coronawarn.server.services.distribution.dgc.dsc;
 
+import static app.coronawarn.server.common.shared.util.SecurityUtils.ecdsaSignatureVerification;
+import static app.coronawarn.server.common.shared.util.SecurityUtils.getPublicKeyFromString;
+import static app.coronawarn.server.common.shared.util.SerializationUtils.validateJsonSchema;
+
+import app.coronawarn.server.common.protocols.internal.dgc.ServiceProviderAllowlistItem;
 import app.coronawarn.server.common.protocols.internal.dgc.ValidationServiceAllowlist;
 import app.coronawarn.server.common.protocols.internal.dgc.ValidationServiceAllowlistItem;
+import app.coronawarn.server.common.shared.util.HashUtils;
+import app.coronawarn.server.common.shared.util.HashUtils.Algorithms;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AllowList;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AllowList.CertificateAllowList;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.ByteString;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.security.PublicKey;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.net.ssl.SSLSession;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.bouncycastle.util.encoders.Hex;
 import org.everit.json.schema.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.security.PublicKey;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static app.coronawarn.server.common.shared.util.SecurityUtils.ecdsaSignatureVerification;
-import static app.coronawarn.server.common.shared.util.SecurityUtils.getPublicKeyFromString;
-import static app.coronawarn.server.common.shared.util.SerializationUtils.validateJsonSchema;
 
 @Component
 public class DigitalCovidValidationCertificateToProtobufMapping {
+
+
+  @JsonIgnoreProperties(ignoreUnknown = true)
+  private static class ServiceProviderDto {
+
+    @JsonProperty("providers")
+    private List<String> providers;
+
+    public List<String> getProviders() {
+      return providers;
+    }
+
+    public void setProviders(List<String> providers) {
+      this.providers = providers;
+    }
+  }
 
   private static final Logger LOGGER = LoggerFactory
       .getLogger(DigitalCovidValidationCertificateToProtobufMapping.class);
@@ -36,13 +67,18 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
 
   private final DistributionServiceConfig distributionServiceConfig;
   private final ResourceLoader resourceLoader;
-  private final RestTemplate restTemplate;
 
+  /**
+   * I'm responsbile for mapping certificate allow lists to their corresponding protobuf definition.
+   *
+   * @param distributionServiceConfig service config.
+   * @param resourceLoader            resource loader.
+   */
   public DigitalCovidValidationCertificateToProtobufMapping(
-      DistributionServiceConfig distributionServiceConfig, ResourceLoader resourceLoader, RestTemplate restTemplate) {
+      DistributionServiceConfig distributionServiceConfig, ResourceLoader resourceLoader) {
     this.distributionServiceConfig = distributionServiceConfig;
     this.resourceLoader = resourceLoader;
-    this.restTemplate = restTemplate;
+
   }
 
   /**
@@ -86,11 +122,6 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
     }
   }
 
-  private static class ServiceProviderDTO {
-
-    @JsonProperty("providers")
-    private List<String> providers;
-  }
 
   /**
    * Create the Protobuf from JSON.
@@ -102,16 +133,34 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
     if (!validateSchema(allowList) || !validateCertificate()) {
       return Optional.empty();
     }
+    List<ServiceProviderAllowlistItem> serviceProviderAllowlistItems = new ArrayList<>();
     List<ValidationServiceAllowlistItem> validationServiceAllowlistItemList = new ArrayList<>();
+    final ObjectMapper objectMapper = new ObjectMapper();
 
     for (CertificateAllowList certificateAllowList : allowList.getCertificates()) {
-      final String serviceProviderAllowlistEndpoint = certificateAllowList.getServiceProviderAllowlistEndpoint(); // url to fetch data
-      // The request shall be subject to certificate pinning by checking the SHA-256 fingerprint of the
-      // leaf certificate of the server against the fingerprint256 attribute.
-      final ServiceProviderDTO providers = restTemplate
-          .getForObject(serviceProviderAllowlistEndpoint, ServiceProviderDTO.class);
-      final String fingerprint256 = certificateAllowList.getFingerprint256();
+      // 1. Fetch corresponding endpoint for retrieving providers
+      final String serviceProviderAllowlistEndpoint = certificateAllowList
+          .getServiceProviderAllowlistEndpoint();
 
+      // 2. Validate certificate fingerprint with fingerprint of leaf certificate of server
+      validateFingerprint(
+          serviceProviderAllowlistEndpoint,
+          certificateAllowList.getFingerprint256(),
+          objectMapper)
+          .ifPresent(response -> {
+
+            // 2.1. Map each of the fetched providers to a ServiceProviderAllowListItem and add to tota List.
+            final List<ServiceProviderAllowlistItem> serviceProviderItems = response.providers
+                .stream()
+                .map(provider -> ServiceProviderAllowlistItem
+                    .newBuilder()
+                    .setServiceIdentityHash(
+                        ByteString.copyFrom(provider.getBytes(StandardCharsets.UTF_8)))
+                    .build()).collect(Collectors.toList());
+            serviceProviderAllowlistItems.addAll(serviceProviderItems);
+          });
+
+      // 3. Map certificates to ValidationServiceAllowlistItem
       validationServiceAllowlistItemList.add(
           ValidationServiceAllowlistItem.newBuilder()
               .setHostname(certificateAllowList.getHostname())
@@ -119,8 +168,72 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
               .setFingerprint256(ByteString.copyFrom(certificateAllowList.getFingerprint256(), StandardCharsets.UTF_8))
               .build());
     }
+
+    // 4. Add total list of ValidationServiceAllowlistItem's and ServiceProviderAllowListItem's to final protobuf
     return Optional.of(ValidationServiceAllowlist.newBuilder()
         .addAllCertificates(validationServiceAllowlistItemList)
+        .addAllServiceProviders(serviceProviderAllowlistItems)
         .build());
+  }
+
+  private Optional<ServiceProviderDto> buildServiceProviderDto(ObjectMapper objectMapper, HttpEntity response) {
+    try {
+      return Optional.ofNullable(objectMapper.readValue(
+          response.getContent(),
+          ServiceProviderDto.class));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return Optional.empty();
+  }
+
+  private Optional<ServiceProviderDto> validateFingerprint(String serviceProviderAllowlistEndpoint,
+      String fingerPrintToCompare,
+      final ObjectMapper objectMapper) {
+    CloseableHttpClient httpClient = HttpClients.custom()
+        .setSSLHostnameVerifier((hostname, session) -> validateHostname(
+            session,
+            fingerPrintToCompare))
+        .build();
+    HttpGet getMethod = new HttpGet(serviceProviderAllowlistEndpoint);
+    final Optional<HttpEntity> httpEntity = executeRequest(httpClient, getMethod);
+    if (httpEntity.isPresent()) {
+      return buildServiceProviderDto(objectMapper, httpEntity.get());
+    }
+    return Optional.empty();
+  }
+
+  private boolean validateHostname(final SSLSession session, final String fingerPrintToCompare) {
+    try {
+      return matches(session.getPeerCertificates()[0], fingerPrintToCompare);
+    } catch (SSLPeerUnverifiedException e) {
+      // TODO check if only one is aborted
+      LOGGER.error(
+          "Constructing ValidationServiceAllowlistItem failed: "
+              + "certificate fingerprint {} does not match fingerprint of leaf certificate of validation server",
+          fingerPrintToCompare);
+    }
+    return false;
+  }
+
+  private boolean matches(final Certificate cert, final String fingerPrintToCompare) {
+    try {
+      String fingerprint = Hex.toHexString(HashUtils.byteStringDigest(cert.getEncoded(), Algorithms.SHA_256));
+      return fingerprint.equals(fingerPrintToCompare);
+    } catch (CertificateEncodingException e) {
+      // TODO log message if cert can not be encoded as byte[]
+      LOGGER.error("TODO");
+    }
+    return false;
+  }
+
+  private Optional<HttpEntity> executeRequest(CloseableHttpClient httpClient, HttpGet getMethod) {
+    try {
+      final CloseableHttpResponse response = httpClient.execute(getMethod);
+      return Optional.of(response.getEntity());
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return Optional.empty();
   }
 }
