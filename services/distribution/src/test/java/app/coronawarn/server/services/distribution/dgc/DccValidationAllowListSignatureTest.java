@@ -5,6 +5,7 @@ import static app.coronawarn.server.common.shared.util.SecurityUtils.getPublicKe
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
+import app.coronawarn.server.common.protocols.internal.dgc.ValidationServiceAllowlist;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AllowList;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalCovidValidationCertificateToProtobufMapping;
@@ -14,6 +15,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +28,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
-      DistributionServiceConfig.class,
-      DigitalCovidValidationCertificateToProtobufMapping.class
-    },
+    DistributionServiceConfig.class,
+    DigitalCovidValidationCertificateToProtobufMapping.class
+},
     initializers = ConfigDataApplicationContextInitializer.class)
 public class DccValidationAllowListSignatureTest {
 
@@ -64,7 +66,7 @@ public class DccValidationAllowListSignatureTest {
           signature,
           publicKey,
           content.getBytes(StandardCharsets.UTF_8));
-    } catch(Throwable t) {
+    } catch (Throwable t) {
       fail(t.getMessage());
     }
   }
@@ -75,4 +77,14 @@ public class DccValidationAllowListSignatureTest {
     assertThat(digitalCovidValidationCertificateToProtobufMapping.validateSchema(allowList))
         .isTrue();
   }
+
+  @Test
+  // TODO ALice Bilc, Felix Rottler, etc.
+  void tst()   {
+    final Optional<ValidationServiceAllowlist> validationServiceAllowlist = digitalCovidValidationCertificateToProtobufMapping
+        .constructProtobufMapping();
+
+
+  }
+
 }

@@ -45,31 +45,34 @@ public class HashUtils {
   }
 
   /**
-   * Returns a digested String by a Message Digest object
-   * that implements the chosen {@link Algorithms}.
+   * Returns a digested String by a Message Digest object that implements the chosen {@link Algorithms}.
    *
-   * @param data - String to be diggested
+   * @param data - String to be digested
    * @return - digested ByteString
    */
   public static byte[] byteStringDigest(String data, Algorithms algorithm) {
-    try {
-      return MessageDigest.getInstance(algorithm.getName()).digest(data.getBytes(StandardCharsets.UTF_8));
-    } catch (NoSuchAlgorithmException e) {
-      logger.error("Digest algorithm does not exist", e);
-    }
-    return new byte[0];
+    return byteStringDigest(data.getBytes(StandardCharsets.UTF_8), algorithm);
   }
 
   /**
-   * Returns a digested ByteString by a Message Digest object
-   * that implements the chosen {@link Algorithms}.
+   * Returns a digested ByteString by a Message Digest object that implements the chosen {@link Algorithms}.
    *
-   * @param data - ByteString to be diggested
+   * @param data - ByteString to be digested
    * @return - digested ByteString
    */
   public static byte[] byteStringDigest(ByteString data, Algorithms algorithm) {
+    return byteStringDigest(data.toByteArray(), algorithm);
+  }
+
+  /**
+   * Returns a digested byte[] by a Message Digest object that implements the chosen {@link Algorithms}.
+   *
+   * @param data - byte array to be digested
+   * @return - digested byte array
+   */
+  public static byte[] byteStringDigest(byte[] data, Algorithms algorithm) {
     try {
-      return MessageDigest.getInstance(algorithm.getName()).digest(data.toByteArray());
+      return MessageDigest.getInstance(algorithm.getName()).digest(data);
     } catch (NoSuchAlgorithmException e) {
       logger.error("Digest algorithm does not exist", e);
     }

@@ -191,7 +191,7 @@ services:
       valuesets-file-name: value-sets
       supported-languages: DE, EN, BG, PL, RO, TR
       export-archive-name: ${DIGITAL_GREEN_CERTIFICATE_ARCHIVE_NAME:export.bin}
-      allow-list: ${DCC_VALIDATION_SERVICE_ALLOWLIST:{"certificates":[{"serviceProvider":"ACME Inc.","hostname":"validation-service.acme.org","fingerprint256":"E87E26EB9D22280125E113F755BE2F9F90DB076DD011D5940E0A78DD2F20EDFA","serviceProviderAllowlistEndpoint":"https://validation-service.acme.org/serviceproviders"}]}}
+      allow-list: ${DCC_VALIDATION_SERVICE_ALLOWLIST:{"certificates":[{"serviceProvider":"ACME Inc.","hostname":"validation-service.acme.org","fingerprint256":"1b6aee0ccd1c2cc47194616954c000318b92249eb8586d91c19e8c6536e3e063","serviceProviderAllowlistEndpoint":"https://cwa-mock-server.cfapps.sap.hana.ondemand.com/validation-service/serviceproviders"}]}}
       allow-list-signature: ${DCC_VALIDATION_SERVICE_ALLOWLIST_SIGNATURE:30440220660639f4bfb53c6830532a50fb0a9b3f7413ab6749a431ae7f0287e4c72dc80102204ad5b32a95f7ace88470182370c57b6d30afd10b45e2c2e5cfa827b61872da3d}
       allow-list-certificate: ${DCC_VALIDATION_SERVICE_ALLOWLIST_CERTIFICATE:MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEMMvW0zun8fNCELK1tsqXsGJPu4p7850ZPCBCoxQ5gs2z5G0in3izL7eTFa5lI7Gkhnz0tN5whVQJObCaqbP55A==}
       dsc-client:
