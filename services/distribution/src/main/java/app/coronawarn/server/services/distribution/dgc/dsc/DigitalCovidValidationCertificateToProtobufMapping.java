@@ -1,16 +1,19 @@
 package app.coronawarn.server.services.distribution.dgc.dsc;
 
-import static app.coronawarn.server.common.shared.util.SecurityUtils.ecdsaSignatureVerification;
-import static app.coronawarn.server.common.shared.util.SecurityUtils.getPublicKeyFromString;
-import static app.coronawarn.server.common.shared.util.SerializationUtils.validateJsonSchema;
-
 import app.coronawarn.server.common.protocols.internal.dgc.ValidationServiceAllowlist;
 import app.coronawarn.server.common.protocols.internal.dgc.ValidationServiceAllowlistItem;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AllowList;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AllowList.CertificateAllowList;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.protobuf.ByteString;
+import org.everit.json.schema.ValidationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -18,11 +21,10 @@ import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.everit.json.schema.ValidationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ResourceLoader;
-import org.springframework.stereotype.Component;
+
+import static app.coronawarn.server.common.shared.util.SecurityUtils.ecdsaSignatureVerification;
+import static app.coronawarn.server.common.shared.util.SecurityUtils.getPublicKeyFromString;
+import static app.coronawarn.server.common.shared.util.SerializationUtils.validateJsonSchema;
 
 @Component
 public class DigitalCovidValidationCertificateToProtobufMapping {
@@ -34,11 +36,13 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
 
   private final DistributionServiceConfig distributionServiceConfig;
   private final ResourceLoader resourceLoader;
+  private final RestTemplate restTemplate;
 
   public DigitalCovidValidationCertificateToProtobufMapping(
-      DistributionServiceConfig distributionServiceConfig, ResourceLoader resourceLoader) {
+      DistributionServiceConfig distributionServiceConfig, ResourceLoader resourceLoader, RestTemplate restTemplate) {
     this.distributionServiceConfig = distributionServiceConfig;
     this.resourceLoader = resourceLoader;
+    this.restTemplate = restTemplate;
   }
 
   /**
@@ -82,6 +86,12 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
     }
   }
 
+  private static class ServiceProviderDTO {
+
+    @JsonProperty("providers")
+    private List<String> providers;
+  }
+
   /**
    * Create the Protobuf from JSON.
    *
@@ -95,6 +105,13 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
     List<ValidationServiceAllowlistItem> validationServiceAllowlistItemList = new ArrayList<>();
 
     for (CertificateAllowList certificateAllowList : allowList.getCertificates()) {
+      final String serviceProviderAllowlistEndpoint = certificateAllowList.getServiceProviderAllowlistEndpoint(); // url to fetch data
+      // The request shall be subject to certificate pinning by checking the SHA-256 fingerprint of the
+      // leaf certificate of the server against the fingerprint256 attribute.
+      final ServiceProviderDTO providers = restTemplate
+          .getForObject(serviceProviderAllowlistEndpoint, ServiceProviderDTO.class);
+      final String fingerprint256 = certificateAllowList.getFingerprint256();
+
       validationServiceAllowlistItemList.add(
           ValidationServiceAllowlistItem.newBuilder()
               .setHostname(certificateAllowList.getHostname())
