@@ -191,9 +191,9 @@ services:
       valuesets-file-name: value-sets
       supported-languages: DE, EN, BG, PL, RO, TR
       export-archive-name: ${DIGITAL_GREEN_CERTIFICATE_ARCHIVE_NAME:export.bin}
-      allow-list: ${DCC_VALIDATION_SERVICE_ALLOWLIST:{"certificates":[{"serviceProvider":"ACME Inc.","hostname":"validation-service.acme.org","fingerprint256":"1b6aee0ccd1c2cc47194616954c000318b92249eb8586d91c19e8c6536e3e063","serviceProviderAllowlistEndpoint":"https://cwa-mock-server.cfapps.sap.hana.ondemand.com/validation-service/serviceproviders"}]}}
-      allow-list-signature: ${DCC_VALIDATION_SERVICE_ALLOWLIST_SIGNATURE:303d021d00ad6e9c52fb39cfa1b02906eb8a1a126bcf8623d51c8bb5703373c958021c05a7396f8236940f090aeee697319e10c68f418c4500d1985abe4dbf}
-      allow-list-certificate: ${DCC_VALIDATION_SERVICE_ALLOWLIST_CERTIFICATE:ME4wEAYHKoZIzj0CAQYFK4EEACEDOgAEAlyXQLQvVgGA7/IAmY7FyyEapogyuX/4CGDlYCEC4CUsw8MbK6Yl/snjigETlpRCAaBzoJ+lmYU=}
+      allow-list: ${DCC_VALIDATION_SERVICE_ALLOWLIST:{"certificates":[{"serviceProvider":"ACME Inc.","hostname":"validation-service.acme.org","fingerprint256":"4b6aee0ccd1c2cc47194616954c000318b92249eb8586d91c19e8c6536e3e064","serviceProviderAllowlistEndpoint":"https://cwa-mock-server.cfapps.sap.hana.ondemand.com/validation-service/serviceproviders"},{"serviceProvider":"ACME Inc.","hostname":"validation-service.acme.org","fingerprint256":"1b6aee0ccd1c2cc47194616954c000318b92249eb8586d91c19e8c6536e3e063","serviceProviderAllowlistEndpoint":"https://cwa-mock-server.cfapps.sap.hana.ondemand.com/validation-service/serviceproviders"}]}}
+      allow-list-signature: ${DCC_VALIDATION_SERVICE_ALLOWLIST_SIGNATURE:304502203abccb3cb94404b3680c11dbee4547705c610857f8c6a060c184660a2f704464022100e16844f9239d309240b7b8fc84e49bd3b9adceda896319c8044154ec2d01178f}
+      allow-list-certificate: ${DCC_VALIDATION_SERVICE_ALLOWLIST_CERTIFICATE:MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE3z0IvVii+RIEnIpKGf3Lq7ifrkNZMA3Ag6JKXHMbyMRBOVUSKIiBPHZGHFSRs0wrLosnUE1Ya7YtEWdsv/gBlQ==}
       dsc-client:
         public-key: ${DSC_PUBLIC_KEY:MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIxHvrv8jQx9OEzTZbsx1prQVQn/3ex0gMYf6GyaNBW0QKLMjrSDeN6HwSPM0QzhvhmyQUixl6l88A7Zpu5OWSw==}
         base-url: ${DSC_BASE_PATH:https://de.test.dscg.ubirch.com}

@@ -12,6 +12,7 @@ import app.coronawarn.server.common.shared.util.HashUtils.Algorithms;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AllowList;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AllowList.CertificateAllowList;
+import app.coronawarn.server.services.distribution.dgc.dsc.errors.InvalidFingerprintException;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -128,7 +129,7 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
    *
    * @return the protobuf filled with values from JSON.
    */
-  public Optional<ValidationServiceAllowlist> constructProtobufMapping() {
+  public Optional<ValidationServiceAllowlist> constructProtobufMapping() throws InvalidFingerprintException {
     AllowList allowList = distributionServiceConfig.getDigitalGreenCertificate().getAllowList();
     if (!validateSchema(allowList) || !validateCertificate()) {
       return Optional.empty();
@@ -143,29 +144,27 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
           .getServiceProviderAllowlistEndpoint();
 
       // 2. Validate certificate fingerprint with fingerprint of leaf certificate of server
-      validateFingerprint(
+      final ServiceProviderDto serviceProviderDto = validateFingerprint(
           serviceProviderAllowlistEndpoint,
           certificateAllowList.getFingerprint256(),
-          objectMapper)
-          .ifPresent(response -> {
+          objectMapper);
 
-            // 2.1. Map each of the fetched providers to a ServiceProviderAllowListItem and add to tota List.
-            final List<ServiceProviderAllowlistItem> serviceProviderItems = response.providers
-                .stream()
-                .map(provider -> ServiceProviderAllowlistItem
-                    .newBuilder()
-                    .setServiceIdentityHash(
-                        ByteString.copyFrom(provider.getBytes(StandardCharsets.UTF_8)))
-                    .build()).collect(Collectors.toList());
-            serviceProviderAllowlistItems.addAll(serviceProviderItems);
-          });
+      // 2.1. Map each of the fetched providers to a ServiceProviderAllowListItem and add to total List.
+      final List<ServiceProviderAllowlistItem> serviceProviderItems = serviceProviderDto.providers
+          .stream()
+          .map(provider -> ServiceProviderAllowlistItem
+              .newBuilder()
+              .setServiceIdentityHash(
+                  ByteString.copyFrom(Hex.decode(provider)))
+              .build()).collect(Collectors.toList());
+      serviceProviderAllowlistItems.addAll(serviceProviderItems);
 
       // 3. Map certificates to ValidationServiceAllowlistItem
       validationServiceAllowlistItemList.add(
           ValidationServiceAllowlistItem.newBuilder()
               .setHostname(certificateAllowList.getHostname())
               .setServiceProvider(certificateAllowList.getServiceProvider())
-              .setFingerprint256(ByteString.copyFrom(certificateAllowList.getFingerprint256(), StandardCharsets.UTF_8))
+              .setFingerprint256(ByteString.copyFrom(Hex.decode(certificateAllowList.getFingerprint256())))
               .build());
     }
 
@@ -176,38 +175,38 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
         .build());
   }
 
-  private Optional<ServiceProviderDto> buildServiceProviderDto(ObjectMapper objectMapper, HttpEntity response) {
-    try {
-      return Optional.ofNullable(objectMapper.readValue(
-          response.getContent(),
-          ServiceProviderDto.class));
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return Optional.empty();
-  }
 
-  private Optional<ServiceProviderDto> validateFingerprint(String serviceProviderAllowlistEndpoint,
+  private ServiceProviderDto validateFingerprint(String serviceProviderAllowlistEndpoint,
       String fingerPrintToCompare,
-      final ObjectMapper objectMapper) {
+      final ObjectMapper objectMapper) throws InvalidFingerprintException {
     CloseableHttpClient httpClient = HttpClients.custom()
         .setSSLHostnameVerifier((hostname, session) -> validateHostname(
             session,
             fingerPrintToCompare))
         .build();
+
     HttpGet getMethod = new HttpGet(serviceProviderAllowlistEndpoint);
-    final Optional<HttpEntity> httpEntity = executeRequest(httpClient, getMethod);
-    if (httpEntity.isPresent()) {
-      return buildServiceProviderDto(objectMapper, httpEntity.get());
+    final HttpEntity httpEntity = executeRequest(httpClient, getMethod);
+    return buildServiceProviderDto(objectMapper, httpEntity);
+  }
+
+
+  private ServiceProviderDto buildServiceProviderDto(ObjectMapper objectMapper, HttpEntity response)
+      throws InvalidFingerprintException {
+    try {
+      return objectMapper.readValue(
+          response.getContent(),
+          ServiceProviderDto.class);
+    } catch (Exception e) {
+      LOGGER.error("Failed to build Service Provider: Could not extract providers from response");
+      throw new InvalidFingerprintException();
     }
-    return Optional.empty();
   }
 
   private boolean validateHostname(final SSLSession session, final String fingerPrintToCompare) {
     try {
       return matches(session.getPeerCertificates()[0], fingerPrintToCompare);
     } catch (SSLPeerUnverifiedException e) {
-      // TODO check if only one is aborted
       LOGGER.error(
           "Constructing ValidationServiceAllowlistItem failed: "
               + "certificate fingerprint {} does not match fingerprint of leaf certificate of validation server",
@@ -218,22 +217,23 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
 
   private boolean matches(final Certificate cert, final String fingerPrintToCompare) {
     try {
-      String fingerprint = Hex.toHexString(HashUtils.byteStringDigest(cert.getEncoded(), Algorithms.SHA_256));
-      return fingerprint.equals(fingerPrintToCompare);
+      String fingerprint = Hex.toHexString(HashUtils.byteStringDigest(cert.getEncoded(), Algorithms.SHA_256))
+          .toLowerCase();
+      return fingerprint.equals(fingerPrintToCompare.toLowerCase());
     } catch (CertificateEncodingException e) {
-      // TODO log message if cert can not be encoded as byte[]
-      LOGGER.error("TODO");
+      LOGGER.error("Certificate Pinning failed: certificate could not be encoded.");
     }
     return false;
   }
 
-  private Optional<HttpEntity> executeRequest(CloseableHttpClient httpClient, HttpGet getMethod) {
+  private HttpEntity executeRequest(CloseableHttpClient httpClient, HttpGet getMethod)
+      throws InvalidFingerprintException {
     try {
       final CloseableHttpResponse response = httpClient.execute(getMethod);
-      return Optional.of(response.getEntity());
-    } catch (IOException e) {
-      e.printStackTrace();
+      return response.getEntity();
+    } catch (Exception e) {
+      LOGGER.error("Request to obtain provider allowlist failed", e);
+      throw new InvalidFingerprintException();
     }
-    return Optional.empty();
   }
 }
