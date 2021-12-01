@@ -29,7 +29,7 @@ public class DccValidationAllowListInvalidSignatureIT {
   private DigitalCovidValidationCertificateToProtobufMapping digitalCovidValidationCertificateToProtobufMapping;
 
   @Test
-  void testInvalidSignature(){
+  void testInvalidFingerprint() {
     assertThatThrownBy(() -> {
       digitalCovidValidationCertificateToProtobufMapping
           .constructProtobufMapping();

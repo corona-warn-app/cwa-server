@@ -204,26 +204,31 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
   }
 
   private boolean validateHostname(final SSLSession session, final String fingerPrintToCompare) {
+    Optional<Certificate> peerCertificate = Optional.empty();
     try {
-      return matches(session.getPeerCertificates()[0], fingerPrintToCompare);
+      final Certificate[] peerCertificates = session.getPeerCertificates();
+      if (peerCertificates.length <= 0) {
+        return false;
+      }
+      peerCertificate = Optional.ofNullable(peerCertificates[0]);
     } catch (SSLPeerUnverifiedException e) {
       LOGGER.error(
           "Constructing ValidationServiceAllowlistItem failed: "
               + "certificate fingerprint {} does not match fingerprint of leaf certificate of validation server",
           fingerPrintToCompare);
     }
-    return false;
+    return peerCertificate.map(it -> matches(it, fingerPrintToCompare)).orElse(false);
   }
 
   private boolean matches(final Certificate cert, final String fingerPrintToCompare) {
+    Optional<String> fingerprint = Optional.empty();
     try {
-      String fingerprint = Hex.toHexString(HashUtils.byteStringDigest(cert.getEncoded(), Algorithms.SHA_256))
-          .toLowerCase();
-      return fingerprint.equals(fingerPrintToCompare.toLowerCase());
+      fingerprint = Optional.of(Hex.toHexString(HashUtils.byteStringDigest(cert.getEncoded(), Algorithms.SHA_256))
+          .toLowerCase());
     } catch (CertificateEncodingException e) {
       LOGGER.error("Certificate Pinning failed: certificate could not be encoded.");
     }
-    return false;
+    return fingerprint.map(it -> it.equals(fingerPrintToCompare.toLowerCase())).orElse(false);
   }
 
   private HttpEntity executeRequest(CloseableHttpClient httpClient, HttpGet getMethod)
