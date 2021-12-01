@@ -22,6 +22,7 @@ import org.everit.json.schema.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.security.crypto.codec.Hex;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -97,7 +98,7 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
           ValidationServiceAllowlistItem.newBuilder()
               .setHostname(certificateAllowList.getHostname())
               .setServiceProvider(certificateAllowList.getServiceProvider())
-              .setFingerprint256(ByteString.copyFrom(certificateAllowList.getFingerprint256(), StandardCharsets.UTF_8))
+              .setFingerprint256(ByteString.copyFrom(Hex.decode(certificateAllowList.getFingerprint256())))
               .build());
     }
     return Optional.of(ValidationServiceAllowlist.newBuilder()
