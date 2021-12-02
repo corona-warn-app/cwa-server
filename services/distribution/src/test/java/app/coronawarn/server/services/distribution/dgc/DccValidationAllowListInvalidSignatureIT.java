@@ -20,10 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
     DigitalCovidValidationCertificateToProtobufMapping.class},
     initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles("allow-list-invalid")
-public class DccValidationAllowListInvalidSignatureIT {
-
-  @Autowired
-  private DistributionServiceConfig distributionServiceConfig;
+class DccValidationAllowListInvalidSignatureIT {
 
   @Autowired
   private DigitalCovidValidationCertificateToProtobufMapping digitalCovidValidationCertificateToProtobufMapping;
