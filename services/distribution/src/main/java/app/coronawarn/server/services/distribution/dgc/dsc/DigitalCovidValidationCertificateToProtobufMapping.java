@@ -69,7 +69,7 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
   private final ResourceLoader resourceLoader;
 
   /**
-   * I'm responsbile for mapping certificate allow lists to their corresponding protobuf definition.
+   * I'm responsible for mapping certificate allow lists to their corresponding protobuf definition.
    *
    * @param distributionServiceConfig service config.
    * @param resourceLoader            resource loader.
