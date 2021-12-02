@@ -23,7 +23,6 @@ import static app.coronawarn.server.common.shared.util.SecurityUtils.getPublicKe
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
-
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
@@ -31,7 +30,7 @@ import static org.assertj.core.api.Assertions.fail;
     DigitalCovidValidationCertificateToProtobufMapping.class
 },
     initializers = ConfigDataApplicationContextInitializer.class)
-public class DccValidationAllowListSignatureTest {
+class DccValidationAllowListSignatureTest {
 
   @Autowired
   private DistributionServiceConfig distributionServiceConfig;
