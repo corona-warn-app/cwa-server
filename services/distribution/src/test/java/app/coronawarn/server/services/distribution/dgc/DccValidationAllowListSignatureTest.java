@@ -51,8 +51,7 @@ class DccValidationAllowListSignatureTest {
   }
 
   @Test
-  void testVerifySignature()
-      throws NoSuchAlgorithmException, InvalidKeySpecException, SignatureException, InvalidKeyException {
+  void testVerifySignature() throws NoSuchAlgorithmException, InvalidKeySpecException {
     String content = distributionServiceConfig.getDigitalGreenCertificate().getAllowListAsString();
     byte[] signature = distributionServiceConfig.getDigitalGreenCertificate().getAllowListSignature();
     PublicKey publicKey = getPublicKeyFromString(
