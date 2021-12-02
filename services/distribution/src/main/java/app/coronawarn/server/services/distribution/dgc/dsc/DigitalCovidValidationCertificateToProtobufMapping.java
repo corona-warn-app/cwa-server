@@ -46,7 +46,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class DigitalCovidValidationCertificateToProtobufMapping {
 
-
   @JsonIgnoreProperties(ignoreUnknown = true)
   private static class ServiceProviderDto {
 
@@ -124,7 +123,6 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
     }
   }
 
-
   /**
    * Create the Protobuf from JSON.
    *
@@ -176,7 +174,6 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
         .build());
   }
 
-
   private ServiceProviderDto validateFingerprint(String serviceProviderAllowlistEndpoint,
       String fingerPrintToCompare,
       final ObjectMapper objectMapper) throws InvalidFingerprintException {
@@ -190,7 +187,6 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
     final HttpEntity httpEntity = executeRequest(httpClient, getMethod);
     return buildServiceProviderDto(objectMapper, httpEntity);
   }
-
 
   private ServiceProviderDto buildServiceProviderDto(ObjectMapper objectMapper, HttpEntity response)
       throws InvalidFingerprintException {
@@ -239,7 +235,7 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
       return response.getEntity();
     } catch (Exception e) {
       LOGGER.error("Request to obtain provider allowlist failed", e);
-      throw new InvalidFingerprintException();
+      throw new InvalidFingerprintException(e);
     }
   }
 }
