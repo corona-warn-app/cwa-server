@@ -72,7 +72,7 @@
     <junit.version>4.13.2</junit.version>
     <tomcat-embed-core.version>9.0.55</tomcat-embed-core.version>
     <findify-s3mock.version>0.2.6</findify-s3mock.version>
-    <checkstyle.version>9.1</checkstyle.version>
+    <checkstyle.version>9.2</checkstyle.version>
   </properties>
 
   <dependencyManagement>
