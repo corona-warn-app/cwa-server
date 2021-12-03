@@ -5,6 +5,7 @@ import static app.coronawarn.server.common.shared.util.SecurityUtils.getPublicKe
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
+import app.coronawarn.server.common.protocols.internal.dgc.ValidationServiceAllowlist;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AllowList;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalCovidValidationCertificateToProtobufMapping;
@@ -13,6 +14,8 @@ import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Optional;
+import app.coronawarn.server.services.distribution.dgc.dsc.errors.InvalidFingerprintException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,10 +70,14 @@ class DccValidationAllowListSignatureTest {
   }
 
   @Test
-  void testValidateSchema() {
+  void testValidateSchema() throws InvalidFingerprintException {
     AllowList allowList = distributionServiceConfig.getDigitalGreenCertificate().getAllowList();
     assertThat(digitalCovidValidationCertificateToProtobufMapping.validateSchema(allowList))
         .isTrue();
+    Optional<ValidationServiceAllowlist> optionalProtobuf =
+        digitalCovidValidationCertificateToProtobufMapping.constructProtobufMapping();
+    assertThat(optionalProtobuf).isPresent();
+    assertThat(optionalProtobuf.get().getServiceProvidersList()).hasSizeGreaterThan(0);
   }
 
   @SuppressWarnings("CatchMayIgnoreException")
