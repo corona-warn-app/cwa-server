@@ -12,6 +12,7 @@ import app.coronawarn.server.common.shared.util.HashUtils.Algorithms;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AllowList;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AllowList.CertificateAllowList;
+import app.coronawarn.server.services.distribution.dgc.dsc.errors.InvalidContentResponseException;
 import app.coronawarn.server.services.distribution.dgc.dsc.errors.InvalidFingerprintException;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -194,11 +195,18 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
   }
 
   private ServiceProviderDto buildServiceProviderDto(ObjectMapper objectMapper, HttpEntity response)
-      throws InvalidFingerprintException {
+      throws InvalidFingerprintException, InvalidContentResponseException {
     try {
-      return objectMapper.readValue(
+      ServiceProviderDto serviceProviderDto = objectMapper.readValue(
           response.getContent(),
           ServiceProviderDto.class);
+      if (serviceProviderDto.getProviders() == null) {
+        throw new InvalidContentResponseException();
+      }
+      return serviceProviderDto;
+    } catch (InvalidContentResponseException e) {
+      LOGGER.error("Failed to build Service Provider: The response was empty.");
+      throw new InvalidContentResponseException();
     } catch (Exception e) {
       LOGGER.error("Failed to build Service Provider: Could not extract providers from response");
       throw new InvalidFingerprintException();
