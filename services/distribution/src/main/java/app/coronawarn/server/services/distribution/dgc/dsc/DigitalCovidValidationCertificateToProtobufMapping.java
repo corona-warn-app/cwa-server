@@ -17,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ser.std.CollectionSerializer;
 import com.google.protobuf.ByteString;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,6 +26,7 @@ import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -174,17 +176,23 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
   }
 
   private ServiceProviderDto validateFingerprint(String serviceProviderAllowlistEndpoint,
-      String fingerPrintToCompare,
-      final ObjectMapper objectMapper) throws InvalidFingerprintException {
-    CloseableHttpClient httpClient = HttpClients.custom()
-        .setSSLHostnameVerifier((hostname, session) -> validateHostname(
-            session,
-            fingerPrintToCompare))
-        .build();
+      String fingerPrintToCompare, final ObjectMapper objectMapper) {
+    try {
+      CloseableHttpClient httpClient = HttpClients.custom()
+          .setSSLHostnameVerifier((hostname, session) -> validateHostname(
+              session,
+              fingerPrintToCompare))
+          .build();
 
-    HttpGet getMethod = new HttpGet(serviceProviderAllowlistEndpoint);
-    final HttpEntity httpEntity = executeRequest(httpClient, getMethod);
-    return buildServiceProviderDto(objectMapper, httpEntity);
+      HttpGet getMethod = new HttpGet(serviceProviderAllowlistEndpoint);
+      final HttpEntity httpEntity = executeRequest(httpClient, getMethod);
+      return buildServiceProviderDto(objectMapper, httpEntity);
+    } catch(Exception e) {
+      LOGGER.warn(e.getMessage(), e);
+      ServiceProviderDto dto = new ServiceProviderDto();
+      dto.setProviders(Collections.emptyList());
+      return dto;
+    }
   }
 
   private ServiceProviderDto buildServiceProviderDto(ObjectMapper objectMapper, HttpEntity response)
