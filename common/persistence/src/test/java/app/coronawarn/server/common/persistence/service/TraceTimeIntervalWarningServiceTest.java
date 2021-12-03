@@ -17,6 +17,7 @@ import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import app.coronawarn.server.common.protocols.internal.pt.CheckInProtectedReport;
 import app.coronawarn.server.common.shared.util.HashUtils;
 import com.google.protobuf.ByteString;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -114,6 +116,22 @@ class TraceTimeIntervalWarningServiceTest {
     String s = new String(encode);
 
     assertEquals("0f37dac11d1b8118ea0b44303400faa5e3b876da9d758058b5ff7dc2e5da8230", s);
+  }
+
+  @Test
+  void testHashingString() {
+    byte[] result = HashUtils.byteStringDigest("abcd", SHA_256);
+    final byte[] encode = Hex.encode(result);
+    String s = new String(encode);
+    Assertions.assertThat(s).isEqualTo("88d4266fd4e6338d13b845fcf289579d209c897823b9217da3e161936f031589");
+  }
+
+  @Test
+  void testHashingByteString() {
+    byte[] result = HashUtils.byteStringDigest(ByteString.copyFrom("abcd", StandardCharsets.UTF_8), SHA_256);
+    final byte[] encode = Hex.encode(result);
+    String s = new String(encode);
+    Assertions.assertThat(s).isEqualTo("88d4266fd4e6338d13b845fcf289579d209c897823b9217da3e161936f031589");
   }
 
   @DisplayName("Assert a positive retention period is accepted.")

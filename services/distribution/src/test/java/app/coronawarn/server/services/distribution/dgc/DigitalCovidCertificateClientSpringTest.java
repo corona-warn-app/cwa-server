@@ -49,11 +49,10 @@ class DigitalCovidCertificateClientSpringTest {
   private DigitalCovidCertificateClient digitalCovidCertificateClient;
 
   @Test
-  public void testCountryList() throws FetchBusinessRulesException {
+  void testCountryList() throws FetchBusinessRulesException {
     List<String> countries = digitalCovidCertificateClient.getCountryList();
 
-    assertThat(countries).isNotEmpty();
-    assertThat(countries).hasSize(27);
+    assertThat(countries).isNotEmpty().hasSize(27);
     assertThat(countries.stream().filter(filterByCountryName(DE))).hasSize(1);
     assertThat(countries.stream().filter(filterByCountryName(RO))).hasSize(1);
     assertThat(countries.stream().filter(filterByCountryName(NL))).hasSize(1);
@@ -61,7 +60,7 @@ class DigitalCovidCertificateClientSpringTest {
   }
 
   @Test
-  public void shouldReturnCorrectValueSetsByHash() throws FetchValueSetsException {
+  void shouldReturnCorrectValueSetsByHash() throws FetchValueSetsException {
     ValueSet valueSet1 = digitalCovidCertificateClient.getValueSet(VACCINE_MAH_HASH);
 
     assertThat(valueSet1).isNotNull();
@@ -76,29 +75,27 @@ class DigitalCovidCertificateClientSpringTest {
   }
 
   @Test
-  public void shouldThrowDccExceptionWhenTryingToRetrieveValuesetWithNonexistingHash() {
+  void shouldThrowDccExceptionWhenTryingToRetrieveValuesetWithNonexistingHash() {
     assertThrows(FetchValueSetsException.class,
         () -> digitalCovidCertificateClient.getValueSet(RULE_3_HASH));
   }
 
   @Test
-  public void shouldThrowDccExceptionWhenTryingToRetrieveRuleWithNonexistingHash() {
+  void shouldThrowDccExceptionWhenTryingToRetrieveRuleWithNonexistingHash() {
     assertThrows(FetchBusinessRulesException.class,
         () -> digitalCovidCertificateClient.getCountryRuleByHash(DE, NL));
   }
 
   @Test
-  public void shouldReturnCorrectValueSets() throws FetchValueSetsException {
+  void shouldReturnCorrectValueSets() throws FetchValueSetsException {
     List<ValueSetMetadata> valueSets = digitalCovidCertificateClient.getValueSets();
 
-    assertThat(valueSets).isNotEmpty();
-    assertThat(valueSets).hasSize(8);
-    assertThat(valueSets).hasSize(8);
-    assertThat(valueSets.stream().filter(missingIdOrHash())).hasSize(0);
+    assertThat(valueSets).isNotEmpty().hasSize(8);
+    assertThat(valueSets.stream().filter(missingIdOrHash())).isEmpty();
   }
 
   @Test
-  public void shouldReturnCorrectCountryRulesByHash() throws FetchBusinessRulesException {
+  void shouldReturnCorrectCountryRulesByHash() throws FetchBusinessRulesException {
     assertThat(digitalCovidCertificateClient.getCountryRuleByHash(DE, DE_HASH)).isNotNull();
     assertThat(digitalCovidCertificateClient.getCountryRuleByHash(NL, NL_HASH)).isNotNull();
     assertThat(digitalCovidCertificateClient.getCountryRuleByHash(CZ, CZ_HASH)).isNotNull();

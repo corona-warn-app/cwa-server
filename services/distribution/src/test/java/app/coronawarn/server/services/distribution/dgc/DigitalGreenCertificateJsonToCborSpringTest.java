@@ -91,5 +91,4 @@ class DigitalGreenCertificateJsonToCborSpringTest {
   private Predicate<BusinessRule> filterByRuleIdentifier(String identifier) {
     return businessRule -> businessRule.getIdentifier().equalsIgnoreCase(identifier);
   }
-
 }

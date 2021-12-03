@@ -234,9 +234,9 @@ services:
       supported-languages: ${DIGITAL_GREEN_CERTIFICATE_SUPPORTED_LANGUAGES:DE, EN, BG, PL, RO, TR}
       booster-notification: ${BOOSTER_NOTIFICATION_DIRECTORY:booster-notification-rules}
       export-archive-name: ${DIGITAL_GREEN_CERTIFICATE_ARCHIVE_NAME:export.bin}
-      allow-list: ${DCC_VALIDATION_SERVICE_ALLOWLIST:{"certificates":[{"serviceProvider":"ACME Inc.","hostname":"validation-service.acme.org","fingerprint256":"E87E26EB9D22280125E113F755BE2F9F90DB076DD011D5940E0A78DD2F20EDFA"}]}}
-      allow-list-signature: ${DCC_VALIDATION_SERVICE_ALLOWLIST_SIGNATURE:3046022100d08d041d6201ef81c07b4df8d149a5f931349db382f2427f1c1c3fdb370eb708022100d01959312e128e04365d3a1ef24795411cda8558809221d847dc52142038bf82}
-      allow-list-certificate: ${DCC_VALIDATION_SERVICE_ALLOWLIST_CERTIFICATE:MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEMMvW0zun8fNCELK1tsqXsGJPu4p7850ZPCBCoxQ5gs2z5G0in3izL7eTFa5lI7Gkhnz0tN5whVQJObCaqbP55A==}
+      allow-list: ${DCC_VALIDATION_SERVICE_ALLOWLIST}
+      allow-list-signature: ${DCC_VALIDATION_SERVICE_ALLOWLIST_SIGNATURE}
+      allow-list-certificate: ${DCC_VALIDATION_SERVICE_ALLOWLIST_CERTIFICATE}
       dsc-client:
         public-key: ${DSC_PUBLIC_KEY:MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIxHvrv8jQx9OEzTZbsx1prQVQn/3ex0gMYf6GyaNBW0QKLMjrSDeN6HwSPM0QzhvhmyQUixl6l88A7Zpu5OWSw==}
         base-url: ${DSC_BASE_PATH:https://de.test.dscg.ubirch.com}

@@ -65,7 +65,7 @@ class DigitalCovidCertificateClientUnitTest {
 
   @Test
   void shouldThrowFetchExceptionWhenClientThrowsConnectionException() {
-    when(digitalCovidCertificateFeignClient.getCountryRule(eq("test"), eq("test")))
+    when(digitalCovidCertificateFeignClient.getCountryRule("test", "test"))
         .thenThrow(RetryableException.class);
     assertThrows(FetchBusinessRulesException.class,
         () -> prodDigitalCovidCertificateClient.getCountryRuleByHash(any(), any()));

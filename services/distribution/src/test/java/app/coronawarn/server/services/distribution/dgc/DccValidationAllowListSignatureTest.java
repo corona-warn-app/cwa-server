@@ -5,15 +5,17 @@ import static app.coronawarn.server.common.shared.util.SecurityUtils.getPublicKe
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
+import app.coronawarn.server.common.protocols.internal.dgc.ValidationServiceAllowlist;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AllowList;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalCovidValidationCertificateToProtobufMapping;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
-import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Optional;
+import app.coronawarn.server.services.distribution.dgc.dsc.errors.InvalidFingerprintException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,15 +24,14 @@ import org.springframework.boot.test.context.ConfigDataApplicationContextInitial
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
-      DistributionServiceConfig.class,
-      DigitalCovidValidationCertificateToProtobufMapping.class
-    },
+    DistributionServiceConfig.class,
+    DigitalCovidValidationCertificateToProtobufMapping.class
+},
     initializers = ConfigDataApplicationContextInitializer.class)
-public class DccValidationAllowListSignatureTest {
+class DccValidationAllowListSignatureTest {
 
   @Autowired
   private DistributionServiceConfig distributionServiceConfig;
@@ -51,8 +52,7 @@ public class DccValidationAllowListSignatureTest {
   }
 
   @Test
-  void testVerifySignature()
-      throws NoSuchAlgorithmException, InvalidKeySpecException, SignatureException, InvalidKeyException {
+  void testVerifySignature() throws NoSuchAlgorithmException, InvalidKeySpecException {
     String content = distributionServiceConfig.getDigitalGreenCertificate().getAllowListAsString();
     byte[] signature = distributionServiceConfig.getDigitalGreenCertificate().getAllowListSignature();
     PublicKey publicKey = getPublicKeyFromString(
@@ -64,15 +64,42 @@ public class DccValidationAllowListSignatureTest {
           signature,
           publicKey,
           content.getBytes(StandardCharsets.UTF_8));
-    } catch(Throwable t) {
+    } catch (Throwable t) {
       fail(t.getMessage());
     }
   }
 
   @Test
-  void testValidateSchema() {
+  void testValidateSchema() throws InvalidFingerprintException {
     AllowList allowList = distributionServiceConfig.getDigitalGreenCertificate().getAllowList();
     assertThat(digitalCovidValidationCertificateToProtobufMapping.validateSchema(allowList))
         .isTrue();
+    Optional<ValidationServiceAllowlist> optionalProtobuf =
+        digitalCovidValidationCertificateToProtobufMapping.constructProtobufMapping();
+    assertThat(optionalProtobuf).isPresent();
+    assertThat(optionalProtobuf.get().getServiceProvidersList()).hasSizeGreaterThan(0);
+  }
+
+  @SuppressWarnings("CatchMayIgnoreException")
+  @Test
+  void testValidateSchemaInexistent() {
+    try {
+      digitalCovidValidationCertificateToProtobufMapping.validateSchema(null);
+    } catch (Exception e) {
+      assertThat(e.getMessage()).startsWith("A JSONObject text must begin with");
+    }
+  }
+
+  @Test
+  void testValidateSchemaInvalid() {
+    AllowList allowList = distributionServiceConfig.getDigitalGreenCertificate().getAllowList();
+    allowList.getCertificates().forEach(certificateAllowList -> certificateAllowList.setFingerprint256("notAcceptedChar$"));
+    assertThat(digitalCovidValidationCertificateToProtobufMapping.validateSchema(allowList))
+        .isFalse();
+  }
+
+  @Test
+  void testConstructProtobufMapping() throws Exception {
+    assertThat(digitalCovidValidationCertificateToProtobufMapping.constructProtobufMapping()).isPresent();
   }
 }

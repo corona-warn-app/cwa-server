@@ -1937,6 +1937,9 @@ public class DistributionServiceConfig {
       private String hostname;
       private String fingerprint256;
 
+      @JsonProperty("serviceProviderAllowlistEndpoint")
+      private String serviceProviderAllowlistEndpoint;
+
       public String getServiceProvider() {
         return serviceProvider;
       }
@@ -1962,6 +1965,14 @@ public class DistributionServiceConfig {
       @JsonProperty("fingerprint256")
       public void setFingerprint256(String fingerprint256) {
         this.fingerprint256 = fingerprint256;
+      }
+
+      public String getServiceProviderAllowlistEndpoint() {
+        return serviceProviderAllowlistEndpoint;
+      }
+
+      public void setServiceProviderAllowlistEndpoint(String serviceProviderAllowlistEndpoint) {
+        this.serviceProviderAllowlistEndpoint = serviceProviderAllowlistEndpoint;
       }
     }
   }
