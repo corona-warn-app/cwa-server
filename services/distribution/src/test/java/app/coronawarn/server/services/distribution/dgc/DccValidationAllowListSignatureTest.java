@@ -8,6 +8,7 @@ import static org.assertj.core.api.Assertions.fail;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AllowList;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalCovidValidationCertificateToProtobufMapping;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
@@ -70,6 +71,16 @@ class DccValidationAllowListSignatureTest {
     AllowList allowList = distributionServiceConfig.getDigitalGreenCertificate().getAllowList();
     assertThat(digitalCovidValidationCertificateToProtobufMapping.validateSchema(allowList))
         .isTrue();
+  }
+
+  @SuppressWarnings("CatchMayIgnoreException")
+  @Test
+  void testValidateSchemaInexistent() {
+    try {
+      digitalCovidValidationCertificateToProtobufMapping.validateSchema(null);
+    } catch (Exception e) {
+      assertThat(e.getMessage()).startsWith("A JSONObject text must begin with");
+    }
   }
 
   @Test
