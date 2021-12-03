@@ -195,7 +195,7 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
   }
 
   private ServiceProviderDto buildServiceProviderDto(ObjectMapper objectMapper, HttpEntity response)
-      throws InvalidFingerprintException, InvalidContentResponseException {
+      throws InvalidFingerprintException {
     try {
       ServiceProviderDto serviceProviderDto = objectMapper.readValue(
           response.getContent(),
@@ -204,9 +204,6 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
         throw new InvalidContentResponseException();
       }
       return serviceProviderDto;
-    } catch (InvalidContentResponseException e) {
-      LOGGER.error("Failed to build Service Provider: The response was empty.");
-      throw new InvalidContentResponseException();
     } catch (Exception e) {
       LOGGER.error("Failed to build Service Provider: Could not extract providers from response");
       throw new InvalidFingerprintException();
