@@ -91,6 +91,14 @@ class DccValidationAllowListSignatureTest {
   }
 
   @Test
+  void testValidateSchemaInvalid() {
+    AllowList allowList = distributionServiceConfig.getDigitalGreenCertificate().getAllowList();
+    allowList.getCertificates().forEach(certificateAllowList -> certificateAllowList.setFingerprint256("notAcceptedChar$"));
+    assertThat(digitalCovidValidationCertificateToProtobufMapping.validateSchema(allowList))
+        .isFalse();
+  }
+
+  @Test
   void testConstructProtobufMapping() throws Exception {
     assertThat(digitalCovidValidationCertificateToProtobufMapping.constructProtobufMapping()).isPresent();
   }

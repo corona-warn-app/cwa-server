@@ -17,9 +17,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ser.std.CollectionSerializer;
 import com.google.protobuf.ByteString;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
@@ -187,7 +185,7 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
       HttpGet getMethod = new HttpGet(serviceProviderAllowlistEndpoint);
       final HttpEntity httpEntity = executeRequest(httpClient, getMethod);
       return buildServiceProviderDto(objectMapper, httpEntity);
-    } catch(Exception e) {
+    } catch (Exception e) {
       LOGGER.warn(e.getMessage(), e);
       ServiceProviderDto dto = new ServiceProviderDto();
       dto.setProviders(Collections.emptyList());
