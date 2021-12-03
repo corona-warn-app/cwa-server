@@ -17,6 +17,7 @@ import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import app.coronawarn.server.common.protocols.internal.pt.CheckInProtectedReport;
 import app.coronawarn.server.common.shared.util.HashUtils;
 import com.google.protobuf.ByteString;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -120,6 +121,14 @@ class TraceTimeIntervalWarningServiceTest {
   @Test
   void testHashingString() {
     byte[] result = HashUtils.byteStringDigest("abcd", SHA_256);
+    final byte[] encode = Hex.encode(result);
+    String s = new String(encode);
+    Assertions.assertThat(s).isEqualTo("88d4266fd4e6338d13b845fcf289579d209c897823b9217da3e161936f031589");
+  }
+
+  @Test
+  void testHashingByteString() {
+    byte[] result = HashUtils.byteStringDigest(ByteString.copyFrom("abcd", StandardCharsets.UTF_8), SHA_256);
     final byte[] encode = Hex.encode(result);
     String s = new String(encode);
     Assertions.assertThat(s).isEqualTo("88d4266fd4e6338d13b845fcf289579d209c897823b9217da3e161936f031589");
