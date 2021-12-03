@@ -127,7 +127,7 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
    *
    * @return the protobuf filled with values from JSON.
    */
-  public Optional<ValidationServiceAllowlist> constructProtobufMapping() throws InvalidFingerprintException {
+  public Optional<ValidationServiceAllowlist> constructProtobufMapping() {
     AllowList allowList = distributionServiceConfig.getDigitalGreenCertificate().getAllowList();
     if (!validateSchema(allowList) || !validateCertificate()) {
       return Optional.empty();

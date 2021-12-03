@@ -1,7 +1,9 @@
 package app.coronawarn.server.services.distribution.dgc;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import app.coronawarn.server.common.protocols.internal.dgc.ValidationServiceAllowlist;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalCovidValidationCertificateToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.dsc.errors.InvalidFingerprintException;
@@ -13,6 +15,7 @@ import org.springframework.boot.test.context.ConfigDataApplicationContextInitial
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import java.util.Optional;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
@@ -27,9 +30,9 @@ class DccValidationAllowListInvalidSignatureIntegrationTest {
 
   @Test
   void testInvalidFingerprint() {
-    assertThatThrownBy(() -> {
-      digitalCovidValidationCertificateToProtobufMapping
-          .constructProtobufMapping();
-    }).isExactlyInstanceOf(InvalidFingerprintException.class);
+      Optional<ValidationServiceAllowlist> underTest =
+          digitalCovidValidationCertificateToProtobufMapping.constructProtobufMapping();
+      assertThat(underTest.get().getServiceProvidersList()).isEmpty();
+
   }
 }
