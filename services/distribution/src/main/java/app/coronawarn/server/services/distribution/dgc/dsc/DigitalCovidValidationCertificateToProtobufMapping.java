@@ -225,7 +225,7 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
       LOGGER.error(
           "Constructing ValidationServiceAllowlistItem failed: "
               + "certificate fingerprint {} does not match fingerprint of leaf certificate of validation server",
-          fingerPrintToCompare ,e);
+          fingerPrintToCompare, e);
     }
     return peerCertificate.map(it -> matches(it, fingerPrintToCompare)).orElse(false);
   }
