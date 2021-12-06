@@ -77,7 +77,7 @@ class DccValidationAllowListSignatureTest {
     Optional<ValidationServiceAllowlist> optionalProtobuf =
         digitalCovidValidationCertificateToProtobufMapping.constructProtobufMapping();
     assertThat(optionalProtobuf).isPresent();
-    assertThat(optionalProtobuf.get().getServiceProvidersList()).hasSizeGreaterThan(0);
+    assertThat(optionalProtobuf.get().getServiceProvidersList()).hasSize(0);
   }
 
   @SuppressWarnings("CatchMayIgnoreException")

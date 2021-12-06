@@ -1920,6 +1920,8 @@ public class DistributionServiceConfig {
 
     private List<CertificateAllowList> certificates;
 
+    private List<ServiceProvider> serviceProviders;
+
     public List<CertificateAllowList> getCertificates() {
       return certificates;
     }
@@ -1927,6 +1929,41 @@ public class DistributionServiceConfig {
     @JsonProperty("certificates")
     public void setCertificates(List<CertificateAllowList> certificates) {
       this.certificates = certificates;
+    }
+
+    public List<ServiceProvider> getServiceProviders() {
+      return serviceProviders;
+    }
+
+    @JsonProperty("serviceProviders")
+    public void setServiceProviders(List<ServiceProvider> serviceProviders) {
+      this.serviceProviders = serviceProviders;
+    }
+
+    @JsonInclude(Include.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class ServiceProvider {
+
+      @JsonProperty("serviceProviderAllowlistEndpoint")
+      private String serviceProviderAllowlistEndpoint;
+      @JsonProperty("fingerprint256")
+      private String fingerprint256;
+
+      public String getServiceProviderAllowlistEndpoint() {
+        return serviceProviderAllowlistEndpoint;
+      }
+
+      public void setServiceProviderAllowlistEndpoint(String serviceProviderAllowlistEndpoint) {
+        this.serviceProviderAllowlistEndpoint = serviceProviderAllowlistEndpoint;
+      }
+
+      public String getFingerprint256() {
+        return fingerprint256;
+      }
+
+      public void setFingerprint256(String fingerprint256) {
+        this.fingerprint256 = fingerprint256;
+      }
     }
 
     @JsonInclude(Include.NON_NULL)
