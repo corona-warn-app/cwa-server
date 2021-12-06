@@ -225,7 +225,7 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
       LOGGER.error(
           "Constructing ValidationServiceAllowlistItem failed: "
               + "certificate fingerprint {} does not match fingerprint of leaf certificate of validation server",
-          fingerPrintToCompare);
+          fingerPrintToCompare ,e);
     }
     return peerCertificate.map(it -> matches(it, fingerPrintToCompare)).orElse(false);
   }
@@ -247,6 +247,7 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
       final CloseableHttpResponse response = httpClient.execute(getMethod);
       return response.getEntity();
     } catch (Exception e) {
+      LOGGER.warn("Request to obtain the service providers failed: ", e);
       throw new InvalidFingerprintException(e);
     }
   }
