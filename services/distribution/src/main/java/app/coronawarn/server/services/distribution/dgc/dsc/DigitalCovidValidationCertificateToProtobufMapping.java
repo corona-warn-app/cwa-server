@@ -248,7 +248,7 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
       return response.getEntity();
     } catch (Exception e) {
       LOGGER.warn("Request to obtain the service providers failed: ", e);
-      throw new InvalidFingerprintException(e);
+      throw new InvalidFingerprintException();
     }
   }
 }
