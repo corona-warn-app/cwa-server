@@ -191,8 +191,8 @@ services:
       valuesets-file-name: value-sets
       supported-languages: DE, EN, BG, PL, RO, TR
       export-archive-name: ${DIGITAL_GREEN_CERTIFICATE_ARCHIVE_NAME:export.bin}
-      allow-list: ${DCC_VALIDATION_SERVICE_ALLOWLIST:{"certificates":[{"serviceProvider":"ACME Inc.","hostname":"validation-service.acme.org","fingerprint256":"4b6aee0ccd1c2cc47194616954c000318b92249eb8586d91c19e8c6536e3e064","serviceProviderAllowlistEndpoint":"https://cwa-mock-server.cfapps.sap.hana.ondemand.com/validation-service/serviceproviders"}]}}
-      allow-list-signature: ${DCC_VALIDATION_SERVICE_ALLOWLIST_SIGNATURE:304502203954dab2cf9b283ed0b051596c132557f881c4068133ee4db043c6088a9aaf920221009202afe7605689c7af655a3d3b75a5efa4b33bf61d57cd4c7829132463f49394}
+      allow-list: ${DCC_VALIDATION_SERVICE_ALLOWLIST:{"certificates":[{"serviceProvider":"ACME Inc.","hostname":"validation-service.acme.org","fingerprint256":"E87E26EB9D22280125E113F755BE2F9F90DB076DD011D5940E0A78DD2F20EDFA"}],"serviceProviders":[{"serviceProviderAllowlistEndpoint":"https://validation-service.acme.org/serviceproviders","fingerprint256":"E87E26EB9D22280125E113F755BE2F9F90DB076DD011D5940E0A78DD2F20EDFA"}]}}
+      allow-list-signature: ${DCC_VALIDATION_SERVICE_ALLOWLIST_SIGNATURE:3046022100945f80f1fa7b32cc9f4f951ec826fab13274472299089cc980448d66ff4e3055022100917dda6bedb1ac209715352b6355142fc23a0e5d5e5743559e3813be54a1b0b8}
       allow-list-certificate: ${DCC_VALIDATION_SERVICE_ALLOWLIST_CERTIFICATE:MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEMMvW0zun8fNCELK1tsqXsGJPu4p7850ZPCBCoxQ5gs2z5G0in3izL7eTFa5lI7Gkhnz0tN5whVQJObCaqbP55A==}
       dsc-client:
         public-key: ${DSC_PUBLIC_KEY:MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIxHvrv8jQx9OEzTZbsx1prQVQn/3ex0gMYf6GyaNBW0QKLMjrSDeN6HwSPM0QzhvhmyQUixl6l88A7Zpu5OWSw==}

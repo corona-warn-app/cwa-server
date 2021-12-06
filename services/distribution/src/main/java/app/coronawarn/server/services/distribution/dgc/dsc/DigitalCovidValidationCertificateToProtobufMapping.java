@@ -12,6 +12,7 @@ import app.coronawarn.server.common.shared.util.HashUtils.Algorithms;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AllowList;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AllowList.CertificateAllowList;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AllowList.ServiceProvider;
 import app.coronawarn.server.services.distribution.dgc.dsc.errors.InvalidContentResponseException;
 import app.coronawarn.server.services.distribution.dgc.dsc.errors.InvalidFingerprintException;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -137,15 +138,15 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
     List<ValidationServiceAllowlistItem> validationServiceAllowlistItemList = new ArrayList<>();
     final ObjectMapper objectMapper = new ObjectMapper();
 
-    for (CertificateAllowList certificateAllowList : allowList.getCertificates()) {
+    for (ServiceProvider serviceProvider : allowList.getServiceProviders()) {
       // 1. Fetch corresponding endpoint for retrieving providers
-      final String serviceProviderAllowlistEndpoint = certificateAllowList
+      final String serviceProviderAllowlistEndpoint = serviceProvider
           .getServiceProviderAllowlistEndpoint();
 
       // 2. Validate certificate fingerprint with fingerprint of leaf certificate of server
       final ServiceProviderDto serviceProviderDto = validateFingerprint(
           serviceProviderAllowlistEndpoint,
-          certificateAllowList.getFingerprint256(),
+          serviceProvider.getFingerprint256(),
           objectMapper);
 
       // 2.1. Map each of the fetched providers to a ServiceProviderAllowListItem and add to total List.
@@ -157,7 +158,9 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
                   ByteString.copyFrom(Hex.decode(provider)))
               .build()).collect(Collectors.toList());
       serviceProviderAllowlistItems.addAll(serviceProviderItems);
+    }
 
+    for (CertificateAllowList certificateAllowList : allowList.getCertificates()) {
       // 3. Map certificates to ValidationServiceAllowlistItem
       validationServiceAllowlistItemList.add(
           ValidationServiceAllowlistItem.newBuilder()
