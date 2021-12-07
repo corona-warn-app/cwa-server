@@ -9,6 +9,7 @@ import app.coronawarn.server.services.distribution.dgc.ValueSetMetadata;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchValueSetsException;
 import app.coronawarn.server.services.distribution.dgc.exception.ThirdPartyServiceException;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
@@ -40,7 +41,12 @@ public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificat
 
   @Override
   public List<String> getCountryList() throws FetchBusinessRulesException {
-    return getResponseAndTreatExceptions(digitalCovidCertificateClient::getCountryList,
+    ResponseEntity<List<String>> responseEntity = digitalCovidCertificateClient.getCountryList();
+    List<String> countryList = responseEntity.getBody();
+    if(countryList != null) {
+      countryList.removeIf("EU"::equals);
+    }
+    return getResponseAndTreatExceptions(() -> ResponseEntity.ok(countryList),
         "country list",
         FetchBusinessRulesException::new);
   }

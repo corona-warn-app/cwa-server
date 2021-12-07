@@ -36,7 +36,9 @@ public class DigitalGreenCertificateToCborMapping {
    * Construct country rules retrieved from DCC client for CBOR encoding.
    */
   public List<String> constructCountryList() throws FetchBusinessRulesException {
-    return digitalCovidCertificateClient.getCountryList();
+    List<String> countryList = digitalCovidCertificateClient.getCountryList();
+    countryList.removeIf("EU"::equals);
+    return countryList;
   }
 
   /**
