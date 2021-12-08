@@ -41,14 +41,18 @@ public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificat
 
   @Override
   public List<String> getCountryList() throws FetchBusinessRulesException {
-    ResponseEntity<List<String>> responseEntity = digitalCovidCertificateClient.getCountryList();
-    List<String> countryList = responseEntity.getBody();
-    if(countryList != null) {
-      countryList.removeIf("EU"::equals);
+    try {
+      ResponseEntity<List<String>> responseEntity = digitalCovidCertificateClient.getCountryList();
+      List<String> countryList = responseEntity.getBody();
+      if (countryList != null) {
+        countryList.removeIf("EU"::equals);
+      }
+      return getResponseAndTreatExceptions(() -> ResponseEntity.ok(countryList),
+          "country list",
+          FetchBusinessRulesException::new);
+    } catch (Exception e) {
+      throw new FetchBusinessRulesException(e.getMessage());
     }
-    return getResponseAndTreatExceptions(() -> ResponseEntity.ok(countryList),
-        "country list",
-        FetchBusinessRulesException::new);
   }
 
   @Override
