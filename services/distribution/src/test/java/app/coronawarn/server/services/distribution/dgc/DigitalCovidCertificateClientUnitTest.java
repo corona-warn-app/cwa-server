@@ -17,6 +17,8 @@ import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRu
 import app.coronawarn.server.services.distribution.dgc.exception.FetchValueSetsException;
 import feign.FeignException.FeignClientException;
 import feign.RetryableException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +28,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.http.ResponseEntity;
 
 @ExtendWith(MockitoExtension.class)
 class DigitalCovidCertificateClientUnitTest {
@@ -77,6 +80,18 @@ class DigitalCovidCertificateClientUnitTest {
         .thenThrow(FeignClientException.class);
     assertThrows(FetchBusinessRulesException.class,
         () -> prodDigitalCovidCertificateClient.getCountryList());
+  }
+
+  @Test
+  void checkEUFiltering() throws FetchBusinessRulesException {
+    try (MockedStatic<SerializationUtils> utilities = Mockito.mockStatic(SerializationUtils.class)) {
+      utilities.when(() -> SerializationUtils.readConfiguredJsonOrDefault(any(), any(), any(), any()))
+          .thenReturn(Optional.of(new String[]{"EU", "RO", "DE"}));
+      when(digitalCovidCertificateFeignClient.getCountryList())
+          .thenReturn(ResponseEntity.ok(Arrays.asList("EU", "RO", "DE")));
+      assertThat(testDigitalCovidCertificateClient.getCountryList()).hasSize(3);
+      assertThat(prodDigitalCovidCertificateClient.getCountryList()).hasSize(2);
+    }
   }
 
   @Test
