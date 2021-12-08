@@ -40,7 +40,7 @@ public class DigitalGreenCertificateToCborMapping {
   public List<String> constructCountryList() throws FetchBusinessRulesException {
     List<String> countryList = digitalCovidCertificateClient.getCountryList();
     //countryList.removeIf("EU"::equals); //remove might not be supported
-    return countryList.stream().filter(not("EU" :: equals)).collect(Collectors.toList());
+    return countryList.stream().filter(not("EU"::equals)).collect(Collectors.toList());
   }
 
   /**

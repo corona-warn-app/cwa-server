@@ -48,7 +48,7 @@ public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificat
       List<String> countryList = responseEntity.getBody();
       final List<String> countryListResponse;
       if (countryList != null) {
-        countryListResponse = countryList.stream().filter(not("EU" :: equals)).collect(Collectors.toList());
+        countryListResponse = countryList.stream().filter(not("EU"::equals)).collect(Collectors.toList());
         //countryList.removeIf("EU"::equals); //remove might not be supported
       } else {
         countryListResponse = null;
