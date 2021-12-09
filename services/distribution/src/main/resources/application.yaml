@@ -116,7 +116,7 @@ services:
       - label: unencrypted-checkins-enabled
         value: ${EVREG_UNENCRYPTED_CHECKINS_ENABLED:0}
       - label: validation-service-android-min-version-code
-        value: { $VALIDATION_SERVICE_ANDROID_MIN_VERSION_CODE:0 }
+        value: { $VALIDATION_SERVICE_ANDROID_MIN_VERSION_CODE:0}
       - label: validation-service-ios-min-version-major
         value: ${VALIDATION_SERVICE_IOS_MIN_VERSION_MAJOR:0}
       - label: validation-service-ios-min-version-minor
