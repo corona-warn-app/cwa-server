@@ -1,6 +1,7 @@
 package app.coronawarn.server.services.distribution.dgc.client;
 
 import static app.coronawarn.server.common.shared.util.SerializationUtils.stringifyObject;
+import static java.util.function.Predicate.not;
 
 import app.coronawarn.server.services.distribution.dgc.BusinessRule;
 import app.coronawarn.server.services.distribution.dgc.BusinessRuleItem;
@@ -9,9 +10,11 @@ import app.coronawarn.server.services.distribution.dgc.ValueSetMetadata;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchValueSetsException;
 import app.coronawarn.server.services.distribution.dgc.exception.ThirdPartyServiceException;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -40,9 +43,22 @@ public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificat
 
   @Override
   public List<String> getCountryList() throws FetchBusinessRulesException {
-    return getResponseAndTreatExceptions(digitalCovidCertificateClient::getCountryList,
-        "country list",
-        FetchBusinessRulesException::new);
+    try {
+      ResponseEntity<List<String>> responseEntity = digitalCovidCertificateClient.getCountryList();
+      List<String> countryList = responseEntity.getBody();
+      final List<String> countryListResponse;
+      if (countryList != null) {
+        countryListResponse = countryList.stream().filter(not("EU"::equals)).collect(Collectors.toList());
+        //countryList.removeIf("EU"::equals); //remove might not be supported
+      } else {
+        countryListResponse = null;
+      }
+      return getResponseAndTreatExceptions(() -> ResponseEntity.ok(countryListResponse),
+          "country list",
+          FetchBusinessRulesException::new);
+    } catch (Exception e) {
+      throw new FetchBusinessRulesException(e.getMessage());
+    }
   }
 
   @Override
