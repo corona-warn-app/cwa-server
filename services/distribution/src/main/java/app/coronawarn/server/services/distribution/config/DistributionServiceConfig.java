@@ -1096,8 +1096,6 @@ public class DistributionServiceConfig {
   public static class AppFeature {
 
     private String label;
-    @Min(0)
-    @Max(1)
     private Integer value;
 
     public String getLabel() {
