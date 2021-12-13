@@ -13,6 +13,7 @@ import app.coronawarn.server.common.shared.util.SerializationUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AllowList;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalCovidValidationCertificateToProtobufMapping;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
@@ -20,10 +21,15 @@ import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 import java.util.Optional;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.Spy;
@@ -133,6 +139,23 @@ class DccValidationAllowListSignatureTest {
       Optional<ValidationServiceAllowlist> validationServiceAllowlist =
           digitalCovidValidationCertificateToProtobufMapping.constructProtobufMapping();
       assertThat(validationServiceAllowlist).isEmpty();
+    }
+  }
+
+  @Mock
+  private HttpClientBuilder httpClientBuilder;
+  @Mock
+  private CloseableHttpClient httpClient;
+
+  @SuppressWarnings("ResultOfMethodCallIgnored")
+  @Test
+  void testWithMockedHttpClientReturningNull() throws IOException {
+    try (MockedStatic<HttpClients> httpClientsMockedStatic = Mockito.mockStatic(HttpClients.class)) {
+      httpClientsMockedStatic.when(HttpClients::custom).thenReturn(httpClientBuilder);
+      when(httpClientBuilder.setSSLHostnameVerifier(any())).thenReturn(httpClientBuilder);
+      when(httpClientBuilder.build()).thenReturn(httpClient);
+      when(httpClient.execute(any())).thenReturn(null);
+      assertThat(digitalCovidValidationCertificateToProtobufMapping.constructProtobufMapping()).isPresent();
     }
   }
 }
