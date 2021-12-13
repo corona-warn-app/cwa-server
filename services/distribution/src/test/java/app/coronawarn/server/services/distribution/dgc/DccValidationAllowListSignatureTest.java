@@ -15,16 +15,28 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalCovidValidationCertificateToProtobufMapping;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
+import java.security.cert.Certificate;
 import java.security.spec.InvalidKeySpecException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
+import org.apache.http.Header;
+import org.apache.http.HeaderIterator;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.ProtocolVersion;
+import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.params.HttpParams;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.junit.jupiter.api.Test;
@@ -40,6 +52,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.testcontainers.shaded.okhttp3.OkHttpClient;
+import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.net.ssl.SSLSession;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
@@ -157,5 +172,19 @@ class DccValidationAllowListSignatureTest {
       when(httpClient.execute(any())).thenReturn(null);
       assertThat(digitalCovidValidationCertificateToProtobufMapping.constructProtobufMapping()).isPresent();
     }
+  }
+
+  @Mock
+  private SSLSession sslSession;
+
+  @Test
+  void testValidateHostname()
+      throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, SSLPeerUnverifiedException {
+    when(sslSession.getPeerCertificates()).thenReturn(new Certificate[0]);
+    Method method = DigitalCovidValidationCertificateToProtobufMapping.class
+        .getDeclaredMethod("validateHostname", SSLSession.class, String.class);
+    method.setAccessible(true);
+    Boolean returnValue = (Boolean) method.invoke(digitalCovidValidationCertificateToProtobufMapping, sslSession, null);
+    assertThat(returnValue).isFalse();
   }
 }
