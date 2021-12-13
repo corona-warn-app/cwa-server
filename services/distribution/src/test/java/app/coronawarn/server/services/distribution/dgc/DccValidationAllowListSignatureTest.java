@@ -4,12 +4,15 @@ import static app.coronawarn.server.common.shared.util.SecurityUtils.ecdsaSignat
 import static app.coronawarn.server.common.shared.util.SecurityUtils.getPublicKeyFromString;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.protocols.internal.dgc.ValidationServiceAllowlist;
+import app.coronawarn.server.common.shared.util.SecurityUtils;
+import app.coronawarn.server.common.shared.util.SerializationUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AllowList;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalCovidValidationCertificateToProtobufMapping;
-import app.coronawarn.server.services.distribution.dgc.dsc.errors.InvalidFingerprintException;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
@@ -17,9 +20,12 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -102,5 +108,15 @@ class DccValidationAllowListSignatureTest {
     Optional<ValidationServiceAllowlist> validationServiceAllowlist =
         digitalCovidValidationCertificateToProtobufMapping.constructProtobufMapping();
     assertThat(validationServiceAllowlist).isPresent();
+  }
+
+  @Test
+  void testConstructProtobufMappingEmpty() {
+    try (MockedStatic<SecurityUtils> utilities = Mockito.mockStatic(SecurityUtils.class)) {
+      utilities.when(() -> getPublicKeyFromString(any())).thenThrow(new NoSuchAlgorithmException());
+      Optional<ValidationServiceAllowlist> validationServiceAllowlist =
+        digitalCovidValidationCertificateToProtobufMapping.constructProtobufMapping();
+      assertThat(validationServiceAllowlist).isEmpty();
+    }
   }
 }

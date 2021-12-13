@@ -80,7 +80,6 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
       DistributionServiceConfig distributionServiceConfig, ResourceLoader resourceLoader) {
     this.distributionServiceConfig = distributionServiceConfig;
     this.resourceLoader = resourceLoader;
-
   }
 
   /**
