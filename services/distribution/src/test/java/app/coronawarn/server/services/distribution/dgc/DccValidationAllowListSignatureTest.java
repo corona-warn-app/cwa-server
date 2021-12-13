@@ -13,19 +13,25 @@ import app.coronawarn.server.common.shared.util.SerializationUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AllowList;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalCovidValidationCertificateToProtobufMapping;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
+import java.util.List;
 import java.util.Optional;
+import org.everit.json.schema.Schema;
+import org.everit.json.schema.ValidationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -116,6 +122,16 @@ class DccValidationAllowListSignatureTest {
       utilities.when(() -> getPublicKeyFromString(any())).thenThrow(new NoSuchAlgorithmException());
       Optional<ValidationServiceAllowlist> validationServiceAllowlist =
         digitalCovidValidationCertificateToProtobufMapping.constructProtobufMapping();
+      assertThat(validationServiceAllowlist).isEmpty();
+    }
+  }
+
+  @Test
+  void testConstructProtobufMappingEmpty2() {
+    try (MockedStatic<SerializationUtils> utilities = Mockito.mockStatic(SerializationUtils.class)) {
+      utilities.when(() -> SerializationUtils.validateJsonSchema(any(), any())).thenThrow(new ValidationException(null, String.class, null));
+      Optional<ValidationServiceAllowlist> validationServiceAllowlist =
+          digitalCovidValidationCertificateToProtobufMapping.constructProtobufMapping();
       assertThat(validationServiceAllowlist).isEmpty();
     }
   }
