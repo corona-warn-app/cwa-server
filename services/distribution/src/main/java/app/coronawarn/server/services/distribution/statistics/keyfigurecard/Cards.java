@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.distribution.statistics.keyfigurecard;
 
+import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.BoosterVaccinatedCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.EmptyCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.FirstVaccinationCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.FullyVaccinatedCardFactory;
@@ -58,7 +59,11 @@ public enum Cards {
   /**
    * Joined Incidence Card.
    */
-  JOINED_INCIDENCE_CARD(new JoinedIncidenceCardFactory(), "Joined incidence Card");
+  JOINED_INCIDENCE_CARD(new JoinedIncidenceCardFactory(), "Joined incidence Card"),
+  /**
+   * Third Dose Card.
+   */
+  BOOSTER_VACCINATED_CARD(new BoosterVaccinatedCardFactory(), "Booster Vaccinated Card");
 
   /**
    * Get card factory by ID.

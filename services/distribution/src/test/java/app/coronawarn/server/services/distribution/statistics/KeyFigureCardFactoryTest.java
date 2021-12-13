@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.distribution.statistics;
 
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.BOOSTER_VACCINATED_CARD;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.FIRST_VACCINATION_CARD;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.FULLY_VACCINATED_CARD;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.HOSPITALIZATION_INCIDENCE_CARD;
@@ -384,7 +385,8 @@ class KeyFigureCardFactoryTest {
     void shouldFailIfHospitalizationIncidenceCardIsNotValid(Double value) {
       statisticsJsonStringObject.setSevenDayHospitalizationReportedDaily(value);
       assertThatThrownBy(
-          () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, HOSPITALIZATION_INCIDENCE_CARD.ordinal()))
+          () -> figureCardFactory
+              .createKeyFigureCard(statisticsJsonStringObject, HOSPITALIZATION_INCIDENCE_CARD.ordinal()))
           .isInstanceOf(MissingPropertyException.class);
     }
   }
@@ -426,6 +428,32 @@ class KeyFigureCardFactoryTest {
       assertThatThrownBy(
           () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, INTENSIVE_CARE_CARD.ordinal()))
           .isInstanceOf(MissingPropertyException.class);
+    }
+  }
+
+  @Nested
+  @EnableConfigurationProperties(value = DistributionServiceConfig.class)
+  @ContextConfiguration(classes = {
+      KeyFigureCardFactory.class}, initializers = ConfigDataApplicationContextInitializer.class)
+  class ThirdDoseCardTest {
+
+    @ParameterizedTest
+    @ValueSource(doubles = {0.0, -1.0})
+    void shouldFailIfThirdDoseCardIsNotValid(Double value) {
+      statisticsJsonStringObject.setPersonsWithThirdDoseRatio(value);
+      assertThatThrownBy(
+          () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, BOOSTER_VACCINATED_CARD.ordinal()))
+          .isInstanceOf(MissingPropertyException.class);
+    }
+
+    @Test
+    void testCardHasCorrectKeyFigures() {
+      var result = figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, BOOSTER_VACCINATED_CARD.ordinal());
+
+      assertKeyFigure(result.getKeyFigures(0), 0.674, Rank.PRIMARY, Trend.UNSPECIFIED_TREND,
+          TrendSemantic.UNSPECIFIED_TREND_SEMANTIC, 1);
+      assertKeyFigure(result.getKeyFigures(1), 56033026, Rank.TERTIARY, Trend.UNSPECIFIED_TREND,
+          TrendSemantic.UNSPECIFIED_TREND_SEMANTIC, 0);
     }
   }
 
