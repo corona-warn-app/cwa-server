@@ -150,7 +150,7 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
           objectMapper);
 
       // 2.1. Map each of the fetched providers to a ServiceProviderAllowListItem and add to total List.
-      final List<ServiceProviderAllowlistItem> serviceProviderItems = serviceProviderDto.providers
+      final List<ServiceProviderAllowlistItem> serviceProviderItems = serviceProviderDto.getProviders()
           .stream()
           .map(provider -> ServiceProviderAllowlistItem
               .newBuilder()
