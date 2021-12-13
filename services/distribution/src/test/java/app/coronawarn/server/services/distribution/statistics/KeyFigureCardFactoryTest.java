@@ -75,6 +75,8 @@ class KeyFigureCardFactoryTest {
     statisticsJsonStringObject.setPersonsWithFirstDoseRatio(0.381);
     statisticsJsonStringObject.setPersonsFullyVaccinatedCumulated(9901626);
     statisticsJsonStringObject.setPersonsFullyVaccinatedRatio(0.11900000274181366);
+    statisticsJsonStringObject.setPersonsWithThirdDoseCumulated(56033026);
+    statisticsJsonStringObject.setPersonsWithThirdDoseRatio(0.674);
 
     statisticsJsonStringObject.setSevenDayHospitalizationReportedDaily(3.21);
     statisticsJsonStringObject.setSevenDayHospitalizationReportedTrend1percent(1);
