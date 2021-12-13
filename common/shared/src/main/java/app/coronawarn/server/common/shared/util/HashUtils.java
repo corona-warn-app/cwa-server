@@ -18,7 +18,7 @@ public class HashUtils {
     EC("EC"),
     SHA_ECDSA("SHA256withECDSA");
 
-    private String name;
+    private final String name;
 
     Algorithms(String name) {
       this.name = name;

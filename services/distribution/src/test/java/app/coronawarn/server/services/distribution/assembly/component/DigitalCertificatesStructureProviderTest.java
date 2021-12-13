@@ -137,7 +137,6 @@ class DigitalCertificatesStructureProviderTest {
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("invalidation-rules"))).hasSize(1);
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("dscs"))).hasSize(1);
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("validation-services"))).hasSize(1);
-
   }
 
   private Predicate<Writable<WritableOnDisk>> filterByArchiveName(String archiveName) {

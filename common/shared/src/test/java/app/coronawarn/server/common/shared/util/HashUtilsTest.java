@@ -20,7 +20,7 @@ class HashUtilsTest {
   void testMd5DigestAsHex() {
     String hash = md5DigestAsHex(HEX_DIGESTED_ORIGIN);
     assertThat(hash).hasSize(32);
-    assertEquals(hash, HEX_DIGESTED);
+    assertEquals(HEX_DIGESTED, hash);
   }
 
   @Test
