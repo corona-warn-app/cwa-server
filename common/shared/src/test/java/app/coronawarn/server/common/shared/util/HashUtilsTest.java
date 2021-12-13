@@ -1,21 +1,19 @@
 package app.coronawarn.server.common.shared.util;
 
+import static app.coronawarn.server.common.shared.util.HashUtils.Algorithms.SHA_256;
 import static app.coronawarn.server.common.shared.util.HashUtils.byteStringDigest;
 import static app.coronawarn.server.common.shared.util.HashUtils.generateSecureRandomByteArrayData;
 import static app.coronawarn.server.common.shared.util.HashUtils.md5DigestAsHex;
-import static app.coronawarn.server.common.shared.util.HashUtils.Algorithms.SHA_256;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 
 import com.google.protobuf.ByteString;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Optional;
 
 class HashUtilsTest {
 
@@ -41,7 +39,12 @@ class HashUtilsTest {
   }
 
   @Test
-  void testByteStringDigest() {
+  void testByteStringDigest1() {
+    byte[] hash = byteStringDigest(TEST_STRING, SHA_256);
+    assertThat(hash).hasSize(32);
+  }
+  @Test
+  void testByteStringDigest2() {
     byte[] hash = byteStringDigest(ByteString.copyFromUtf8(TEST_STRING), SHA_256);
     assertThat(hash).hasSize(32);
   }
