@@ -2,6 +2,7 @@ package app.coronawarn.server.services.distribution.dgc;
 
 import static app.coronawarn.server.common.shared.util.SerializationUtils.cborEncode;
 import static app.coronawarn.server.common.shared.util.SerializationUtils.validateJsonSchema;
+import static java.util.function.Predicate.not;
 
 import app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleType;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.everit.json.schema.ValidationException;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
@@ -36,7 +38,9 @@ public class DigitalGreenCertificateToCborMapping {
    * Construct country rules retrieved from DCC client for CBOR encoding.
    */
   public List<String> constructCountryList() throws FetchBusinessRulesException {
-    return digitalCovidCertificateClient.getCountryList();
+    List<String> countryList = digitalCovidCertificateClient.getCountryList();
+    //countryList.removeIf("EU"::equals); //remove might not be supported
+    return countryList.stream().filter(not("EU"::equals)).collect(Collectors.toList());
   }
 
   /**
