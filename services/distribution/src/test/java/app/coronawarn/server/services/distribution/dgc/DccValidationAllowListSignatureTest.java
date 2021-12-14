@@ -5,6 +5,7 @@ import static app.coronawarn.server.common.shared.util.SecurityUtils.getPublicKe
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.protocols.internal.dgc.ValidationServiceAllowlist;
@@ -34,13 +35,17 @@ import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.HttpVersion;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.params.HttpParams;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
@@ -175,6 +180,20 @@ class DccValidationAllowListSignatureTest {
       when(httpClientBuilder.setSSLHostnameVerifier(any())).thenReturn(httpClientBuilder);
       when(httpClientBuilder.build()).thenReturn(httpClient);
       when(httpClient.execute(any())).thenReturn(null);
+      assertThat(digitalCovidValidationCertificateToProtobufMapping.constructProtobufMapping()).isPresent();
+    }
+  }
+
+  @SuppressWarnings("ResultOfMethodCallIgnored")
+  @Test
+  void testWithMockedHttpClientReturningResponse() throws IOException {
+    try (MockedStatic<HttpClients> httpClientsMockedStatic = Mockito.mockStatic(HttpClients.class)) {
+      httpClientsMockedStatic.when(HttpClients::custom).thenReturn(httpClientBuilder);
+      when(httpClientBuilder.setSSLHostnameVerifier(any())).thenReturn(httpClientBuilder);
+      when(httpClientBuilder.build()).thenReturn(httpClient);
+      CloseableHttpResponse closeableHttpResponse = mock(CloseableHttpResponse.class);
+      when(httpClient.execute(any())).thenReturn(closeableHttpResponse);
+      when(closeableHttpResponse.getEntity()).thenReturn(new StringEntity("{}"));
       assertThat(digitalCovidValidationCertificateToProtobufMapping.constructProtobufMapping()).isPresent();
     }
   }
