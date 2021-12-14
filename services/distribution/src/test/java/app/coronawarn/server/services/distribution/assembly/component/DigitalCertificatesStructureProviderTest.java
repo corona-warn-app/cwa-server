@@ -15,6 +15,8 @@ import app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCe
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalCovidValidationCertificateToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalSigningCertificatesClient;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalSigningCertificatesToProtobufMapping;
+import app.coronawarn.server.services.distribution.dgc.dsc.errors.InvalidContentResponseException;
+import app.coronawarn.server.services.distribution.dgc.dsc.errors.InvalidFingerprintException;
 import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -119,6 +121,10 @@ class DigitalCertificatesStructureProviderTest {
         });
   }
 
+  private Predicate<Writable<WritableOnDisk>> filterByArchiveName(String archiveName) {
+    return writable -> writable.getName().equals(archiveName);
+  }
+
   @Test
   void shouldCreateCorrectFileStructureForBusinessRules() {
     DirectoryOnDisk digitalGreenCertificates = underTest.getDigitalGreenCertificates();
@@ -137,10 +143,26 @@ class DigitalCertificatesStructureProviderTest {
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("invalidation-rules"))).hasSize(1);
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("dscs"))).hasSize(1);
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("validation-services"))).hasSize(1);
-
   }
 
-  private Predicate<Writable<WritableOnDisk>> filterByArchiveName(String archiveName) {
-    return writable -> writable.getName().equals(archiveName);
+  @Test
+  void testExceptionResults() {
+    try {
+      throw new InvalidFingerprintException();
+    } catch(InvalidFingerprintException e) {
+      assertEquals("Obtaining service provider allow list failed", e.getMessage());
+    }
+
+    try {
+      throw new InvalidFingerprintException(new IllegalStateException());
+    } catch(InvalidFingerprintException e) {
+      assertEquals("Obtaining service provider allow list failed", e.getMessage());
+    }
+
+    try {
+      throw new InvalidContentResponseException();
+    } catch(InvalidContentResponseException e) {
+      assertEquals("Obtaining providers from content response failed", e.getMessage());
+    }
   }
 }

@@ -1096,8 +1096,6 @@ public class DistributionServiceConfig {
   public static class AppFeature {
 
     private String label;
-    @Min(0)
-    @Max(1)
     private Integer value;
 
     public String getLabel() {
@@ -1920,6 +1918,8 @@ public class DistributionServiceConfig {
 
     private List<CertificateAllowList> certificates;
 
+    private List<ServiceProvider> serviceProviders;
+
     public List<CertificateAllowList> getCertificates() {
       return certificates;
     }
@@ -1929,6 +1929,41 @@ public class DistributionServiceConfig {
       this.certificates = certificates;
     }
 
+    public List<ServiceProvider> getServiceProviders() {
+      return serviceProviders;
+    }
+
+    @JsonProperty("serviceProviders")
+    public void setServiceProviders(List<ServiceProvider> serviceProviders) {
+      this.serviceProviders = serviceProviders;
+    }
+
+    @JsonInclude(Include.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class ServiceProvider {
+
+      @JsonProperty("serviceProviderAllowlistEndpoint")
+      private String serviceProviderAllowlistEndpoint;
+      @JsonProperty("fingerprint256")
+      private String fingerprint256;
+
+      public String getServiceProviderAllowlistEndpoint() {
+        return serviceProviderAllowlistEndpoint;
+      }
+
+      public void setServiceProviderAllowlistEndpoint(String serviceProviderAllowlistEndpoint) {
+        this.serviceProviderAllowlistEndpoint = serviceProviderAllowlistEndpoint;
+      }
+
+      public String getFingerprint256() {
+        return fingerprint256;
+      }
+
+      public void setFingerprint256(String fingerprint256) {
+        this.fingerprint256 = fingerprint256;
+      }
+    }
+
     @JsonInclude(Include.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class CertificateAllowList {
@@ -1936,6 +1971,9 @@ public class DistributionServiceConfig {
       private String serviceProvider;
       private String hostname;
       private String fingerprint256;
+
+      @JsonProperty("serviceProviderAllowlistEndpoint")
+      private String serviceProviderAllowlistEndpoint;
 
       public String getServiceProvider() {
         return serviceProvider;
@@ -1962,6 +2000,14 @@ public class DistributionServiceConfig {
       @JsonProperty("fingerprint256")
       public void setFingerprint256(String fingerprint256) {
         this.fingerprint256 = fingerprint256;
+      }
+
+      public String getServiceProviderAllowlistEndpoint() {
+        return serviceProviderAllowlistEndpoint;
+      }
+
+      public void setServiceProviderAllowlistEndpoint(String serviceProviderAllowlistEndpoint) {
+        this.serviceProviderAllowlistEndpoint = serviceProviderAllowlistEndpoint;
       }
     }
   }
