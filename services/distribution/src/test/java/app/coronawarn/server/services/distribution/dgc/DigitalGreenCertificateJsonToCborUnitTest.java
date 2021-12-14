@@ -99,5 +99,4 @@ class DigitalGreenCertificateJsonToCborUnitTest {
 
     return businessRule;
   }
-
 }
