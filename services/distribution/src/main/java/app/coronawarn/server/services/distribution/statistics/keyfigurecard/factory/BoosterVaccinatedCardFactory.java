@@ -55,8 +55,8 @@ public class BoosterVaccinatedCardFactory extends HeaderCardFactory {
         Optional.ofNullable(stats.getPersonsWithThirdDoseCumulated()));
 
     if (requiredFields.contains(Optional.empty())
-        || stats.getPersonsFullyVaccinatedRatio() <= 0
-        || stats.getPersonsFullyVaccinatedCumulated() <= 0
+        || stats.getPersonsWithThirdDoseRatio() <= 0
+        || stats.getPersonsWithThirdDoseCumulated() <= 0
     ) {
       return List.of(Optional.empty());
     }
