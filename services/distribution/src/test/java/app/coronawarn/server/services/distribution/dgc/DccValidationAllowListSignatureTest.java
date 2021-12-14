@@ -18,9 +18,14 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PublicKey;
+import java.security.SignatureException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 import java.util.Locale;
@@ -178,7 +183,7 @@ class DccValidationAllowListSignatureTest {
   private SSLSession sslSession;
 
   @Test
-  void testValidateHostname()
+  void testValidateHostnameWithNoCertificates()
       throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, SSLPeerUnverifiedException {
     when(sslSession.getPeerCertificates()).thenReturn(new Certificate[0]);
     Method method = DigitalCovidValidationCertificateToProtobufMapping.class
@@ -186,5 +191,44 @@ class DccValidationAllowListSignatureTest {
     method.setAccessible(true);
     Boolean returnValue = (Boolean) method.invoke(digitalCovidValidationCertificateToProtobufMapping, sslSession, null);
     assertThat(returnValue).isFalse();
+  }
+
+  @Test
+  void testValidateHostnameWithCertificateEqualToFingerPrint()
+      throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, SSLPeerUnverifiedException {
+    Certificate certificate = new Certificate("type") {
+      @Override
+      public byte[] getEncoded() {
+        return new byte[0];
+      }
+
+      @Override
+      public void verify(PublicKey key) {
+      }
+
+      @Override
+      public void verify(PublicKey key, String sigProvider) {
+      }
+
+      @Override
+      public String toString() {
+        return "fingerPrint";
+      }
+
+      @Override
+      public PublicKey getPublicKey() {
+        return null;
+      }
+    };
+    Certificate[] certificates = new Certificate[]{certificate};
+    when(sslSession.getPeerCertificates()).thenReturn(certificates);
+    Method method = DigitalCovidValidationCertificateToProtobufMapping.class
+        .getDeclaredMethod("validateHostname", SSLSession.class, String.class);
+    method.setAccessible(true);
+    Boolean returnValue = (Boolean) method.invoke(
+        digitalCovidValidationCertificateToProtobufMapping,
+        sslSession,
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+    assertThat(returnValue).isTrue();
   }
 }
