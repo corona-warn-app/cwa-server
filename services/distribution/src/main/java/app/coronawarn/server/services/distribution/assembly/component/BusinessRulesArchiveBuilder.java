@@ -17,11 +17,11 @@ import app.coronawarn.server.services.distribution.dgc.functions.BusinessRuleSup
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
 /**
  * Builder for Businuess Rules Archive. There are three types of rules: Acceptance, Invalidation and Booster.
@@ -62,7 +62,7 @@ public class BusinessRulesArchiveBuilder {
   public Optional<Writable<WritableOnDisk>> build() {
     checkFields();
     ArchiveOnDisk rulesArchive = new ArchiveOnDisk(
-        Strings.isEmpty(archiveName) ? distributionServiceConfig.getDefaultArchiveName() : archiveName);
+        ObjectUtils.isEmpty(archiveName) ? distributionServiceConfig.getDefaultArchiveName() : archiveName);
     try {
       rulesArchive
           .addWritable(new FileOnDisk(exportBinaryFilename,
