@@ -398,9 +398,10 @@
             <compilerArgs>
               <arg>-Xlint:all</arg>
             </compilerArgs>
-            <!-- Missing parameter metadata for FederationBatchSourceSystem(String, int), which declares implicit or synthetic parameters. Automatic 
-              resolution of generic type information for method parameters may yield incorrect results if multiple parameters have the same erasure. To solve 
-              this, compile your code with the '-parameters' flag. -->
+            <!-- Missing parameter metadata for FederationBatchSourceSystem(String, int),
+            which declares implicit or synthetic parameters. Automatic resolution of generic type information
+            for method parameters may yield incorrect results if multiple parameters have the same erasure.
+            To solve this, compile your code with the '-parameters' flag. -->
             <parameters>true</parameters>
           </configuration>
         </plugin>
