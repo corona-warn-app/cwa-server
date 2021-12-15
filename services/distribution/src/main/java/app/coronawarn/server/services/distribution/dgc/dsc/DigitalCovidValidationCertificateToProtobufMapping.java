@@ -178,13 +178,11 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
 
   private ServiceProviderDto validateFingerprint(String serviceProviderAllowlistEndpoint,
       String fingerPrintToCompare, final ObjectMapper objectMapper) {
-    try {
-      CloseableHttpClient httpClient = HttpClients.custom()
-          .setSSLHostnameVerifier((hostname, session) -> validateHostname(
-              session,
-              fingerPrintToCompare))
-          .build();
-
+    try (CloseableHttpClient httpClient = HttpClients.custom()
+        .setSSLHostnameVerifier((hostname, session) -> validateHostname(
+            session,
+            fingerPrintToCompare))
+        .build()) {
       HttpGet getMethod = new HttpGet(serviceProviderAllowlistEndpoint);
       final HttpEntity httpEntity = executeRequest(httpClient, getMethod);
       return buildServiceProviderDto(objectMapper, httpEntity);
