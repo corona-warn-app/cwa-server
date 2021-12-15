@@ -122,6 +122,17 @@
       </dependency>
       <dependency>
         <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter</artifactId>
+        <version>${spring-boot.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-web</artifactId>
         <version>${spring-boot.version}</version>
         <exclusions>
@@ -176,13 +187,6 @@
         <groupId>io.github.openfeign</groupId>
         <artifactId>feign-core</artifactId>
         <version>${feign.version}</version>
-      </dependency>
-      <!-- upgraded the openfeign-core version to mitigate WhiteSource issue -->
-      <!-- delete this when springframework.cloud version will contain this version -->
-      <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-openfeign-core</artifactId>
-        <version>3.1.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.logging.log4j</groupId>
