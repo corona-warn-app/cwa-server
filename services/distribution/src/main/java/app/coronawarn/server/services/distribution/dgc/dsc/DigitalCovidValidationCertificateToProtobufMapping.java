@@ -245,4 +245,14 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
     }
     return fingerprint.map(it -> it.equalsIgnoreCase(fingerPrintToCompare)).orElse(false);
   }
+
+  private HttpEntity executeRequest(CloseableHttpClient httpClient, HttpGet getMethod)
+      throws InvalidFingerprintException {
+    try (final CloseableHttpResponse response = httpClient.execute(getMethod)) {
+      return response.getEntity();
+    } catch (Exception e) {
+      LOGGER.warn("Request to obtain the service providers failed: ", e);
+      throw new InvalidFingerprintException();
+    }
+  }
 }
