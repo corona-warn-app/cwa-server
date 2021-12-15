@@ -240,8 +240,7 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
 
   private HttpEntity executeRequest(CloseableHttpClient httpClient, HttpGet getMethod)
       throws InvalidFingerprintException {
-    try {
-      final CloseableHttpResponse response = httpClient.execute(getMethod);
+    try (final CloseableHttpResponse response = httpClient.execute(getMethod)) {
       return response.getEntity();
     } catch (Exception e) {
       LOGGER.warn("Request to obtain the service providers failed: ", e);
