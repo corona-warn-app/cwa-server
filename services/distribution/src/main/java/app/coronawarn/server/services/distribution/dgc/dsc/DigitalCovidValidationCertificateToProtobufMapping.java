@@ -184,8 +184,12 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
             fingerPrintToCompare))
         .build()) {
       HttpGet getMethod = new HttpGet(serviceProviderAllowlistEndpoint);
-      final HttpEntity httpEntity = executeRequest(httpClient, getMethod);
-      return buildServiceProviderDto(objectMapper, httpEntity);
+      try (CloseableHttpResponse response = httpClient.execute(getMethod)) {
+        return buildServiceProviderDto(objectMapper, response.getEntity());
+      } catch (Exception e) {
+        LOGGER.warn("Request to obtain the service providers failed: ", e);
+        throw new InvalidFingerprintException();
+      }
     } catch (Exception e) {
       LOGGER.warn(e.getMessage(), e);
       ServiceProviderDto dto = new ServiceProviderDto();
@@ -236,15 +240,5 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
       LOGGER.error("Certificate Pinning failed: certificate could not be encoded.");
     }
     return fingerprint.map(it -> it.equals(fingerPrintToCompare.toLowerCase())).orElse(false);
-  }
-
-  private HttpEntity executeRequest(CloseableHttpClient httpClient, HttpGet getMethod)
-      throws InvalidFingerprintException {
-    try (final CloseableHttpResponse response = httpClient.execute(getMethod)) {
-      return response.getEntity();
-    } catch (Exception e) {
-      LOGGER.warn("Request to obtain the service providers failed: ", e);
-      throw new InvalidFingerprintException();
-    }
   }
 }
