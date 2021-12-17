@@ -184,17 +184,22 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
             fingerPrintToCompare))
         .build()) {
       HttpGet getMethod = new HttpGet(serviceProviderAllowlistEndpoint);
-      try (CloseableHttpResponse response = httpClient.execute(getMethod)) {
-        return buildServiceProviderDto(objectMapper, response.getEntity());
-      } catch (Exception e) {
-        LOGGER.warn("Request to obtain the service providers failed: ", e);
-        throw new InvalidFingerprintException();
-      }
+      return buildServiceProviderDto(httpClient, getMethod, objectMapper);
     } catch (Exception e) {
       LOGGER.warn(e.getMessage(), e);
       ServiceProviderDto dto = new ServiceProviderDto();
       dto.setProviders(Collections.emptyList());
       return dto;
+    }
+  }
+
+  private ServiceProviderDto buildServiceProviderDto(CloseableHttpClient httpClient, HttpGet getMethod,
+      final ObjectMapper objectMapper) throws InvalidFingerprintException {
+    try (CloseableHttpResponse response = httpClient.execute(getMethod)) {
+      return buildServiceProviderDto(objectMapper, response.getEntity());
+    } catch (Exception e) {
+      LOGGER.warn("Request to obtain the service providers failed: ", e);
+      throw new InvalidFingerprintException();
     }
   }
 
