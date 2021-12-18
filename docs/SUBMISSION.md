@@ -148,7 +148,7 @@ You will find the implementation file at [`/services/submission/src/main/java/ap
 
 Temporary Exposure Keys (TEK's) are submitted by the client device (iOS/Android phone) via the Submission Service.
 
-Some constraints are maintained as enviroment variables and kept in Vault under the key path: /cwa-server/submission
+Some constraints are maintained as environment variables and kept in Vault under the key path: /cwa-server/submission
 
 The constraints put on submitted TEK's are as follows:
 
