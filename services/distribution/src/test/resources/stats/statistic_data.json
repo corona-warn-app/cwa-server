@@ -30,6 +30,8 @@
     "seven_day_r_value_published_trend_1percent": 1,
     "seven_day_r_value_1st_reported_daily": 0.63,
     "seven_day_r_value_1st_reported_growthrate": 0.9402932074626865,
-    "seven_day_r_value_1st_reported_trend_1percent": -1
+    "seven_day_r_value_1st_reported_trend_1percent": -1,
+    "persons_with_third_dose_cumulated": 56033026,
+    "persons_with_third_dose_ratio": 0.674
   }
 ]

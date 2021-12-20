@@ -40,6 +40,8 @@
     "persons_with_first_dose_ratio": 0.38100001215934753,
     "persons_fully_vaccinated_cumulated": 9901626,
     "persons_fully_vaccinated_ratio": 0.11900000274181366,
+    "persons_with_third_dose_cumulated": 56033026,
+    "persons_with_third_dose_ratio": 0.674,
     "seven_day_hospitalization_1st_reported_daily": 168.5,
     "seven_day_hospitalization_1st_reported_growthrate": 0.86,
     "seven_day_hospitalization_1st_reported_trend_1percent": 1,
