@@ -39,7 +39,7 @@ public class EventCheckinDataFilter {
 
   /**
    * Return a filtered list of checkin data based on the following criteria:
-   * <li>Filter out checkins with TRL values that are mapped to 0 ( as per Risk calculation paramters app config)</li>
+   * <li>Filter out checkins with TRL values that are mapped to 0 ( as per Risk calculation parameters app config)</li>
    * <li>Filter out checkins which have checkout time in the past further than 15 days (app config)</li>
    * <li>Filter out checkins which are in the future</li>
    * <li>Filter out checkins which have trace location signatures that can not be verified</li>.
