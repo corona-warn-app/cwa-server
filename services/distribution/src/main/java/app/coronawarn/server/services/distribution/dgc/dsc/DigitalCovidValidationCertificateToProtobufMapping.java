@@ -178,21 +178,28 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
 
   private ServiceProviderDto validateFingerprint(String serviceProviderAllowlistEndpoint,
       String fingerPrintToCompare, final ObjectMapper objectMapper) {
-    try {
-      CloseableHttpClient httpClient = HttpClients.custom()
-          .setSSLHostnameVerifier((hostname, session) -> validateHostname(
-              session,
-              fingerPrintToCompare))
-          .build();
-
+    try (CloseableHttpClient httpClient = HttpClients.custom()
+        .setSSLHostnameVerifier((hostname, session) -> validateHostname(
+            session,
+            fingerPrintToCompare))
+        .build()) {
       HttpGet getMethod = new HttpGet(serviceProviderAllowlistEndpoint);
-      final HttpEntity httpEntity = executeRequest(httpClient, getMethod);
-      return buildServiceProviderDto(objectMapper, httpEntity);
+      return buildServiceProviderDto(httpClient, getMethod, objectMapper);
     } catch (Exception e) {
       LOGGER.warn(e.getMessage(), e);
       ServiceProviderDto dto = new ServiceProviderDto();
       dto.setProviders(Collections.emptyList());
       return dto;
+    }
+  }
+
+  private ServiceProviderDto buildServiceProviderDto(CloseableHttpClient httpClient, HttpGet getMethod,
+      final ObjectMapper objectMapper) throws InvalidFingerprintException {
+    try (CloseableHttpResponse response = httpClient.execute(getMethod)) {
+      return buildServiceProviderDto(objectMapper, response.getEntity());
+    } catch (Exception e) {
+      LOGGER.warn("Request to obtain the service providers failed: ", e);
+      throw new InvalidFingerprintException();
     }
   }
 
@@ -238,16 +245,5 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
       LOGGER.error("Certificate Pinning failed: certificate could not be encoded.");
     }
     return fingerprint.map(it -> it.equals(fingerPrintToCompare.toLowerCase())).orElse(false);
-  }
-
-  private HttpEntity executeRequest(CloseableHttpClient httpClient, HttpGet getMethod)
-      throws InvalidFingerprintException {
-    try {
-      final CloseableHttpResponse response = httpClient.execute(getMethod);
-      return response.getEntity();
-    } catch (Exception e) {
-      LOGGER.warn("Request to obtain the service providers failed: ", e);
-      throw new InvalidFingerprintException();
-    }
   }
 }
