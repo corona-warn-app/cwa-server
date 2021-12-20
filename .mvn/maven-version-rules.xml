@@ -17,6 +17,16 @@
         <ignoreVersion>20030203.000550</ignoreVersion>
       </ignoreVersions>
     </rule>
+    <rule groupId="commons-beanutils" artifactId="commons-beanutils" comparisonMethod="maven">
+      <ignoreVersions>
+        <ignoreVersion type="regex">200[0-9]{5}.*</ignoreVersion>
+      </ignoreVersions>
+    </rule>
+    <rule groupId="org.apache.tomcat.embed" artifactId="tomcat-embed-core" comparisonMethod="maven">
+      <ignoreVersions>
+        <ignoreVersion type="regex">10\..*</ignoreVersion>
+      </ignoreVersions>
+    </rule>
     <rule groupId="org.postgresql" artifactId="postgresql" comparisonMethod="maven">
       <ignoreVersions>
         <ignoreVersion type="regex">(?i).*jre.*</ignoreVersion>
