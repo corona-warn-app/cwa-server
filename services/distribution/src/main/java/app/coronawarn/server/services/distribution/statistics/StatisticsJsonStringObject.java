@@ -92,6 +92,10 @@ public class StatisticsJsonStringObject extends StatisticsTimeJsonObject {
   private Integer personsFullyVaccinatedCumulated;
   @JsonProperty("persons_fully_vaccinated_ratio")
   private Double personsFullyVaccinatedRatio;
+  @JsonProperty("persons_with_third_dose_cumulated")
+  private Integer personsWithThirdDoseCumulated;
+  @JsonProperty("persons_with_third_dose_ratio")
+  private Double personsWithThirdDoseRatio;
   @JsonProperty("seven_day_hospitalization_1st_reported_daily")
   private Double sevenDayHospitalizationReportedDaily;
   @JsonProperty("seven_day_hospitalization_1st_reported_growthrate")
@@ -271,6 +275,14 @@ public class StatisticsJsonStringObject extends StatisticsTimeJsonObject {
     return personsFullyVaccinatedRatio;
   }
 
+  public Integer getPersonsWithThirdDoseCumulated() {
+    return personsWithThirdDoseCumulated;
+  }
+
+  public Double getPersonsWithThirdDoseRatio() {
+    return personsWithThirdDoseRatio;
+  }
+
   public void setAppDownloads7DaysAvg(String appDownloads7DaysAvg) {
     this.appDownloads7DaysAvg = appDownloads7DaysAvg;
   }
@@ -433,6 +445,14 @@ public class StatisticsJsonStringObject extends StatisticsTimeJsonObject {
 
   public void setPersonsFullyVaccinatedRatio(Double personsFullyVaccinatedRatio) {
     this.personsFullyVaccinatedRatio = personsFullyVaccinatedRatio;
+  }
+
+  public void setPersonsWithThirdDoseCumulated(Integer personsWithThirdDoseCumulated) {
+    this.personsWithThirdDoseCumulated = personsWithThirdDoseCumulated;
+  }
+
+  public void setPersonsWithThirdDoseRatio(Double personsWithThirdDoseRatio) {
+    this.personsWithThirdDoseRatio = personsWithThirdDoseRatio;
   }
 
   public Double getSevenDayRvaluepublishedDaily() {

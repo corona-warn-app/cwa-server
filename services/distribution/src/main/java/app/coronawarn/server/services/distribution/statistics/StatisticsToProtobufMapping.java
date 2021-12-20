@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.distribution.statistics;
 
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.BOOSTER_VACCINATED_CARD;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.EMPTY_CARD;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.FIRST_VACCINATION_CARD;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.FULLY_VACCINATED_CARD;
@@ -150,6 +151,7 @@ public class StatisticsToProtobufMapping {
     figureCardMap.put(HOSPITALIZATION_INCIDENCE_CARD.ordinal(), Optional.empty());
     figureCardMap.put(INTENSIVE_CARE_CARD.ordinal(), Optional.empty());
     figureCardMap.put(JOINED_INCIDENCE_CARD.ordinal(), Optional.empty());
+    figureCardMap.put(BOOSTER_VACCINATED_CARD.ordinal(), Optional.empty());
 
     List<StatisticsJsonStringObject> orderedList = jsonStringObjects.stream()
         .sorted(Comparator.comparing(a -> effectiveDateStringToLocalDate(a.getEffectiveDate())))
@@ -208,7 +210,8 @@ public class StatisticsToProtobufMapping {
         figureCardMap.get(VACCINATION_DOSES_CARD.ordinal()).orElse(emptyCard),
         figureCardMap.get(HOSPITALIZATION_INCIDENCE_CARD.ordinal()).orElse(emptyCard),
         figureCardMap.get(INTENSIVE_CARE_CARD.ordinal()).orElse(emptyCard),
-        figureCardMap.get(JOINED_INCIDENCE_CARD.ordinal()).orElse(emptyCard)
+        figureCardMap.get(JOINED_INCIDENCE_CARD.ordinal()).orElse(emptyCard),
+        figureCardMap.get(BOOSTER_VACCINATED_CARD.ordinal()).orElse(emptyCard)
     );
   }
 
