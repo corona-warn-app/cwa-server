@@ -58,14 +58,14 @@
     <everit-json.version>1.5.1</everit-json.version>
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
     <commons-io.version>2.11.0</commons-io.version>
-    <log4j.version>2.16.0</log4j.version>
+    <log4j.version>2.17.0</log4j.version>
     <feign.version>11.7</feign.version>
     <commons-math3.version>3.6.1</commons-math3.version>
     <bouncycastle.version>1.70</bouncycastle.version>
     <dom4j.version>2.1.3</dom4j.version>
     <awssdk-s3.version>2.17.2</awssdk-s3.version>
     <guava.version>31.0.1-jre</guava.version>
-    <jackson.version>2.13.0</jackson.version>
+    <jackson.version>2.13.1</jackson.version>
     <test-containers.version>1.16.2</test-containers.version>
     <postgresql.version>42.3.1</postgresql.version>
     <wiremock.version>2.32.0</wiremock.version>

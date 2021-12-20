@@ -25,7 +25,7 @@ public class EventCheckinDataValidator {
   private static final Marker SECURITY = MarkerFactory.getMarker("SECURITY");
 
   /**
-   * Given the submission payload, it verifies whether user event checkin data is alligned with the application
+   * Given the submission payload, it verifies whether user event checkin data is aligned with the application
    * constraints. For each checkin:
    * <li>TRL must be between 1 and 8</li>
    * <li>Checkin time must be greater then 0</li>
@@ -42,7 +42,7 @@ public class EventCheckinDataValidator {
 
   /**
    * Given a submission in the context of host warnings (submission on behalf) check if all checkins share the same
-   * location id or additionally checks if empty (thats why <= 1).
+   * location id or additionally checks if empty (that's why <= 1).
    *
    * @param submissionPayload the submission paylaod to validate.
    * @param context           the validator context for keeping track of the constrain violations.

@@ -1,6 +1,6 @@
 # CWA Federation Key Download Service
 
-This is a spring boot [ApplicationRunner](https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/ApplicationRunner.html) service (running as a cronjob). The app will deal with the download, sematic validation, extraction, and storage of the keys from the federation gateway. The download service leverages the download API of the federation gateway and will trigger downloads of available batches provided by the Callback Service.
+This is a spring boot [ApplicationRunner](https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/ApplicationRunner.html) service (running as a cronjob). The app will deal with the download, semantic validation, extraction, and storage of the keys from the federation gateway. The download service leverages the download API of the federation gateway and will trigger downloads of available batches provided by the Callback Service.
 
 In addition to callback-based downloads, the Download Service supports date-based downloads.
 For that, the download service will use the polling mechanism provided by the federation gateway based on `batchTag` and `date` combinations and it will keep track of its last processed state within the database. The polling mechanism would mainly be used for mass loading scenarios.
@@ -110,7 +110,7 @@ Java object representing one downloaded and parsed batch.
 
 ## FederationKeyNormalizer
 
-Helps to derive Transmission Risk Level from Days Since Onset of Symptoms (for backwards compatability).
+Helps to derive Transmission Risk Level from Days Since Onset of Symptoms (for backwards compatibility).
 Derivation mapping is set in `application.yaml` (under `services`.`download`.`tek-field-derivations`.`trl-from-dsos`).
 
 ## RetentionPolicy Runner

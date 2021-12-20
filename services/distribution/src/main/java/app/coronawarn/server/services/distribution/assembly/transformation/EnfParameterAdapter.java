@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 /**
  * This component is used to adapt the information contained within keys coming via EFGS to the requirements of the CWA
  * client with respect to the ENF version that its using. This is needed because some of the fields might carry
- * information alligned with EFGS spec that is not fully compliant with ENF spec, or simply not compliant with the needs
+ * information aligned with EFGS spec that is not fully compliant with ENF spec, or simply not compliant with the needs
  * of the CWA client (i.e we need to adapt how infectiousness/transmission risk gets calculated).
  *
  * <p>One important thing to note is that these field adaptations are performed on the fly prior to

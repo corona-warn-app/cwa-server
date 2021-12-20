@@ -185,7 +185,7 @@ public abstract class DiagnosisKeyBundler {
    *
    * @param date date to search
    * @param country country to search
-   * @return list of DiagnosisKey entires submitted from specified Country on the specified day
+   * @return list of DiagnosisKey entries submitted from specified Country on the specified day
    */
   public List<DiagnosisKey> getDiagnosisKeysForDate(LocalDate date, String country) {
     if (isCountrySupported(country)) {
