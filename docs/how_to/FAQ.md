@@ -15,7 +15,7 @@ This document gathers common problems and pitfalls, as well as possible solution
 * Stop the postgres docker container and delete it, as well as the corresponding docker volume (`$ docker volumes prune`).
 Then rebuild and restart the container.
 
-<u>After updating Docker, the container do not start properly or cant be interacted with</u>
+<u>After updating Docker, the containers do not start properly or can't be interacted with</u>
 
 * Delete all containers and volumes (`$ docker-compose down && docker system prune`). Rebuild all containers. If the problem persists, downgrade to the previous version of Docker.
 
