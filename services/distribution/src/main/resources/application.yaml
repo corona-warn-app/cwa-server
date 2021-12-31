@@ -126,7 +126,7 @@ services:
       - label: dcc-person-count-max
         value: ${DCC_PERSON_COUNT_MAX:20}
       - label: dcc-person-warn-threshold
-        value: ${DCC_PERSON_WARN_THRESHOLD:10}
+        value: ${DCC_PERSON_WARN_THRESHOLD:4}
     supported-countries: ${SUPPORTED_COUNTRIES}
     app-versions:
       latest-ios: ${IOS_LATEST_VERSION:1.5.3}
