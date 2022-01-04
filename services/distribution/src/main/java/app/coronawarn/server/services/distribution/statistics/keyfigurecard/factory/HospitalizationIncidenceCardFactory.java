@@ -1,7 +1,6 @@
 package app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory;
 
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.HOSPITALIZATION_INCIDENCE_CARD;
-import static java.time.ZoneOffset.UTC;
 
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.Rank;
@@ -9,7 +8,6 @@ import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard.Builder;
 import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStringObject;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.ValueTrendCalculator;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,8 +47,6 @@ public class HospitalizationIncidenceCardFactory extends HeaderCardFactory {
         .setDecimals(1)
         .setTrend(trend)
         .setTrendSemantic(semantic)
-        .setUpdatedAt(stats.getHospitalizationEffectiveDate() != null
-            ? LocalDate.parse(stats.getHospitalizationEffectiveDate()).atStartOfDay(UTC).toEpochSecond() : 0)
         .build();
   }
 }
