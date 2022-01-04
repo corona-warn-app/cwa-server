@@ -1,14 +1,10 @@
-
-
 package app.coronawarn.server.services.federation.upload;
 
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
 import java.util.Arrays;
 import java.util.List;
-import org.apache.logging.log4j.LogManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -32,7 +28,7 @@ import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
     "app.coronawarn.server.services.federation.upload",
     "app.coronawarn.server.common.federation.client"})
 @EnableConfigurationProperties({UploadServiceConfig.class})
-public class Application implements EnvironmentAware, DisposableBean {
+public class Application implements EnvironmentAware {
 
   private static final Logger logger = LoggerFactory.getLogger(Application.class);
 
@@ -48,12 +44,6 @@ public class Application implements EnvironmentAware, DisposableBean {
     SpringApplication.exit(appContext);
     logger.error("Federation Upload Service terminated abnormally.");
     System.exit(1);
-  }
-
-  @Override
-  public void destroy() {
-    logger.info("Shutting down log4j2.");
-    LogManager.shutdown();
   }
 
   @Override
