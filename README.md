@@ -208,6 +208,18 @@ The German government has asked SAP and Deutsche Telekom to develop the Corona-W
 
 A list of all public repositories from the Corona-Warn-App can be found [here](https://github.com/corona-warn-app/cwa-documentation/blob/master/README.md#repositories).
 
+## Licensing
+
+Copyright (c) 2020-2022 SAP SE or an SAP affiliate company and Corona-Warn-App contributors.
+
+Licensed under the **Apache License, Version 2.0** (the "License"); you may not use this file except in compliance with the License.
+
+You may obtain a copy of the License from [here](./LICENSE).
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the [LICENSE](./LICENSE) for the specific language governing permissions and limitations under the License.
+
+Please see the [detailed licensing information](https://api.reuse.software/info/github.com/corona-warn-app/cwa-ppa-server) via the [REUSE Tool](https://reuse.software/) for more details.
+
 [Postgres]: https://www.postgresql.org/
-[HSQLDB]: http://hsqldb.org/
+
 [Zenko CloudServer]: https://github.com/scality/cloudserver
