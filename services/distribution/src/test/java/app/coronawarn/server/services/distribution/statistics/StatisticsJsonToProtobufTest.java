@@ -302,7 +302,7 @@ class StatisticsJsonToProtobufTest {
           .containsExactly(168.5, Trend.DECREASING, TrendSemantic.POSITIVE);
       assertThat(joinedIncidence.getKeyFigures(1))
           .extracting(KeyFigure::getValue, KeyFigure::getTrend, KeyFigure::getTrendSemantic, KeyFigure::getUpdatedAt)
-          .containsExactly(168.5, Trend.INCREASING, TrendSemantic.NEGATIVE, dateToTimestamp(LocalDate.of(2020, 11, 7)));
+          .containsExactly(168.5, Trend.INCREASING, TrendSemantic.NEGATIVE, dateToTimestamp(LocalDate.of(2021, 11, 9)));
     }
   }
 }
