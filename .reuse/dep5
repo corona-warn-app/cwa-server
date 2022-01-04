@@ -6,3 +6,7 @@ Source: https://github.com/corona-warn-app/cwa-server
 Files: **
 Copyright: 2020-2022 SAP SE or an SAP affiliate company and Corona-Warn-App contributors
 License: Apache-2.0
+
+Files: .mvn/wrapper mvnw mvnw.cmd 
+Copyright: 2007-present the original author or authors.
+License: Apache-2.0
