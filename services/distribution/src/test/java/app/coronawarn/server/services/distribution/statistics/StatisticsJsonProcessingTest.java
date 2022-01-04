@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.distribution.statistics;
 
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.HOSPITALIZATION_INCIDENCE_CARD;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.INCIDENCE_CARD;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.INFECTIONS_CARD;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.KEY_SUBMISSION_CARD;
@@ -84,6 +85,14 @@ class StatisticsJsonProcessingTest {
     assertThat(result.getKeyFigureCards(3).getKeyFigures(0))
         .extracting(KeyFigure::getValue, KeyFigure::getTrend, KeyFigure::getTrendSemantic)
         .containsExactly(1.67, Trend.INCREASING, TrendSemantic.NEGATIVE);
+
+    // Assert Hospitalization Number Card
+    assertThat(result.getKeyFigureCards(7).getHeader())
+        .extracting(CardHeader::getCardId, CardHeader::getUpdatedAt)
+        .containsExactly(HOSPITALIZATION_INCIDENCE_CARD.ordinal(), dateToTimestamp(LocalDate.of(2021, 11, 9)));
+    assertThat(result.getKeyFigureCards(7).getKeyFigures(0))
+        .extracting(KeyFigure::getValue, KeyFigure::getTrend, KeyFigure::getTrendSemantic)
+        .containsExactly(168.5, Trend.INCREASING, TrendSemantic.NEGATIVE);
   }
 
 }
