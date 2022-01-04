@@ -22,9 +22,7 @@ public abstract class HeaderCardFactory {
    */
   public KeyFigureCard makeKeyFigureCard(StatisticsJsonStringObject stats) {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    LocalDate dateTime = LocalDate.parse(
-        stats.getHospitalizationEffectiveDate() == null || stats.getHospitalizationEffectiveDate().isEmpty()
-        ? stats.getEffectiveDate() : stats.getHospitalizationEffectiveDate(), formatter);
+    LocalDate dateTime = LocalDate.parse(stats.getEffectiveDate(), formatter);
     KeyFigureCard.Builder keyFigureBuilder = makeBuilderWithDefaultHeader(dateTime);
     throwIfNullFieldsFound(stats);
     return this.buildKeyFigureCard(stats, keyFigureBuilder);
