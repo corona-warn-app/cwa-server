@@ -4,5 +4,5 @@ Upstream-Contact: The Corona Warn App Server Team <corona-warn-app.opensource@sa
 Source: https://github.com/corona-warn-app/cwa-server
 
 Files: **
-Copyright:  2020 SAP SE or an SAP affiliate company and cwa-server contributors
+Copyright: 2020-2022 SAP SE or an SAP affiliate company and Corona-Warn-App contributors
 License: Apache-2.0
