@@ -42,9 +42,9 @@ public class DscListDecoder {
    * Decode the trust list of certificates. Verifies the trust list content by using the ECDSA signature logic. Filters
    * only X509 valid format certificates from the response.
    *
-   * @param data - trust list reponse from DSC as string.
+   * @param data - trust list response from DSC as string.
    * @return - object wrapping the list of certificates.
-   * @throws DscListDecodeException - thrown if any exception is catched and special treatment if signature verification
+   * @throws DscListDecodeException - thrown if any exception is caught and special treatment if signature verification
    *                                fails.
    */
   public Certificates decode(String data) throws DscListDecodeException {

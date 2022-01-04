@@ -239,11 +239,10 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
   private boolean matches(final Certificate cert, final String fingerPrintToCompare) {
     Optional<String> fingerprint = Optional.empty();
     try {
-      fingerprint = Optional.of(Hex.toHexString(HashUtils.byteStringDigest(cert.getEncoded(), Algorithms.SHA_256))
-          .toLowerCase());
+      fingerprint = Optional.of(Hex.toHexString(HashUtils.byteStringDigest(cert.getEncoded(), Algorithms.SHA_256)));
     } catch (CertificateEncodingException e) {
       LOGGER.error("Certificate Pinning failed: certificate could not be encoded.");
     }
-    return fingerprint.map(it -> it.equals(fingerPrintToCompare.toLowerCase())).orElse(false);
+    return fingerprint.map(it -> it.equalsIgnoreCase(fingerPrintToCompare)).orElse(false);
   }
 }

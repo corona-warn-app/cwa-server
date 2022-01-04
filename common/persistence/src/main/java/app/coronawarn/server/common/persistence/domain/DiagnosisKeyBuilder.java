@@ -193,7 +193,7 @@ public class DiagnosisKeyBuilder implements
   }
 
   /**
-   * If a {@link DiagnosisKeyNormalizer} object was configured in this builder, apply normalization where possibile, and
+   * If a {@link DiagnosisKeyNormalizer} object was configured in this builder, apply normalization where possible, and
    * return a container with the new values. Otherwise return a container with the original unchanged values. For boxed
    * types, primitive zero like values will be chosen if they have not been provided by the client of the builder.
    */

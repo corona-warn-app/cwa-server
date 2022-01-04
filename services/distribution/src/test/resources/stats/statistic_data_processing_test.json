@@ -168,6 +168,8 @@
     "persons_fully_vaccinated_ratio": null,
     "seven_day_hospitalization_1st_reported_daily": 168.5,
     "seven_day_hospitalization_1st_reported_growthrate": 0.86,
-    "seven_day_hospitalization_1st_reported_trend_1percent": 1
+    "seven_day_hospitalization_1st_reported_trend_1percent": 1,
+    "persons_with_third_dose_cumulated": 56033026,
+    "persons_with_third_dose_ratio": 0.674
   }
 ]

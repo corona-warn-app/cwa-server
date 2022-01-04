@@ -87,7 +87,7 @@ public class EventCheckinFacade {
     } catch (final Exception e) {
       // Any check-in data processing related error must not interrupt the submission flow or interfere
       // with storing of the diagnosis keys
-      logger.error(EVENT, "An error has occured while trying to store the event checkin data", e);
+      logger.error(EVENT, "An error has occurred while trying to store the event checkin data", e);
     }
     return new CheckinsStorageResult(numberOfFilteredCheckins.get(), numberOfSavedCheckins.get());
   }
