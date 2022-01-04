@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory;
 
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.HOSPITALIZATION_INCIDENCE_CARD;
 import static java.time.ZoneOffset.UTC;
 
 import app.coronawarn.server.common.protocols.internal.stats.CardHeader;
@@ -10,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.util.ObjectUtils;
 
 public abstract class HeaderCardFactory {
 
@@ -23,6 +25,10 @@ public abstract class HeaderCardFactory {
   public KeyFigureCard makeKeyFigureCard(StatisticsJsonStringObject stats) {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     LocalDate dateTime = LocalDate.parse(stats.getEffectiveDate(), formatter);
+    if (this.getCardId() == HOSPITALIZATION_INCIDENCE_CARD.ordinal() 
+        && !ObjectUtils.isEmpty(stats.getHospitalizationEffectiveDate())) {
+      dateTime = LocalDate.parse(stats.getHospitalizationEffectiveDate(), formatter);
+    }
     KeyFigureCard.Builder keyFigureBuilder = makeBuilderWithDefaultHeader(dateTime);
     throwIfNullFieldsFound(stats);
     return this.buildKeyFigureCard(stats, keyFigureBuilder);
