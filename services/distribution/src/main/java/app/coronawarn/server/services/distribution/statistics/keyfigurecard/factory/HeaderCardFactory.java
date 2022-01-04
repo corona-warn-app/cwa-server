@@ -26,7 +26,7 @@ public abstract class HeaderCardFactory {
     LocalDate dateTime = LocalDate.parse(stats.getEffectiveDate(), formatter);
     if (this.getCardId() == HOSPITALIZATION_INCIDENCE_CARD.ordinal()) {
       dateTime = stats.getHospitalizationEffectiveDate() == null || stats.getHospitalizationEffectiveDate().isEmpty()
-          ? LocalDate.parse(stats.getEffectiveDate()) :
+          ? LocalDate.parse(stats.getEffectiveDate(), formatter) :
           LocalDate.parse(stats.getHospitalizationEffectiveDate(), formatter);
     }
     KeyFigureCard.Builder keyFigureBuilder = makeBuilderWithDefaultHeader(dateTime);
