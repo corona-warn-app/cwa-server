@@ -455,10 +455,6 @@ public class StatisticsJsonStringObject extends StatisticsTimeJsonObject {
     this.personsWithThirdDoseRatio = personsWithThirdDoseRatio;
   }
 
-  public Double getSevenDayRvaluepublishedDaily() {
-    return sevenDayRvaluepublishedDaily;
-  }
-
   public Double getSevenDayHospitalizationReportedDaily() {
     return sevenDayHospitalizationReportedDaily;
   }
