@@ -51,7 +51,7 @@ class BusinessRulesArchiveBuilderTest {
 
     Optional<Writable<WritableOnDisk>> businessRuleArchive = businessRulesArchiveBuilder
         .setArchiveName(ARCHIVE_NAME)
-        .setRuleType(RuleType.BoosterNotification)
+        .setRuleType(RuleType.BOOSTER_NOTIFICATION)
         .setExportBinaryFilename(EXPORT_BINARY_FILENAME)
         .setBusinessRuleItemSupplier(testDigitalCovidCertificateClient::getBoosterNotificationRules)
         .setBusinessRuleSupplier(testDigitalCovidCertificateClient::getBoosterNotificationRuleByHash)
@@ -67,7 +67,7 @@ class BusinessRulesArchiveBuilderTest {
 
     Optional<Writable<WritableOnDisk>> businessRuleArchive = businessRulesArchiveBuilder
         .setArchiveName(ARCHIVE_NAME)
-        .setRuleType(RuleType.BoosterNotification)
+        .setRuleType(RuleType.BOOSTER_NOTIFICATION)
         .setExportBinaryFilename(EXPORT_BINARY_FILENAME)
         .setBusinessRuleItemSupplier(testDigitalCovidCertificateClient::getBoosterNotificationRules)
         .setBusinessRuleSupplier(testDigitalCovidCertificateClient::getBoosterNotificationRuleByHash)
@@ -91,19 +91,19 @@ class BusinessRulesArchiveBuilderTest {
         .build());
 
     assertThrows(NullPointerException.class, () -> businessRulesArchiveBuilder
-        .setRuleType(RuleType.BoosterNotification)
+        .setRuleType(RuleType.BOOSTER_NOTIFICATION)
         .setBusinessRuleItemSupplier(testDigitalCovidCertificateClient::getBoosterNotificationRules)
         .setBusinessRuleSupplier(testDigitalCovidCertificateClient::getBoosterNotificationRuleByHash)
         .build());
 
     assertThrows(NullPointerException.class, () -> businessRulesArchiveBuilder
-        .setRuleType(RuleType.BoosterNotification)
+        .setRuleType(RuleType.BOOSTER_NOTIFICATION)
         .setExportBinaryFilename(EXPORT_BINARY_FILENAME)
         .setBusinessRuleSupplier(testDigitalCovidCertificateClient::getBoosterNotificationRuleByHash)
         .build());
 
     assertThrows(NullPointerException.class, () -> businessRulesArchiveBuilder
-        .setRuleType(RuleType.BoosterNotification)
+        .setRuleType(RuleType.BOOSTER_NOTIFICATION)
         .setExportBinaryFilename(EXPORT_BINARY_FILENAME)
         .setBusinessRuleItemSupplier(testDigitalCovidCertificateClient::getBoosterNotificationRules)
         .build());

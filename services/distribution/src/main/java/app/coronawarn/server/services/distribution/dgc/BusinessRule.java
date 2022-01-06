@@ -163,8 +163,18 @@ public class BusinessRule {
   }
 
   public enum RuleType {
-    Acceptance,
-    Invalidation,
-    BoosterNotification
+    ACCEPTANCE("Acceptance"),
+    INVALIDATION("Invalidation"),
+    BOOSTER_NOTIFICATION("BoosterNotification");
+
+    private final String type;
+
+    private RuleType(String type) {
+      this.type = type;
+    }
+
+    public String getType() {
+      return type;
+    }
   }
 }

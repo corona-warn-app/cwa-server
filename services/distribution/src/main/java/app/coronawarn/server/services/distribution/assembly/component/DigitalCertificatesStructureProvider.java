@@ -92,8 +92,8 @@ public class DigitalCertificatesStructureProvider {
     }
 
     getOnboardedCountriesArchive().ifPresent(dgcDirectory::addWritable);
-    getRulesArchive(RuleType.Acceptance, ACCEPTANCE_RULES).ifPresent(dgcDirectory::addWritable);
-    getRulesArchive(RuleType.Invalidation, INVALIDATION_RULES).ifPresent(dgcDirectory::addWritable);
+    getRulesArchive(RuleType.ACCEPTANCE, ACCEPTANCE_RULES).ifPresent(dgcDirectory::addWritable);
+    getRulesArchive(RuleType.INVALIDATION, INVALIDATION_RULES).ifPresent(dgcDirectory::addWritable);
     getDscsArchive().ifPresent(dgcDirectory::addWritable);
     getValidationServiceAllowListArchive().ifPresent(dgcDirectory::addWritable);
 
