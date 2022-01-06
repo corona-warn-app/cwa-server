@@ -5,9 +5,6 @@ public class TransmissionRiskValueMapping {
   private Integer transmissionRiskLevel;
   private Double transmissionRiskValue;
 
-  public TransmissionRiskValueMapping() {
-  }
-
   public Integer getTransmissionRiskLevel() {
     return transmissionRiskLevel;
   }

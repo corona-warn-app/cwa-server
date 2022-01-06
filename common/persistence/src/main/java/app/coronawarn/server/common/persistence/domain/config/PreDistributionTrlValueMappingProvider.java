@@ -15,9 +15,6 @@ public class PreDistributionTrlValueMappingProvider {
 
   private List<TransmissionRiskValueMapping> transmissionRiskValueMapping;
 
-  public PreDistributionTrlValueMappingProvider() {
-  }
-
   public List<TransmissionRiskValueMapping> getTransmissionRiskValueMapping() {
     return transmissionRiskValueMapping;
   }
@@ -29,7 +26,7 @@ public class PreDistributionTrlValueMappingProvider {
 
   public Iterable<app.coronawarn.server.common.protocols.internal.v2.TransmissionRiskValueMapping>
           getTransmissionRiskValueMappingAsProto() {
-    return transmissionRiskValueMapping.stream().map(mapping -> toProto(mapping))
+    return transmissionRiskValueMapping.stream().map(this::toProto)
         .collect(Collectors.toList());
   }
 
