@@ -94,7 +94,7 @@ class DigitalGreenCertificateJsonToCborUnitTest {
   private BusinessRule mockBusinessRule() {
     BusinessRule businessRule = new BusinessRule();
     businessRule.setIdentifier(BAD_IDENTIFIER);
-    businessRule.setType(RuleType.ACCEPTANCE.name());
+    businessRule.setType(RuleType.ACCEPTANCE.getType());
     businessRule.setCountry(DE);
 
     return businessRule;
