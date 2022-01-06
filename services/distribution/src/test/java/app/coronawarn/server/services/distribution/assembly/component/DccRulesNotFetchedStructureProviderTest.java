@@ -151,9 +151,9 @@ class DccRulesNotFetchedStructureProviderTest {
     businessRuleItem2.setCountry("test2");
 
     BusinessRule businessRule = new BusinessRule();
-    businessRule.setType(RuleType.ACCEPTANCE.name());
+    businessRule.setType(RuleType.ACCEPTANCE.getType());
     BusinessRule businessRule2 = new BusinessRule();
-    businessRule2.setType(RuleType.ACCEPTANCE.name());
+    businessRule2.setType(RuleType.ACCEPTANCE.getType());
 
     when(digitalCovidCertificateClient.getRules()).thenReturn(Arrays.asList(businessRuleItem, businessRuleItem2));
     when(digitalCovidCertificateClient.getCountryRuleByHash("test1", "test1"))
