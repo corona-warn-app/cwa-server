@@ -46,9 +46,7 @@ public class FakeCheckinsGeneratorTest {
   private void assertContentDerivedCorrectly(CheckIn original, CheckIn fake, byte[] pepper) {
     assertThat(fake.getLocationId()).isNotEmpty();
     assertThat(fake.getLocationId()).isNotEqualTo(original.getLocationId());
-    assertThat(fake.getLocationId()
-           .equals(original.getLocationId().concat(ByteString.copyFrom(pepper).concat(ByteString.copyFromUtf8("1"))))
-    );
+    assertThat(fake.getLocationId()).isEqualTo(original.getLocationId().concat(ByteString.copyFrom(pepper).concat(ByteString.copyFromUtf8("1"))));
     assertThat(fake.getTransmissionRiskLevel()).isEqualTo(original.getTransmissionRiskLevel());
   }
 
