@@ -17,7 +17,7 @@ services:
     include-incomplete-hours: false
     eu-package-name: EUR
     apply-policies-for-all-countries: false
-    card-id-sequence: ${STATS_CARD_ID_SEQUENCE:[10,2,8,9,1,3,4,5,6,7,11]}
+    card-id-sequence: ${STATS_CARD_ID_SEQUENCE:[10,2,8,9,1,3,4,5,6,11,7]}
     connection-pool-size: 200
     default-archive-name: export.bin
     paths:
