@@ -42,11 +42,11 @@ public class FakeRequestController {
    */
   @PostMapping(value = SUBMISSION_ROUTE, headers = {"cwa-fake!=0"})
   @Timed(description = "Time spent handling fake submission.")
-  public DeferredResult<ResponseEntity<Void>> fakeRequest(@RequestHeader("cwa-fake") Integer fake) {
+  public DeferredResult<ResponseEntity<?>> fakeRequest(@RequestHeader("cwa-fake") Integer fake) {
     submissionMonitor.incrementRequestCounter();
     submissionMonitor.incrementFakeRequestCounter();
     long delay = fakeDelayManager.getJitteredFakeDelay();
-    DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
+    DeferredResult<ResponseEntity<?>> deferredResult = new DeferredResult<>();
     ResponseEntity response = ResponseEntity.ok()
         .header(CWA_FILTERED_CHECKINS_HEADER, String.valueOf(0))
         .header(CWA_SAVED_CHECKINS_HEADER, String.valueOf(0))

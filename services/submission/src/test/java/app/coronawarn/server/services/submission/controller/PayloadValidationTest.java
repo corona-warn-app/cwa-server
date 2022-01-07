@@ -6,6 +6,7 @@ import static app.coronawarn.server.services.submission.controller.SubmissionPay
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildTemporaryExposureKey;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildTemporaryExposureKeyWithFlexibleRollingPeriod;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.createRollingStartIntervalNumber;
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -20,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.IntStream;
-import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -49,7 +49,7 @@ class PayloadValidationTest {
 
   @Test
   void check400ResponseStatusForMissingKeys() {
-    ResponseEntity<Void> actResponse = executor.executePost(Lists.emptyList());
+    ResponseEntity<Void> actResponse = executor.executePost(emptyList());
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
@@ -61,7 +61,7 @@ class PayloadValidationTest {
 
   private Collection<TemporaryExposureKey> buildPayloadWithTooManyKeys() {
     ArrayList<TemporaryExposureKey> tooMany = new ArrayList<>();
-    generatePayloadKeys(tooMany,101,4);
+    generatePayloadKeys(tooMany, 101, 4);
     return tooMany;
   }
 
@@ -81,7 +81,7 @@ class PayloadValidationTest {
 
   private Collection<TemporaryExposureKey> buildKeysWithDaysSinceSymptoms(int dsos) {
     return List.of(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3,
-        ReportType.CONFIRMED_TEST, dsos),
+            ReportType.CONFIRMED_TEST, dsos),
         // also add a key without DSOS since this can happen in production and should be supported
         buildTemporaryExposureKey(VALID_KEY_DATA_1,
             createRollingStartIntervalNumber(2) + DiagnosisKey.MAX_ROLLING_PERIOD, 3,
@@ -114,7 +114,7 @@ class PayloadValidationTest {
 
   private Collection<TemporaryExposureKey> buildKeysWithTransmissionRiskLevel(int trl) {
     return List.of(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), trl,
-        ReportType.CONFIRMED_TEST, 1),
+            ReportType.CONFIRMED_TEST, 1),
         // also add a key without TRL since this can happen in production and should be supported
         buildTemporaryExposureKey(VALID_KEY_DATA_1,
             createRollingStartIntervalNumber(2) + +DiagnosisKey.MAX_ROLLING_PERIOD, null,
