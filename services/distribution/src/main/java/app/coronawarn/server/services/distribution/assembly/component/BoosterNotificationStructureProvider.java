@@ -1,7 +1,7 @@
 package app.coronawarn.server.services.distribution.assembly.component;
 
 
-import static app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleType.BoosterNotification;
+import static app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleType.BOOSTER_NOTIFICATION;
 
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
@@ -56,7 +56,7 @@ public class BoosterNotificationStructureProvider {
     return businessRulesArchiveBuilder
         .setArchiveName(archiveName)
         .setExportBinaryFilename(distributionServiceConfig.getDigitalGreenCertificate().getExportArchiveName())
-        .setRuleType(BoosterNotification)
+        .setRuleType(BOOSTER_NOTIFICATION)
         .setBusinessRuleItemSupplier(digitalCovidCertificateClient::getBoosterNotificationRules)
         .setBusinessRuleSupplier(digitalCovidCertificateClient::getBoosterNotificationRuleByHash)
         .build();

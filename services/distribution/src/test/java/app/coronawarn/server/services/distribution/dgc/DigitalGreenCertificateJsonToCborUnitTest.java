@@ -49,7 +49,7 @@ class DigitalGreenCertificateJsonToCborUnitTest {
 
     assertThatExceptionOfType(FetchBusinessRulesException.class).isThrownBy(
         () -> digitalGreenCertificateToCborMapping
-            .constructRules(RuleType.Acceptance, digitalCovidCertificateClient::getRules,
+            .constructRules(RuleType.ACCEPTANCE, digitalCovidCertificateClient::getRules,
                 digitalCovidCertificateClient::getCountryRuleByHash));
   }
 
@@ -63,7 +63,7 @@ class DigitalGreenCertificateJsonToCborUnitTest {
 
     DigitalCovidCertificateException exception = assertThrows(DigitalCovidCertificateException.class,
         () -> digitalGreenCertificateToCborMapping
-            .constructRules(RuleType.Acceptance, digitalCovidCertificateClient::getRules,
+            .constructRules(RuleType.ACCEPTANCE, digitalCovidCertificateClient::getRules,
                 digitalCovidCertificateClient::getCountryRuleByHash));
     assertThat(exception.getMessage()).contains("is not valid");
   }
@@ -78,7 +78,7 @@ class DigitalGreenCertificateJsonToCborUnitTest {
 
     DigitalCovidCertificateException exception = assertThrows(DigitalCovidCertificateException.class,
         () -> digitalGreenCertificateToCborMapping
-            .constructRules(RuleType.Acceptance, digitalCovidCertificateClient::getRules,
+            .constructRules(RuleType.ACCEPTANCE, digitalCovidCertificateClient::getRules,
                 digitalCovidCertificateClient::getCountryRuleByHash));
     assertThat(exception.getMessage()).contains("could not be found");
   }
@@ -94,7 +94,7 @@ class DigitalGreenCertificateJsonToCborUnitTest {
   private BusinessRule mockBusinessRule() {
     BusinessRule businessRule = new BusinessRule();
     businessRule.setIdentifier(BAD_IDENTIFIER);
-    businessRule.setType(RuleType.Acceptance.name());
+    businessRule.setType(RuleType.ACCEPTANCE.getType());
     businessRule.setCountry(DE);
 
     return businessRule;
