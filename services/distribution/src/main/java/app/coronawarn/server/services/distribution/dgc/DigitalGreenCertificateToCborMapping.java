@@ -68,7 +68,7 @@ public class DigitalGreenCertificateToCborMapping {
       BusinessRule businessRule =
           businessRuleSupplier.get(businessRuleItem.getCountry(), businessRuleItem.getHash());
 
-      if (businessRule.getType().equalsIgnoreCase(ruleType.name())) {
+      if (businessRule.getType().equalsIgnoreCase(ruleType.getType())) {
         try (final InputStream in = resourceLoader.getResource(DCC_VALIDATION_RULE_JSON_CLASSPATH).getInputStream()) {
           validateJsonSchema(businessRule, in);
           businessRules.add(businessRule);

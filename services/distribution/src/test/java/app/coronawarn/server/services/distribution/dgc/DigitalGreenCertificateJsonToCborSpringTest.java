@@ -45,11 +45,11 @@ class DigitalGreenCertificateJsonToCborSpringTest {
   @Test
   void shouldConstructCorrectAcceptanceRules() throws DigitalCovidCertificateException, FetchBusinessRulesException {
     List<BusinessRule> businessRules = digitalGreenCertificateToCborMapping
-        .constructRules(RuleType.Acceptance, digitalCovidCertificateClient::getRules,
+        .constructRules(RuleType.ACCEPTANCE, digitalCovidCertificateClient::getRules,
             digitalCovidCertificateClient::getCountryRuleByHash);
 
     assertThat(businessRules).hasSize(2);
-    assertThat(businessRules.stream().filter(filterByRuleType(RuleType.Acceptance))).hasSize(2);
+    assertThat(businessRules.stream().filter(filterByRuleType(RuleType.ACCEPTANCE))).hasSize(2);
     assertThat(businessRules.stream().filter(filterByRuleIdentifier(ID_ACCEPTANCE_1)).findAny()).isPresent();
     assertThat(businessRules.stream().filter(filterByRuleIdentifier(ID_ACCEPTANCE_2)).findAny()).isPresent();
   }
@@ -57,35 +57,35 @@ class DigitalGreenCertificateJsonToCborSpringTest {
   @Test
   void shouldConstructCorrectBnRules() throws DigitalCovidCertificateException, FetchBusinessRulesException {
     List<BusinessRule> businessRules = digitalGreenCertificateToCborMapping
-        .constructRules(RuleType.BoosterNotification, digitalCovidCertificateClient::getBoosterNotificationRules,
+        .constructRules(RuleType.BOOSTER_NOTIFICATION, digitalCovidCertificateClient::getBoosterNotificationRules,
             digitalCovidCertificateClient::getBoosterNotificationRuleByHash);
     assertThat(businessRules).hasSize(1);
-    assertThat(businessRules.stream().filter(filterByRuleType(RuleType.BoosterNotification))).hasSize(1);
+    assertThat(businessRules.stream().filter(filterByRuleType(RuleType.BOOSTER_NOTIFICATION))).hasSize(1);
     assertThat(businessRules.stream().filter(filterByRuleIdentifier(ID_BN_1)).findAny()).isPresent();
   }
 
   @Test
   void shouldConstructCorrectInvalidationRules() throws DigitalCovidCertificateException, FetchBusinessRulesException {
     List<BusinessRule> businessRules = digitalGreenCertificateToCborMapping
-        .constructRules(RuleType.Invalidation, digitalCovidCertificateClient::getRules,
+        .constructRules(RuleType.INVALIDATION, digitalCovidCertificateClient::getRules,
             digitalCovidCertificateClient::getCountryRuleByHash);
 
     assertThat(businessRules).hasSize(1);
-    assertThat(businessRules.stream().filter(filterByRuleType(RuleType.Invalidation))).hasSize(1);
+    assertThat(businessRules.stream().filter(filterByRuleType(RuleType.INVALIDATION))).hasSize(1);
     assertThat(businessRules.stream().filter(filterByRuleIdentifier(ID_INVALIDATION_1)).findAny()).isPresent();
   }
 
   @Test
   void shouldConstructCborAcceptanceRules() throws DigitalCovidCertificateException, FetchBusinessRulesException {
     byte[] businessRules = digitalGreenCertificateToCborMapping
-        .constructCborRules(RuleType.Acceptance, digitalCovidCertificateClient::getRules,
+        .constructCborRules(RuleType.ACCEPTANCE, digitalCovidCertificateClient::getRules,
             digitalCovidCertificateClient::getCountryRuleByHash);
 
     assertThat(businessRules).isNotEmpty();
   }
 
   private Predicate<BusinessRule> filterByRuleType(RuleType ruleType) {
-    return businessRule -> businessRule.getType().equalsIgnoreCase(ruleType.name());
+    return businessRule -> businessRule.getType().equalsIgnoreCase(ruleType.getType());
   }
 
   private Predicate<BusinessRule> filterByRuleIdentifier(String identifier) {
