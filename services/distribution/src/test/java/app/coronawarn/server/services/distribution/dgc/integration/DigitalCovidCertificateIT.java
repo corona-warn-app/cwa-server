@@ -8,8 +8,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
@@ -40,7 +38,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.openfeign.FeignAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.ResourceLoader;
@@ -127,11 +124,13 @@ public class DigitalCovidCertificateIT {
   }
 
   private boolean isAcceptanceOrInvalidation(String type) {
-    return type.equalsIgnoreCase(RuleType.Invalidation.name()) || type.equalsIgnoreCase(RuleType.Acceptance.name());
+    return type.equalsIgnoreCase(RuleType.INVALIDATION.getType()) || type
+        .equalsIgnoreCase(RuleType.ACCEPTANCE.getType());
   }
 
   private void stubValueSetByHash() throws IOException {
-    String content = new String(new ClassPathResource("dgc/wiremock/valueset.json").getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+    String content = new String(new ClassPathResource("dgc/wiremock/valueset.json").getInputStream().readAllBytes(),
+        StandardCharsets.UTF_8);
 
     wireMockServer.stubFor(
         get(urlPathMatching("/valuesets/.*"))
