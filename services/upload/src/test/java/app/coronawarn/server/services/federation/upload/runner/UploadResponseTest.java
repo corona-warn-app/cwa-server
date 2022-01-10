@@ -1,7 +1,7 @@
 package app.coronawarn.server.services.federation.upload.runner;
 
 import static app.coronawarn.server.services.federation.upload.utils.MockData.generateRandomUploadKey;
-import static org.assertj.core.util.Lists.emptyList;
+import static java.util.Collections.emptyList;
 import static org.assertj.core.util.Lists.list;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
