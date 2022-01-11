@@ -53,8 +53,8 @@ class EventCheckinsFacadeIT {
         .addAllCheckIns(getRandomTestData())
         .build();
     CheckinsStorageResult result = eventCheckinFacade.extractAndStoreCheckins(newPayload);
-    assertEquals(result.getNumberOfFilteredCheckins(), 2);
-    assertEquals(result.getNumberOfSavedCheckins(), 2);
+    assertEquals(2, result.getNumberOfFilteredCheckins());
+    assertEquals(2, result.getNumberOfSavedCheckins());
   }
 
   @Test

@@ -51,7 +51,7 @@ class FakeCheckinIntervalSpecificationTest {
   @Test
   void testStartIntervalGenerationSet() {
     final Set<Integer> set = new HashSet<>();
-    assertEquals(set.size(), 0);
+    assertEquals(0, set.size());
     for (int i = 0; i < 1000; i++) {
       final CheckIn checkIn = CheckIn.newBuilder().setStartIntervalNumber(2698815).build();
       set.add(START_INTERVAL_GENERATION.apply(checkIn));
