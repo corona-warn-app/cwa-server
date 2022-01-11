@@ -56,6 +56,6 @@ class FakeCheckinIntervalSpecificationTest {
       final CheckIn checkIn = CheckIn.newBuilder().setStartIntervalNumber(2698815).build();
       set.add(START_INTERVAL_GENERATION.apply(checkIn));
     }
-    assertTrue(set.size() == 11);
+    assertEquals(11, set.size());
   }
 }
