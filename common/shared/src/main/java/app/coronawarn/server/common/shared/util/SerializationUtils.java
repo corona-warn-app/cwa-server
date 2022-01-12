@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper;
 import java.io.IOException;
@@ -57,10 +58,10 @@ public final class SerializationUtils {
    */
   public static <T> T deserializeJson(final InputStream jsonStream,
       final Function<TypeFactory, JavaType> typeProviderFunction) throws IOException {
-    final ObjectMapper mapper = new ObjectMapper();
-    return mapper.enable(JsonReadFeature.ALLOW_NON_NUMERIC_NUMBERS.mappedFeature())
-        .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
-        .readValue(jsonStream, typeProviderFunction.apply(mapper.getTypeFactory()));
+    final ObjectMapper mapper = JsonMapper.builder()
+        .enable(JsonReadFeature.ALLOW_NON_NUMERIC_NUMBERS.mappedFeature())
+        .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS).build();
+    return mapper.readValue(jsonStream, typeProviderFunction.apply(mapper.getTypeFactory()));
   }
 
   /**
