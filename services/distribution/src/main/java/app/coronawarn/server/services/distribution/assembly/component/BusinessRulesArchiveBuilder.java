@@ -67,15 +67,15 @@ public class BusinessRulesArchiveBuilder {
       rulesArchive
           .addWritable(new FileOnDisk(exportBinaryFilename,
               dgcToCborMapping.constructCborRules(ruleType, businessRuleItemSupplier, businessRuleSupplier)));
-      logger.info("%s archive has been added to the DGC distribution folder", archiveName);
+      logger.info("{} archive has been added to the DGC distribution folder", archiveName);
 
       reset();
       return Optional.of(
           new DistributionArchiveSigningDecorator(rulesArchive, cryptoProvider, distributionServiceConfig));
     } catch (DigitalCovidCertificateException e) {
-      logger.error("%s archive was not overwritten because of: %s", archiveName, e.toString());
+      logger.error("{} archive was not overwritten because of: {}", archiveName, e.toString());
     } catch (FetchBusinessRulesException e) {
-      logger.error("%s archive was not overwritten because business rules could not been fetched: %s", archiveName,
+      logger.error("{} archive was not overwritten because business rules could not been fetched: {}", archiveName,
           e.toString());
     }
 

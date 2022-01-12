@@ -110,7 +110,7 @@ public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificat
       String fetchEntityName,
       BiFunction<String, Exception, E> exceptionConverter)
       throws E {
-    logger.debug("Get %s from DCC", fetchEntityName);
+    logger.debug("Get {} from DCC", fetchEntityName);
     try {
       ResponseEntity<T> response = responseSupplier.get();
 
