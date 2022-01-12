@@ -42,6 +42,7 @@ public class HourIntervalIndexingV1Decorator extends AbstractHourIntervalIndexin
    */
   @Override
   @Deprecated(since = "2.8")
+  @SuppressWarnings("unchecked")
   public FileOnDisk getIndexFile(String indexFileName, ImmutableStack<Object> indices) {
     String currentCountry = (String) indices.peek();
     final Optional<Integer> oldestHourWithDistributableWarnings = packageBundler
