@@ -1,10 +1,9 @@
 package app.coronawarn.server.common.shared.functional;
 
-import static app.coronawarn.server.common.shared.functional.CheckedConsumer.uncheckedConsumer;
 import static app.coronawarn.server.common.shared.functional.CheckedFunction.uncheckedFunction;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.function.Function;
 import org.junit.jupiter.api.Test;
 
 class CheckedFunctionTest {
@@ -17,8 +16,9 @@ class CheckedFunctionTest {
       throw new Exception("This has to be converted into Runtime: " + s);
     };
 
+    final Function<String, String> uncheckedFunction = uncheckedFunction(checkedFunction);
     assertThatExceptionOfType(RuntimeException.class)
-        .isThrownBy(() -> uncheckedFunction(checkedFunction).apply(TEST_STRING));
+        .isThrownBy(() -> uncheckedFunction.apply(TEST_STRING));
   }
 
 }

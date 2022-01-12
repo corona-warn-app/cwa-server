@@ -18,6 +18,7 @@ import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.Rank;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.Trend;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.TrendSemantic;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.MissingPropertyException;
 import org.junit.jupiter.api.BeforeEach;
@@ -134,8 +135,9 @@ class KeyFigureCardFactoryTest {
     @ValueSource(ints = {0, -1})
     void shouldFailIfInfectionCardIsNotValid(Integer value) {
       statisticsJsonStringObject.setInfectionsReportedCumulated(value);
+      final int cardOrdinal = INFECTIONS_CARD.ordinal();
       assertThatThrownBy(
-          () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, INFECTIONS_CARD.ordinal()))
+          () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, cardOrdinal))
           .isInstanceOf(MissingPropertyException.class);
     }
   }
@@ -179,16 +181,18 @@ class KeyFigureCardFactoryTest {
     @Test
     void shouldThrowAnExceptionIfMandatoryPropertyIsEqualToZero() {
       statisticsJsonStringObject.setSevenDayIncidence(-0.0);
+      final int cardOrdinal = INCIDENCE_CARD.ordinal();
       assertThatThrownBy(
-          () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, INCIDENCE_CARD.ordinal()))
+          () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, cardOrdinal))
           .isInstanceOf(MissingPropertyException.class);
     }
 
     @Test
     void shouldThrowAnExceptionIfMandatoryPropertyIsLessThanZero() {
       statisticsJsonStringObject.setSevenDayIncidence(-0.0);
+      final int cardOrdinal = INCIDENCE_CARD.ordinal();
       assertThatThrownBy(
-          () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, INCIDENCE_CARD.ordinal()))
+          () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, cardOrdinal))
           .isInstanceOf(MissingPropertyException.class);
     }
   }
@@ -221,8 +225,9 @@ class KeyFigureCardFactoryTest {
     @ValueSource(doubles = {0.0, -1.0})
     void shouldFailIfKeySubmissionCardIsNotValid(Double value) {
       statisticsJsonStringObject.setPersonWhoSharedKeys7daysAvg(value);
+      final int cardOrdinal = KEY_SUBMISSION_CARD.ordinal();
       assertThatThrownBy(
-          () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, KEY_SUBMISSION_CARD.ordinal()))
+          () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, cardOrdinal))
           .isInstanceOf(MissingPropertyException.class);
     }
   }
@@ -243,8 +248,9 @@ class KeyFigureCardFactoryTest {
     @ValueSource(doubles = {0.0, -1.0})
     void shouldFailIfReproductionNumberCardIsNotValid(Double value) {
       statisticsJsonStringObject.setSevenDayRvaluepublishedDaily(value);
+      final int cardOrdinal = REPRODUCTION_NUMBER_CARD.ordinal();
       assertThatThrownBy(
-          () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, REPRODUCTION_NUMBER_CARD.ordinal()))
+          () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, cardOrdinal))
           .isInstanceOf(MissingPropertyException.class);
     }
   }
@@ -286,16 +292,18 @@ class KeyFigureCardFactoryTest {
     @Test
     void shouldThrowAnExceptionIfMandatoryPropertyIsEqualToZero() {
       statisticsJsonStringObject.setAdministeredDosesDaily(0);
+      final int cardOrdinal = VACCINATION_DOSES_CARD.ordinal();
       assertThatThrownBy(
-          () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, VACCINATION_DOSES_CARD.ordinal()))
+          () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject,cardOrdinal))
           .isInstanceOf(MissingPropertyException.class);
     }
 
     @Test
     void shouldThrowAnExceptionIfMandatoryPropertyLessThanZero() {
       statisticsJsonStringObject.setAdministeredDosesDaily(-1);
+      final int cardOrdinal = VACCINATION_DOSES_CARD.ordinal();
       assertThatThrownBy(
-          () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, VACCINATION_DOSES_CARD.ordinal()))
+          () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, cardOrdinal))
           .isInstanceOf(MissingPropertyException.class);
     }
   }
@@ -320,8 +328,9 @@ class KeyFigureCardFactoryTest {
     @ValueSource(doubles = {0.0, -1.0})
     void shouldFailIfFullyVaccinatedCardIsNotValid(Double value) {
       statisticsJsonStringObject.setPersonsFullyVaccinatedRatio(value);
+      final int cardOrdinal = FULLY_VACCINATED_CARD.ordinal();
       assertThatThrownBy(
-          () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, FULLY_VACCINATED_CARD.ordinal()))
+          () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, cardOrdinal))
           .isInstanceOf(MissingPropertyException.class);
     }
   }
@@ -346,8 +355,9 @@ class KeyFigureCardFactoryTest {
     @ValueSource(doubles = {0.0, -1.0})
     void shouldFailIfFirstVaccinationCardIsNotValid(Double value) {
       statisticsJsonStringObject.setPersonsWithFirstDoseRatio(value);
+      final int cardOrdinal = FIRST_VACCINATION_CARD.ordinal();
       assertThatThrownBy(
-          () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, FIRST_VACCINATION_CARD.ordinal()))
+          () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, cardOrdinal))
           .isInstanceOf(MissingPropertyException.class);
     }
   }
@@ -386,9 +396,10 @@ class KeyFigureCardFactoryTest {
     @ValueSource(doubles = {0.0, -1.0})
     void shouldFailIfHospitalizationIncidenceCardIsNotValid(Double value) {
       statisticsJsonStringObject.setSevenDayHospitalizationReportedDaily(value);
+      final int cardOrdinal = HOSPITALIZATION_INCIDENCE_CARD.ordinal();
       assertThatThrownBy(
           () -> figureCardFactory
-              .createKeyFigureCard(statisticsJsonStringObject, HOSPITALIZATION_INCIDENCE_CARD.ordinal()))
+              .createKeyFigureCard(statisticsJsonStringObject, cardOrdinal))
           .isInstanceOf(MissingPropertyException.class);
     }
   }
@@ -427,8 +438,9 @@ class KeyFigureCardFactoryTest {
     @ValueSource(doubles = {0.0, -1.0})
     void shouldFailIfIntensiveCareCardIsNotValid(Double value) {
       statisticsJsonStringObject.setOccupiedIntensiveCareBedsReportedDailyRatio(value);
+      final int cardOrdinal = INTENSIVE_CARE_CARD.ordinal();
       assertThatThrownBy(
-          () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, INTENSIVE_CARE_CARD.ordinal()))
+          () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, cardOrdinal))
           .isInstanceOf(MissingPropertyException.class);
     }
   }
@@ -443,8 +455,9 @@ class KeyFigureCardFactoryTest {
     @ValueSource(doubles = {0.0, -1.0})
     void shouldFailIfThirdDoseCardIsNotValid(Double value) {
       statisticsJsonStringObject.setPersonsWithThirdDoseRatio(value);
+      final int cardOrdinal = BOOSTER_VACCINATED_CARD.ordinal();
       assertThatThrownBy(
-          () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, BOOSTER_VACCINATED_CARD.ordinal()))
+          () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, cardOrdinal))
           .isInstanceOf(MissingPropertyException.class);
     }
 
