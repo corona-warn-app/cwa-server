@@ -10,7 +10,6 @@ import app.coronawarn.server.services.distribution.dgc.ValueSetMetadata;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchValueSetsException;
 import app.coronawarn.server.services.distribution.dgc.exception.ThirdPartyServiceException;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
@@ -111,7 +110,7 @@ public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificat
       String fetchEntityName,
       BiFunction<String, Exception, E> exceptionConverter)
       throws E {
-    logger.debug("Get " + fetchEntityName + " from DCC");
+    logger.debug("Get %s from DCC", fetchEntityName);
     try {
       ResponseEntity<T> response = responseSupplier.get();
 

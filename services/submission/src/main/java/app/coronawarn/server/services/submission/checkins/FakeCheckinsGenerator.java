@@ -6,17 +6,13 @@ import static app.coronawarn.server.services.submission.checkins.FakeCheckinInte
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import app.coronawarn.server.common.shared.util.HashUtils;
 import com.google.protobuf.ByteString;
-import java.security.SecureRandom;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.springframework.stereotype.Component;
 
 @Component
 public class FakeCheckinsGenerator {
-
-  private final Random random = new SecureRandom();
 
   /**
    * For each checkin in the original list, create X amount of fake checkins and collect to one
