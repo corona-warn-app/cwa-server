@@ -6,6 +6,7 @@ import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServi
 import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServiceTestHelper.buildDiagnosisKeyForDateTime;
 import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServiceTestHelper.buildDiagnosisKeyForSubmissionTimestamp;
 import static java.time.ZoneOffset.UTC;
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -23,7 +24,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,7 +49,7 @@ class DiagnosisKeyServiceTest {
   @Test
   void testRetrievalForEmptyDB() {
     var actKeys = diagnosisKeyService.getDiagnosisKeys();
-    assertDiagnosisKeysEqual(Lists.emptyList(), actKeys);
+    assertDiagnosisKeysEqual(emptyList(), actKeys);
   }
 
   @Test
