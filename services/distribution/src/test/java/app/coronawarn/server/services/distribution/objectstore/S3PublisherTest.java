@@ -1,6 +1,6 @@
 package app.coronawarn.server.services.distribution.objectstore;
 
-import static org.assertj.core.util.Lists.emptyList;
+import static java.util.Collections.emptyList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;

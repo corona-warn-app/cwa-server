@@ -36,6 +36,7 @@ public class HourIntervalIndexingV2Decorator extends AbstractHourIntervalIndexin
    * @return the file on disk that contains the oldest and latest as JSON with a checksum.
    */
   @Override
+  @SuppressWarnings("unchecked")
   public FileOnDisk getIndexFile(String indexFileName, ImmutableStack<Object> indices) {
     String currentCountry = (String) indices.peek();
     final Optional<Integer> oldestHourWithDistributableCheckIns = packageBundler
