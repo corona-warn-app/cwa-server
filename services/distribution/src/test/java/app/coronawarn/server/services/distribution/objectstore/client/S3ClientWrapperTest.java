@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.distribution.objectstore.client;
 
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.util.Maps.newHashMap;
