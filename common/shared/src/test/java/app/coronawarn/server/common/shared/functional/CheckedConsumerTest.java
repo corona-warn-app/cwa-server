@@ -11,7 +11,7 @@ class CheckedConsumerTest {
   public static final String TEST_STRING = "string";
 
   @Test
-  public void checkConsumer() {
+  void checkConsumer() {
     CheckedConsumer<String, Exception> checkedConsumer = s -> {
       throw new Exception("This has to be converted into Runtime: " + s);
     };

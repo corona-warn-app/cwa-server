@@ -76,7 +76,7 @@ public class DigitalCovidCertificateSignatureTest {
   }
 
   @Test
-  public void shouldThrowRuntimeExceptionWhenPublicKeyIsWrong() {
+  void shouldThrowRuntimeExceptionWhenPublicKeyIsWrong() {
     stubRules();
 
     try (MockedStatic<SecurityUtils> utilities = Mockito.mockStatic(SecurityUtils.class)) {
@@ -97,7 +97,7 @@ public class DigitalCovidCertificateSignatureTest {
   }
 
   @Test
-  public void shouldRetryAndThrowCheckedException() {
+  void shouldRetryAndThrowCheckedException() {
     stubRules();
 
     try (MockedStatic<SecurityUtils> utilities = Mockito.mockStatic(SecurityUtils.class)) {

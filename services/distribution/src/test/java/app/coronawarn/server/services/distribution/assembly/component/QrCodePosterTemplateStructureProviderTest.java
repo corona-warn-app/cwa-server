@@ -11,7 +11,6 @@ import app.coronawarn.server.services.distribution.assembly.structure.archive.Ar
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import app.coronawarn.server.services.distribution.config.TransmissionRiskLevelEncoding;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
@@ -35,7 +34,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(
     classes = {QrCodeTemplateLoader.class, CryptoProvider.class},
     initializers = ConfigDataApplicationContextInitializer.class)
-public class QrCodePosterTemplateStructureProviderTest {
+class QrCodePosterTemplateStructureProviderTest {
 
   private static final String PARENT_TEST_FOLDER = "parent";
 

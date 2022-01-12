@@ -40,10 +40,10 @@ class ApplicationConfigurationV2MainFileTest {
   }
 
   @Nested
-  public class DgcParametersTest {
+  class DgcParametersTest {
 
     @Test
-    public void testDgcParametersAreValid() {
+    void testDgcParametersAreValid() {
       assertThat(applicationConfigurationAndroid).isNotNull();
       assertThat(applicationConfigurationAndroid.getDgcParameters()).isNotNull();
       assertThat(applicationConfigurationAndroid.getDgcParameters().getTestCertificateParameters()).isNotNull();

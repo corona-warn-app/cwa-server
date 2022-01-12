@@ -32,14 +32,14 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
     initializers = ConfigDataApplicationContextInitializer.class)
 @ImportAutoConfiguration({FeignAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class})
 @ActiveProfiles({"dcc-invalid-truststore","dcc-client-factory"})
-public class DigitalCovidCertificateInvalidTruststoreTest {
+class DigitalCovidCertificateInvalidTruststoreTest {
 
   @Autowired
   private DigitalCovidCertificateClient digitalCovidCertificateClient;
 
   @Test
   @Disabled
-  public void shouldNotEstablishSslConnection() {
+  void shouldNotEstablishSslConnection() {
     Exception exception = Assert.assertThrows(FetchBusinessRulesException.class,
         () -> digitalCovidCertificateClient.getRules());
     assertThat(exception.getCause()).isInstanceOf(RetryableException.class);

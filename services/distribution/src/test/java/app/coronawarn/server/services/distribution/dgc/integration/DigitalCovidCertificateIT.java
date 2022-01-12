@@ -81,7 +81,7 @@ public class DigitalCovidCertificateIT {
   }
 
   @Test
-  public void shouldFetchAllRulesItems() throws FetchBusinessRulesException {
+  void shouldFetchAllRulesItems() throws FetchBusinessRulesException {
     stubRules();
 
     List<BusinessRuleItem> rules = digitalCovidCertificateClient.getRules();
@@ -89,7 +89,7 @@ public class DigitalCovidCertificateIT {
   }
 
   @Test
-  public void shouldFetchSpecificRule() throws FetchBusinessRulesException, IOException {
+  void shouldFetchSpecificRule() throws FetchBusinessRulesException, IOException {
     stubRuleByHash();
 
     BusinessRule businessRule = digitalCovidCertificateClient.getCountryRuleByHash(RULE_COUNTRY, RULE_HASH);
@@ -100,14 +100,14 @@ public class DigitalCovidCertificateIT {
   }
 
   @Test
-  public void shouldFetchCountryList() throws FetchBusinessRulesException {
+  void shouldFetchCountryList() throws FetchBusinessRulesException {
     stubCountries();
     List<String> countries = digitalCovidCertificateClient.getCountryList();
     assertThat(countries).isNotEmpty();
   }
 
   @Test
-  public void shouldFetchAllValuesetsMetadata() throws FetchValueSetsException {
+  void shouldFetchAllValuesetsMetadata() throws FetchValueSetsException {
     stubValueSets();
 
     List<ValueSetMetadata> valuesets = digitalCovidCertificateClient.getValueSets();
@@ -115,7 +115,7 @@ public class DigitalCovidCertificateIT {
   }
 
   @Test
-  public void shouldFetchSpecificValueset() throws FetchValueSetsException, IOException {
+  void shouldFetchSpecificValueset() throws FetchValueSetsException, IOException {
     stubValueSetByHash();
     ValueSet valueSet = digitalCovidCertificateClient.getValueSet(VALUESET_HASH);
     assertThat(valueSet).isNotNull();
