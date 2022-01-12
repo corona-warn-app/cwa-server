@@ -51,6 +51,11 @@ public class DiagnosisKeysStructureProvider {
   public Directory<WritableOnDisk> getDiagnosisKeys() {
     logger.debug("Querying diagnosis keys from the database...");
     Collection<DiagnosisKey> diagnosisKeys = diagnosisKeyService.getDiagnosisKeys();
+
+    diagnosisKeys.removeIf(key -> {
+      return key.getTransmissionRiskLevel() < 3;
+    });
+
     diagnosisKeyBundler.setDiagnosisKeys(enfParameterEncoder.adaptKeys(diagnosisKeys), getCurrentUtcHour());
     return new DiagnosisKeysDirectory(diagnosisKeyBundler, cryptoProvider, distributionServiceConfig);
   }
