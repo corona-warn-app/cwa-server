@@ -78,7 +78,7 @@ public class CloudFederationFeignHttpClientProvider implements FederationFeignHt
               emptyCharrArrayIfNull(this.trustStorePassword))
           .build();
     } catch (Exception e) {
-      throw new RuntimeException(e);
+      throw new CloudFeignHttpClientProviderException(e);
     }
   }
 

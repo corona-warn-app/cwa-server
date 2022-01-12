@@ -4,6 +4,7 @@ import static app.coronawarn.server.common.shared.util.CwaStringUtils.emptyCharr
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.Client.Ssl;
+import app.coronawarn.server.services.distribution.dgc.dsc.errors.CloudDscFeignHttpClientProviderException;
 import feign.Client;
 import feign.httpclient.ApacheHttpClient;
 import java.io.File;
@@ -12,16 +13,15 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.commons.httpclient.ApacheHttpClientConnectionManagerFactory;
 import org.springframework.cloud.commons.httpclient.ApacheHttpClientFactory;
-import org.springframework.cloud.commons.httpclient.DefaultApacheHttpClientConnectionManagerFactory;
 import org.springframework.cloud.commons.httpclient.DefaultApacheHttpClientFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
- * Creates a dedicated http client used by Feign when performing http calls to the Digital Signing Certificates Service.
+ * Creates a dedicated http client used by Feign when performing http calls to the Digital Signing Certificates
+ * Service.
  */
 @Component
 @Profile("!fake-dsc-client")
@@ -82,7 +82,7 @@ public class CloudDscFeignHttpClientProvider implements DscFeignHttpClientProvid
     } catch (Exception e) {
       logger.error("Problem on creating DSC client - SSL context with truststore: "
           + trustStorePath.getName(), e);
-      throw new RuntimeException(e);
+      throw new CloudDscFeignHttpClientProviderException(e);
     }
   }
 }

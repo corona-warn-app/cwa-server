@@ -26,7 +26,7 @@ public interface CheckedFunction<T, R, E extends Exception> {
       try {
         return function.apply(input);
       } catch (Exception e) {
-        throw new RuntimeException(e);
+        throw new CheckedFunctionAndConsumerException(e);
       }
     };
   }
