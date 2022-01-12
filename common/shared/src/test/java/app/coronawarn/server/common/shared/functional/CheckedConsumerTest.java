@@ -4,7 +4,6 @@ import static app.coronawarn.server.common.shared.functional.CheckedConsumer.unc
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import org.junit.jupiter.api.Test;
-import java.util.function.Consumer;
 
 class CheckedConsumerTest {
 
@@ -16,10 +15,8 @@ class CheckedConsumerTest {
       throw new Exception("This has to be converted into Runtime: " + s);
     };
 
-    Consumer<String> consumer = uncheckedConsumer(checkedConsumer);
-
     assertThatExceptionOfType(RuntimeException.class)
-        .isThrownBy(() -> consumer.accept(TEST_STRING));
+        .isThrownBy(() -> uncheckedConsumer(checkedConsumer).accept(TEST_STRING));
   }
 
 }
