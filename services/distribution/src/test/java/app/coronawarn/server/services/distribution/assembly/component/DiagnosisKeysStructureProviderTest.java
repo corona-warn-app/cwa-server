@@ -92,7 +92,7 @@ class DiagnosisKeysStructureProviderTest {
     DiagnosisKeysStructureProvider diagnosisKeysStructureProvider = new DiagnosisKeysStructureProvider(
         diagnosisKeyService, cryptoProvider, distributionServiceConfig, bundler, enfParameterAdapter);
     assertNotNull(diagnosisKeysStructureProvider.getDiagnosisKeys());
-    assertEquals(bundler.getAllDiagnosisKeys("DE").size(), 75);
+    assertEquals(75, bundler.getAllDiagnosisKeys("DE").size());
     bundler.getAllDiagnosisKeys("DE").forEach(key -> {
       assertTrue(key.getTransmissionRiskLevel() >= 3);
     });
