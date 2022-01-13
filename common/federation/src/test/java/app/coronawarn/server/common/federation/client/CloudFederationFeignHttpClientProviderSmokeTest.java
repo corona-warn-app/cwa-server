@@ -7,7 +7,6 @@ import app.coronawarn.server.common.federation.client.config.FederationGatewayCo
 import app.coronawarn.server.common.federation.client.config.FederationGatewayConfig.Ssl;
 import app.coronawarn.server.common.federation.client.hostname.DefaultHostnameVerifierProvider;
 import java.io.File;
-import app.coronawarn.server.common.shared.functional.CheckedFunctionAndConsumerException;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -43,9 +42,10 @@ class CloudFederationFeignHttpClientProviderSmokeTest {
     config.setConnectionPoolSize(1);
     config.setSsl(ssl);
 
+    CloudFederationFeignHttpClientProvider provider = new CloudFederationFeignHttpClientProvider(config,
+        new DefaultHostnameVerifierProvider());
     assertThatExceptionOfType(CloudFeignHttpClientProviderException.class)
-        .isThrownBy(() -> new CloudFederationFeignHttpClientProvider(config,
-            new DefaultHostnameVerifierProvider()).createFeignClient());
+        .isThrownBy(() -> provider.createFeignClient());
   }
 
 }
