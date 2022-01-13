@@ -94,7 +94,7 @@ class DiagnosisKeysStructureProviderTest {
     assertNotNull(diagnosisKeysStructureProvider.getDiagnosisKeys());
     assertEquals(75, bundler.getAllDiagnosisKeys("DE").size());
     bundler.getAllDiagnosisKeys("DE").forEach(key -> {
-      assertTrue(key.getTransmissionRiskLevel() >= 3);
+      assertTrue(key.getTransmissionRiskLevel() >= distributionServiceConfig.getMinimumTrlValueAllowed());
     });
   }
 }
