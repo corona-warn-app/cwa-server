@@ -17,7 +17,7 @@ class CheckedConsumerTest {
     };
 
     final Consumer<String> uncheckedConsumer = uncheckedConsumer(checkedConsumer);
-    assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> uncheckedConsumer.accept(TEST_STRING));
+    assertThatExceptionOfType(CheckedFunctionAndConsumerException.class).isThrownBy(() -> uncheckedConsumer.accept(TEST_STRING));
   }
 
 }

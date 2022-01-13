@@ -17,7 +17,7 @@ class CheckedFunctionTest {
     };
 
     final Function<String, String> uncheckedFunction = uncheckedFunction(checkedFunction);
-    assertThatExceptionOfType(RuntimeException.class)
+    assertThatExceptionOfType(CheckedFunctionAndConsumerException.class)
         .isThrownBy(() -> uncheckedFunction.apply(TEST_STRING));
   }
 
