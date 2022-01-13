@@ -79,6 +79,7 @@ public class DistributionServiceConfig {
   private DigitalGreenCertificate digitalGreenCertificate;
   private Integer connectionPoolSize;
   private String defaultArchiveName;
+  private Integer minimumTrlValueAllowed;
 
   public Paths getPaths() {
     return paths;
@@ -271,6 +272,14 @@ public class DistributionServiceConfig {
 
   public void setStatistics(StatisticsConfig statistics) {
     this.statistics = statistics;
+  }
+
+  public Integer getMinimumTrlValueAllowed() {
+    return minimumTrlValueAllowed;
+  }
+
+  public void setMinimumTrlValueAllowed(Integer minimumTrlValueAllowed) {
+    this.minimumTrlValueAllowed = minimumTrlValueAllowed;
   }
 
   /**
