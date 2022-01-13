@@ -38,6 +38,8 @@ services:
     # Local paths, that are used during the export creation.
     connection-pool-size: 200
     default-archive-name: export.bin
+    # Minimum value allowed for the diagnosis keys TRLs.
+    minimum-trl-value-allowed: ${MINIMUM_TRL_VALUE_ALLOWED:3}
     paths:
       # The output path.
       output: out
