@@ -42,9 +42,10 @@ class CloudFederationFeignHttpClientProviderSmokeTest {
     config.setConnectionPoolSize(1);
     config.setSsl(ssl);
 
+    CloudFederationFeignHttpClientProvider provider = new CloudFederationFeignHttpClientProvider(config,
+        new DefaultHostnameVerifierProvider());
     assertThatExceptionOfType(CloudFeignHttpClientProviderException.class)
-        .isThrownBy(() -> new CloudFederationFeignHttpClientProvider(config,
-            new DefaultHostnameVerifierProvider()).createFeignClient());
+        .isThrownBy(() -> provider.createFeignClient());
   }
 
 }

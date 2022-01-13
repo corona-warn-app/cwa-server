@@ -18,7 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {CloudDscFeignHttpClientProvider.class},
     initializers = ConfigDataApplicationContextInitializer.class)
-public class CloudDscFeignHttpClientProviderSmokeTest {
+class CloudDscFeignHttpClientProviderSmokeTest {
 
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
@@ -31,8 +31,9 @@ public class CloudDscFeignHttpClientProviderSmokeTest {
     distributionServiceConfig.setConnectionPoolSize(1);
     distributionServiceConfig.getDigitalGreenCertificate().getDscClient().setSsl(ssl);
 
+    CloudDscFeignHttpClientProvider provider = new CloudDscFeignHttpClientProvider(distributionServiceConfig);
     assertThatExceptionOfType(CloudDscFeignHttpClientProviderException.class)
-        .isThrownBy(() -> new CloudDscFeignHttpClientProvider(distributionServiceConfig).createDscFeignClient());
+        .isThrownBy(() -> provider.createDscFeignClient());
   }
 
 }

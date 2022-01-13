@@ -1,18 +1,15 @@
 package app.coronawarn.server.services.distribution.statistics;
 
-import static app.coronawarn.server.services.distribution.statistics.StatisticType.LOCAL;
-import static app.coronawarn.server.services.distribution.statistics.StatisticType.STANDARD;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
-import app.coronawarn.server.common.federation.client.CloudFeignHttpClientProviderException;
 import app.coronawarn.server.common.persistence.service.StatisticsDownloadService;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.statistics.exceptions.BucketNotFoundException;
 import app.coronawarn.server.services.distribution.statistics.exceptions.ConnectionException;
 import app.coronawarn.server.services.distribution.statistics.exceptions.FilePathNotFoundException;
 import app.coronawarn.server.services.distribution.statistics.file.JsonFile;
-import app.coronawarn.server.services.distribution.statistics.file.JsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.file.JsonFileLoaderException;
 import app.coronawarn.server.services.distribution.statistics.file.MockStatisticJsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.file.StatisticJsonFileLoader;
@@ -68,7 +65,8 @@ class StatisticsLoadExceptionTest {
   void shouldNotGenerateProtobufFileIfException(Class<RuntimeException> exception) {
     when(loader.getFile()).thenThrow(exception);
     when(statisticsDownloadService.getMostRecentDownload()).thenReturn(Optional.empty());
-    var statisticsToProtobufMapping = new StatisticsToProtobufMapping(serviceConfig, keyFigureCardFactory, loader, statisticsDownloadService);
+    var statisticsToProtobufMapping = new StatisticsToProtobufMapping(serviceConfig, keyFigureCardFactory, loader,
+        statisticsDownloadService);
     assertThat(statisticsToProtobufMapping.constructProtobufStatistics().getKeyFigureCardsCount())
         .isZero();
   }
