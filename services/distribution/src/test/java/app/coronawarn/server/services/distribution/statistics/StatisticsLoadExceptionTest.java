@@ -64,7 +64,6 @@ class StatisticsLoadExceptionTest {
       BucketNotFoundException.class,
       FilePathNotFoundException.class,
       ConnectionException.class,
-      JsonFileLoaderException.class
   })
   void shouldNotGenerateProtobufFileIfException(Class<RuntimeException> exception) {
     when(loader.getFile()).thenThrow(exception);
