@@ -1,6 +1,8 @@
 package app.coronawarn.server.services.distribution.assembly.component;
 
 import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeys;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
@@ -89,8 +91,8 @@ class DiagnosisKeysStructureProviderTest {
     DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(distributionServiceConfig, sharingPoliciesChecker);
     DiagnosisKeysStructureProvider diagnosisKeysStructureProvider = new DiagnosisKeysStructureProvider(
         diagnosisKeyService, cryptoProvider, distributionServiceConfig, bundler, enfParameterAdapter);
-    Directory<WritableOnDisk> diagnosisKeys = diagnosisKeysStructureProvider.getDiagnosisKeys();
-    Assertions.assertEquals(bundler.getAllDiagnosisKeys("DE").size(), 75);
+    assertNotNull(diagnosisKeysStructureProvider.getDiagnosisKeys());
+    assertEquals(bundler.getAllDiagnosisKeys("DE").size(), 75);
     bundler.getAllDiagnosisKeys("DE").forEach(key -> {
       assertTrue(key.getTransmissionRiskLevel() >= 3);
     });
