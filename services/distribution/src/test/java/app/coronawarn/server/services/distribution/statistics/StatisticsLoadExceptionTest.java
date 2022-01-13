@@ -1,18 +1,24 @@
 package app.coronawarn.server.services.distribution.statistics;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static app.coronawarn.server.services.distribution.statistics.StatisticType.LOCAL;
+import static app.coronawarn.server.services.distribution.statistics.StatisticType.STANDARD;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
+import app.coronawarn.server.common.federation.client.CloudFeignHttpClientProviderException;
 import app.coronawarn.server.common.persistence.service.StatisticsDownloadService;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.statistics.exceptions.BucketNotFoundException;
 import app.coronawarn.server.services.distribution.statistics.exceptions.ConnectionException;
 import app.coronawarn.server.services.distribution.statistics.exceptions.FilePathNotFoundException;
+import app.coronawarn.server.services.distribution.statistics.file.JsonFile;
 import app.coronawarn.server.services.distribution.statistics.file.JsonFileLoader;
+import app.coronawarn.server.services.distribution.statistics.file.JsonFileLoaderException;
 import app.coronawarn.server.services.distribution.statistics.file.MockStatisticJsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.file.StatisticJsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
 import java.util.Optional;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -21,6 +27,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -38,6 +45,9 @@ class StatisticsLoadExceptionTest {
   StatisticJsonFileLoader loader;
 
   @Autowired
+  ResourceLoader resourceLoader;
+
+  @Autowired
   DistributionServiceConfig serviceConfig;
 
   @Autowired
@@ -46,11 +56,15 @@ class StatisticsLoadExceptionTest {
   @MockBean
   StatisticsDownloadService statisticsDownloadService;
 
+  @MockBean
+  JsonFile jsonFile;
+
   @ParameterizedTest
   @ValueSource(classes = {
       BucketNotFoundException.class,
       FilePathNotFoundException.class,
-      ConnectionException.class
+      ConnectionException.class,
+      JsonFileLoaderException.class
   })
   void shouldNotGenerateProtobufFileIfException(Class<RuntimeException> exception) {
     when(loader.getFile()).thenThrow(exception);
@@ -58,5 +72,11 @@ class StatisticsLoadExceptionTest {
     var statisticsToProtobufMapping = new StatisticsToProtobufMapping(serviceConfig, keyFigureCardFactory, loader, statisticsDownloadService);
     assertThat(statisticsToProtobufMapping.constructProtobufStatistics().getKeyFigureCardsCount())
         .isZero();
+  }
+
+  @Test
+  void shouldThrowJsonFileLoaderException() {
+    when(loader.getFile()).thenThrow(JsonFileLoaderException.class);
+    assertThatThrownBy(() -> loader.getFile()).isInstanceOf(JsonFileLoaderException.class);
   }
 }
