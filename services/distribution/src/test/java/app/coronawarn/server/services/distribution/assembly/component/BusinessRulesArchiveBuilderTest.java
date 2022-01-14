@@ -79,7 +79,7 @@ class BusinessRulesArchiveBuilderTest {
     assertThat(((SigningDecoratorOnDisk) businessRuleArchive.get()).getBytesToSign()).isEqualTo(bytesToSign);
 
     assertTrue(businessRuleArchive.get().isArchive());
-    assertEquals(businessRuleArchive.get().getName(), ARCHIVE_NAME);
+    assertEquals(ARCHIVE_NAME, businessRuleArchive.get().getName());
   }
 
   @Test

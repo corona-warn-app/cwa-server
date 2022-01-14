@@ -66,7 +66,7 @@ public class SubmissionServiceConfig {
    *
    * @deprecated should be removed when false
    */
-  @Deprecated
+  @Deprecated(since = "2.8", forRemoval = true)
   private Boolean unencryptedCheckinsEnabled;
 
   @Autowired
@@ -217,7 +217,7 @@ public class SubmissionServiceConfig {
    *
    * @deprecated should be removed when false
    */
-  @Deprecated
+  @Deprecated(since = "2.8", forRemoval = true)
   public Boolean isUnencryptedCheckinsEnabled() {
     return unencryptedCheckinsEnabled == null ? false : unencryptedCheckinsEnabled;
   }

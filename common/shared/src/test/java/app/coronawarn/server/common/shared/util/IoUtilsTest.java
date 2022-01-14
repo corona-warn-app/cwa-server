@@ -4,8 +4,7 @@ import static app.coronawarn.server.common.shared.util.IoUtils.fileExistsInDirec
 import static app.coronawarn.server.common.shared.util.IoUtils.makeNewFile;
 import static app.coronawarn.server.common.shared.util.IoUtils.writeBytesToFile;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -38,7 +37,7 @@ class IoUtilsTest {
     File file = outputFolder.newFile();
     writeBytesToFile(new byte[IoUtils.MAXIMUM_FILE_SIZE - 1], file);
 
-    assertTrue(file.getTotalSpace() != 0);
+    assertNotEquals(0, file.getTotalSpace());
   }
 
   @Test
@@ -47,7 +46,7 @@ class IoUtilsTest {
     File file = outputFolder.newFile();
     writeBytesToFile(new byte[(int)(IoUtils.MAXIMUM_FILE_SIZE * 0.8)], file);
 
-    assertTrue(file.getTotalSpace() != 0);
+    assertNotEquals(0, file.getTotalSpace());
   }
 
   @Test

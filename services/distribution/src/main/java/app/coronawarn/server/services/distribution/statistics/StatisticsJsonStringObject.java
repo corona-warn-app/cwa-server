@@ -235,6 +235,7 @@ public class StatisticsJsonStringObject extends StatisticsTimeJsonObject {
     return testsTotalDaily;
   }
 
+  @Override
   public String getUpdateTimestamp() {
     return updateTimestamp;
   }
@@ -407,6 +408,7 @@ public class StatisticsJsonStringObject extends StatisticsTimeJsonObject {
     this.testsTotalDaily = testsTotalDaily;
   }
 
+  @Override
   public void setUpdateTimestamp(String updateTimestamp) {
     this.updateTimestamp = updateTimestamp;
   }

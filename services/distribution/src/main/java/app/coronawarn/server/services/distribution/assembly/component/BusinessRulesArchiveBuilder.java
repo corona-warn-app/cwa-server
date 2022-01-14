@@ -24,9 +24,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
 /**
- * Builder for Businuess Rules Archive. There are three types of rules: Acceptance, Invalidation and Booster.
- * The builder can build the archive containing rules of one the above types by using the business rules suppliers
- * within the builder to supply the right type.
+ * Builder for Businuess Rules Archive. There are three types of rules: Acceptance, Invalidation and Booster. The
+ * builder can build the archive containing rules of one the above types by using the business rules suppliers within
+ * the builder to supply the right type.
  */
 @Component
 @Scope("prototype")
@@ -67,15 +67,16 @@ public class BusinessRulesArchiveBuilder {
       rulesArchive
           .addWritable(new FileOnDisk(exportBinaryFilename,
               dgcToCborMapping.constructCborRules(ruleType, businessRuleItemSupplier, businessRuleSupplier)));
-      logger.info(archiveName + " archive has been added to the DGC distribution folder");
+      logger.info("{} archive has been added to the DGC distribution folder", archiveName);
 
       reset();
       return Optional.of(
           new DistributionArchiveSigningDecorator(rulesArchive, cryptoProvider, distributionServiceConfig));
     } catch (DigitalCovidCertificateException e) {
-      logger.error(archiveName + " archive was not overwritten because of:", e);
+      logger.error(String.format("%s archive was not overwritten because of: ", archiveName), e);
     } catch (FetchBusinessRulesException e) {
-      logger.error(archiveName + " archive was not overwritten because business rules could not been fetched:", e);
+      logger.error(String
+          .format("%s archive was not overwritten because business rules could not been fetched: ", archiveName), e);
     }
 
     reset();

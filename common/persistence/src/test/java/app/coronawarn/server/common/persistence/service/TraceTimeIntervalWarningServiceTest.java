@@ -107,7 +107,7 @@ class TraceTimeIntervalWarningServiceTest {
    * Contract for hashing between client and server.
    */
   @Test
-  public void testHashingOfTraceLocationId() {
+  void testHashingOfTraceLocationId() {
     String locationId = "afa27b44d43b02a9fea41d13cedc2e4016cfcf87c5dbf990e593669aa8ce286d";
     byte[] locationIdByte = Hex.decode(locationId);
     byte[] hashedLocationId = HashUtils.byteStringDigest(ByteString.copyFrom(locationIdByte), SHA_256);

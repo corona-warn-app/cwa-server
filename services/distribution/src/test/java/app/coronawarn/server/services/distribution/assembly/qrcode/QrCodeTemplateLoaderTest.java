@@ -6,13 +6,11 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import com.google.protobuf.ByteString;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
@@ -32,7 +30,7 @@ class QrCodeTemplateLoaderTest {
   private QrCodeTemplateLoader loader;
 
   @Test
-  public void testLoadPosterTemplateCanLoadDefaultOnError() throws IOException {
+  void testLoadPosterTemplateCanLoadDefaultOnError() throws IOException {
     config.getAndroidQrCodePosterTemplate().setTemplate("non/existent.file");
     ByteString template = loader.loadAndroidTemplateAsBytes();
 
@@ -40,7 +38,7 @@ class QrCodeTemplateLoaderTest {
   }
 
   @Test
-  public void testLoadPosterTemplateCanLoadDefaultMissingFile() throws IOException {
+  void testLoadPosterTemplateCanLoadDefaultMissingFile() throws IOException {
     config.getIosQrCodePosterTemplate().setTemplate(null);
     ByteString template = loader.loadIosTemplateAsBytes();
 
@@ -48,7 +46,7 @@ class QrCodeTemplateLoaderTest {
   }
 
   @Test
-  public void testLoadPosterTemplateCanLoadFileFromDisk() throws IOException {
+  void testLoadPosterTemplateCanLoadFileFromDisk() throws IOException {
     String uri = new File("src/main/resources/pt-android-poster-1.0.0.pdf").getAbsoluteFile().toURI().toString();
     ByteString template = loader.loadPosterTemplate(uri, "non-existent");
 
@@ -56,7 +54,7 @@ class QrCodeTemplateLoaderTest {
   }
 
   @Test
-  public void testWrongFallbackDoesNotThrowException() throws IOException {
+  void testWrongFallbackDoesNotThrowException() throws IOException {
     ByteString template = loader.loadPosterTemplate("non-existent", "non-existent");
 
     assertThat(template).isEmpty();

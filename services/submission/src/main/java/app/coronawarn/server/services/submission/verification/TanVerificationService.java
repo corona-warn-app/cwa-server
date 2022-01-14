@@ -21,7 +21,7 @@ public abstract class TanVerificationService {
    *
    * @param verificationServerClient The REST client to communicate with the verification server
    */
-  public TanVerificationService(VerificationServerClient verificationServerClient) {
+  protected TanVerificationService(VerificationServerClient verificationServerClient) {
     this.verificationServerClient = verificationServerClient;
   }
 

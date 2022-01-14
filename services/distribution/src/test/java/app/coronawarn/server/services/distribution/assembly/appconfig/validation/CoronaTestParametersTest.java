@@ -7,7 +7,7 @@ import app.coronawarn.server.common.shared.exception.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.assembly.appconfig.YamlLoader;
 import org.junit.jupiter.api.Test;
 
-public class CoronaTestParametersTest {
+class CoronaTestParametersTest {
 
   private static final String CORONA_TEST_PARAMETERS_FILE = "configtests/corona-test-parameters.yaml";
 

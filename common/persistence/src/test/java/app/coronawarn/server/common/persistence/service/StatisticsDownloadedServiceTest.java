@@ -13,7 +13,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @DataJdbcTest
-public class StatisticsDownloadedServiceTest {
+class StatisticsDownloadedServiceTest {
 
   @Autowired
   private StatisticsDownloadService statisticsDownloadService;
