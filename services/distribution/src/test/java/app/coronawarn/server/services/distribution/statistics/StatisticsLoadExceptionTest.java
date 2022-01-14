@@ -60,7 +60,7 @@ class StatisticsLoadExceptionTest {
   @ValueSource(classes = {
       BucketNotFoundException.class,
       FilePathNotFoundException.class,
-      ConnectionException.class,
+      ConnectionException.class
   })
   void shouldNotGenerateProtobufFileIfException(Class<RuntimeException> exception) {
     when(loader.getFile()).thenThrow(exception);

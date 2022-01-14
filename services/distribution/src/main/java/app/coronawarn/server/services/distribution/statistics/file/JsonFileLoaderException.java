@@ -2,7 +2,7 @@ package app.coronawarn.server.services.distribution.statistics.file;
 
 public class JsonFileLoaderException extends RuntimeException {
 
-  public JsonFileLoaderException(String message, final Throwable cause) {
-    super(message, cause);
+  public JsonFileLoaderException(String path, final Throwable cause) {
+    super(String.format("Failed to load Local JSON from path %s", path), cause);
   }
 }

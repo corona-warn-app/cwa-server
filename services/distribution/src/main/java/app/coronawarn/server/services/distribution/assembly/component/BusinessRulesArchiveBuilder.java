@@ -73,10 +73,10 @@ public class BusinessRulesArchiveBuilder {
       return Optional.of(
           new DistributionArchiveSigningDecorator(rulesArchive, cryptoProvider, distributionServiceConfig));
     } catch (DigitalCovidCertificateException e) {
-      logger.error("{} archive was not overwritten because of: {}", archiveName, e.toString());
+      logger.error(String.format("%s archive was not overwritten because of: ", archiveName), e);
     } catch (FetchBusinessRulesException e) {
-      logger.error("{} archive was not overwritten because business rules could not been fetched: {}", archiveName,
-          e.toString());
+      logger.error(String
+          .format("%s archive was not overwritten because business rules could not been fetched: ", archiveName), e);
     }
 
     reset();
