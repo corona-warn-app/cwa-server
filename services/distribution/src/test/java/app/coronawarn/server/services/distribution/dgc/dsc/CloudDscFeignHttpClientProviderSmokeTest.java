@@ -2,9 +2,9 @@ package app.coronawarn.server.services.distribution.dgc.dsc;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+import app.coronawarn.server.common.federation.client.CloudFeignHttpClientProviderException;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.Client.Ssl;
-import app.coronawarn.server.services.distribution.dgc.dsc.errors.CloudDscFeignHttpClientProviderException;
 import java.io.File;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +32,7 @@ class CloudDscFeignHttpClientProviderSmokeTest {
     distributionServiceConfig.getDigitalGreenCertificate().getDscClient().setSsl(ssl);
 
     CloudDscFeignHttpClientProvider provider = new CloudDscFeignHttpClientProvider(distributionServiceConfig);
-    assertThatExceptionOfType(CloudDscFeignHttpClientProviderException.class)
+    assertThatExceptionOfType(CloudFeignHttpClientProviderException.class)
         .isThrownBy(() -> provider.createDscFeignClient());
   }
 

@@ -2,9 +2,9 @@ package app.coronawarn.server.services.distribution.dgc.dsc;
 
 import static app.coronawarn.server.common.shared.util.CwaStringUtils.emptyCharrArrayIfNull;
 
+import app.coronawarn.server.common.federation.client.CloudFeignHttpClientProviderException;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.Client.Ssl;
-import app.coronawarn.server.services.distribution.dgc.dsc.errors.CloudDscFeignHttpClientProviderException;
 import feign.Client;
 import feign.httpclient.ApacheHttpClient;
 import java.io.File;
@@ -82,7 +82,7 @@ public class CloudDscFeignHttpClientProvider implements DscFeignHttpClientProvid
     } catch (Exception e) {
       logger.error("Problem on creating DSC client - SSL context with truststore: "
           + trustStorePath.getName(), e);
-      throw new CloudDscFeignHttpClientProviderException(e);
+      throw new CloudFeignHttpClientProviderException(e);
     }
   }
 }
