@@ -44,11 +44,10 @@ public class BuildLocalStatisticsHelper {
   /**
    * Supplies with an newly created Local Statistics protobuf containing Administrative Unit statistics.
    *
-   * @param federalStateCode                - federal state code.
    * @param localStatisticsJsonStringObject - local statistics json object.
    * @return - Local Statistics supplier
    */
-  public static Supplier<LocalStatistics> administrativeUnitSupplier(int federalStateCode,
+  public static Supplier<LocalStatistics> administrativeUnitSupplier(
       LocalStatisticsJsonStringObject localStatisticsJsonStringObject) {
     return () -> buildAdministrativeUnitStatistics(localStatisticsJsonStringObject);
   }
