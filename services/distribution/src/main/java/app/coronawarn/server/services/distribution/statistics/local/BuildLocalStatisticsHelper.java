@@ -50,7 +50,7 @@ public class BuildLocalStatisticsHelper {
    */
   public static Supplier<LocalStatistics> administrativeUnitSupplier(int federalStateCode,
       LocalStatisticsJsonStringObject localStatisticsJsonStringObject) {
-    return () -> buildAdministrativeUnitStatistics(federalStateCode, localStatisticsJsonStringObject);
+    return () -> buildAdministrativeUnitStatistics(localStatisticsJsonStringObject);
   }
 
   /**
@@ -124,11 +124,10 @@ public class BuildLocalStatisticsHelper {
    * Build local statistics containing administrative unit statistics from an instance of {@link
    * LocalStatisticsJsonStringObject}.
    *
-   * @param federalStateCode                - federal state code.
    * @param localStatisticsJsonStringObject - local statistics json object.
    * @return - Local Statistics protobuf.
    */
-  private static LocalStatistics buildAdministrativeUnitStatistics(int federalStateCode,
+  private static LocalStatistics buildAdministrativeUnitStatistics(
       LocalStatisticsJsonStringObject localStatisticsJsonStringObject) {
     return LocalStatistics.newBuilder()
         .addAdministrativeUnitData(buildAdministrativeUnitData(localStatisticsJsonStringObject))
