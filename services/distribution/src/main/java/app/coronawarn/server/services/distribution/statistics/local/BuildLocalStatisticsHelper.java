@@ -38,7 +38,7 @@ public class BuildLocalStatisticsHelper {
    */
   public static Function<LocalStatistics, LocalStatistics> federalStateEnhancer(int federalStateCode,
       LocalStatisticsJsonStringObject localStatisticsJsonStringObject) {
-    return (localStatistics) -> addFederalStateData(localStatistics, federalStateCode, localStatisticsJsonStringObject);
+    return localStatistics -> addFederalStateData(localStatistics, federalStateCode, localStatisticsJsonStringObject);
   }
 
   /**
@@ -60,7 +60,7 @@ public class BuildLocalStatisticsHelper {
    */
   public static Function<LocalStatistics, LocalStatistics> administrativeUnitEnhancer(
       LocalStatisticsJsonStringObject localStatisticsJsonStringObject) {
-    return (localStatistics) ->
+    return localStatistics ->
         addAdministrativeUnitData(localStatistics, localStatisticsJsonStringObject);
   }
 

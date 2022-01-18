@@ -65,7 +65,6 @@ public class CwaApiStructureProvider {
         ignoredValue -> Set.of(distributionServiceConfig.getApi().getVersionV1()),
         Object::toString);
 
-
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.of(appConfigurationStructureProvider.getAppConfiguration()));
     versionDirectory.addWritableToAll(
@@ -87,9 +86,8 @@ public class CwaApiStructureProvider {
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.ofNullable(statisticsStructureProvider.getStatistics()));
 
-    localStatisticsStructureProvider.getLocalStatisticsList().forEach(archive -> {
-      versionDirectory.addWritableToAll(ignoredValue -> Optional.ofNullable(archive));
-    });
+    localStatisticsStructureProvider.getLocalStatisticsList().forEach(archive ->
+        versionDirectory.addWritableToAll(ignoredValue -> Optional.ofNullable(archive)));
 
     return new IndexingDecoratorOnDisk<>(versionDirectory, distributionServiceConfig.getOutputFileName());
   }
