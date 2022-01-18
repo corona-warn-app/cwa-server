@@ -207,7 +207,7 @@ services:
         retry-period: 2
         max-retry-period: 5
         max-retry-attempts: 2
-        base-url: ${BUSSINESS_RULES_BASE_PATH:http://localhost:1234}
+        base-url: ${BUSSINESS_RULES_BASE_PATH:https://distribution-dfe4f5c711db.dcc-rules.de/}
         country-list-path: ${BUSSINESS_RULES_COUNTRY_LIST_PATH:/countrylist}
         value-sets-path: ${BUSSINESS_RULES_VALUE_SETS_PATH:/valuesets}
         rules-path: ${BUSSINESS_RULES_RULES_PATH:/rules}
