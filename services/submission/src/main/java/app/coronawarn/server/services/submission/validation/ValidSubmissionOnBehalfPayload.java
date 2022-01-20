@@ -58,7 +58,7 @@ public @interface ValidSubmissionOnBehalfPayload {
     @Deprecated(since = "2.8", forRemoval = true)
     private final EventCheckinDataValidator eventCheckInValidator;
     private final EventCheckInProtectedReportsValidator eventCheckInProtectedReportsValidator;
-    private static final Logger logger = LoggerFactory.getLogger(SubmissionPayloadValidator.class);
+    private static final Logger logger = LoggerFactory.getLogger(ValidSubmissionOnBehalfPayload.class);
     private static final Marker SECURITY = MarkerFactory.getMarker("SECURITY");
 
     public ValidSubmissionOnBehalfPayloadValidator(EventCheckinDataValidator eventCheckinValidator,

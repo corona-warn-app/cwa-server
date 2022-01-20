@@ -97,7 +97,7 @@ public class LocalStatisticsToProtobufMapping {
               fillLocalStatisticsFederalStatesGroupMap(
                   localStatisticsMap,
                   federalStateCode,
-                  administrativeUnitSupplier(provinceCode, localStatisticsJsonStringObject),
+                  administrativeUnitSupplier(localStatisticsJsonStringObject),
                   administrativeUnitEnhancer(localStatisticsJsonStringObject)
               );
             }

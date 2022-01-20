@@ -37,8 +37,10 @@ class DigitalCovidCertificateInvalidTruststoreTest {
   @Autowired
   private DigitalCovidCertificateClient digitalCovidCertificateClient;
 
+  @Autowired
+  private DistributionServiceConfig distributionServiceConfig;
+
   @Test
-  @Disabled
   void shouldNotEstablishSslConnection() {
     Exception exception = Assert.assertThrows(FetchBusinessRulesException.class,
         () -> digitalCovidCertificateClient.getRules());
