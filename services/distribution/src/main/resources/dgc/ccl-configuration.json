@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ccl.coronawarn.app/ccl-configuration.json",
+  "title": "CWA CCL Configuration",
+  "type": "object",
+  "required": [
+    "Identifier",
+    "Type",
+    "Country",
+    "Version",
+    "SchemaVersion",
+    "Engine",
+    "EngineVersion",
+    "ValidFrom",
+    "ValidTo",
+    "Logic"
+  ],
+  "properties": {
+    "Identifier": {
+      "type": "string",
+      "description": "The unique rule name",
+      "pattern": "^CCL-[A-Z]{2}-\\d{4}$"
+    },
+    "Type": {
+      "type": "string",
+      "description": "Type of the rule",
+      "enum": [
+        "CCLConfiguration"
+      ]
+    },
+    "Country": {
+      "type": "string",
+      "description": "ISO Country Code of rule owner",
+      "pattern": "^[A-Z]{2}$"
+    },
+    "Version": {
+      "type": "string",
+      "description": "Version of the rule (Semver)",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "SchemaVersion": {
+      "type": "string",
+      "description": "Version of the used schema (Semver)",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "Engine": {
+      "type": "string",
+      "description": "Type of the RuleEngine"
+    },
+    "EngineVersion": {
+      "type": "string",
+      "description": "Version of the used engine (Semver)",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "ValidFrom": {
+      "type": "string",
+      "description": "Start validity of the rule as ISO 8601 Timestamp (without ms, with timezone)",
+      "format": "date-time",
+      "pattern": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([-+][0-2]\\d:[0-5]\\d|Z)$"
+    },
+    "ValidTo": {
+      "type": "string",
+      "description": "End validity of the rule as ISO 8601 Timestamp (without ms, with timezone)",
+      "format": "date-time",
+      "pattern": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([-+][0-2]\\d:[0-5]\\d|Z)$"
+    },
+    "Logic": {
+      "type": "object",
+      "description": "The logic payload in JSON",
+      "required": [
+        "JfnDescriptors"
+      ],
+      "properties": {
+        "JfnDescriptors": {
+          "type": "array",
+          "items": {
+            "$ref": "https://jfn.coronawarn.app/jfn-function-descriptor.json"
+          }
+        }
+      }
+    }
+  }
+}
