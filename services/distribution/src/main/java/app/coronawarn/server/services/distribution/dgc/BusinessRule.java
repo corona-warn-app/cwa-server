@@ -165,7 +165,8 @@ public class BusinessRule {
   public enum RuleType {
     ACCEPTANCE("Acceptance"),
     INVALIDATION("Invalidation"),
-    BOOSTER_NOTIFICATION("BoosterNotification");
+    BOOSTER_NOTIFICATION("BoosterNotification"),
+    COMMON_COVID_LOGIC("CommonCovidLogic");
 
     private final String type;
 

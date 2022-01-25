@@ -1761,6 +1761,10 @@ public class DistributionServiceConfig {
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String valuesetsFileName;
 
+    @NotNull
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
+    private String commonCovidLogic;
+
     private String allowList;
 
     private String allowListSignature;
@@ -1861,6 +1865,14 @@ public class DistributionServiceConfig {
 
     public void setSupportedLanguages(String[] supportedLanguages) {
       this.supportedLanguages = supportedLanguages;
+    }
+
+    public String getCommonCovidLogic() {
+      return commonCovidLogic;
+    }
+
+    public void setCommonCovidLogic(String commonCovidLogic) {
+      this.commonCovidLogic = commonCovidLogic;
     }
 
     /**

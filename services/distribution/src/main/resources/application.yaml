@@ -251,6 +251,7 @@ services:
       allow-list: ${DCC_VALIDATION_SERVICE_ALLOWLIST}
       allow-list-signature: ${DCC_VALIDATION_SERVICE_ALLOWLIST_SIGNATURE}
       allow-list-certificate: ${DCC_VALIDATION_SERVICE_ALLOWLIST_CERTIFICATE}
+      common-covid-logic: ${COMMON_COVID_LOGIC_DIRECTORY:common-covid-logic-rules}
       dsc-client:
         public-key: ${DSC_PUBLIC_KEY:MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIxHvrv8jQx9OEzTZbsx1prQVQn/3ex0gMYf6GyaNBW0QKLMjrSDeN6HwSPM0QzhvhmyQUixl6l88A7Zpu5OWSw==}
         base-url: ${DSC_BASE_PATH:https://de.test.dscg.ubirch.com}
@@ -268,6 +269,7 @@ services:
         value-sets-path: ${BUSSINESS_RULES_VALUE_SETS_PATH:/valuesets}
         rules-path: ${BUSSINESS_RULES_RULES_PATH:/rules}
         bn-rules-path: ${BUSSINESS_RULES_BN_RULES_PATH:/bnrules}
+        ccl-rules-path: ${COMMON_COVID_LOGIC:/cclrules}
         ssl:
           trust-store: ${DCC_TRUST_STORE:../../docker-compose-test-secrets/dcc_truststore}
           trust-store-password: ${DCC_TRUST_STORE_PASSWORD:123456}
