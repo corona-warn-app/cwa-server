@@ -1,5 +1,7 @@
 package app.coronawarn.server.services.distribution.assembly.component;
 
+import app.coronawarn.server.services.distribution.assembly.structure.Writable;
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dgc.BusinessRule;
@@ -8,6 +10,7 @@ import app.coronawarn.server.services.distribution.dgc.BusinessRuleItem;
 import app.coronawarn.server.services.distribution.dgc.functions.BusinessRuleItemSupplier;
 import app.coronawarn.server.services.distribution.dgc.functions.BusinessRuleSupplier;
 import java.util.List;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
@@ -27,17 +30,21 @@ public class CommonCovidLogicArchiveBuilder {
   private RuleType ruleType;
   private BusinessRuleItemSupplier<List<BusinessRuleItem>> businessRuleItemSupplier;
   private BusinessRuleSupplier<BusinessRule, String, String> businessRuleSupplier;
-  private Object WritableOnDisk;
 
   public CommonCovidLogicArchiveBuilder(
       DistributionServiceConfig distributionServiceConfig) {
     this.distributionServiceConfig = distributionServiceConfig;
   }
 
-  public void build() {
-
+  /**
+   * TODO write javadoc.
+   * 
+   * @return TODO
+   */
+  public Optional<Writable<WritableOnDisk>> build() {
     ArchiveOnDisk rulesArchive = new ArchiveOnDisk(
         ObjectUtils.isEmpty(archiveName) ? distributionServiceConfig.getDefaultArchiveName() : archiveName);
+    return Optional.empty(); // FIXME
   }
 
   public CommonCovidLogicArchiveBuilder setArchiveName(String archiveName) {
