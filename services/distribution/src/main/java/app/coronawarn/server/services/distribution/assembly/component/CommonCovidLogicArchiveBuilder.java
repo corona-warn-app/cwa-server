@@ -37,11 +37,12 @@ public class CommonCovidLogicArchiveBuilder {
   }
 
   /**
-   * TODO write javadoc.
-   * 
-   * @return TODO
+   * Builds a archive on disk containing ccl rules.
+   *
+   * @return - optional archive on disk
    */
   public Optional<Writable<WritableOnDisk>> build() {
+
     ArchiveOnDisk rulesArchive = new ArchiveOnDisk(
         ObjectUtils.isEmpty(archiveName) ? distributionServiceConfig.getDefaultArchiveName() : archiveName);
     return Optional.empty(); // FIXME

@@ -251,6 +251,7 @@ services:
       allow-list: ${DCC_VALIDATION_SERVICE_ALLOWLIST}
       allow-list-signature: ${DCC_VALIDATION_SERVICE_ALLOWLIST_SIGNATURE}
       allow-list-certificate: ${DCC_VALIDATION_SERVICE_ALLOWLIST_CERTIFICATE}
+      ccl-directory: ${COMMON_COVID_LOGIC:ccl}
       common-covid-logic: ${COMMON_COVID_LOGIC_DIRECTORY:common-covid-logic-rules}
       dsc-client:
         public-key: ${DSC_PUBLIC_KEY:MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIxHvrv8jQx9OEzTZbsx1prQVQn/3ex0gMYf6GyaNBW0QKLMjrSDeN6HwSPM0QzhvhmyQUixl6l88A7Zpu5OWSw==}

@@ -24,7 +24,12 @@ public interface DigitalCovidCertificateClient {
 
   List<BusinessRuleItem> getBoosterNotificationRules() throws FetchBusinessRulesException;
 
+  List<BusinessRuleItem> getCommonCovidLogicRules() throws FetchBusinessRulesException;
+
   BusinessRule getCountryRuleByHash(String country, String hash) throws FetchBusinessRulesException;
 
   BusinessRule getBoosterNotificationRuleByHash(String country, String hash) throws FetchBusinessRulesException;
+
+  BusinessRule getCommonCovidLogicRuleByHash(String country, String hash) throws FetchBusinessRulesException;
+
 }
