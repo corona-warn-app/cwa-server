@@ -46,6 +46,9 @@ public class Assembly implements ApplicationRunner {
       Directory<WritableOnDisk> outputDirectory = this.outputDirectoryProvider.getDirectory();
       outputDirectory.addWritable(cwaApiStructureProvider.getDirectory());
       outputDirectory.addWritable(cwaApiStructureProvider.getDirectoryV2());
+
+//       FIXME create new directories based on the version number -> v3
+
       this.outputDirectoryProvider.clear();
       logger.debug("Preparing files...");
       logger.info("Start signing...");
