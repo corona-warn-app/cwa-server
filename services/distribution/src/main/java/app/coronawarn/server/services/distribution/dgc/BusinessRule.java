@@ -30,11 +30,11 @@ public class BusinessRule {
 
   /**
    * Filters all older {@link BusinessRule}s and keeps only one for each available major version.
-   * 
+   *
    * @param rules to be filtered
    * @return {@link Map} with the major version as key
    */
-  public static Map<Integer, BusinessRule> filterAndSort(final BusinessRule... rules) {
+  public static Map<Integer, BusinessRule> filterAndSort(final List<BusinessRule> rules) {
     final Map<Integer, BusinessRule> result = new HashMap<>();
     for (final BusinessRule rule : rules) {
       final Version version = rule.version();

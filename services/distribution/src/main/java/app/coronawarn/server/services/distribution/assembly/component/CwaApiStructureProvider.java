@@ -89,7 +89,7 @@ public class CwaApiStructureProvider {
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.ofNullable(statisticsStructureProvider.getStatistics()));
     versionDirectory.addWritableToAll(
-        ignoredValue -> commonCovidLogicStructureProvider.getCommonCovidLogicRules());
+        ignoredValue -> Optional.ofNullable(commonCovidLogicStructureProvider.getCommonCovidLogicRules()));
 
     localStatisticsStructureProvider.getLocalStatisticsList().forEach(archive ->
         versionDirectory.addWritableToAll(ignoredValue -> Optional.ofNullable(archive)));

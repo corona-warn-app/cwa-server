@@ -132,7 +132,8 @@ public class TestDigitalCovidCertificateClient implements DigitalCovidCertificat
     if (businessRuleItems.isEmpty()) {
       return Collections.emptyList();
     }
-    return Arrays.asList(businessRuleItems.get());  }
+    return Arrays.asList(businessRuleItems.get());
+  }
 
   @Override
   public BusinessRule getCountryRuleByHash(String country, String hash) throws FetchBusinessRulesException {

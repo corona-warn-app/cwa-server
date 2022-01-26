@@ -24,7 +24,6 @@ import org.springframework.stereotype.Component;
 public class DigitalGreenCertificateToCborMapping {
 
   public static final String DCC_VALIDATION_RULE_JSON_CLASSPATH = "dgc/dcc-validation-rule.json";
-  public static final String COMMON_COVID_LOGIC_JSON_CLASSPATH = "dgc/ccl-configuration.json";
   private final DigitalCovidCertificateClient digitalCovidCertificateClient;
 
   private final ResourceLoader resourceLoader;
@@ -70,11 +69,7 @@ public class DigitalGreenCertificateToCborMapping {
           businessRuleSupplier.get(businessRuleItem.getCountry(), businessRuleItem.getHash());
 
       if (businessRule.getType().equalsIgnoreCase(ruleType.getType())) {
-        String resource = DCC_VALIDATION_RULE_JSON_CLASSPATH;
-        if (RuleType.COMMON_COVID_LOGIC.toString().equalsIgnoreCase(businessRule.getType())) {
-          resource = COMMON_COVID_LOGIC_JSON_CLASSPATH;
-        }
-        try (final InputStream in = resourceLoader.getResource(resource).getInputStream()) {
+        try (final InputStream in = resourceLoader.getResource(DCC_VALIDATION_RULE_JSON_CLASSPATH).getInputStream()) {
           validateJsonSchema(businessRule, in);
           businessRules.add(businessRule);
         } catch (JsonProcessingException | ValidationException e) {
@@ -83,7 +78,7 @@ public class DigitalGreenCertificateToCborMapping {
                   + "' is not valid", e);
         } catch (IOException e) {
           throw new DigitalCovidCertificateException(
-              "Validation rules schema found at: " + resource + "could not be found", e);
+              "Validation rules schema found at: " + DCC_VALIDATION_RULE_JSON_CLASSPATH + "could not be found", e);
         }
       }
     }

@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +24,7 @@ class BusinessRuleTest {
     final BusinessRule v2_1_1 = new BusinessRule();
     v2_1_1.setVersion("2.1.1");
 
-    final Map<Integer, BusinessRule> map = BusinessRule.filterAndSort(v1_0_0, v1_0_5, v1_2_0, v2_0_42, v2_1_1);
+    final Map<Integer, BusinessRule> map = BusinessRule.filterAndSort(List.of(v1_0_0, v1_0_5, v1_2_0, v2_0_42, v2_1_1));
     assertEquals(2, map.size());
     assertEquals(v1_2_0, map.get(1));
     assertEquals(v2_1_1, map.get(2));
