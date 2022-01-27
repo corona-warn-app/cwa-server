@@ -115,7 +115,7 @@ public class CommonCovidLogicArchiveBuilder {
             return new DistributionArchiveSigningDecorator(rulesArchive, cryptoProvider, distributionServiceConfig);
 
           } catch (DigitalCovidCertificateException e) {
-            e.printStackTrace();
+            logger.error(String.format("%s archive was not overwritten because of: ", CONFIG_V + key), e);
           }
           return rulesArchive;
         }).collect(Collectors.toList());
