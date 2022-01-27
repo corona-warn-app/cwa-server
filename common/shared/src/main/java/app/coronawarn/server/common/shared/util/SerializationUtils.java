@@ -1,6 +1,5 @@
 package app.coronawarn.server.common.shared.util;
 
-
 import app.coronawarn.server.common.shared.exception.UnableToLoadFileException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
@@ -16,6 +15,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
+import org.everit.json.schema.loader.SchemaClient;
 import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -91,10 +91,10 @@ public final class SerializationUtils {
    * Reads and convers a JSON object from a classpath file or if it does not find it
    * returns a default.
    * @param resourceLoader - resource loader.
-   * @param path - JSON path.
-   * @param defaultPath - default JSON path.
-   * @param rawType - type to convert to.
-   * @param <T> - type of the method.
+   * @param path           - JSON path.
+   * @param defaultPath    - default JSON path.
+   * @param rawType        - type to convert to.
+   * @param <T>            - type of the method.
    * @return - converted JSON to raw type instance.
    * @throws UnableToLoadFileException - if default JSON is not found.
    */
@@ -122,6 +122,7 @@ public final class SerializationUtils {
 
   /**
    * Encodes an object to CBOR.
+   * 
    * @param object - object to be encoded
    * @return - CBOR encoded byte array
    * @throws JsonProcessingException - if JSON processing of the object fails.
@@ -133,20 +134,27 @@ public final class SerializationUtils {
 
   /**
    * Validates an object (JSON) based on a provided schema containing validation rules.
-   * @param validateObject - object to be validated
+   * 
+   * @param validateObject       - object to be validated
    * @param schemaValidationJson - validation schema
    * @throws JsonProcessingException - if object to be validated fails on JSON processing
-   * @throws ValidationException - if the validation of the object based on validation schema fails.
+   * @throws ValidationException     - if the validation of the object based on validation schema fails.
    */
-  public static void validateJsonSchema(Object validateObject, InputStream schemaValidationJson)
+  public static void validateJsonSchema(Object validateObject, InputStream schemaValidationJson,
+      final SchemaClient schemaClient)
       throws JsonProcessingException, ValidationException {
     ObjectMapper objectMapper = new ObjectMapper();
     JSONObject jsonSchema = new JSONObject(new JSONTokener(schemaValidationJson));
     String businessRuleJson = objectMapper.writeValueAsString(validateObject);
 
     JSONObject jsonSubject = new JSONObject(businessRuleJson);
-    Schema schema = SchemaLoader.load(jsonSchema);
+    Schema schema = schemaClient == null ? SchemaLoader.load(jsonSchema) : SchemaLoader.load(jsonSchema, schemaClient);
     schema.validate(jsonSubject);
+  }
+
+  public static void validateJsonSchema(Object validateObject, InputStream schemaValidationJson)
+      throws JsonProcessingException, ValidationException {
+    validateJsonSchema(validateObject, schemaValidationJson, null);
   }
 
   private SerializationUtils() {
