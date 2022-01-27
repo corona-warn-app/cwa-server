@@ -72,7 +72,10 @@
       ],
       "properties": {
         "JfnDescriptors": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "$ref": "https://jfn.coronawarn.app/jfn-function-descriptor.json"
+          }
         }
       }
     }
