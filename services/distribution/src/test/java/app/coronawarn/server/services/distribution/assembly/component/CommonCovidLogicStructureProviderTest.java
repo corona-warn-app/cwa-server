@@ -60,8 +60,7 @@ public class CommonCovidLogicStructureProviderTest {
   @Test
   @Disabled
   void shouldCreateCorrectFileStructureForCommonCovidLogicRules() {
-    Optional<Writable<WritableOnDisk>> commonCovidLogicRules = Optional.ofNullable(
-        underTest.getCommonCovidLogicRules());
+    Optional<Writable<WritableOnDisk>> commonCovidLogicRules = underTest.getCommonCovidLogicRules();
     Collection<String> archiveContent;
 
     commonCovidLogicRules.get().prepare(new ImmutableStack<>());

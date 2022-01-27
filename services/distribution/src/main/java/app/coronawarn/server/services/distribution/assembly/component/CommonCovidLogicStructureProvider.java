@@ -4,15 +4,11 @@ import static app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleT
 
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -46,33 +42,29 @@ public class CommonCovidLogicStructureProvider {
    *
    * @return CommonCovidLogic rules config.
    */
-  public DirectoryOnDisk getCommonCovidLogicRules() {
-    IndexDirectoryOnDisk<String> cclDirectory = new IndexDirectoryOnDisk<>(
-        distributionServiceConfig.getDigitalGreenCertificate().getCclDirectory(),
-        ignoredValue -> Set.of(),
-        Object::toString);
-
-    getCommonCovidLogicRulesArchive(
-        distributionServiceConfig.getDigitalGreenCertificate().getCommonCovidLogic()).forEach(ccl ->
-        cclDirectory.addWritable(ccl));
-
-    return cclDirectory;
-  }
-
-  private List<Writable<WritableOnDisk>> getCommonCovidLogicRulesArchive(String archiveName) {
+  public Optional<Writable<WritableOnDisk>> getCommonCovidLogicRules() {
     try {
-      return commonCovidLogicArchiveBuilder
-          .setArchiveName(archiveName)
-          .setRuleType(COMMON_COVID_LOGIC)
-          .setBusinessRuleItemSupplier(digitalCovidCertificateClient::getCommonCovidLogicRules)
-          .setBusinessRuleSupplier(digitalCovidCertificateClient::getCommonCovidLogicRuleByHash)
-          .build();
+      return getCommonCovidLogicRulesDirectory(
+          distributionServiceConfig.getDigitalGreenCertificate().getCclDirectory());
     } catch (DigitalCovidCertificateException e) {
-      logger.error(String.format("%s archive was not overwritten because of: ", archiveName), e);
+      logger.error(String.format("%s archive was not overwritten because of: ",
+          distributionServiceConfig.getDigitalGreenCertificate().getCclDirectory()), e);
     } catch (FetchBusinessRulesException e) {
       logger.error(String
-          .format("%s archive was not overwritten because business rules could not been fetched: ", archiveName), e);
+          .format("%s archive was not overwritten because business rules could not been fetched: ",
+              distributionServiceConfig.getDigitalGreenCertificate().getCclDirectory()), e);
     }
-    return Collections.emptyList();
+    return Optional.empty();
+  }
+
+  private Optional<Writable<WritableOnDisk>> getCommonCovidLogicRulesDirectory(String directoryName)
+      throws FetchBusinessRulesException, DigitalCovidCertificateException {
+    return commonCovidLogicArchiveBuilder
+        .setDirectoryName(directoryName)
+        .setRuleType(COMMON_COVID_LOGIC)
+        .setExportBinaryFilename(distributionServiceConfig.getDigitalGreenCertificate().getExportArchiveName())
+        .setBusinessRuleItemSupplier(digitalCovidCertificateClient::getCommonCovidLogicRules)
+        .setBusinessRuleSupplier(digitalCovidCertificateClient::getCommonCovidLogicRuleByHash)
+        .build();
   }
 }
