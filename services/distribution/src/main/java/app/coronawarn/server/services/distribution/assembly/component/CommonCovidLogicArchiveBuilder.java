@@ -3,6 +3,7 @@ package app.coronawarn.server.services.distribution.assembly.component;
 import static app.coronawarn.server.common.shared.util.SerializationUtils.cborEncode;
 import static app.coronawarn.server.common.shared.util.SerializationUtils.validateJsonSchema;
 
+import app.coronawarn.server.common.shared.util.ResourceSchemaClient;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
@@ -87,7 +88,7 @@ public class CommonCovidLogicArchiveBuilder {
 
       if (businessRule.getType().equalsIgnoreCase(ruleType.getType())) {
         try (final InputStream in = resourceLoader.getResource(COMMON_COVID_LOGIC_JSON_CLASSPATH).getInputStream()) {
-          validateJsonSchema(businessRule, in);
+          validateJsonSchema(businessRule, in, new ResourceSchemaClient(resourceLoader, "dgc"));
           businessRules.add(businessRule);
         } catch (JsonProcessingException | ValidationException e) {
           throw new DigitalCovidCertificateException(
