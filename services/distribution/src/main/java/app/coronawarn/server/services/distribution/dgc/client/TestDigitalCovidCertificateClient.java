@@ -158,7 +158,14 @@ public class TestDigitalCovidCertificateClient implements DigitalCovidCertificat
 
   @Override
   public BusinessRule getCommonCovidLogicRuleByHash(String country, String hash) throws FetchBusinessRulesException {
-    return getBusinessRuleOrThrow("dgc/ccl-configuration-sample.json");
+    switch (hash) {
+      case RULE_1_HASH:
+        return getBusinessRuleOrThrow("dgc/ccl-configuration-sample.json");
+      case RULE_2_HASH:
+        return getBusinessRuleOrThrow("dgc/ccl-configuration-sample_2.json");
+      default:
+        throw new FetchBusinessRulesException("No business rule found for hash: " + hash);
+    }
   }
 
   private BusinessRule getBusinessRuleOrThrow(String path) throws FetchBusinessRulesException {

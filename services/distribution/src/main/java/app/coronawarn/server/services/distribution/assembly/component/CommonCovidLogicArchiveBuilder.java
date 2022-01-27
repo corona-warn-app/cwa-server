@@ -79,8 +79,39 @@ public class CommonCovidLogicArchiveBuilder {
     final DirectoryOnDisk rulesDirectory = new DirectoryOnDisk(
         ObjectUtils.isEmpty(directoryName) ? distributionServiceConfig.getDefaultArchiveName() : directoryName);
 
-    List<BusinessRuleItem> businessRulesItems = businessRuleItemSupplier.get();
+    List<BusinessRule> businessRules = getValidBusinessRules(getBusinessRuleItemsFilterByIdentifier());
+    Map<Integer, BusinessRule> filteredBusinessRules = BusinessRule.filterAndSort(businessRules);
 
+    List<Archive<WritableOnDisk>> rulesArchives = getCommonCovidLogicArchives(filteredBusinessRules);
+
+    rulesArchives.forEach(rulesArchive -> rulesDirectory.addWritable(rulesArchive));
+
+    return Optional.ofNullable(rulesDirectory);
+  }
+
+  private List<Archive<WritableOnDisk>> getCommonCovidLogicArchives(Map<Integer, BusinessRule> filteredBusinessRules) {
+    List<Archive<WritableOnDisk>> rulesArchives = filteredBusinessRules
+        .keySet()
+        .stream()
+        .map(key -> {
+          ArchiveOnDisk rulesArchive = new ArchiveOnDisk(
+              ObjectUtils.isEmpty(CONFIG_V + key) ? distributionServiceConfig.getDefaultArchiveName() : CONFIG_V + key);
+          try {
+            rulesArchive
+                .addWritable(
+                    new FileOnDisk(exportBinaryFilename, cborEncodeOrElseThrow(filteredBusinessRules.get(key))));
+            return new DistributionArchiveSigningDecorator(rulesArchive, cryptoProvider, distributionServiceConfig);
+
+          } catch (DigitalCovidCertificateException e) {
+            logger.error(String.format("%s archive was not overwritten because of: ", CONFIG_V + key), e);
+          }
+          return rulesArchive;
+        }).collect(Collectors.toList());
+    return rulesArchives;
+  }
+
+  private List<BusinessRule> getValidBusinessRules(List<BusinessRuleItem> businessRulesItems)
+      throws FetchBusinessRulesException, DigitalCovidCertificateException {
     List<BusinessRule> businessRules = new ArrayList<>();
     for (BusinessRuleItem businessRuleItem : businessRulesItems) {
       BusinessRule businessRule =
@@ -100,29 +131,16 @@ public class CommonCovidLogicArchiveBuilder {
         }
       }
     }
+    return businessRules;
+  }
 
-    Map<Integer, BusinessRule> filteredBusinessRules = BusinessRule.filterAndSort(businessRules);
-    List<Archive<WritableOnDisk>> rulesArchives = filteredBusinessRules
-        .keySet()
-        .stream()
-        .map(key -> {
-          ArchiveOnDisk rulesArchive = new ArchiveOnDisk(
-              ObjectUtils.isEmpty(CONFIG_V + key) ? distributionServiceConfig.getDefaultArchiveName() : CONFIG_V + key);
-          try {
-            rulesArchive
-                .addWritable(
-                    new FileOnDisk(exportBinaryFilename, cborEncodeOrElseThrow(filteredBusinessRules.get(key))));
-            return new DistributionArchiveSigningDecorator(rulesArchive, cryptoProvider, distributionServiceConfig);
-
-          } catch (DigitalCovidCertificateException e) {
-            logger.error(String.format("%s archive was not overwritten because of: ", CONFIG_V + key), e);
-          }
-          return rulesArchive;
-        }).collect(Collectors.toList());
-
-    rulesArchives.forEach(rulesArchive -> rulesDirectory.addWritable(rulesArchive));
-
-    return Optional.ofNullable(rulesDirectory);
+  private List<BusinessRuleItem> getBusinessRuleItemsFilterByIdentifier() throws FetchBusinessRulesException {
+    List<BusinessRuleItem> businessRulesItems = businessRuleItemSupplier.get().stream()
+        .filter(businessRuleItem ->
+            List.of(distributionServiceConfig.getDigitalGreenCertificate().getCclAllowList())
+                .contains(businessRuleItem.getIdentifier()))
+        .collect(Collectors.toList());
+    return businessRulesItems;
   }
 
   public CommonCovidLogicArchiveBuilder setDirectoryName(String directoryName) {
