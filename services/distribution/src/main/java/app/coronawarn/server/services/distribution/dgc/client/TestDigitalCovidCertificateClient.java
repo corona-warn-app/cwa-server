@@ -158,7 +158,7 @@ public class TestDigitalCovidCertificateClient implements DigitalCovidCertificat
 
   @Override
   public BusinessRule getCommonCovidLogicRuleByHash(String country, String hash) throws FetchBusinessRulesException {
-    return getBusinessRuleOrThrow("dgc/ccl_rule_1.json");
+    return getBusinessRuleOrThrow("dgc/ccl-configuration-sample.json");
   }
 
   private BusinessRule getBusinessRuleOrThrow(String path) throws FetchBusinessRulesException {

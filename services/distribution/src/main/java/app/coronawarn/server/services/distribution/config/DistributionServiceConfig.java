@@ -1761,11 +1761,9 @@ public class DistributionServiceConfig {
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String valuesetsFileName;
 
-    @NotNull
-    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
-    private String commonCovidLogic;
-
     private String cclDirectory;
+
+    private String[] cclAllowList;
 
     private String allowList;
 
@@ -1869,20 +1867,20 @@ public class DistributionServiceConfig {
       this.supportedLanguages = supportedLanguages;
     }
 
-    public String getCommonCovidLogic() {
-      return commonCovidLogic;
-    }
-
-    public void setCommonCovidLogic(String commonCovidLogic) {
-      this.commonCovidLogic = commonCovidLogic;
-    }
-
     public String getCclDirectory() {
       return cclDirectory;
     }
 
     public void setCclDirectory(String cclDirectory) {
       this.cclDirectory = cclDirectory;
+    }
+
+    public String[] getCclAllowList() {
+      return cclAllowList;
+    }
+
+    public void setCclAllowList(String[] cclAllowList) {
+      this.cclAllowList = cclAllowList;
     }
 
     /**

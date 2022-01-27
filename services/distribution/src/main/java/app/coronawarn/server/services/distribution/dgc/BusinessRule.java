@@ -194,7 +194,7 @@ public class BusinessRule {
     ACCEPTANCE("Acceptance"),
     INVALIDATION("Invalidation"),
     BOOSTER_NOTIFICATION("BoosterNotification"),
-    COMMON_COVID_LOGIC("CommonCovidLogic");
+    COMMON_COVID_LOGIC("CCLConfiguration");
 
     private final String type;
 
