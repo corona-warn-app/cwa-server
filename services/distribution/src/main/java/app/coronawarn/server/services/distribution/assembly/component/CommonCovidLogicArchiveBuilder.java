@@ -84,13 +84,13 @@ public class CommonCovidLogicArchiveBuilder {
 
     List<Archive<WritableOnDisk>> rulesArchives = getCommonCovidLogicArchives(filteredBusinessRules);
 
-    rulesArchives.forEach(rulesArchive -> rulesDirectory.addWritable(rulesArchive));
+    rulesArchives.forEach(rulesDirectory::addWritable);
 
-    return Optional.ofNullable(rulesDirectory);
+    return Optional.of(rulesDirectory);
   }
 
   private List<Archive<WritableOnDisk>> getCommonCovidLogicArchives(Map<Integer, BusinessRule> filteredBusinessRules) {
-    List<Archive<WritableOnDisk>> rulesArchives = filteredBusinessRules
+    return filteredBusinessRules
         .keySet()
         .stream()
         .map(key -> {
@@ -107,7 +107,6 @@ public class CommonCovidLogicArchiveBuilder {
           }
           return rulesArchive;
         }).collect(Collectors.toList());
-    return rulesArchives;
   }
 
   private List<BusinessRule> getValidBusinessRules(List<BusinessRuleItem> businessRulesItems)
@@ -135,12 +134,11 @@ public class CommonCovidLogicArchiveBuilder {
   }
 
   private List<BusinessRuleItem> getBusinessRuleItemsFilterByIdentifier() throws FetchBusinessRulesException {
-    List<BusinessRuleItem> businessRulesItems = businessRuleItemSupplier.get().stream()
+    return businessRuleItemSupplier.get().stream()
         .filter(businessRuleItem ->
             List.of(distributionServiceConfig.getDigitalGreenCertificate().getCclAllowList())
                 .contains(businessRuleItem.getIdentifier()))
         .collect(Collectors.toList());
-    return businessRulesItems;
   }
 
   public CommonCovidLogicArchiveBuilder setDirectoryName(String directoryName) {
