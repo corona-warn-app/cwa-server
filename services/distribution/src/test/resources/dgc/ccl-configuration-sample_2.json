@@ -2,7 +2,7 @@
   "Identifier": "CCL-DE-0001",
   "Type": "CCLConfiguration",
   "Country": "DE",
-  "Version": "1.0.0",
+  "Version": "2.0.0",
   "SchemaVersion": "1.0.0",
   "Engine": "JsonFunctions",
   "EngineVersion": "1.0.0",

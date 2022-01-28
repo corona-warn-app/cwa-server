@@ -8,6 +8,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToCborMapping;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
+import app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalSigningCertificatesClient;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ContextConfiguration(
     classes = {DigitalGreenCertificateToCborMapping.class,
         CryptoProvider.class, DistributionServiceConfig.class,
-        DigitalSigningCertificatesClient.class, DigitalCovidCertificateClient.class,
+        DigitalSigningCertificatesClient.class, TestDigitalCovidCertificateClient.class,
         CommonCovidLogicStructureProvider.class, CommonCovidLogicArchiveBuilder.class},
     initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles({"fake-dcc-client", "fake-dsc-client"})
@@ -48,8 +49,8 @@ public class CommonCovidLogicStructureProviderTest {
   @Autowired
   DigitalGreenCertificateToCborMapping dgcToCborMappingMock;
 
-  @MockBean
-  DigitalCovidCertificateClient digitalCovidCertificateClient;
+  @Autowired
+  TestDigitalCovidCertificateClient digitalCovidCertificateClient;
 
   @MockBean
   DigitalSigningCertificatesClient digitalSigningCertificatesClient;
@@ -58,7 +59,6 @@ public class CommonCovidLogicStructureProviderTest {
   CommonCovidLogicStructureProvider underTest;
 
   @Test
-  @Disabled
   void shouldCreateCorrectFileStructureForCommonCovidLogicRules() {
     Optional<Writable<WritableOnDisk>> commonCovidLogicRules = underTest.getCommonCovidLogicRules();
     Collection<String> archiveContent;
@@ -68,7 +68,7 @@ public class CommonCovidLogicStructureProviderTest {
         .map(Writable::getName).collect(Collectors.toList());
 
     assertEquals("ccl", commonCovidLogicRules.get().getName());
-    assertThat(archiveContent).containsAll(Set.of("export.bin", "export.sig"));
+    assertThat(archiveContent).containsAll(Set.of("config-v1", "config-v2"));
   }
 
 }
