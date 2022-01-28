@@ -116,7 +116,7 @@ public class CommonCovidLogicArchiveBuilder {
       try {
         businessRule = businessRuleSupplier.get(businessRuleItem.getCountry(), businessRuleItem.getHash());
       } catch (FetchBusinessRulesException e) {
-        logger.error("Config archive was not overwritten because business rule could not been fetched:", e);;
+        logger.error("Config archive was not overwritten because business rule could not been fetched:", e);
       }
 
       if (businessRule != null && businessRule.getType().equalsIgnoreCase(ruleType.getType())) {
@@ -125,10 +125,10 @@ public class CommonCovidLogicArchiveBuilder {
           businessRules.add(businessRule);
         } catch (JsonProcessingException | ValidationException e) {
           logger.error(String.format("Rule for country %s having hash %s is not valid.",
-                  businessRuleItem.getCountry(), businessRuleItem.getHash()), e);
+              businessRuleItem.getCountry(), businessRuleItem.getHash()), e);
         } catch (IOException e) {
           logger.error(String.format("Validation rules schema found at: %s could not be found.",
-                  COMMON_COVID_LOGIC_JSON_CLASSPATH), e);
+              COMMON_COVID_LOGIC_JSON_CLASSPATH), e);
         }
       }
     }

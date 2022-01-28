@@ -6,7 +6,6 @@ import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
-import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
 import java.util.Optional;
 import org.slf4j.Logger;
