@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
         CommonCovidLogicStructureProvider.class, CommonCovidLogicArchiveBuilder.class},
     initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles({"fake-dcc-client", "fake-dsc-client"})
-public class CommonCovidLogicStructureProviderTest {
+class CommonCovidLogicStructureProviderTest {
 
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
