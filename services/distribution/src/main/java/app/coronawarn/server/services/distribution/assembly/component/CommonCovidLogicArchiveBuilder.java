@@ -75,7 +75,7 @@ public class CommonCovidLogicArchiveBuilder {
    * @return - optional archive on disk
    */
   public Optional<Writable<WritableOnDisk>> build()
-      throws FetchBusinessRulesException, DigitalCovidCertificateException {
+      throws FetchBusinessRulesException {
     final DirectoryOnDisk rulesDirectory = new DirectoryOnDisk(
         ObjectUtils.isEmpty(directoryName) ? distributionServiceConfig.getDefaultArchiveName() : directoryName);
 
@@ -109,24 +109,26 @@ public class CommonCovidLogicArchiveBuilder {
         }).collect(Collectors.toList());
   }
 
-  private List<BusinessRule> getValidBusinessRules(List<BusinessRuleItem> businessRulesItems)
-      throws FetchBusinessRulesException, DigitalCovidCertificateException {
+  private List<BusinessRule> getValidBusinessRules(List<BusinessRuleItem> businessRulesItems) {
     List<BusinessRule> businessRules = new ArrayList<>();
     for (BusinessRuleItem businessRuleItem : businessRulesItems) {
-      BusinessRule businessRule =
-          businessRuleSupplier.get(businessRuleItem.getCountry(), businessRuleItem.getHash());
+      BusinessRule businessRule = null;
+      try {
+        businessRule = businessRuleSupplier.get(businessRuleItem.getCountry(), businessRuleItem.getHash());
+      } catch (FetchBusinessRulesException e) {
+        logger.error("Config archive was not overwritten because business rule could not been fetched:", e);;
+      }
 
-      if (businessRule.getType().equalsIgnoreCase(ruleType.getType())) {
+      if (businessRule != null && businessRule.getType().equalsIgnoreCase(ruleType.getType())) {
         try (final InputStream in = resourceLoader.getResource(COMMON_COVID_LOGIC_JSON_CLASSPATH).getInputStream()) {
           validateJsonSchema(businessRule, in, new ResourceSchemaClient(resourceLoader, "dgc"));
           businessRules.add(businessRule);
         } catch (JsonProcessingException | ValidationException e) {
-          throw new DigitalCovidCertificateException(
-              "Rule for country '" + businessRuleItem.getCountry() + "' having hash '" + businessRuleItem.getHash()
-                  + "' is not valid", e);
+          logger.error(String.format("Rule for country %s having hash %s is not valid.",
+                  businessRuleItem.getCountry(), businessRuleItem.getHash()), e);
         } catch (IOException e) {
-          throw new DigitalCovidCertificateException(
-              "Validation rules schema found at: " + COMMON_COVID_LOGIC_JSON_CLASSPATH + "could not be found", e);
+          logger.error(String.format("Validation rules schema found at: %s could not be found.",
+                  COMMON_COVID_LOGIC_JSON_CLASSPATH), e);
         }
       }
     }

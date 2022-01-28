@@ -46,19 +46,16 @@ public class CommonCovidLogicStructureProvider {
     try {
       return getCommonCovidLogicRulesDirectory(
           distributionServiceConfig.getDigitalGreenCertificate().getCclDirectory());
-    } catch (DigitalCovidCertificateException e) {
-      logger.error(String.format("%s archive was not overwritten because of: ",
-          distributionServiceConfig.getDigitalGreenCertificate().getCclDirectory()), e);
     } catch (FetchBusinessRulesException e) {
       logger.error(String
-          .format("%s archive was not overwritten because business rules could not been fetched: ",
+          .format("%s archive was not overwritten because config business rules could not been fetched: ",
               distributionServiceConfig.getDigitalGreenCertificate().getCclDirectory()), e);
     }
     return Optional.empty();
   }
 
   private Optional<Writable<WritableOnDisk>> getCommonCovidLogicRulesDirectory(String directoryName)
-      throws FetchBusinessRulesException, DigitalCovidCertificateException {
+      throws FetchBusinessRulesException {
     return commonCovidLogicArchiveBuilder
         .setDirectoryName(directoryName)
         .setRuleType(COMMON_COVID_LOGIC)
