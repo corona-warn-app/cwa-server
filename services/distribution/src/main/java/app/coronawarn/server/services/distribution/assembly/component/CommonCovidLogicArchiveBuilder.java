@@ -41,7 +41,8 @@ public class CommonCovidLogicArchiveBuilder {
 
   private static final Logger logger = LoggerFactory.getLogger(CommonCovidLogicArchiveBuilder.class);
 
-  public static final String COMMON_COVID_LOGIC_JSON_CLASSPATH = "dgc/ccl-configuration.json";
+  public static final String JSON_SCHEMA_PATH = "dgc";
+  public static final String CCL_JSON_SCHEMA = JSON_SCHEMA_PATH + "/ccl-configuration.json";
   public static final String CONFIG_V = "config-v";
 
   private final DistributionServiceConfig distributionServiceConfig;
@@ -120,15 +121,15 @@ public class CommonCovidLogicArchiveBuilder {
       }
 
       if (businessRule != null && businessRule.getType().equalsIgnoreCase(ruleType.getType())) {
-        try (final InputStream in = resourceLoader.getResource(COMMON_COVID_LOGIC_JSON_CLASSPATH).getInputStream()) {
-          validateJsonSchema(businessRule, in, new ResourceSchemaClient(resourceLoader, "dgc"));
+        try (final InputStream in = resourceLoader.getResource(CCL_JSON_SCHEMA).getInputStream()) {
+          validateJsonSchema(businessRule, in, new ResourceSchemaClient(resourceLoader, JSON_SCHEMA_PATH));
           businessRules.add(businessRule);
         } catch (JsonProcessingException | ValidationException e) {
           logger.error(String.format("Rule for country %s having hash %s is not valid.",
               businessRuleItem.getCountry(), businessRuleItem.getHash()), e);
         } catch (IOException e) {
           logger.error(String.format("Validation rules schema found at: %s could not be found.",
-              COMMON_COVID_LOGIC_JSON_CLASSPATH), e);
+              CCL_JSON_SCHEMA), e);
         }
       }
     }
