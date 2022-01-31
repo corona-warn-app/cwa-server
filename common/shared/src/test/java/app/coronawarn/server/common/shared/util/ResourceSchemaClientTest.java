@@ -12,7 +12,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-public class ResourceSchemaClientTest {
+class ResourceSchemaClientTest {
 
 
   @Autowired
