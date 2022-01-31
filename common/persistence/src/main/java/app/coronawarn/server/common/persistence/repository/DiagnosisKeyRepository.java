@@ -81,11 +81,11 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
       @Param("submission_type") String submissionType);
 
   /**
-   * <code>SELECT * FROM diagnosis_key WHERE transmission_risk_level>=:minTRL SORT BY submission_timestamp</code>.
-   * 
-   * @param minTrl minimum Transmission-Risk-Level to be fetched from the database 
-   * @return List of {@link DiagnosisKey}s with given TRL or higher 
+   * <code>SELECT * FROM diagnosis_key WHERE transmission_risk_level>=:minTRL ORDER BY submission_timestamp</code>.
+   *
+   * @param minTrl minimum Transmission-Risk-Level to be fetched from the database
+   * @return List of {@link DiagnosisKey}s with given TRL or higher
    */
-  @Query("SELECT * FROM diagnosis_key WHERE transmission_risk_level>=:minTRL SORT BY submission_timestamp")
+  @Query("SELECT * FROM diagnosis_key WHERE transmission_risk_level>=:minTrl ORDER BY submission_timestamp")
   List<DiagnosisKey> findAllWithTrlGreaterThanOrEqual(final @Param("minTrl") int minTrl);
 }
