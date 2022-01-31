@@ -93,7 +93,7 @@ public class DiagnosisKeyService {
    * @return List of {@link DiagnosisKey}s filtered by {@link #validationFilter}.
    */
   public List<DiagnosisKey> getDiagnosisKeysWithMinTrl(final int minTrl) {
-    final List<DiagnosisKey> diagnosisKeys = keyRepository.findAllWithTrlGreaterThan(minTrl);
+    final List<DiagnosisKey> diagnosisKeys = keyRepository.findAllWithTrlGreaterThanOrEqual(minTrl);
     return validationFilter.filter(diagnosisKeys);
   }
 

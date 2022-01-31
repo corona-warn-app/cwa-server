@@ -87,5 +87,5 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
    * @return List of {@link DiagnosisKey}s with given TRL or higher 
    */
   @Query("SELECT * FROM diagnosis_key WHERE transmission_risk_level>=:minTRL SORT BY submission_timestamp")
-  List<DiagnosisKey> findAllWithTrlGreaterThan(final @Param("minTrl") int minTrl);
+  List<DiagnosisKey> findAllWithTrlGreaterThanOrEqual(final @Param("minTrl") int minTrl);
 }
