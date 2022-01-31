@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class CommonCovidLogicArchiveBuilderTest {
+class CommonCovidLogicArchiveBuilderTest {
 
 
   public static final String EXPORT_BINARY_FILENAME = "export-test.bin";
