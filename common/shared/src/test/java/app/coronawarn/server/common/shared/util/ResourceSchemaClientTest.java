@@ -1,7 +1,6 @@
 package app.coronawarn.server.common.shared.util;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.in;
 import static org.junit.Assert.assertThrows;
 
 import java.io.FileNotFoundException;
@@ -31,12 +30,12 @@ public class ResourceSchemaClientTest {
     assertThat(inputStream).isNotEmpty();
   }
 
-//  @Test
-//  void throwsExceptionWhenTheFileNameIsIncorrect() {
-//
-//    String incorrectFile = "ccl-configuration-sample.json";
-//    ResourceSchemaClient resourceSchemaClient = new ResourceSchemaClient(resourceLoader, "dgc");
-//
-//    assertThrows(FileNotFoundException.class, () -> resourceSchemaClient.get(path + incorrectFile));
-//  }
+  @Test
+  void throwsExceptionWhenTheFileNameIsIncorrect() {
+
+    String incorrectFile = "ccl-configuration-sample.json";
+
+    assertThrows(FileNotFoundException.class,
+        () -> resourceLoader.getResource(path + incorrectFile).getInputStream());
+  }
 }
