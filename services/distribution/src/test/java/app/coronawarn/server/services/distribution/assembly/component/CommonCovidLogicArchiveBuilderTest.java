@@ -26,7 +26,7 @@ public class CommonCovidLogicArchiveBuilderTest {
   CommonCovidLogicArchiveBuilder commonCovidLogicArchiveBuilder;
 
   @Test
-  void fetchingBusinessRulesItemsShouldThrowExceptionWhenClientThowsException()
+  void fetchingBusinessRulesItemsShouldThrowExceptionWhenClientThrowsException()
       throws FetchBusinessRulesException {
     when(testDigitalCovidCertificateClient.getCommonCovidLogicRules()).thenThrow(FetchBusinessRulesException.class);
 
