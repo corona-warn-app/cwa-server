@@ -17,9 +17,9 @@ import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
 import java.util.Collection;
+import org.bouncycastle.jcajce.provider.asymmetric.x509.CertificateFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
@@ -76,13 +76,14 @@ public class DscListDecoder {
   private Certificates filterValidCertificates(Certificates certificates) {
     final Collection<CertificateStructure> validCertificates = new ArrayList<>(certificates.getCertificates().size());
 
+    final CertificateFactory certificateFactory = new CertificateFactory();
     for (CertificateStructure certificate : certificates.getCertificates()) {
       InputStream certificateStream = new ByteArrayInputStream(base64decode(certificate.getRawData()));
       try {
-        CertificateFactory.getInstance("X.509").generateCertificate(certificateStream);
+        certificateFactory.engineGenerateCertificate(certificateStream);
         validCertificates.add(certificate);
       } catch (CertificateException e) {
-        logger.error("Skipping certificate (kid=" + certificate.getKid() + ") due to X.509 validation failure.", e);
+        logger.error("Skipping certificate (kid=" + certificate.getKid() + ") due to validation failure.", e);
       }
     }
     certificates.setCertificates(validCertificates);

@@ -25,8 +25,8 @@ import java.security.Signature;
 import java.security.SignatureException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.util.List;
+import org.bouncycastle.jcajce.provider.asymmetric.x509.CertificateFactory;
 import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -120,9 +120,9 @@ class SigningDecoratorTest {
     Resource certResource = resourceLoader.getResource("classpath:keys/certificate.crt");
     try (InputStream certStream = certResource.getInputStream()) {
       byte[] bytes = certStream.readAllBytes();
-      CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+      final CertificateFactory certificateFactory = new CertificateFactory();
       InputStream certificateByteStream = new ByteArrayInputStream(bytes);
-      Certificate certificate = certificateFactory.generateCertificate(certificateByteStream);
+      final Certificate certificate = certificateFactory.engineGenerateCertificate(certificateByteStream);
 
       Signature payloadSignature = Signature.getInstance("SHA256withECDSA", "BC");
       payloadSignature.initVerify(certificate);
