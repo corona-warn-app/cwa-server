@@ -35,6 +35,7 @@ import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 @DataJdbcTest
 class DiagnosisKeyServiceTest {
 
+  public static final int MIN_TRL = 3;
   @Autowired
   private DiagnosisKeyService diagnosisKeyService;
 
@@ -65,6 +66,29 @@ class DiagnosisKeyServiceTest {
     var actKeys = diagnosisKeyService.getDiagnosisKeys();
 
     assertEquals(4, actKeys.size());
+    assertDiagnosisKeysEqual(expKeys, actKeys);
+  }
+
+  @Test
+  void testSaveAndRetrieveKeysFilteredByTrl() {
+    var filterOutKeysBasedOnTrl =List.of(
+        DiagnosisKeyServiceTestHelper.generateRandomDiagnosisKeyWithSpecifiedTrl(false, 1,
+            SubmissionType.SUBMISSION_TYPE_PCR_TEST, 1),
+    DiagnosisKeyServiceTestHelper.generateRandomDiagnosisKeyWithSpecifiedTrl(false, 1,
+        SubmissionType.SUBMISSION_TYPE_RAPID_TEST, 2));
+    var expKeys = List.of(
+        DiagnosisKeyServiceTestHelper.generateRandomDiagnosisKeyWithSpecifiedTrl(true, 1,
+            SubmissionType.SUBMISSION_TYPE_PCR_TEST, 3),
+        DiagnosisKeyServiceTestHelper.generateRandomDiagnosisKeyWithSpecifiedTrl(true, 1,
+            SubmissionType.SUBMISSION_TYPE_RAPID_TEST, 4)
+    );
+
+    diagnosisKeyService.saveDiagnosisKeys(filterOutKeysBasedOnTrl);
+    diagnosisKeyService.saveDiagnosisKeys(expKeys);
+
+    var actKeys = diagnosisKeyService.getDiagnosisKeysWithMinTrl(MIN_TRL);
+
+    assertEquals(2, actKeys.size());
     assertDiagnosisKeysEqual(expKeys, actKeys);
   }
 
