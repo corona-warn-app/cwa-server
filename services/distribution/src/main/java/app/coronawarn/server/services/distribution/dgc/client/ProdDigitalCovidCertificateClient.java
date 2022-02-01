@@ -90,6 +90,13 @@ public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificat
   }
 
   @Override
+  public List<BusinessRuleItem> getCommonCovidLogicRules() throws FetchBusinessRulesException {
+    return getResponseAndTreatExceptions(digitalCovidCertificateClient::getCommonCovidLogicRules,
+        "common covid logic rules",
+        FetchBusinessRulesException::new);
+  }
+
+  @Override
   public BusinessRule getCountryRuleByHash(String country, String hash) throws FetchBusinessRulesException {
     return getResponseAndTreatExceptions(
         () -> digitalCovidCertificateClient.getCountryRule(country, hash),
@@ -102,6 +109,14 @@ public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificat
     return getResponseAndTreatExceptions(
         () -> digitalCovidCertificateClient.getBoosterNotificationRule(hash),
         "bn rule",
+        FetchBusinessRulesException::new);
+  }
+
+  @Override
+  public BusinessRule getCommonCovidLogicRuleByHash(String country, String hash) throws FetchBusinessRulesException {
+    return getResponseAndTreatExceptions(
+        () -> digitalCovidCertificateClient.getCommonCovidLogicRule(hash),
+        "ccl rule",
         FetchBusinessRulesException::new);
   }
 

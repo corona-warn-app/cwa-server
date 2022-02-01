@@ -125,6 +125,17 @@ public class TestDigitalCovidCertificateClient implements DigitalCovidCertificat
   }
 
   @Override
+  public List<BusinessRuleItem> getCommonCovidLogicRules() throws FetchBusinessRulesException {
+    Optional<BusinessRuleItem[]> businessRuleItems = readConfiguredJsonOrDefault(resourceLoader, null,
+        "dgc/cclrules.json", BusinessRuleItem[].class);
+
+    if (businessRuleItems.isEmpty()) {
+      return Collections.emptyList();
+    }
+    return Arrays.asList(businessRuleItems.get());
+  }
+
+  @Override
   public BusinessRule getCountryRuleByHash(String country, String hash) throws FetchBusinessRulesException {
     switch (hash) {
       case RULE_1_HASH:
@@ -143,6 +154,18 @@ public class TestDigitalCovidCertificateClient implements DigitalCovidCertificat
   @Override
   public BusinessRule getBoosterNotificationRuleByHash(String country, String hash) throws FetchBusinessRulesException {
     return getBusinessRuleOrThrow("dgc/bn_rule_1.json");
+  }
+
+  @Override
+  public BusinessRule getCommonCovidLogicRuleByHash(String country, String hash) throws FetchBusinessRulesException {
+    switch (hash) {
+      case RULE_1_HASH:
+        return getBusinessRuleOrThrow("dgc/ccl-configuration-sample.json");
+      case RULE_2_HASH:
+        return getBusinessRuleOrThrow("dgc/ccl-configuration-sample_2.json");
+      default:
+        throw new FetchBusinessRulesException("No business rule found for hash: " + hash);
+    }
   }
 
   private BusinessRule getBusinessRuleOrThrow(String path) throws FetchBusinessRulesException {

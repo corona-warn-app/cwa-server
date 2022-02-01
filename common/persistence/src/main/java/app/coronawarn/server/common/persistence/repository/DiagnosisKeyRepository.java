@@ -1,8 +1,7 @@
-
-
 package app.coronawarn.server.common.persistence.repository;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import java.util.List;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -80,4 +79,13 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
       @Param("days_since_onset_of_symptoms") int daysSinceOnsetOfSymptoms,
       @Param("consent_to_federation") boolean consentToFederation,
       @Param("submission_type") String submissionType);
+
+  /**
+   * <code>SELECT * FROM diagnosis_key WHERE transmission_risk_level>=:minTRL ORDER BY submission_timestamp</code>.
+   *
+   * @param minTrl minimum Transmission-Risk-Level to be fetched from the database
+   * @return List of {@link DiagnosisKey}s with given TRL or higher
+   */
+  @Query("SELECT * FROM diagnosis_key WHERE transmission_risk_level>=:minTrl ORDER BY submission_timestamp")
+  List<DiagnosisKey> findAllWithTrlGreaterThanOrEqual(final @Param("minTrl") int minTrl);
 }

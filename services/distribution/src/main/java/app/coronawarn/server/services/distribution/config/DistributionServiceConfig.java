@@ -1761,6 +1761,10 @@ public class DistributionServiceConfig {
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String valuesetsFileName;
 
+    private String cclDirectory;
+
+    private String[] cclAllowList;
+
     private String allowList;
 
     private String allowListSignature;
@@ -1861,6 +1865,22 @@ public class DistributionServiceConfig {
 
     public void setSupportedLanguages(String[] supportedLanguages) {
       this.supportedLanguages = supportedLanguages;
+    }
+
+    public String getCclDirectory() {
+      return cclDirectory;
+    }
+
+    public void setCclDirectory(String cclDirectory) {
+      this.cclDirectory = cclDirectory;
+    }
+
+    public String[] getCclAllowList() {
+      return cclAllowList;
+    }
+
+    public void setCclAllowList(String[] cclAllowList) {
+      this.cclAllowList = cclAllowList;
     }
 
     /**

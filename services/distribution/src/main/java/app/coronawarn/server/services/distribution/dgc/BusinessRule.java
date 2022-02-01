@@ -4,7 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.core.util.VersionUtil;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -23,6 +27,21 @@ public class BusinessRule {
   private String validFrom;
   private String validTo;
   private String version;
+
+  /**
+   * Filters all older {@link BusinessRule}s and keeps only one for each available major version.
+   *
+   * @param rules to be filtered
+   * @return {@link Map} with the major version as key
+   */
+  public static Map<Integer, BusinessRule> filterAndSort(final List<BusinessRule> rules) {
+    final Map<Integer, BusinessRule> result = new HashMap<>();
+    for (final BusinessRule rule : rules) {
+      final Version version = rule.version();
+      result.merge(version.getMajorVersion(), rule, (r1, r2) -> r1.isSameMajorVersionButNewer(r2) ? r1 : r2);
+    }
+    return result;
+  }
 
   public String getIdentifier() {
     return identifier;
@@ -141,6 +160,15 @@ public class BusinessRule {
     this.logic = logic;
   }
 
+  Version version() {
+    return VersionUtil.parseVersion(getVersion(), null, null);
+  }
+
+  boolean isSameMajorVersionButNewer(final BusinessRule other) {
+    return version().getMajorVersion() == other.version().getMajorVersion()
+        && version().compareTo(other.version()) >= 0;
+  }
+
   public static class Description {
     private String desc;
     private String lang;
@@ -165,7 +193,8 @@ public class BusinessRule {
   public enum RuleType {
     ACCEPTANCE("Acceptance"),
     INVALIDATION("Invalidation"),
-    BOOSTER_NOTIFICATION("BoosterNotification");
+    BOOSTER_NOTIFICATION("BoosterNotification"),
+    COMMON_COVID_LOGIC("CCLConfiguration");
 
     private final String type;
 

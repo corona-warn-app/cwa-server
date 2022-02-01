@@ -10,6 +10,7 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.AndroidKeyDownloadParameters;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.IosExposureDetectionParameters;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppVersions;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import javax.validation.ConstraintViolation;
@@ -222,6 +223,16 @@ class DistributionServiceConfigTest {
     void testOverallTimeoutBoundaries(Integer overallTimeout, String errorMessage) {
       androidKeyDownloadParameters.setOverallTimeoutInSeconds(overallTimeout);
       validate(androidKeyDownloadParameters, errorMessage);
+    }
+  }
+
+  @Nested
+  class CclAllowListTest {
+
+    @Test
+    void failsOnInvalidSupportedCountries() {
+      String[] cclAllowList = distributionServiceConfig.getDigitalGreenCertificate().getCclAllowList();
+      assertThat(List.of(cclAllowList)).hasSize(2);
     }
   }
 
