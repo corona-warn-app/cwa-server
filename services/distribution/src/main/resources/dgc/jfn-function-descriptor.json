@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jfn.coronawarn.app/jfn-function-descriptor.json",
+  "title": "JFN - Function Descriptor",
+  "description": "JsonFunctions (JFN) - Function Descriptor",
+  "type": "object",
+  "required": [
+    "name",
+    "definition"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "definition": {
+      "$ref": "#/$defs/functionDefinition"
+    }
+  },
+  "$defs": {
+    "functionDefinition": {
+      "type": "object",
+      "required": [
+        "parameters",
+        "logic"
+      ],
+      "properties": {
+        "parameters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/functionParameter"
+          }
+        },
+        "logic": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "functionParameter": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "default": {
+
+        }
+      }
+    }
+  }
+}
