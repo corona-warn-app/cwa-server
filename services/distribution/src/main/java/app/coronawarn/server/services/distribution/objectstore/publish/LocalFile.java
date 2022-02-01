@@ -80,7 +80,7 @@ public abstract class LocalFile {
    */
   public String getContentType() {
     if (isConfigFile() || isStatisticFile() || isKeyFile() || isQrPosterTemplate() || isVaccineValueSet()
-        || isDscFile()) {
+        || isDscFile() || isCclConfigFile()) {
       return "application/zip";
     }
     // list of versions, dates, hours
