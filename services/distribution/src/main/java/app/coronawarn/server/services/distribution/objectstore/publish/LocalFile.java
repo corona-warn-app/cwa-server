@@ -110,7 +110,7 @@ public abstract class LocalFile {
   }
 
   private boolean isCclConfigFile() {
-    return s3Key.endsWith("stats") || s3Key.matches(".*config-v\\d");
+    return s3Key.matches(".*config-v\\d");
   }
 
   private boolean isVaccineValueSet() {
