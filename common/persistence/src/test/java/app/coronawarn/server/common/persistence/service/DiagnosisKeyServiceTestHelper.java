@@ -141,6 +141,21 @@ public class DiagnosisKeyServiceTestHelper {
         .build();
   }
 
+  public static DiagnosisKey generateRandomDiagnosisKeyWithSpecifiedTrl(boolean consentToShare, long submissionTimestamp,
+      SubmissionType submissionType, int transmissionRiskLevel) {
+    return DiagnosisKey.builder()
+        .withKeyDataAndSubmissionType(randomByteData(), submissionType)
+        .withRollingStartIntervalNumber((int) submissionTimestamp * 6)
+        .withTransmissionRiskLevel(transmissionRiskLevel)
+        .withConsentToFederation(consentToShare)
+        .withCountryCode("DE")
+        .withDaysSinceOnsetOfSymptoms(random.nextInt(13))
+        .withSubmissionTimestamp(submissionTimestamp)
+        .withVisitedCountries(Set.of("FR", "DK"))
+        .withReportType(ReportType.CONFIRMED_TEST)
+        .build();
+  }
+
   private static byte[] randomByteData() {
     byte[] keyData = new byte[16];
     DiagnosisKeyServiceTestHelper.random.nextBytes(keyData);

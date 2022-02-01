@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.common.persistence.service;
 
 import static app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionTimestampValidator.SECONDS_PER_HOUR;
@@ -85,6 +83,17 @@ public class DiagnosisKeyService {
   public List<DiagnosisKey> getDiagnosisKeys() {
     List<DiagnosisKey> diagnosisKeys = createStreamFromIterator(
         keyRepository.findAll(Sort.by(Direction.ASC, "submissionTimestamp")).iterator()).collect(Collectors.toList());
+    return validationFilter.filter(diagnosisKeys);
+  }
+
+  /**
+   * Fetches {@link DiagnosisKey}s from DB with TRL greater or equal than the given value.
+   * 
+   * @param minTrl Minimum Transmission-Risk-Level to fetch.
+   * @return List of {@link DiagnosisKey}s filtered by {@link #validationFilter}.
+   */
+  public List<DiagnosisKey> getDiagnosisKeysWithMinTrl(final int minTrl) {
+    final List<DiagnosisKey> diagnosisKeys = keyRepository.findAllWithTrlGreaterThanOrEqual(minTrl);
     return validationFilter.filter(diagnosisKeys);
   }
 
