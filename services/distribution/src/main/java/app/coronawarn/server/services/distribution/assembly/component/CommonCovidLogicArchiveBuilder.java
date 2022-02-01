@@ -23,6 +23,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -80,17 +81,18 @@ public class CommonCovidLogicArchiveBuilder {
     final DirectoryOnDisk rulesDirectory = new DirectoryOnDisk(
         ObjectUtils.isEmpty(directoryName) ? distributionServiceConfig.getDefaultArchiveName() : directoryName);
 
-    List<BusinessRule> businessRules = getValidBusinessRules(getBusinessRuleItemsFilterByIdentifier());
-    Map<Integer, BusinessRule> filteredBusinessRules = BusinessRule.filterAndSort(businessRules);
+    Collection<BusinessRule> businessRules = getValidBusinessRules(getBusinessRuleItemsFilterByIdentifier());
+    Map<Integer, Collection<BusinessRule>> filteredBusinessRules = BusinessRule.filterAndSort(businessRules);
 
-    List<Archive<WritableOnDisk>> rulesArchives = getCommonCovidLogicArchives(filteredBusinessRules);
+    Collection<Archive<WritableOnDisk>> rulesArchives = getCommonCovidLogicArchives(filteredBusinessRules);
 
     rulesArchives.forEach(rulesDirectory::addWritable);
 
     return Optional.of(rulesDirectory);
   }
 
-  private List<Archive<WritableOnDisk>> getCommonCovidLogicArchives(Map<Integer, BusinessRule> filteredBusinessRules) {
+  private Collection<Archive<WritableOnDisk>> getCommonCovidLogicArchives(
+      Map<Integer, Collection<BusinessRule>> filteredBusinessRules) {
     return filteredBusinessRules
         .keySet()
         .stream()
@@ -110,8 +112,8 @@ public class CommonCovidLogicArchiveBuilder {
         }).collect(Collectors.toList());
   }
 
-  private List<BusinessRule> getValidBusinessRules(List<BusinessRuleItem> businessRulesItems) {
-    List<BusinessRule> businessRules = new ArrayList<>();
+  private Collection<BusinessRule> getValidBusinessRules(Collection<BusinessRuleItem> businessRulesItems) {
+    Collection<BusinessRule> businessRules = new ArrayList<>();
     for (BusinessRuleItem businessRuleItem : businessRulesItems) {
       BusinessRule businessRule = null;
       try {
@@ -136,11 +138,10 @@ public class CommonCovidLogicArchiveBuilder {
     return businessRules;
   }
 
-  private List<BusinessRuleItem> getBusinessRuleItemsFilterByIdentifier() throws FetchBusinessRulesException {
+  private Collection<BusinessRuleItem> getBusinessRuleItemsFilterByIdentifier() throws FetchBusinessRulesException {
     return businessRuleItemSupplier.get().stream()
-        .filter(businessRuleItem ->
-            List.of(distributionServiceConfig.getDigitalGreenCertificate().getCclAllowList())
-                .contains(businessRuleItem.getIdentifier()))
+        .filter(businessRuleItem -> List.of(distributionServiceConfig.getDigitalGreenCertificate().getCclAllowList())
+            .contains(businessRuleItem.getIdentifier()))
         .collect(Collectors.toList());
   }
 
