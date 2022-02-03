@@ -80,6 +80,7 @@ public class DistributionServiceConfig {
   private Integer connectionPoolSize;
   private String defaultArchiveName;
   private Integer minimumTrlValueAllowed;
+  private Integer daysToPublish;
 
   public Paths getPaths() {
     return paths;
@@ -105,6 +106,14 @@ public class DistributionServiceConfig {
     this.retentionDays = retentionDays;
   }
 
+  public Integer getDaysToPublish() {
+    return daysToPublish == null ? retentionDays : daysToPublish;
+  }
+  
+  public void setDaysToPublish(Integer daysToPublish) {
+    this.daysToPublish = daysToPublish;
+  }
+  
   public Integer getExpiryPolicyMinutes() {
     return expiryPolicyMinutes;
   }

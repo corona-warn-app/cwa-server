@@ -89,11 +89,13 @@ public class DiagnosisKeyService {
   /**
    * Fetches {@link DiagnosisKey}s from DB with TRL greater or equal than the given value.
    * 
-   * @param minTrl Minimum Transmission-Risk-Level to fetch.
+   * @param minTrl      Minimum Transmission-Risk-Level to fetch.
+   * @param daysToFetch time in days, that should be published
    * @return List of {@link DiagnosisKey}s filtered by {@link #validationFilter}.
    */
-  public List<DiagnosisKey> getDiagnosisKeysWithMinTrl(final int minTrl) {
-    final List<DiagnosisKey> diagnosisKeys = keyRepository.findAllWithTrlGreaterThanOrEqual(minTrl);
+  public List<DiagnosisKey> getDiagnosisKeysWithMinTrl(final int minTrl, final int daysToFetch) {
+    final List<DiagnosisKey> diagnosisKeys = keyRepository.findAllWithTrlGreaterThanOrEqual(minTrl,
+        daysToSeconds(daysToFetch));
     return validationFilter.filter(diagnosisKeys);
   }
 
@@ -106,17 +108,27 @@ public class DiagnosisKeyService {
    */
   @Transactional
   public void applyRetentionPolicy(int daysToRetain) {
-    if (daysToRetain < 0) {
-      throw new IllegalArgumentException("Number of days to retain must be greater or equal to 0.");
-    }
-
-    long threshold = LocalDateTime
-        .ofInstant(Instant.now(), UTC)
-        .minusDays(daysToRetain)
-        .toEpochSecond(UTC) / SECONDS_PER_HOUR;
+    final long threshold = daysToSeconds(daysToRetain);
     int numberOfDeletions = keyRepository.countOlderThan(threshold);
     logger.info("Deleting {} diagnosis key(s) with a submission timestamp older than {} day(s) ago.",
         numberOfDeletions, daysToRetain);
     keyRepository.deleteOlderThan(threshold);
+  }
+
+  /**
+   * Calculates epoch seconds in UTC based upon current time and given days.
+   * 
+   * @param daysToRetain offset in days to use for epoch second
+   * @return epoch seconds
+   */
+  public static long daysToSeconds(final int daysToRetain) {
+    if (daysToRetain < 0) {
+      throw new IllegalArgumentException("Number of days to retain must be greater or equal to 0.");
+    }
+
+    return LocalDateTime
+        .ofInstant(Instant.now(), UTC)
+        .minusDays(daysToRetain)
+        .toEpochSecond(UTC) / SECONDS_PER_HOUR;
   }
 }
