@@ -84,7 +84,15 @@ class DiagnosisKeyServiceTest {
             SubmissionType.SUBMISSION_TYPE_RAPID_TEST, 4)
         );
 
+    var oldKeys = List.of(
+        DiagnosisKeyServiceTestHelper.generateRandomDiagnosisKeyWithSpecifiedTrl(true, daysToSeconds(42),
+            SubmissionType.SUBMISSION_TYPE_PCR_TEST, 3),
+        DiagnosisKeyServiceTestHelper.generateRandomDiagnosisKeyWithSpecifiedTrl(true, daysToSeconds(42),
+            SubmissionType.SUBMISSION_TYPE_RAPID_TEST, 4)
+        );
+
     diagnosisKeyService.saveDiagnosisKeys(filterOutKeysBasedOnTrl);
+    diagnosisKeyService.saveDiagnosisKeys(oldKeys);
     diagnosisKeyService.saveDiagnosisKeys(expKeys);
 
     var actKeys = diagnosisKeyService.getDiagnosisKeysWithMinTrl(MIN_TRL, 10);
