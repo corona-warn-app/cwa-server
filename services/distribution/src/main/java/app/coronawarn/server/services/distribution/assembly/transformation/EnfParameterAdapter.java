@@ -3,8 +3,6 @@ package app.coronawarn.server.services.distribution.assembly.transformation;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.config.TransmissionRiskLevelEncoding;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 /**
@@ -33,22 +31,12 @@ public class EnfParameterAdapter {
    * @return updated collection of DiagnosisKey
    */
   public Collection<DiagnosisKey> adaptKeys(Collection<DiagnosisKey> diagnosisKeys) {
-    return diagnosisKeys.stream().map(this::adapt).collect(Collectors.toList());
-  }
+    diagnosisKeys.forEach(k -> {
+      k.setReportType(trlEncoding.getReportTypeForTransmissionRiskLevel(k.getTransmissionRiskLevel()));
+      k.setDaysSinceOnsetOfSymptoms(
+          trlEncoding.getDaysSinceSymptomsForTransmissionRiskLevel(k.getTransmissionRiskLevel()));
+    });
 
-  private DiagnosisKey adapt(DiagnosisKey diagnosisKey) {
-    return DiagnosisKey.builder()
-        .withKeyDataAndSubmissionType(diagnosisKey.getKeyData(), diagnosisKey.getSubmissionType())
-        .withRollingStartIntervalNumber(diagnosisKey.getRollingStartIntervalNumber())
-        .withTransmissionRiskLevel(diagnosisKey.getTransmissionRiskLevel())
-        .withRollingPeriod(diagnosisKey.getRollingPeriod())
-        .withCountryCode(diagnosisKey.getOriginCountry())
-        .withReportType(trlEncoding
-            .getReportTypeForTransmissionRiskLevel(diagnosisKey.getTransmissionRiskLevel()))
-        .withVisitedCountries(new HashSet<>(diagnosisKey.getVisitedCountries()))
-        .withConsentToFederation(diagnosisKey.isConsentToFederation())
-        .withDaysSinceOnsetOfSymptoms(trlEncoding
-            .getDaysSinceSymptomsForTransmissionRiskLevel(diagnosisKey.getTransmissionRiskLevel()))
-        .withSubmissionTimestamp(diagnosisKey.getSubmissionTimestamp()).build();
+    return diagnosisKeys;
   }
 }
