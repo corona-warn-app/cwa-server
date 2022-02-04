@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
@@ -77,12 +77,12 @@ public class DiagnosisKey {
   @ValidCountries
   private final Set<String> visitedCountries;
 
-  private final ReportType reportType;
+  private ReportType reportType;
 
   @Range(min = MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS, max = MAX_DAYS_SINCE_ONSET_OF_SYMPTOMS,
       message = "Days since onset of symptoms value must be between " + MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS + " and "
           + MAX_DAYS_SINCE_ONSET_OF_SYMPTOMS + ".")
-  private final int daysSinceOnsetOfSymptoms;
+  private int daysSinceOnsetOfSymptoms;
 
   /**
    * Should be called by builders.
@@ -99,7 +99,7 @@ public class DiagnosisKey {
     this.submissionTimestamp = submissionTimestamp;
     this.consentToFederation = consentToFederation;
     this.originCountry = originCountry;
-    this.visitedCountries = visitedCountries == null ? new HashSet<>() : visitedCountries;
+    this.visitedCountries = visitedCountries != null && visitedCountries.isEmpty() ? null : visitedCountries;
     this.reportType = reportType;
     // Workaround to avoid exception on loading old DiagnosisKeys after migration to EFGS
     this.daysSinceOnsetOfSymptoms = daysSinceOnsetOfSymptoms == null ? 0 : daysSinceOnsetOfSymptoms;
@@ -165,6 +165,14 @@ public class DiagnosisKey {
     this.transmissionRiskLevel = transmissionRiskLevel;
   }
 
+  public void setReportType(ReportType reportType) {
+    this.reportType = reportType;
+  }
+
+  public void setDaysSinceOnsetOfSymptoms(int daysSinceOnsetOfSymptoms) {
+    this.daysSinceOnsetOfSymptoms = daysSinceOnsetOfSymptoms;
+  }
+
   /**
    * Returns the timestamp associated with the submission of this {@link DiagnosisKey} as hours since epoch.
    *
@@ -183,7 +191,7 @@ public class DiagnosisKey {
   }
 
   public Set<String> getVisitedCountries() {
-    return visitedCountries;
+    return visitedCountries == null ? Collections.emptySet() : visitedCountries;
   }
 
   public ReportType getReportType() {
