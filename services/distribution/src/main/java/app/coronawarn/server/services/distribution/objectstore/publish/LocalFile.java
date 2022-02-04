@@ -80,7 +80,7 @@ public abstract class LocalFile {
    */
   public String getContentType() {
     if (isConfigFile() || isStatisticFile() || isKeyFile() || isQrPosterTemplate() || isVaccineValueSet()
-        || isDscFile()) {
+        || isDscFile() || isCclConfigFile()) {
       return "application/zip";
     }
     // list of versions, dates, hours
@@ -94,7 +94,7 @@ public abstract class LocalFile {
    * @return <code>true</code> if and only if the {@link #s3Key} ends with a digit, false otherwise.
    */
   public boolean isKeyFile() {
-    return s3Key.matches(".*\\d") && !isStatisticFile();
+    return s3Key.matches(".*\\d") && !isStatisticFile() && !isCclConfigFile();
   }
 
   public boolean isQrPosterTemplate() {
@@ -107,6 +107,10 @@ public abstract class LocalFile {
 
   private boolean isStatisticFile() {
     return s3Key.endsWith("stats") || s3Key.matches(".*local_stats_\\d");
+  }
+
+  private boolean isCclConfigFile() {
+    return s3Key.matches(".*config-v\\d");
   }
 
   private boolean isVaccineValueSet() {

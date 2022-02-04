@@ -1,11 +1,12 @@
-
-
 package app.coronawarn.server.common.persistence.domain;
 
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
@@ -72,7 +73,7 @@ class DiagnosisKeyTest {
   }
 
   @DisplayName("Test retention threshold accepts positive value")
-  @ValueSource(ints = {0, 1, Integer.MAX_VALUE})
+  @ValueSource(ints = { 0, 1, Integer.MAX_VALUE })
   @ParameterizedTest
   void testRetentionThresholdAcceptsPositiveValue(int daysToRetain) {
     assertThatCode(() -> diagnosisKey.isYoungerThanRetentionThreshold(daysToRetain))
@@ -80,10 +81,43 @@ class DiagnosisKeyTest {
   }
 
   @DisplayName("Test retention threshold rejects negative value")
-  @ValueSource(ints = {Integer.MIN_VALUE, -1})
+  @ValueSource(ints = { Integer.MIN_VALUE, -1 })
   @ParameterizedTest
   void testRetentionThresholdRejectsNegativeValue(int daysToRetain) {
     assertThatIllegalArgumentException()
         .isThrownBy(() -> diagnosisKey.isYoungerThanRetentionThreshold(daysToRetain));
+  }
+
+  @Test
+  void testSetTransmissionRiskLevel() {
+    diagnosisKey.setTransmissionRiskLevel(0);
+  }
+
+  @Test
+  void testSetReportType() {
+    diagnosisKey.setReportType(null);
+  }
+
+  @Test
+  void testSetDaysSinceOnsetOfSymptoms() {
+    diagnosisKey.setDaysSinceOnsetOfSymptoms(0);
+  }
+
+  @Test
+  void testGetVisitedCountries() {
+    assertEquals("DE", diagnosisKey.getVisitedCountries().iterator().next());
+  }
+
+  @Test
+  void testEquals() {
+    DiagnosisKey other = new DiagnosisKey("testKey222222222".getBytes(StandardCharsets.US_ASCII), expSubmissionType,
+        expRollingStartIntervalNumber, expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp, false,
+        originCountry, visitedCountries, reportType, daysSinceOnsetOfSymptoms);
+    assertFalse(diagnosisKey.equals(other));
+  }
+
+  @Test
+  void testHashCode() {
+    assertTrue(0 != diagnosisKey.hashCode());
   }
 }

@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
@@ -29,7 +29,7 @@ import org.springframework.data.annotation.Id;
  */
 public class DiagnosisKey {
 
-  public static final long ROLLING_PERIOD_MINUTES_INTERVAL = 10;
+  public static final int ROLLING_PERIOD_MINUTES_INTERVAL = 10;
 
   /**
    * According to "Setting Up an Exposure Notification Server" by Apple, exposure notification servers are expected to
@@ -63,11 +63,11 @@ public class DiagnosisKey {
 
   @Range(min = MIN_TRANSMISSION_RISK_LEVEL, max = MAX_TRANSMISSION_RISK_LEVEL,
       message = "Risk level must be between " + MIN_TRANSMISSION_RISK_LEVEL + " and " + MAX_TRANSMISSION_RISK_LEVEL
-          + ".")
+      + ".")
   private int transmissionRiskLevel;
 
   @ValidSubmissionTimestamp
-  private final long submissionTimestamp;
+  private final int submissionTimestamp;
 
   private final boolean consentToFederation;
 
@@ -77,12 +77,12 @@ public class DiagnosisKey {
   @ValidCountries
   private final Set<String> visitedCountries;
 
-  private final ReportType reportType;
+  private ReportType reportType;
 
   @Range(min = MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS, max = MAX_DAYS_SINCE_ONSET_OF_SYMPTOMS,
       message = "Days since onset of symptoms value must be between " + MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS + " and "
-          + MAX_DAYS_SINCE_ONSET_OF_SYMPTOMS + ".")
-  private final int daysSinceOnsetOfSymptoms;
+      + MAX_DAYS_SINCE_ONSET_OF_SYMPTOMS + ".")
+  private int daysSinceOnsetOfSymptoms;
 
   /**
    * Should be called by builders.
@@ -96,10 +96,10 @@ public class DiagnosisKey {
     this.rollingStartIntervalNumber = rollingStartIntervalNumber;
     this.rollingPeriod = rollingPeriod;
     this.transmissionRiskLevel = transmissionRiskLevel;
-    this.submissionTimestamp = submissionTimestamp;
+    this.submissionTimestamp = (int) submissionTimestamp;
     this.consentToFederation = consentToFederation;
     this.originCountry = originCountry;
-    this.visitedCountries = visitedCountries == null ? new HashSet<>() : visitedCountries;
+    this.visitedCountries = visitedCountries != null && visitedCountries.isEmpty() ? null : visitedCountries;
     this.reportType = reportType;
     // Workaround to avoid exception on loading old DiagnosisKeys after migration to EFGS
     this.daysSinceOnsetOfSymptoms = daysSinceOnsetOfSymptoms == null ? 0 : daysSinceOnsetOfSymptoms;
@@ -165,12 +165,20 @@ public class DiagnosisKey {
     this.transmissionRiskLevel = transmissionRiskLevel;
   }
 
+  public void setReportType(ReportType reportType) {
+    this.reportType = reportType;
+  }
+
+  public void setDaysSinceOnsetOfSymptoms(int daysSinceOnsetOfSymptoms) {
+    this.daysSinceOnsetOfSymptoms = daysSinceOnsetOfSymptoms;
+  }
+
   /**
    * Returns the timestamp associated with the submission of this {@link DiagnosisKey} as hours since epoch.
    *
    * @return submissionTimestamp
    */
-  public long getSubmissionTimestamp() {
+  public int getSubmissionTimestamp() {
     return submissionTimestamp;
   }
 
@@ -183,7 +191,7 @@ public class DiagnosisKey {
   }
 
   public Set<String> getVisitedCountries() {
-    return visitedCountries;
+    return visitedCountries == null ? Collections.emptySet() : visitedCountries;
   }
 
   public ReportType getReportType() {
@@ -244,11 +252,11 @@ public class DiagnosisKey {
         && rollingPeriod == that.rollingPeriod
         && transmissionRiskLevel == that.transmissionRiskLevel
         && submissionTimestamp == that.submissionTimestamp
-        && Arrays.equals(keyData, that.keyData)
+        && reportType == that.reportType
+        && daysSinceOnsetOfSymptoms == that.daysSinceOnsetOfSymptoms
         && Objects.equals(originCountry, that.originCountry)
         && Objects.equals(visitedCountries, that.visitedCountries)
-        && reportType == that.reportType
-        && daysSinceOnsetOfSymptoms == that.daysSinceOnsetOfSymptoms;
+        && Arrays.equals(keyData, that.keyData);
   }
 
   @Override

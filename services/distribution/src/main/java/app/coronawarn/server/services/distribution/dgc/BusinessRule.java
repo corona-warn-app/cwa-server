@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.core.util.VersionUtil;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +36,31 @@ public class BusinessRule {
    * @param rules to be filtered
    * @return {@link Map} with the major version as key
    */
-  public static Map<Integer, BusinessRule> filterAndSort(final List<BusinessRule> rules) {
+  public static Map<Integer, Collection<BusinessRule>> filterAndSort(final Collection<BusinessRule> rules) {
+    final Map<Integer, Collection<BusinessRule>> result = new HashMap<>();
+
+    // group BusinessRule by Identifier
+    final Map<String, Collection<BusinessRule>> identifiers = new HashMap<>();
+    rules.forEach(r -> {
+      final Collection<BusinessRule> list = identifiers.computeIfAbsent(r.getIdentifier(), k -> new ArrayList<>());
+      list.add(r);
+    });
+
+    // per same Identifier
+    identifiers.keySet().forEach(identifier -> {
+      // find latest version by it's Major
+      final Map<Integer, BusinessRule> map = groupByMajor(identifiers.get(identifier));
+      map.forEach((major, rule) -> {
+        // add to result per it's Major
+        Collection<BusinessRule> merge = result.computeIfAbsent(major, k -> new ArrayList<>());
+        merge.add(rule);
+      });
+    });
+
+    return result;
+  }
+
+  static Map<Integer, BusinessRule> groupByMajor(final Collection<BusinessRule> rules) {
     final Map<Integer, BusinessRule> result = new HashMap<>();
     for (final BusinessRule rule : rules) {
       final Version version = rule.version();
