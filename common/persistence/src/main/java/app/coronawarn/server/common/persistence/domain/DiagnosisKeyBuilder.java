@@ -100,9 +100,9 @@ public class DiagnosisKeyBuilder implements
   }
 
   /**
-   * Try to use smallest (memory) possible Set implementation.  
+   * Try to use smallest (memory) possible Set implementation.
    * 
-   * @param <E> generic
+   * @param <E>        generic
    * @param collection to be turned into Set
    * @return <code>null</code> if collection is null or empty, otherwise a Set
    */
@@ -118,7 +118,12 @@ public class DiagnosisKeyBuilder implements
     }
     if (collection.size() == 2) {
       Iterator<E> it = collection.iterator();
-      return Set.of(it.next(), it.next());
+      E v1 = it.next();
+      E v2 = it.next();
+      if (v1.equals(v2)) {
+        return Set.of(v1);
+      }
+      return Set.of(v1, v2);
     }
 
     final Set<E> set = new HashSet<>(collection.size(), 1f);
