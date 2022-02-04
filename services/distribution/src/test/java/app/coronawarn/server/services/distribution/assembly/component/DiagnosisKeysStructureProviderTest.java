@@ -65,15 +65,6 @@ class DiagnosisKeysStructureProviderTest {
         .mapToObj(currentHour -> buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0).plusHours(currentHour), 5))
         .flatMap(List::stream)
         .collect(Collectors.toList());
-    // Generates 75 ( 15 * 5 ) keys with TRL 3
-    diagnosisKeys.addAll(IntStream.range(0, 15)
-        .mapToObj(
-            currentHour -> buildDiagnosisKeys(6,
-                LocalDateTime.of(1970, 1, 3, 0, 0).plusHours(currentHour)
-                    .toEpochSecond(ZoneOffset.UTC) / 3600, 5, "DE",
-                Set.of("DE"), ReportType.CONFIRMED_TEST, 1, 3))
-        .flatMap(List::stream)
-        .collect(Collectors.toList()));
     Mockito.when(diagnosisKeyService.getDiagnosisKeys()).thenReturn(diagnosisKeys);
   }
 
@@ -84,17 +75,5 @@ class DiagnosisKeysStructureProviderTest {
         diagnosisKeyService, cryptoProvider, distributionServiceConfig, bundler, enfParameterAdapter);
     Directory<WritableOnDisk> diagnosisKeys = diagnosisKeysStructureProvider.getDiagnosisKeys();
     Assertions.assertEquals("diagnosis-keys", diagnosisKeys.getName());
-  }
-
-  @Test
-  void testGetDiagnosisKeysWithTrlSmallerThan3NotDistributed() {
-    DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(distributionServiceConfig, sharingPoliciesChecker);
-    DiagnosisKeysStructureProvider diagnosisKeysStructureProvider = new DiagnosisKeysStructureProvider(
-        diagnosisKeyService, cryptoProvider, distributionServiceConfig, bundler, enfParameterAdapter);
-    assertNotNull(diagnosisKeysStructureProvider.getDiagnosisKeys());
-    assertEquals(75, bundler.getAllDiagnosisKeys("DE").size());
-    bundler.getAllDiagnosisKeys("DE").forEach(key -> {
-      assertTrue(key.getTransmissionRiskLevel() >= distributionServiceConfig.getMinimumTrlValueAllowed());
-    });
   }
 }
