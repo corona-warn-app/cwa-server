@@ -38,7 +38,7 @@ public class DistributionServiceConfig {
   private static final String ALGORITHM_OID_REGEX = "^[0-9]{1,256}[\\.[0-9]{1,256}]{0,256}$";
   private static final String BUNDLE_REGEX = "^[a-z-]{1,256}[\\.[a-z-]{1,256}]{0,256}$";
   private static final String PRIVATE_KEY_REGEX =
-      "^(classpath:|file:[/]{1,8})[a-zA-Z0-9_-]{1,256}[/[a-zA-Z0-9_-]{1,256}]{0,256}(.pem)?$";
+      "^(classpath:|file:\\.?[/]{1,8})[a-zA-Z0-9_-]{1,256}:?[/[a-zA-Z0-9_-]{1,256}]{0,256}(.pem)?$";
 
   private Paths paths;
   private TestData testData;
