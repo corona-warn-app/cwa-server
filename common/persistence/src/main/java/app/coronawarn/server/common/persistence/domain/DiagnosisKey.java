@@ -29,7 +29,7 @@ import org.springframework.data.annotation.Id;
  */
 public class DiagnosisKey {
 
-  public static final long ROLLING_PERIOD_MINUTES_INTERVAL = 10;
+  public static final int ROLLING_PERIOD_MINUTES_INTERVAL = 10;
 
   /**
    * According to "Setting Up an Exposure Notification Server" by Apple, exposure notification servers are expected to
@@ -63,11 +63,11 @@ public class DiagnosisKey {
 
   @Range(min = MIN_TRANSMISSION_RISK_LEVEL, max = MAX_TRANSMISSION_RISK_LEVEL,
       message = "Risk level must be between " + MIN_TRANSMISSION_RISK_LEVEL + " and " + MAX_TRANSMISSION_RISK_LEVEL
-          + ".")
+      + ".")
   private int transmissionRiskLevel;
 
   @ValidSubmissionTimestamp
-  private final long submissionTimestamp;
+  private final int submissionTimestamp;
 
   private final boolean consentToFederation;
 
@@ -81,7 +81,7 @@ public class DiagnosisKey {
 
   @Range(min = MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS, max = MAX_DAYS_SINCE_ONSET_OF_SYMPTOMS,
       message = "Days since onset of symptoms value must be between " + MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS + " and "
-          + MAX_DAYS_SINCE_ONSET_OF_SYMPTOMS + ".")
+      + MAX_DAYS_SINCE_ONSET_OF_SYMPTOMS + ".")
   private int daysSinceOnsetOfSymptoms;
 
   /**
@@ -96,7 +96,7 @@ public class DiagnosisKey {
     this.rollingStartIntervalNumber = rollingStartIntervalNumber;
     this.rollingPeriod = rollingPeriod;
     this.transmissionRiskLevel = transmissionRiskLevel;
-    this.submissionTimestamp = submissionTimestamp;
+    this.submissionTimestamp = (int) submissionTimestamp;
     this.consentToFederation = consentToFederation;
     this.originCountry = originCountry;
     this.visitedCountries = visitedCountries != null && visitedCountries.isEmpty() ? null : visitedCountries;
@@ -178,7 +178,7 @@ public class DiagnosisKey {
    *
    * @return submissionTimestamp
    */
-  public long getSubmissionTimestamp() {
+  public int getSubmissionTimestamp() {
     return submissionTimestamp;
   }
 
