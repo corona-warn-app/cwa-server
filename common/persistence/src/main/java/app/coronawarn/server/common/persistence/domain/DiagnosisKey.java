@@ -252,11 +252,11 @@ public class DiagnosisKey {
         && rollingPeriod == that.rollingPeriod
         && transmissionRiskLevel == that.transmissionRiskLevel
         && submissionTimestamp == that.submissionTimestamp
-        && Arrays.equals(keyData, that.keyData)
+        && reportType == that.reportType
+        && daysSinceOnsetOfSymptoms == that.daysSinceOnsetOfSymptoms
         && Objects.equals(originCountry, that.originCountry)
         && Objects.equals(visitedCountries, that.visitedCountries)
-        && reportType == that.reportType
-        && daysSinceOnsetOfSymptoms == that.daysSinceOnsetOfSymptoms;
+        && Arrays.equals(keyData, that.keyData);
   }
 
   @Override
