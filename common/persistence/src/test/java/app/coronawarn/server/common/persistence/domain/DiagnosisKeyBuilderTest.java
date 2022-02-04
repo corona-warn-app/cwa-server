@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.common.persistence.domain;
 
 import static app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionTimestampValidator.SECONDS_PER_HOUR;
@@ -7,6 +5,8 @@ import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServi
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
@@ -18,6 +18,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -174,7 +175,7 @@ class DiagnosisKeyBuilderTest {
   }
 
   @ParameterizedTest
-  @ValueSource(ints = {4200, 441552})
+  @ValueSource(ints = { 4200, 441552 })
   void rollingStartIntervalNumberDoesNotThrowForValid(int validRollingStartIntervalNumber) {
     assertThatCode(() -> keyWithRollingStartIntervalNumber(validRollingStartIntervalNumber)).doesNotThrowAnyException();
   }
@@ -227,7 +228,7 @@ class DiagnosisKeyBuilderTest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"DER", "xx", "De", "dE", "DE,FRE", ""})
+  @ValueSource(strings = { "DER", "xx", "De", "dE", "DE,FRE", "" })
   void failsForInvalidOriginCountry(String countryCode) {
     assertThat(
         catchThrowable(() -> DiagnosisKey.builder()
@@ -241,7 +242,7 @@ class DiagnosisKeyBuilderTest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"DER", "xx", "De", "dE", "DE,FRE", ""})
+  @ValueSource(strings = { "DER", "xx", "De", "dE", "DE,FRE", "" })
   void failsForInvalidVisitedCountries(String visitedCountries) {
     assertThat(
         catchThrowable(() -> DiagnosisKey.builder()
@@ -257,7 +258,7 @@ class DiagnosisKeyBuilderTest {
   }
 
   @ParameterizedTest
-  @ValueSource(ints = {DiagnosisKey.MIN_TRANSMISSION_RISK_LEVEL - 1, DiagnosisKey.MAX_TRANSMISSION_RISK_LEVEL + 1})
+  @ValueSource(ints = { DiagnosisKey.MIN_TRANSMISSION_RISK_LEVEL - 1, DiagnosisKey.MAX_TRANSMISSION_RISK_LEVEL + 1 })
   void transmissionRiskLevelMustBeInRange(int invalidRiskLevel) {
     assertThat(catchThrowable(() -> keyWithRiskLevel(invalidRiskLevel)))
         .isInstanceOf(InvalidDiagnosisKeyException.class)
@@ -267,13 +268,13 @@ class DiagnosisKeyBuilderTest {
   }
 
   @ParameterizedTest
-  @ValueSource(ints = {DiagnosisKey.MIN_TRANSMISSION_RISK_LEVEL, DiagnosisKey.MAX_TRANSMISSION_RISK_LEVEL})
+  @ValueSource(ints = { DiagnosisKey.MIN_TRANSMISSION_RISK_LEVEL, DiagnosisKey.MAX_TRANSMISSION_RISK_LEVEL })
   void transmissionRiskLevelDoesNotThrowForValid(int validRiskLevel) {
     assertThatCode(() -> keyWithRiskLevel(validRiskLevel)).doesNotThrowAnyException();
   }
 
   @ParameterizedTest
-  @ValueSource(ints = {-15, -17, 4001})
+  @ValueSource(ints = { -15, -17, 4001 })
   void daysSinceOnsetSymptomsMustBeInRange(int invalidDsos) {
     assertThat(catchThrowable(() -> keyWithDsos(invalidDsos)))
         .isInstanceOf(InvalidDiagnosisKeyException.class)
@@ -282,13 +283,13 @@ class DiagnosisKeyBuilderTest {
   }
 
   @ParameterizedTest
-  @ValueSource(ints = {0, 8, -14, 3986})
+  @ValueSource(ints = { 0, 8, -14, 3986 })
   void daysSinceOnsetSymptomsValidationDoesNotThrowForValid(int validDsos) {
     assertThatCode(() -> keyWithDsos(validDsos)).doesNotThrowAnyException();
   }
 
   @ParameterizedTest
-  @ValueSource(ints = {-3, 145})
+  @ValueSource(ints = { -3, 145 })
   void rollingPeriodMustBeExpectedValue(int invalidRollingPeriod) {
     assertThat(catchThrowable(() -> keyWithRollingPeriod(invalidRollingPeriod)))
         .isInstanceOf(InvalidDiagnosisKeyException.class)
@@ -298,17 +299,17 @@ class DiagnosisKeyBuilderTest {
   }
 
   @ParameterizedTest
-  @ValueSource(ints = {DiagnosisKey.MIN_ROLLING_PERIOD, 100, DiagnosisKey.MAX_ROLLING_PERIOD})
+  @ValueSource(ints = { DiagnosisKey.MIN_ROLLING_PERIOD, 100, DiagnosisKey.MAX_ROLLING_PERIOD })
   void rollingPeriodDoesNotThrowForValid(int validRollingPeriod) {
     assertThatCode(() -> keyWithRollingPeriod(validRollingPeriod)).doesNotThrowAnyException();
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"17--bytelongarray", "", "1"})
+  @ValueSource(strings = { "17--bytelongarray", "", "1" })
   void keyDataMustHaveValidLength(String invalidKeyString) {
     assertThat(
         catchThrowable(() -> keyWithKeyData(invalidKeyString.getBytes(StandardCharsets.US_ASCII))))
-        .isInstanceOf(InvalidDiagnosisKeyException.class);
+            .isInstanceOf(InvalidDiagnosisKeyException.class);
   }
 
   @Test
@@ -318,21 +319,21 @@ class DiagnosisKeyBuilderTest {
   }
 
   @ParameterizedTest
-  @ValueSource(longs = {-1L, Long.MAX_VALUE})
+  @ValueSource(longs = { -1L, Long.MAX_VALUE })
   void submissionTimestampMustBeValid(long submissionTimestamp) {
     assertThat(
         catchThrowable(() -> buildDiagnosisKeyForSubmissionTimestamp(submissionTimestamp)))
-        .isInstanceOf(InvalidDiagnosisKeyException.class);
+            .isInstanceOf(InvalidDiagnosisKeyException.class);
   }
 
   @Test
   void submissionTimestampMustNotBeInTheFuture() {
     assertThat(catchThrowable(
         () -> buildDiagnosisKeyForSubmissionTimestamp(getCurrentHoursSinceEpoch() + 1)))
-        .isInstanceOf(InvalidDiagnosisKeyException.class);
+            .isInstanceOf(InvalidDiagnosisKeyException.class);
     assertThat(catchThrowable(() -> buildDiagnosisKeyForSubmissionTimestamp(
         Instant.now().getEpochSecond() /* accidentally forgot to divide by SECONDS_PER_HOUR */)))
-        .isInstanceOf(InvalidDiagnosisKeyException.class);
+            .isInstanceOf(InvalidDiagnosisKeyException.class);
   }
 
   @Test
@@ -343,7 +344,7 @@ class DiagnosisKeyBuilderTest {
     assertThatCode(
         () -> buildDiagnosisKeyForSubmissionTimestamp(
             Instant.now().minus(Duration.ofHours(2)).getEpochSecond() / SECONDS_PER_HOUR, 144, false))
-        .doesNotThrowAnyException();
+                .doesNotThrowAnyException();
   }
 
   @Test
@@ -455,10 +456,6 @@ class DiagnosisKeyBuilderTest {
     assertDiagnosisKeyEquals(actDiagnosisKey, getCurrentHoursSinceEpoch());
   }
 
-  private long getCurrentHoursSinceEpoch() {
-    return Instant.now().getEpochSecond() / SECONDS_PER_HOUR;
-  }
-
   private void assertDiagnosisKeyEquals(DiagnosisKey actDiagnosisKey, long expSubmissionTimestamp) {
     assertThat(actDiagnosisKey.getKeyData()).isEqualTo(expKeyData);
     assertThat(actDiagnosisKey.getSubmissionType()).isEqualTo(expSubmissionType);
@@ -471,5 +468,39 @@ class DiagnosisKeyBuilderTest {
     assertThat(actDiagnosisKey.isConsentToFederation()).isEqualTo(expConsentToFederation);
     assertThat(actDiagnosisKey.getOriginCountry()).isEqualTo(originCountry);
     assertThat(actDiagnosisKey.getVisitedCountries()).isEqualTo(visitedCountries);
+  }
+
+  private long getCurrentHoursSinceEpoch() {
+    return Instant.now().getEpochSecond() / SECONDS_PER_HOUR;
+  }
+
+  @Test
+  void testCollectionToTinySet() {
+    assertNull(DiagnosisKeyBuilder.collectionToTinySet(null));
+    assertNull(DiagnosisKeyBuilder.collectionToTinySet(Collections.emptyList()));
+    assertNull(DiagnosisKeyBuilder.collectionToTinySet(Collections.emptySet()));
+    Set<Integer> set = new HashSet<>(Set.of(1, 2, 3, 4));
+    assertEquals(set, DiagnosisKeyBuilder.collectionToTinySet(set));
+
+    assertEquals("java.util.ImmutableCollections$Set12",
+        DiagnosisKeyBuilder.collectionToTinySet(Collections.singletonList(1)).getClass().getName());
+
+    List<Integer> list = List.of(1, 2);
+    assertEquals("java.util.ImmutableCollections$Set12",
+        DiagnosisKeyBuilder.collectionToTinySet(list).getClass().getName());
+    assertEquals(2,
+        DiagnosisKeyBuilder.collectionToTinySet(list).size());
+
+    List<Integer> one = List.of(1, 1);
+    assertEquals("java.util.ImmutableCollections$Set12",
+        DiagnosisKeyBuilder.collectionToTinySet(one).getClass().getName());
+    assertEquals(1,
+        DiagnosisKeyBuilder.collectionToTinySet(one).size());
+
+    List<Integer> roomForImproovement = List.of(1, 1, 1, 1);
+    assertEquals("java.util.HashSet",
+        DiagnosisKeyBuilder.collectionToTinySet(roomForImproovement).getClass().getName());
+    assertEquals(1,
+        DiagnosisKeyBuilder.collectionToTinySet(roomForImproovement).size());
   }
 }
