@@ -13,6 +13,7 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Repo
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -68,7 +69,8 @@ public class DiagnosisKeyBuilder implements
 
   @Override
   public FinalBuilder fromTemporaryExposureKeyAndMetadata(TemporaryExposureKey protoBufObject,
-      SubmissionType submissionType, List<String> visitedCountries, String originCountry, boolean consentToFederation) {
+      SubmissionType submissionType, Collection<String> visitedCountries, String originCountry,
+      boolean consentToFederation) {
     return this
         .withKeyDataAndSubmissionType(protoBufObject.getKeyData().toByteArray(), submissionType)
         .withRollingStartIntervalNumber(protoBufObject.getRollingStartIntervalNumber())

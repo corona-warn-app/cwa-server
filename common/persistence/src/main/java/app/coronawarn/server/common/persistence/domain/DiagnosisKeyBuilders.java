@@ -1,12 +1,10 @@
-
-
 package app.coronawarn.server.common.persistence.domain;
 
 import app.coronawarn.server.common.persistence.domain.normalization.DiagnosisKeyNormalizer;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
-import java.util.List;
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -37,7 +35,7 @@ interface DiagnosisKeyBuilders {
      * @return this Builder instance.
      */
     FinalBuilder fromTemporaryExposureKeyAndMetadata(TemporaryExposureKey protoBufObject,
-        SubmissionType submissionType, List<String> visitedCountries, String originCountry,
+        SubmissionType submissionType, Collection<String> visitedCountries, String originCountry,
         boolean consentToFederation);
 
     /**
