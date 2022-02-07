@@ -85,7 +85,7 @@ public class KeySharingPoliciesChecker {
   private LocalDateTime getRollingPeriodExpiryTime(DiagnosisKey diagnosisKey) {
     return LocalDateTime
         .ofEpochSecond(diagnosisKey.getRollingStartIntervalNumber() * TEN_MINUTES_INTERVAL_SECONDS, 0, UTC)
-        .plusMinutes(diagnosisKey.getRollingPeriod() * DiagnosisKey.ROLLING_PERIOD_MINUTES_INTERVAL);
+        .plusMinutes((long) diagnosisKey.getRollingPeriod() * DiagnosisKey.ROLLING_PERIOD_MINUTES_INTERVAL);
   }
 
   /**
