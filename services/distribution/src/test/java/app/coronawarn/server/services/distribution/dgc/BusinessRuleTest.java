@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.distribution.dgc;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -134,5 +135,12 @@ class BusinessRuleTest {
       assertTrue(smallest.isLowerThan(versions[i]));
       assertTrue(largest.isGreaterThan(versions[i]));
     }
+  }
+  
+  @Test
+  void testToString() {
+    BusinessRule b = new BusinessRule();
+    b.setVersion("1.2.3-RC42");
+    assertThat(b.toString()).contains("1.2.3-RC42");
   }
 }
