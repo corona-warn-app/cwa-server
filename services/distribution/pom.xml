@@ -76,5 +76,9 @@
       <groupId>org.everit.json</groupId>
       <artifactId>org.everit.json.schema</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.vdurmont</groupId>
+      <artifactId>semver4j</artifactId>
+    </dependency>
   </dependencies>
 </project>
