@@ -205,7 +205,7 @@ public class BusinessRule {
     if (semver == null) {
       semver = new Semver(getVersion(), SemverType.LOOSE);
       if (semver.getSuffixTokens().length > 0
-          && semver.getSuffixTokens()[0].chars().anyMatch(c -> Character.isDigit(c))) {
+          && semver.getSuffixTokens()[0].chars().anyMatch(Character::isDigit)) {
         logger.warn("Version-Sorting might not be correct, because we found number in SuffixToken for '{}'", this);
       }
     }
