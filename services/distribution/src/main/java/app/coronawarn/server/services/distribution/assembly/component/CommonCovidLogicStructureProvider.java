@@ -4,6 +4,7 @@ import static app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleT
 
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
@@ -43,8 +44,12 @@ public class CommonCovidLogicStructureProvider {
    */
   public Optional<Writable<WritableOnDisk>> getCommonCovidLogicRules() {
     try {
-      return getCommonCovidLogicRulesDirectory(
+      Optional<Writable<WritableOnDisk>> cclDirectory = getCommonCovidLogicRulesDirectory(
           distributionServiceConfig.getDigitalGreenCertificate().getCclDirectory());
+      if (cclDirectory.isPresent() && ((DirectoryOnDisk) cclDirectory.get()).getWritables().isEmpty()) {
+        return Optional.empty();
+      }
+      return cclDirectory;
     } catch (FetchBusinessRulesException e) {
       logger.error(String
           .format("%s archive was not overwritten because config business rules could not been fetched: ",
