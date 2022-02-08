@@ -57,6 +57,7 @@ class CommonCovidLogicStructureProviderTest {
 
   @Test
   void shouldCreateCorrectFileStructureForCommonCovidLogicRules() {
+    distributionServiceConfig.getDigitalGreenCertificate().setCclAllowList(new String[]{"CCL-DE-0001", "CCL-DE-0003"});
     Optional<Writable<WritableOnDisk>> commonCovidLogicRules = underTest.getCommonCovidLogicRules();
     Collection<String> archiveContent;
 
@@ -67,4 +68,14 @@ class CommonCovidLogicStructureProviderTest {
     assertEquals("ccl", commonCovidLogicRules.get().getName());
     assertThat(archiveContent).containsAll(Set.of("config-v1", "config-v2"));
   }
+
+
+  @Test
+  void shouldNotCreateFileStructureForCommonCovidLogicRules() {
+    distributionServiceConfig.getDigitalGreenCertificate().setCclAllowList(new String[]{"CCL-DE-0100"});
+    Optional<Writable<WritableOnDisk>> commonCovidLogicRules = underTest.getCommonCovidLogicRules();
+
+    assertThat(commonCovidLogicRules).isEmpty();
+  }
 }
+
