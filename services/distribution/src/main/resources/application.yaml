@@ -254,7 +254,7 @@ services:
       allow-list-signature: ${DCC_VALIDATION_SERVICE_ALLOWLIST_SIGNATURE}
       allow-list-certificate: ${DCC_VALIDATION_SERVICE_ALLOWLIST_CERTIFICATE}
       ccl-directory: ${COMMON_COVID_LOGIC:ccl}
-      ccl-allow-list: CCL-DE-0001
+      ccl-allow-list: ${CCL_ALLOW_LIST:CCL-DE-0001}
       dsc-client:
         public-key: ${DSC_PUBLIC_KEY:MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIxHvrv8jQx9OEzTZbsx1prQVQn/3ex0gMYf6GyaNBW0QKLMjrSDeN6HwSPM0QzhvhmyQUixl6l88A7Zpu5OWSw==}
         base-url: ${DSC_BASE_PATH:https://de.test.dscg.ubirch.com}
