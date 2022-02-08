@@ -1,20 +1,25 @@
 package app.coronawarn.server.services.distribution.dgc;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.core.util.VersionUtil;
+import com.vdurmont.semver4j.Semver;
+import com.vdurmont.semver4j.Semver.SemverType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BusinessRule {
+
+  private static final Logger logger = LoggerFactory.getLogger(BusinessRule.class);
 
   private List<String> affectedFields;
   private String certificateType;
@@ -29,6 +34,9 @@ public class BusinessRule {
   private String validFrom;
   private String validTo;
   private String version;
+
+  @JsonIgnore
+  private transient Semver semver;
 
   /**
    * Filters all older {@link BusinessRule}s and keeps only one for each available major version.
@@ -63,8 +71,8 @@ public class BusinessRule {
   static Map<Integer, BusinessRule> groupByMajor(final Collection<BusinessRule> rules) {
     final Map<Integer, BusinessRule> result = new HashMap<>();
     for (final BusinessRule rule : rules) {
-      final Version version = rule.version();
-      result.merge(version.getMajorVersion(), rule, (r1, r2) -> r1.isSameMajorVersionButNewer(r2) ? r1 : r2);
+      final Semver version = rule.version();
+      result.merge(version.getMajor(), rule, (r1, r2) -> r1.isSameMajorVersionButNewer(r2) ? r1 : r2);
     }
     return result;
   }
@@ -85,6 +93,7 @@ public class BusinessRule {
   @JsonProperty("Version")
   public void setVersion(String version) {
     this.version = version;
+    semver = null;
   }
 
   public String getCountry() {
@@ -186,13 +195,26 @@ public class BusinessRule {
     this.logic = logic;
   }
 
-  Version version() {
-    return VersionUtil.parseVersion(getVersion(), null, null);
+  @Override
+  public String toString() {
+    return "{\"BusinessRule\":{\"country\":\"" + country + "\",\"identifier\":\"" + identifier + "\",\"type\":\"" + type
+        + "\",\"version\":\"" + version + "\"}}";
+  }
+
+  Semver version() {
+    if (semver == null) {
+      semver = new Semver(getVersion(), SemverType.LOOSE);
+      if (semver.getSuffixTokens().length > 0
+          && semver.getSuffixTokens()[0].chars().anyMatch(Character::isDigit)) {
+        logger.warn("Version-Sorting might not be correct, because we found number in SuffixToken for '{}'", this);
+      }
+    }
+    return semver;
   }
 
   boolean isSameMajorVersionButNewer(final BusinessRule other) {
-    return version().getMajorVersion() == other.version().getMajorVersion()
-        && version().compareTo(other.version()) >= 0;
+    return version().getMajor().equals(other.version().getMajor())
+        && version().isGreaterThanOrEqualTo(other.version());
   }
 
   public static class Description {
