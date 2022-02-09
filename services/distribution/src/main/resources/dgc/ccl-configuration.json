@@ -36,7 +36,7 @@
     "Version": {
       "type": "string",
       "description": "Version of the rule (Semver)",
-      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+      "pattern": "^\\d+\\.\\d+\\.\\d+(-rc\\.\\d+)?$"
     },
     "SchemaVersion": {
       "type": "string",
