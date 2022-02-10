@@ -15,6 +15,8 @@ import app.coronawarn.server.services.submission.validation.ValidSubmissionPaylo
 import app.coronawarn.server.services.submission.verification.EventTanVerifier;
 import app.coronawarn.server.services.submission.verification.TanVerificationService;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
+import feign.FeignException;
+import feign.RetryableException;
 import io.micrometer.core.annotation.Timed;
 import java.util.ArrayList;
 import java.util.List;
@@ -138,6 +140,12 @@ public class SubmissionController {
             .header(CWA_SAVED_CHECKINS_HEADER, String.valueOf(checkinsStorageResult.getNumberOfSavedCheckins()))
             .build());
       }
+    } catch (RetryableException e) {
+      logger.error("Verification Service could not be reached after retry mechanism.", e);
+      deferredResult.setErrorResult(e);
+    } catch (FeignException e) {
+      logger.error("Verification Service could not be reached.", e);
+      deferredResult.setErrorResult(e);
     } catch (Exception e) {
       deferredResult.setErrorResult(e);
     } finally {
