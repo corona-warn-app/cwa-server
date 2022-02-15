@@ -1,7 +1,7 @@
 package app.coronawarn.server.common.persistence.repository;
 
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
-import java.util.List;
+import java.util.Collection;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
@@ -17,10 +17,16 @@ import org.springframework.stereotype.Repository;
 public interface EfgsUploadKeyRepository extends FederationUploadKeyRepository {
 
   @Query("SELECT * FROM federation_upload_key WHERE (batch_tag is null or batch_tag = '')")
-  List<FederationUploadKey> findAllUploadableKeys();
+  Collection<FederationUploadKey> findAllUploadableKeys();
 
+  /**
+   * Inefficient - only use for testing.
+   * 
+   * @deprecated only use for testing!
+   */
+  @Deprecated
   @Query("SELECT * FROM federation_upload_key")
-  List<FederationUploadKey> findAll();
+  Iterable<FederationUploadKey> findAll();
 
   @Modifying
   @Query("update federation_upload_key set batch_tag = :batchTag where key_data = :keyData")
