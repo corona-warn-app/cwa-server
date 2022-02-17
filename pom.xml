@@ -68,7 +68,7 @@
     <guava.version>31.0.1-jre</guava.version>
     <jackson.version>2.13.1</jackson.version>
     <test-containers.version>1.16.3</test-containers.version>
-    <postgresql.version>42.3.2</postgresql.version>
+    <postgresql.version>42.3.3</postgresql.version>
     <wiremock.version>2.32.0</wiremock.version>
     <httpclient.version>4.5.13</httpclient.version>
     <junit.version>4.13.2</junit.version>
@@ -514,7 +514,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.10.0</version>
+          <version>3.11.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
