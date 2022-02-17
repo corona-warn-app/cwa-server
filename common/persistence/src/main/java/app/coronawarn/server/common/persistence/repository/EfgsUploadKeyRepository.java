@@ -24,7 +24,7 @@ public interface EfgsUploadKeyRepository extends FederationUploadKeyRepository {
    * 
    * @deprecated only use for testing!
    */
-  @Deprecated
+  @Deprecated(forRemoval = false, since = "2.19")
   @Query("SELECT * FROM federation_upload_key")
   Iterable<FederationUploadKey> findAll();
 

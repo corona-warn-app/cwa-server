@@ -23,7 +23,7 @@ public interface ChgsUploadKeyRepository extends FederationUploadKeyRepository {
    * 
    * @deprecated only use for testing!
    */
-  @Deprecated
+  @Deprecated(forRemoval = false, since = "2.19")
   @Query("SELECT * FROM chgs_upload_key")
   Iterable<FederationUploadKey> findAll();
 
