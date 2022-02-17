@@ -52,7 +52,7 @@ public class DigitalCertificatesDirectory extends IndexDirectoryOnDisk<String> {
         ArchiveOnDisk archiveToPublish = new ArchiveOnDisk(dgcConfig.getValuesetsFileName());
         archiveToPublish.addWritable(new FileOnDisk(EXPORT_BINARY_FILENAME, valueSets.toByteArray()));
         logger.info("Writing digital green certificate value sets to {}/{}/{}.",
-            dgcConfig.getDgcDirectory(), lang, archiveToPublish.getName());
+            dgcConfig.getDgcDirectory(), lang.peek(), archiveToPublish.getName());
         return Optional.of(new DistributionArchiveSigningDecorator(
             archiveToPublish, cryptoProvider, distributionServiceConfig));
       });
