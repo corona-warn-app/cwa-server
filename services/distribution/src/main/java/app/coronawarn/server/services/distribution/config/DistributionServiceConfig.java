@@ -109,11 +109,11 @@ public class DistributionServiceConfig {
   public Integer getDaysToPublish() {
     return daysToPublish == null ? retentionDays : daysToPublish;
   }
-  
+
   public void setDaysToPublish(Integer daysToPublish) {
     this.daysToPublish = daysToPublish;
   }
-  
+
   public Integer getExpiryPolicyMinutes() {
     return expiryPolicyMinutes;
   }
@@ -1631,6 +1631,10 @@ public class DistributionServiceConfig {
 
       private DgcBlocklistParameters blockListParameters;
 
+      private String iosDgcReissueServicePublicKeyDigest;
+
+      private String androidDgcReissueServicePublicKeyDigest;
+
       public DgcTestCertificateParameters getTestCertificateParameters() {
         return dgcTestCertificateParameters;
       }
@@ -1653,6 +1657,22 @@ public class DistributionServiceConfig {
 
       public void setBlockListParameters(DgcBlocklistParameters blockListParameters) {
         this.blockListParameters = blockListParameters;
+      }
+
+      public String getIosDgcReissueServicePublicKeyDigest() {
+        return iosDgcReissueServicePublicKeyDigest;
+      }
+
+      public void setIosDgcReissueServicePublicKeyDigest(String iosDgcReissueServicePublicKeyDigest) {
+        this.iosDgcReissueServicePublicKeyDigest = iosDgcReissueServicePublicKeyDigest;
+      }
+
+      public String getAndroidDgcReissueServicePublicKeyDigest() {
+        return androidDgcReissueServicePublicKeyDigest;
+      }
+
+      public void setAndroidDgcReissueServicePublicKeyDigest(String androidDgcReissueServicePublicKeyDigest) {
+        this.androidDgcReissueServicePublicKeyDigest = androidDgcReissueServicePublicKeyDigest;
       }
 
       public static class DgcTestCertificateParameters {
