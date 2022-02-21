@@ -179,7 +179,8 @@ public class ApplicationConfigurationV2PublicationConfig {
         .setErrorLogSharingParameters(buildErrorLogSharingParametersAndroid(distributionServiceConfig))
         .setPresenceTracingParameters(buildPresenceTracingParameters(distributionServiceConfig))
         .setCoronaTestParameters(coronaTestParameters)
-        .setDgcParameters(buildDgcParameters(distributionServiceConfig))
+        .setDgcParameters(buildDgcParameters(distributionServiceConfig, distributionServiceConfig
+            .getAppConfigParameters().getDgcParameters().getAndroidDgcReissueServicePublicKeyDigest()))
         .build();
   }
 
@@ -409,7 +410,8 @@ public class ApplicationConfigurationV2PublicationConfig {
         .setErrorLogSharingParameters(buildErrorLogSharingParametersIos())
         .setPresenceTracingParameters(buildPresenceTracingParameters(distributionServiceConfig))
         .setCoronaTestParameters(coronaTestParameters)
-        .setDgcParameters(buildDgcParameters(distributionServiceConfig))
+        .setDgcParameters(buildDgcParameters(distributionServiceConfig, distributionServiceConfig
+            .getAppConfigParameters().getDgcParameters().getIosDgcReissueServicePublicKeyDigest()))
         .build();
   }
 
@@ -528,7 +530,7 @@ public class ApplicationConfigurationV2PublicationConfig {
   }
 
   private DGCParameters buildDgcParameters(
-      DistributionServiceConfig distributionServiceConfig) {
+      DistributionServiceConfig distributionServiceConfig, String serviceKeyDigest) {
     final Integer waitAfterPublicKeyRegistrationInSeconds = distributionServiceConfig.getAppConfigParameters()
         .getDgcParameters().getTestCertificateParameters().getWaitAfterPublicKeyRegistrationInSeconds();
     final Integer waitForRetryInSeconds = distributionServiceConfig.getAppConfigParameters().getDgcParameters()
@@ -545,13 +547,14 @@ public class ApplicationConfigurationV2PublicationConfig {
             .addAllBlockedUvciChunks(buildBlockedUvciChunks(distributionServiceConfig.getAppConfigParameters()
                 .getDgcParameters().getBlockListParameters().getBlockedUvciChunks()))
             .build())
+        .setReissueServicePublicKeyDigest(ByteString.copyFromUtf8(serviceKeyDigest))
         .build();
   }
 
   private List<DGCBlockedUVCIChunk> buildBlockedUvciChunks(
       List<DgcBlockedUvciChunk> deserializedBlockedUvciChunks) {
     return deserializedBlockedUvciChunks.stream().filter(dgcBlockedUvciChunk ->
-        TimeUtils.getNow().getEpochSecond() >= dgcBlockedUvciChunk.getValidFrom())
+            TimeUtils.getNow().getEpochSecond() >= dgcBlockedUvciChunk.getValidFrom())
         .map(deserializedBlockedUvciChunk -> DGCBlockedUVCIChunk.newBuilder()
             .addAllIndices(deserializedBlockedUvciChunk.getIndices())
             .setHash(ByteString.copyFrom(deserializedBlockedUvciChunk.getHash()))

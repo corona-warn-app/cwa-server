@@ -108,6 +108,8 @@ services:
           # '[{"indices":[0],"hash":"fcde2b2edba5"},{"indices":[0,2],"hash":"1b68fbf8fb94"}]'
           # note that `hash` shall be parsed from a hex string to a byte sequence
           blocked-uvci-chunks: ${DGC_BLOCKED_UVCI_CHUNKS:[{"indices":[0],"hash":"9B09CAFEC0A6808411C348880C9C2D920646DFB980B5C959DC6EBF8A19B98120","validFrom":1636040446},{"indices":[0,2],"hash":"7D5D5B336E903086D64D1207EC6E957A4B1301026699011026F84A5156317C2B","validFrom":1951642095}]}
+        ios-dgc-reissue-service-public-key-digest: ${IOS_DGC_REISSUE_SERVICE_PUBLIC_KEY_DIGEST:}
+        android-dgc-reissue-service-public-key-digest: ${ANDROID_DGC_REISSUE_SERVICE_PUBLIC_KEY_DIGEST:}
       ios-key-download-parameters:
         revoked-day-packages: "[]"
         revoked-hour-packages: "[]"
