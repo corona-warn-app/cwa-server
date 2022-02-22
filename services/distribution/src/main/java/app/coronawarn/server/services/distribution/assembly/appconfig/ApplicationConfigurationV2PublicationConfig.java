@@ -530,7 +530,7 @@ public class ApplicationConfigurationV2PublicationConfig {
   }
 
   private DGCParameters buildDgcParameters(
-      DistributionServiceConfig distributionServiceConfig, String serviceKeyDigest) {
+      DistributionServiceConfig distributionServiceConfig, byte[] serviceKeyDigest) {
     final Integer waitAfterPublicKeyRegistrationInSeconds = distributionServiceConfig.getAppConfigParameters()
         .getDgcParameters().getTestCertificateParameters().getWaitAfterPublicKeyRegistrationInSeconds();
     final Integer waitForRetryInSeconds = distributionServiceConfig.getAppConfigParameters().getDgcParameters()
@@ -547,7 +547,7 @@ public class ApplicationConfigurationV2PublicationConfig {
             .addAllBlockedUvciChunks(buildBlockedUvciChunks(distributionServiceConfig.getAppConfigParameters()
                 .getDgcParameters().getBlockListParameters().getBlockedUvciChunks()))
             .build())
-        .setReissueServicePublicKeyDigest(ByteString.copyFromUtf8(serviceKeyDigest))
+        .setReissueServicePublicKeyDigest(ByteString.copyFrom((serviceKeyDigest)))
         .build();
   }
 
