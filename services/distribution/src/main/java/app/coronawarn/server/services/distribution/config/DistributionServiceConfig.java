@@ -1659,16 +1659,16 @@ public class DistributionServiceConfig {
         this.blockListParameters = blockListParameters;
       }
 
-      public String getIosDgcReissueServicePublicKeyDigest() {
-        return iosDgcReissueServicePublicKeyDigest;
+      public byte[] getIosDgcReissueServicePublicKeyDigest() {
+        return Hex.decode(iosDgcReissueServicePublicKeyDigest);
       }
 
       public void setIosDgcReissueServicePublicKeyDigest(String iosDgcReissueServicePublicKeyDigest) {
         this.iosDgcReissueServicePublicKeyDigest = iosDgcReissueServicePublicKeyDigest;
       }
 
-      public String getAndroidDgcReissueServicePublicKeyDigest() {
-        return androidDgcReissueServicePublicKeyDigest;
+      public byte[] getAndroidDgcReissueServicePublicKeyDigest() {
+        return Hex.decode(androidDgcReissueServicePublicKeyDigest);
       }
 
       public void setAndroidDgcReissueServicePublicKeyDigest(String androidDgcReissueServicePublicKeyDigest) {
