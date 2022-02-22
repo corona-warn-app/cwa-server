@@ -131,8 +131,8 @@ services:
         value: ${DCC_PERSON_COUNT_MAX:20}
       - label: dcc-person-warn-threshold
         value: ${DCC_PERSON_WARN_THRESHOLD:4}
-      - label: dcc-admission-check-scenarios-disabled
-        value: ${DCC_ADMISSION_CHECK_SCENARIOS_DISABLED:1}
+      - label: ccl-admission-check-scenarios-disabled
+        value: ${CCL_ADMISSION_CHECK_SCENARIOS_DISABLED:1}
     supported-countries: ${SUPPORTED_COUNTRIES}
     app-versions:
       latest-ios: ${IOS_LATEST_VERSION:1.5.3}
