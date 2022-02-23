@@ -72,7 +72,7 @@
     <wiremock.version>2.32.0</wiremock.version>
     <httpclient.version>4.5.13</httpclient.version>
     <junit.version>4.13.2</junit.version>
-    <tomcat-embed-core.version>9.0.58</tomcat-embed-core.version>
+    <tomcat.version>9.0.58</tomcat.version>
     <findify-s3mock.version>0.2.6</findify-s3mock.version>
     <checkstyle.version>9.3</checkstyle.version>
     <semver4j.version>3.1.0</semver4j.version>
@@ -318,7 +318,17 @@
       <dependency>
         <groupId>org.apache.tomcat.embed</groupId>
         <artifactId>tomcat-embed-core</artifactId>
-        <version>${tomcat-embed-core.version}</version>
+        <version>${tomcat.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat.embed</groupId>
+        <artifactId>tomcat-embed-el</artifactId>
+        <version>${tomcat.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat</groupId>
+        <artifactId>tomcat-annotations-api</artifactId>
+        <version>${tomcat.version}</version>
       </dependency>
       <dependency>
         <groupId>io.findify</groupId>
