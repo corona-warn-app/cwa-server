@@ -326,7 +326,7 @@
         <version>${tomcat.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.tomcat.embed</groupId>
+        <groupId>org.apache.tomcat</groupId>
         <artifactId>tomcat-annotations-api</artifactId>
         <version>${tomcat.version}</version>
       </dependency>
