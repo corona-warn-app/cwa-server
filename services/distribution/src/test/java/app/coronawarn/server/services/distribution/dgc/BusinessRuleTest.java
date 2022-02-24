@@ -1,6 +1,7 @@
 package app.coronawarn.server.services.distribution.dgc;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -178,6 +179,12 @@ class BusinessRuleTest {
     }
   }
 
+  /**
+   * <a 
+   * href="https://github.com/corona-warn-app/cwa-server/blob/main/services/distribution/src/main/resources/dgc/ccl-configuration.json#L39">
+   * ./services/distribution/src/main/resources/dgc/ccl-configuration.json # properties/Version/pattern
+   * </a>
+   */
   @Test
   void testCclVersionPattern() {
     // see dgc\ccl-configuration.json #Version:pattern
@@ -187,8 +194,11 @@ class BusinessRuleTest {
         "1.0.0-beta.2", "1.0.0-beta.11", "1.0.0-rc.1", "1.0.0", "1.0.0-alpha+20130313144700",
         "1.0.0-alpha+2013031314422", "1.2.3-RC42", "1.0.0-rc.6", "1.0.0-rc.60", "1.0.0-RC.30", "1.0.0-RC.3" };
 
+    BusinessRule b = new BusinessRule();
     for (String string : strings) {
       assertTrue(p.matcher(string).matches(), string + " doesn't match " + p);
+      b.setVersion(string);
+      assertNotNull(b.version());
     }
   }
 }
