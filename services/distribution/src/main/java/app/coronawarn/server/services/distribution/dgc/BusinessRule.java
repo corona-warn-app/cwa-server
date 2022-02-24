@@ -201,6 +201,13 @@ public class BusinessRule {
         + "\",\"version\":\"" + version + "\"}}";
   }
 
+  /**
+   * Creates {@link Semver} from {@link #version}.
+   * When checking versions, please also have a look at the allowed "Version" pattern in the json-schema files. E.g.
+   * dgc\ccl-configuration.json
+   * 
+   * @return {@link #version} parsed and converted into {@link Semver}.
+   */
   Semver version() {
     if (semver == null) {
       semver = new Semver(getVersion(), SemverType.LOOSE);
