@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import org.junit.jupiter.api.Test;
 
 class BusinessRuleTest {
@@ -136,11 +137,58 @@ class BusinessRuleTest {
       assertTrue(largest.isGreaterThan(versions[i]));
     }
   }
-  
+
   @Test
   void testToString() {
     BusinessRule b = new BusinessRule();
     b.setVersion("1.2.3-RC42");
     assertThat(b.toString()).contains("1.2.3-RC42");
+  }
+
+  /**
+   * https://semver.org/#spec-item-10
+   */
+  @Test
+  void testBuildMetadataVersions() {
+    String[] strings = new String[] { "1.0.0-alpha+20130313144700", "1.0.0-alpha+2013031314422" };
+
+    BusinessRule b1 = new BusinessRule();
+    BusinessRule b2 = new BusinessRule();
+    for (int i = 0; i < strings.length - 1; i++) {
+      b1.setVersion(strings[i]);
+      b2.setVersion(strings[i + 1]);
+      assertEquals(0, b1.version().compareTo(b2.version()));
+    }
+  }
+
+  /**
+   * https://semver.org/#spec-item-11
+   */
+  @Test
+  void testSemverOrgSpecItem11() {
+    String[] strings = new String[] { "1.0.0-alpha", "1.0.0-alpha.1", "1.0.0-alpha.beta", "1.0.0-beta",
+        "1.0.0-beta.2", "1.0.0-beta.11", "1.0.0-rc.1", "1.0.0" };
+
+    BusinessRule b1 = new BusinessRule();
+    BusinessRule b2 = new BusinessRule();
+    for (int i = 0; i < strings.length - 1; i++) {
+      b1.setVersion(strings[i]);
+      b2.setVersion(strings[i + 1]);
+      assertEquals(-1, b1.version().compareTo(b2.version()));
+    }
+  }
+
+  @Test
+  void testCclVersionPattern() {
+    // see dgc\ccl-configuration.json #Version:pattern
+    Pattern p = Pattern.compile("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(-\\w+(\\.\\w+)?)?(\\+\\w+)?$");
+
+    String[] strings = new String[] { "1.0.0-alpha", "1.0.0-alpha.1", "1.0.0-alpha.beta", "1.0.0-beta",
+        "1.0.0-beta.2", "1.0.0-beta.11", "1.0.0-rc.1", "1.0.0", "1.0.0-alpha+20130313144700",
+        "1.0.0-alpha+2013031314422", "1.2.3-RC42", "1.0.0-rc.6", "1.0.0-rc.60", "1.0.0-RC.30", "1.0.0-RC.3" };
+
+    for (String string : strings) {
+      assertTrue(p.matcher(string).matches(), string + " doesn't match " + p);
+    }
   }
 }
