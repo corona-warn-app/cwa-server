@@ -1,6 +1,7 @@
 package app.coronawarn.server.services.distribution.dgc;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -11,6 +12,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import org.junit.jupiter.api.Test;
 
 class BusinessRuleTest {
@@ -136,11 +138,71 @@ class BusinessRuleTest {
       assertTrue(largest.isGreaterThan(versions[i]));
     }
   }
-  
+
   @Test
   void testToString() {
     BusinessRule b = new BusinessRule();
     b.setVersion("1.2.3-RC42");
     assertThat(b.toString()).contains("1.2.3-RC42");
+  }
+
+  /**
+   * https://semver.org/#spec-item-10
+   */
+  @Test
+  void testBuildMetadataVersions() {
+    String[] strings = new String[] { "1.0.0-alpha+20130313144700", "1.0.0-alpha+2013031314422" };
+
+    BusinessRule b1 = new BusinessRule();
+    BusinessRule b2 = new BusinessRule();
+    for (int i = 0; i < strings.length - 1; i++) {
+      b1.setVersion(strings[i]);
+      b2.setVersion(strings[i + 1]);
+      assertEquals(0, b1.version().compareTo(b2.version()));
+    }
+  }
+
+  /**
+   * https://semver.org/#spec-item-11
+   */
+  @Test
+  void testSemverOrgSpecItem11() {
+    String[] strings = new String[] { "1.0.0-alpha", "1.0.0-alpha.1", "1.0.0-alpha.beta", "1.0.0-beta",
+        "1.0.0-beta.2", "1.0.0-beta.11", "1.0.0-rc.1", "1.0.0" };
+
+    BusinessRule b1 = new BusinessRule();
+    BusinessRule b2 = new BusinessRule();
+    for (int i = 0; i < strings.length - 1; i++) {
+      b1.setVersion(strings[i]);
+      b2.setVersion(strings[i + 1]);
+      assertEquals(-1, b1.version().compareTo(b2.version()));
+    }
+  }
+
+  /**
+   * <a href=
+   * "https://github.com/corona-warn-app/cwa-server/blob/main/services/distribution/src/main/resources/dgc/ccl-configuration.json#L39">
+   * ./services/distribution/src/main/resources/dgc/ccl-configuration.json # properties/Version/pattern </a>
+   * 
+   * @see <a href="https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string">Is there
+   *      a suggested regular expression regex to check a semver string?</a>
+   */
+  @Test
+  void testCclVersionPattern() {
+    // https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
+    Pattern p = Pattern.compile(
+        "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$");
+
+    String[] strings = new String[] { "1.0.0-alpha", "1.0.0-alpha.1", "1.0.0-alpha.beta", "1.0.0-beta",
+        "1.0.0-beta.2", "1.0.0-beta.11", "1.0.0-rc.1", "1.0.0", "1.0.0-alpha+20130313144700",
+        "1.0.0-alpha+2013031314422", "1.2.3-RC42", "1.0.0-rc.6", "1.0.0-rc.60", "1.0.0-RC.30", "1.0.0-RC.3",
+        "1.0.0-alpha+001", "1.0.0+20130313144700", "1.0.0-beta+exp.sha.5114f85", "1.0.0+21AF26D3--117B344092BD" };
+
+    BusinessRule b = new BusinessRule();
+    for (String string : strings) {
+      assertTrue(p.matcher(string).matches(), string + " doesn't match " + p);
+      b.setVersion(string);
+      assertNotNull(b.version());
+    }
   }
 }
