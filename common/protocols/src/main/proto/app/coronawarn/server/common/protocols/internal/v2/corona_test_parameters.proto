@@ -6,8 +6,14 @@ option java_multiple_files = true;
 message CoronaTestParameters {
 
   CoronaRapidAntigenTestParameters coronaRapidAntigenTestParameters = 1;
+  CoronaPCRTestParameters coronaPCRTestParameters = 2;
 }
 
 message CoronaRapidAntigenTestParameters {
   uint32 hoursToDeemTestOutdated = 1;
+  uint32 hoursSinceSampleCollectionToEncourageRemoval = 2;
+}
+
+message CoronaPCRTestParameters {
+  uint32 hoursSinceTestRegistrationToEncourageRemoval = 1;
 }
