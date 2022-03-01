@@ -72,7 +72,7 @@
     <wiremock.version>2.32.0</wiremock.version>
     <httpclient.version>4.5.13</httpclient.version>
     <junit.version>4.13.2</junit.version>
-    <tomcat.version>9.0.58</tomcat.version>
+    <tomcat.version>9.0.59</tomcat.version>
     <findify-s3mock.version>0.2.6</findify-s3mock.version>
     <checkstyle.version>10.0</checkstyle.version>
     <semver4j.version>3.1.0</semver4j.version>
