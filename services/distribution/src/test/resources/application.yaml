@@ -92,10 +92,6 @@ services:
         value: ${DCC_PERSON_WARN_THRESHOLD:4}
       - label: dcc-admission-check-scenarios-enabled
         value: ${DCC_ADMISSION_CHECK_SCENARIOS_ENABLED:0}
-      - label: max-exposure-age-in-days
-        value: ${MAX_EXPOSURE_AGE_IN_DAYS}
-      - label: max-check-in-age-in-days
-        value: ${MAX_CHECK_IN_AGE_IN_DAYS}
     supported-countries: ${SUPPORTED_COUNTRIES:DE,FR,NL,IE}
     app-versions:
       latest-ios: ${IOS_LATEST_VERSION:1.5.3}
