@@ -62,6 +62,7 @@ risk-calculation-parameters:
         max: 999999
         max-exclusive: false
       risk-level: 2 # 2 = High
+  max-check-in-age-in-days: 10
 
 submission-parameters:
   duration-filters:
