@@ -4,10 +4,10 @@ coronaRapidAntigenTestParameters:
   hoursToDeemTestOutdated: 48
     # validation rule for hoursSinceSampleCollectionToEncourageRemoval:
     #   * > 0
-  hoursSinceSampleCollectionToEncourageRemoval: 48 # tbd (value set for successful tests)
+  hoursSinceSampleCollectionToShowRiskCard: 48 # tbd (value set for successful tests)
 coronaPCRTestParameters:
   # validation rule for hoursSinceTestRegistrationToEncourageRemoval:
   #   * > 0
-  hoursSinceTestRegistrationToEncourageRemoval: 264 # 11 days x 24 hours
+  hoursSinceTestRegistrationToShowRiskCard: 264 # 11 days x 24 hours
 
 
