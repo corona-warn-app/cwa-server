@@ -21,8 +21,8 @@ class CoronaTestParametersTest {
     assertThat(coronaTestParameters.getCoronaRapidAntigenTestParameters()).isNotNull();
     assertThat(coronaTestParameters.getCoronaRapidAntigenTestParameters().getHoursToDeemTestOutdated()).isEqualTo(48);
     assertThat(coronaTestParameters.getCoronaRapidAntigenTestParameters()
-        .getHoursSinceSampleCollectionToEncourageRemoval()).isEqualTo(48);
-    assertThat(coronaTestParameters.getCoronaPCRTestParameters().getHoursSinceTestRegistrationToEncourageRemoval())
+        .getHoursSinceSampleCollectionToShowRiskCard()).isEqualTo(48);
+    assertThat(coronaTestParameters.getCoronaPCRTestParameters().getHoursSinceTestRegistrationToShowRiskCard())
         .isEqualTo(264);
   }
 }

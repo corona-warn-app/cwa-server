@@ -11,9 +11,9 @@ message CoronaTestParameters {
 
 message CoronaRapidAntigenTestParameters {
   uint32 hoursToDeemTestOutdated = 1;
-  uint32 hoursSinceSampleCollectionToEncourageRemoval = 2;
+  uint32 hoursSinceSampleCollectionToShowRiskCard = 2;
 }
 
 message CoronaPCRTestParameters {
-  uint32 hoursSinceTestRegistrationToEncourageRemoval = 1;
+  uint32 hoursSinceTestRegistrationToShowRiskCard = 1;
 }
