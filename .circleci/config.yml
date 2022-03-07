@@ -1,18 +1,14 @@
 version: 2.1
 jobs:
   build:
-    working_directory: ~/cwa-server
-    machine:
-      image: ubuntu-2004:202101-01
-      docker_layer_caching: true
+    docker:
+      - image: cimg/openjdk:11.0
     steps:
       - checkout
       - run:
-          name: Update to OpenJDK 11
+          name: Check OpenJDK Version
           command: |
-            sudo apt-get install openjdk-11-jre
-            sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java
-            java -version
+             java -version
       - run:
           name: Generate cumulative pom.xml checksum
           command: |
@@ -21,16 +17,17 @@ jobs:
           when: always
       - restore_cache:
           key: cwa-server-{{ checksum "~/pom-checksum" }}
-      - run: ./mvnw --batch-mode dependency:go-offline
+      - run: 
+          name: Fetch dependencies
+          command: |
+            ./mvnw --batch-mode dependency:go-offline
       - run:
           name: JUnit Tests, Integration Tests
           command: |
-            export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
             ./mvnw --batch-mode -P integration-test verify --fail-fast
       - run:
           name: Analyze on SonarCloud
           command: |
-            export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
             ./mvnw --batch-mode sonar:sonar --fail-never
       - save_cache:
           paths:
