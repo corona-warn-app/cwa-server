@@ -8,6 +8,7 @@ jobs:
       - run:
           name: Check OpenJDK Version
           command: |
+            sudo apt-get update
             sudo apt-get install openjdk-11-jre
             java -version
       - run:
