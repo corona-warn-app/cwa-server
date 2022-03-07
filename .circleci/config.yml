@@ -2,13 +2,14 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: cimg/openjdk:11.0
+      - image: cimg/base:stable-LTS
     steps:
       - checkout
       - run:
           name: Check OpenJDK Version
           command: |
-             java -version
+            sudo apt-get install openjdk-11-jre
+            java -version
       - run:
           name: Generate cumulative pom.xml checksum
           command: |
