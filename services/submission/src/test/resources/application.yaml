@@ -42,7 +42,7 @@ services:
       supported-countries: DE,FR,IT
       default-origin-country: DE
       checkins:
-        accepted-event-date-threshold-days: 15
+        accepted-event-date-threshold-days: ${DAYS_TO_PUBLISH:10}
     verification:
       base-url: http://localhost:1234
       path: /version/v1/tan/verify
