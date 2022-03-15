@@ -1,0 +1,231 @@
+---
+logging:
+  level:
+    org:
+      springframework: info
+    root: info
+
+services:
+  distribution:
+    output-file-name: index
+    output-file-name-v2: index-v2
+    retention-days: 14
+    expiry-policy-minutes: 120
+    shifting-policy-threshold: 5
+    maximum-number-of-keys-per-bundle: 600000
+    include-incomplete-days: false
+    include-incomplete-hours: false
+    eu-package-name: EUR
+    apply-policies-for-all-countries: false
+    card-id-sequence: ${STATS_CARD_ID_SEQUENCE:[10,2,8,9,1,3,4,5,6,7]}
+    connection-pool-size: 200
+    default-archive-name: export.bin
+    paths:
+      output: out
+      privatekey: classpath:keys/private.pem
+    tek-export:
+      file-name: export.bin
+      file-header: EK Export v1
+      file-header-width: 16
+    api:
+      version-path: version
+      version-v1: v1
+      version-v2: v2
+      country-path: country
+      # This is used to generate the application configuration directory for Germany
+      origin-country: DE
+      date-path: date
+      hour-path: hour
+      diagnosis-keys-path: diagnosis-keys
+      trace-warnings-path: twp
+      parameters-path: configuration
+      app-config-file-name: app_config
+      app-config-v2-android-file-name: app_config_android
+      app-config-v2-ios-file-name: app_config_ios
+      statistics-file-name: stats
+      local-statistics-file-name: local_stats
+    signature:
+      app-bundle-id: de.rki.coronawarnapp
+      verification-key-id: 262
+      verification-key-version: v1
+      algorithm-oid: 1.2.840.10045.4.3.2
+      algorithm-name: SHA256withECDSA
+      file-name: export.sig
+      security-provider: BC
+    # S3 object store configuration
+    objectstore:
+      access-key: ${CWA_OBJECTSTORE_ACCESSKEY:accessKey1}
+      secret-key: ${CWA_OBJECTSTORE_SECRETKEY:verySecretKey1}
+      endpoint: ${CWA_OBJECTSTORE_ENDPOINT:http://localhost}
+      bucket: ${CWA_OBJECTSTORE_BUCKET:cwa}
+      port: ${CWA_OBJECTSTORE_PORT:8003}
+      set-public-read-acl-on-put-object: true
+      retry-attempts: 3
+      retry-backoff: 1
+      max-number-of-failed-operations: 5
+      max-number-of-s3-threads: 2
+      force-update-keyfiles: ${FORCE_UPDATE_KEYFILES:false}
+      hour-file-retention-days: 2
+    statistics:
+      statistic-path: stats/statistic_data.json
+      local-statistic-path: stats/local_statistic_data_processing_test.json
+      access-key: fakeAccessKey
+      secret-key: secretKey
+      endpoint: https://localhost
+      bucket: ${STATS_S3_BUCKET:obs-cwa-public-dev}
+
+    app-features:
+      - label: isPlausibleDeniabilityActive
+        value: ${PLAUSIBLE_DENIABILITY_ACTIVE:1}
+      - label: unencrypted-checkins-enabled
+        value: ${EVREG_UNENCRYPTED_CHECKINS_ENABLED:0}
+    supported-countries: ${SUPPORTED_COUNTRIES:DE,FR,NL,IE}
+    app-versions:
+      latest-ios: ${IOS_LATEST_VERSION:1.5.3}
+      min-ios: ${IOS_MIN_VERSION:1.5.3}
+      latest-android: ${ANDROID_LATEST_VERSION:1.5.1}
+      min-android: ${ANDROID_MIN_VERSION:1.5.1}
+      min-android-version-code: ${ANDROID_MIN_VERSION_CODE:48}
+      latest-android-version-code: ${ANDROID_LATEST_VERSION_CODE:48}
+    app-config-parameters:
+      dgcParameters:
+        testCertificateParameters:
+          # validation rule for waitAfterPublicKeyRegistrationInSeconds:
+          #   * must be a number
+          #   * >= 0
+          #   * <= 60
+          waitAfterPublicKeyRegistrationInSeconds: ${DGC_TC_WAIT_AFTER_PUBLIC_KEY_REGISTRATION_IN_SECONDS:10}
+          # validation rule for waitForRetryInSeconds:
+          #   * must be a number
+          #   * >= 0
+          #   * <= 60
+          waitForRetryInSeconds: ${DGC_TC_WAIT_FOR_RETRY_IN_SECONDS:10}
+        expiration-threshold-in-days: ${DGC_EXPIRATION_THRESHOLD_IN_DAYS:14}
+        block-list-parameters:
+          # the value shall be parsed as a JSON string to
+          # generate the individual items, e.g.
+          # '[{"indices":[0],"hash":"fcde2b2edba5"},{"indices":[0,2],"hash":"1b68fbf8fb94"}]'
+          # note that `hash` shall be parsed from a hex string to a byte sequence
+          blocked-uvci-chunks: ${DGC_BLOCKED_UVCI_CHUNKS:[{"indices":[0],"hash":"9B09CAFEC0A6808411C348880C9C2D920646DFB980B5C959DC6EBF8A19B98120","validFrom":1636040446},{"indices":[0,2],"hash":"7D5D5B336E903086D64D1207EC6E957A4B1301026699011026F84A5156317C2B","validFrom":1951642095}]}
+      ios-key-download-parameters:
+        revoked-day-packages: "[]"
+        revoked-hour-packages: "[]"
+      android-key-download-parameters:
+        revoked-day-packages: "[]"
+        revoked-hour-packages: "[]"
+        download-timeout-in-seconds: 30
+        overall-timeout-in-seconds: 480
+      ios-exposure-detection-parameters:
+        max-exposure-detections-per-interval: 6
+      android-exposure-detection-parameters:
+        max-exposure-detections-per-interval: 6
+        overall-timeout-in-seconds: 900
+      ios-event-driven-user-survey-parameters:
+        otp-query-parameter-name: otp
+        survey-on-high-risk-enabled: true
+        survey-on-high-risk-url: "https://ios-survey-on-high-risk-url.com"
+      android-event-driven-user-survey-parameters:
+        otp-query-parameter-name: otp
+        survey-on-high-risk-enabled: true
+        survey-on-high-risk-url: "https://android-survey-on-high-risk-url.com"
+        require-basic-integrity: false
+        require-cts-profile-match: false
+        require-evaluation-type-basic: false
+        require-evaluation-type-hardware-backed: false
+      ios-privacy-preserving-analytics-parameters:
+        probability-to-submit: 1
+        probability-to-submit-exposure-windows: 1
+        hours-since-test-registration-to-submit-test-result-metadata: 165
+        hours-since-test-to-submit-key-submission-metadata: 36
+      android-privacy-preserving-analytics-parameters:
+        probability-to-submit: 1
+        probability-to-submit-exposure-windows: 1
+        hours-since-test-registration-to-submit-test-result-metadata: 65
+        hours-since-test-to-submit-key-submission-metadata: 36
+        require-basic-integrity: false
+        require-cts-profile-match: false
+        require-evaluation-type-basic: false
+        require-evaluation-type-hardware-backed: false
+
+    ios-qr-code-poster-template:
+      published-archive-name: qr_code_poster_template_ios
+      template:
+      offsetX: 97
+      offsetY: 82
+      qr-code-side-length: 400
+      description-text-box:
+        offsetX: 80
+        offsetY: 510
+        width: 420
+        height: 20
+        fontSize: 14
+        fontColor: black
+      address-text-box:
+        offsetX: 80
+        offsetY: 525
+        width: 420
+        height: 15
+        fontSize: 10
+        fontColor: #000000
+    android-qr-code-poster-template:
+      published-archive-name: qr_code_poster_template_android
+      template:
+      offsetX: 10
+      offsetY: 10
+      qr-code-side-length: 100
+      description-text-box:
+        offsetX: 10
+        offsetY: 50
+        width: 100
+        height: 20
+        font-size: 10
+        font-color: #000000
+    presence-tracing-parameters:
+      qr-code-error-correction-level: 0
+      plausible-deniability-parameters:
+        probability-to-fake-check-ins-if-no-check-ins: 0
+        probability-to-fake-check-ins-if-some-check-ins: 0.005
+    digital-green-certificate:
+      booster-notification: booster-notification-rules
+      dgc-directory: ehn-dgc
+      valuesets-file-name: value-sets
+      supported-languages: DE, EN, BG, PL, RO, TR
+      export-archive-name: ${DIGITAL_GREEN_CERTIFICATE_ARCHIVE_NAME:export.bin}
+      allow-list: ${DCC_VALIDATION_SERVICE_ALLOWLIST:{"certificates":[{"serviceProvider":"ACME Inc.","hostname":"validation-service.acme.org","fingerprint256":"E87E26EB9D22280125E113F755BE2F9F90DB076DD011D5940E0A78DD2F20EDFA"}],"serviceProviders":[{"serviceProviderAllowlistEndpoint":"https://validation-service.acme.org/serviceproviders","fingerprint256":"E87E26EB9D22280125E113F755BE2F9F90DB076DD011D5940E0A78DD2F20EDFA"}]}}
+      allow-list-signature: ${DCC_VALIDATION_SERVICE_ALLOWLIST_SIGNATURE:3046022100945f80f1fa7b32cc9f4f951ec826fab13274472299089cc980448d66ff4e3055022100917dda6bedb1ac209715352b6355142fc23a0e5d5e5743559e3813be54a1b0b8}
+      allow-list-certificate: ${DCC_VALIDATION_SERVICE_ALLOWLIST_CERTIFICATE:MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEMMvW0zun8fNCELK1tsqXsGJPu4p7850ZPCBCoxQ5gs2z5G0in3izL7eTFa5lI7Gkhnz0tN5whVQJObCaqbP55A==}
+      dsc-client:
+        public-key: ${DSC_PUBLIC_KEY:MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIxHvrv8jQx9OEzTZbsx1prQVQn/3ex0gMYf6GyaNBW0QKLMjrSDeN6HwSPM0QzhvhmyQUixl6l88A7Zpu5OWSw==}
+        base-url: ${DSC_BASE_PATH:https://de.test.dscg.ubirch.com}
+        dsc-list-path: ${DSC_LIST_PATH:/trustList/DSC/}
+        ssl:
+          trust-store: ${DSC_TRUST_STORE:../../docker-compose-test-secrets/dsc_truststore}
+          trust-store-password: ${DSC_TRUST_STORE_PASSWORD:123456}
+      client:
+        public-key: ${DCC_PUBLIC_KEY:MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETvIUhkUuMmqPSlCHJj4EmtWizOO6H8xbh5kviCF6/kSSq8ojxYeGZjB3qWQqOP3v4MktD6ccopslQAuKjiUyxw==}
+        retry-period: 2
+        max-retry-period: 5
+        max-retry-attempts: 2
+        base-url: ${BUSSINESS_RULES_BASE_PATH:http://localhost:1234}
+        country-list-path: ${BUSSINESS_RULES_COUNTRY_LIST_PATH:/countrylist}
+        value-sets-path: ${BUSSINESS_RULES_VALUE_SETS_PATH:/valuesets}
+        rules-path: ${BUSSINESS_RULES_RULES_PATH:/rules}
+        bn-rules-path: ${BUSSINESS_RULES_BN_RULES_PATH:/bnrules}
+        ssl:
+          trust-store: ../../docker-compose-test-secrets/dcc_truststore
+          trust-store-password: 123456
+
+spring:
+  main:
+    banner-mode: off
+  flyway:
+    enabled: true
+    locations: classpath:/db/migration, classpath:/db/specific/{vendor}
+    mixed: true
+  datasource:
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    url: jdbc:tc:postgresql:11.8:///cwa?TC_TMPFS=/testtmpfs:rw?TC_INITSCRIPT=file:src/test/java/V0__init_db.sql
+  test:
+    database:
+      # Use datasource as defined above.
+      replace: none

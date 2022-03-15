@@ -50,7 +50,9 @@ public class DiagnosisKeysStructureProvider {
    */
   public Directory<WritableOnDisk> getDiagnosisKeys() {
     logger.debug("Querying diagnosis keys from the database...");
-    Collection<DiagnosisKey> diagnosisKeys = diagnosisKeyService.getDiagnosisKeys();
+    Collection<DiagnosisKey> diagnosisKeys = diagnosisKeyService
+        .getDiagnosisKeysWithMinTrl(distributionServiceConfig.getMinimumTrlValueAllowed(),
+            distributionServiceConfig.getDaysToPublish());
     diagnosisKeyBundler.setDiagnosisKeys(enfParameterEncoder.adaptKeys(diagnosisKeys), getCurrentUtcHour());
     return new DiagnosisKeysDirectory(diagnosisKeyBundler, cryptoProvider, distributionServiceConfig);
   }

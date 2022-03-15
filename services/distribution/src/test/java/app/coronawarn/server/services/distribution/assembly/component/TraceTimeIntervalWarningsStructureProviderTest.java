@@ -58,7 +58,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
     classes = {CryptoProvider.class, DistributionServiceConfig.class,
         KeySharingPoliciesChecker.class, EnfParameterAdapter.class,},
     initializers = ConfigDataApplicationContextInitializer.class)
-public class TraceTimeIntervalWarningsStructureProviderTest {
+class TraceTimeIntervalWarningsStructureProviderTest {
 
   private static final String PARENT_TEST_FOLDER = "parent";
   private static final String SEPARATOR = File.separator;

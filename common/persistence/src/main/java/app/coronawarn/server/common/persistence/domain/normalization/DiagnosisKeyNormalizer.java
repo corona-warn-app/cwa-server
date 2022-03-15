@@ -11,8 +11,8 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
  *  provided, which might be valid, but not meeting national standards, as described by the system configuration
  *  (i.e. number scales, ranges etc).
  *
- *  <p>There is a slight overlap with validation topics from a class responsability point of view, but the
- *  the focus of this service is to directly modify information in given keys, rather than stoping a process
+ *  <p>There is a slight overlap with validation topics from a class responsibility point of view, but the
+ *  the focus of this service is to directly modify information in given keys, rather than stopping a process
  *  when the key does not meet input validty requirements.
  *
  *  <p>There is no default normalization instance provided in the domain module. All other modules which

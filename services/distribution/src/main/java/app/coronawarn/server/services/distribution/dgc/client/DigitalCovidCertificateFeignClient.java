@@ -58,14 +58,30 @@ public interface DigitalCovidCertificateFeignClient {
   @Timed
   @GetMapping(value = "${services.distribution.digital-green-certificate.client.bn-rules-path}")
   ResponseEntity<List<BusinessRuleItem>> getBoosterNotificationRules();
+
+  @Timed
+  @GetMapping(value = "${services.distribution.digital-green-certificate.client.ccl-rules-path}")
+  ResponseEntity<List<BusinessRuleItem>> getCommonCovidLogicRules();
+
   /**
    * HTTP GET to return a specific business rule based on its country and hash.
    *
    * @param country - business rule country code.
    * @param hash - business rule hash
    */
-
   @Timed
   @GetMapping(value = "${services.distribution.digital-green-certificate.client.rules-path}/{country}/{hash}")
   ResponseEntity<BusinessRule> getCountryRule(@PathVariable String country, @PathVariable String hash);
+
+  /**
+   * HTTP GET to return a specific business rule based on its hash.
+   * @param hash - business rule hash
+   */
+  @Timed
+  @GetMapping(value = "${services.distribution.digital-green-certificate.client.bn-rules-path}/{hash}")
+  ResponseEntity<BusinessRule> getBoosterNotificationRule(@PathVariable String hash);
+
+  @Timed
+  @GetMapping(value = "${services.distribution.digital-green-certificate.client.ccl-rules-path}/{hash}")
+  ResponseEntity<BusinessRule> getCommonCovidLogicRule(@PathVariable String hash);
 }

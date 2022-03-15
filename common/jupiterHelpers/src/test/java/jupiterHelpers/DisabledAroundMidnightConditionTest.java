@@ -16,7 +16,7 @@ class DisabledAroundMidnightConditionTest {
 
   @Test
   @DisabledAroundMidnight(offsetInMinutes = 0)
-  void testEndabledAroundMidnight() {
+  void testEnabledAroundMidnight() {
     assertTrue(true, "Test should always be executed!");
   }
 }

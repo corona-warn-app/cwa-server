@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.distribution.objectstore.client;
 
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.util.Maps.newHashMap;
@@ -18,6 +19,7 @@ import java.io.ByteArrayInputStream;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.assertj.core.util.Lists;
@@ -81,6 +83,8 @@ class S3ClientWrapperTest {
 
   @Autowired
   private ObjectStoreClient s3ClientWrapper;
+
+  final Map emptyMap = Collections.emptyMap();
 
   @Configuration
   @EnableRetry
@@ -163,7 +167,7 @@ class S3ClientWrapperTest {
 
   private static Stream<Arguments> createGetObjectsResults() {
     return Stream.of(
-        Lists.emptyList(),
+        emptyList(),
         Lists.list(new S3Object("objName")),
         Lists.list(new S3Object("objName1"), new S3Object("objName2"))
     ).map(Arguments::of);
@@ -171,8 +175,8 @@ class S3ClientWrapperTest {
 
   private ListObjectsV2Response buildListObjectsResponse(List<S3Object> s3Objects) {
     var responseObjects = s3Objects.stream().map(
-        s3Object -> software.amazon.awssdk.services.s3.model.S3Object.builder()
-            .key(s3Object.getObjectName()))
+            s3Object -> software.amazon.awssdk.services.s3.model.S3Object.builder()
+                .key(s3Object.getObjectName()))
         .map(SdkBuilder::build).collect(Collectors.toList());
     return ListObjectsV2Response.builder().contents(responseObjects).build();
   }
@@ -240,7 +244,7 @@ class S3ClientWrapperTest {
   void putObjectsThrowsObjectStoreOperationFailedExceptionIfClientThrows(Class<Exception> cause) {
     when(s3Client.putObject(any(PutObjectRequest.class), any(RequestBody.class))).thenThrow(cause);
     assertThatExceptionOfType(ObjectStoreOperationFailedException.class)
-        .isThrownBy(() -> s3ClientWrapper.putObject(VALID_BUCKET_NAME, VALID_PREFIX, VALID_PATH, Collections.emptyMap()));
+        .isThrownBy(() -> s3ClientWrapper.putObject(VALID_BUCKET_NAME, VALID_PREFIX, VALID_PATH, emptyMap));
   }
 
   @ParameterizedTest
@@ -248,7 +252,7 @@ class S3ClientWrapperTest {
   void shouldRetryUploadingObjectAndThenThrow(Class<Exception> cause) {
     when(s3Client.putObject(any(PutObjectRequest.class), any(RequestBody.class))).thenThrow(cause);
     assertThatExceptionOfType(ObjectStoreOperationFailedException.class)
-        .isThrownBy(() -> s3ClientWrapper.putObject(VALID_BUCKET_NAME, VALID_PREFIX, VALID_PATH, Collections.emptyMap()));
+        .isThrownBy(() -> s3ClientWrapper.putObject(VALID_BUCKET_NAME, VALID_PREFIX, VALID_PATH, emptyMap));
 
     verify(s3Client, times(configuredNumberOfRetries)).putObject(any(PutObjectRequest.class), any(RequestBody.class));
   }

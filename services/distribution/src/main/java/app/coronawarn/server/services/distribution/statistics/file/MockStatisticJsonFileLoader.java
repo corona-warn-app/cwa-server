@@ -40,8 +40,7 @@ public class MockStatisticJsonFileLoader implements StatisticJsonFileLoader {
     try {
       return new JsonFile(resource.getInputStream(), "local");
     } catch (IOException e) {
-      throw new RuntimeException(String.format("Failed to load Local JSON from path %s",
-          serviceConfig.getStatistics().getStatisticPath()), e);
+      throw new JsonFileLoaderException(serviceConfig.getStatistics().getStatisticPath(), e);
     }
   }
 

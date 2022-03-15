@@ -64,7 +64,7 @@ public abstract class TraceTimeIntervalWarningsPackageBundler {
    *
    * @param distributionServiceConfig configuration containing relevant attributes
    */
-  public TraceTimeIntervalWarningsPackageBundler(
+  protected TraceTimeIntervalWarningsPackageBundler(
       DistributionServiceConfig distributionServiceConfig) {
     this.supportedCountries = List.of(distributionServiceConfig.getSupportedCountries());
     daysInThePast = distributionServiceConfig.getRetentionDays();

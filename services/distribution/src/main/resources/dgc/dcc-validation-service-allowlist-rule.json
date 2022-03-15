@@ -1,0 +1,60 @@
+{
+  "title": "CWA DCC Validation Service Allowlist",
+  "description": "CWA DCC Validation Service Allowlist",
+  "required": [
+    "certificates",
+    "serviceProviders"
+  ],
+  "type": "object",
+  "properties": {
+    "certificates": {
+      "description": "",
+      "type": "array",
+      "items": {
+        "required": [
+          "serviceProvider",
+          "hostname",
+          "fingerprint256"
+        ],
+        "type": "object",
+        "properties": {
+          "serviceProvider": {
+            "type": "string",
+            "minLength": 1
+          },
+          "hostname": {
+            "type": "string",
+            "minLength": 1
+          },
+          "fingerprint256": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[0-9a-fA-F]{64}$"
+          }
+        }
+      }
+    },
+    "serviceProviders": {
+      "description": "",
+      "type": "array",
+      "items": {
+        "required": [
+          "serviceProviderAllowlistEndpoint",
+          "fingerprint256"
+        ],
+        "type": "object",
+        "properties": {
+          "serviceProviderAllowlistEndpoint": {
+            "type": "string",
+            "minLength": 1
+          },
+          "fingerprint256": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[0-9a-fA-F]{64}$"
+          }
+        }
+      }
+    }
+  }
+}

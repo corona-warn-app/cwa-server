@@ -3,7 +3,6 @@ package app.coronawarn.server.services.distribution.assembly.component;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.shared.collection.ImmutableStack;
@@ -20,6 +19,7 @@ import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateTo
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.client.ProdDigitalCovidCertificateClient;
+import app.coronawarn.server.services.distribution.dgc.dsc.DigitalCovidValidationCertificateToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalSigningCertificatesClient;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalSigningCertificatesToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
@@ -45,9 +45,16 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @EnableConfigurationProperties(value = {DistributionServiceConfig.class})
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(
-    classes = {DigitalGreenCertificateToProtobufMapping.class, DigitalGreenCertificateToCborMapping.class,
-        CryptoProvider.class, DistributionServiceConfig.class, ProdDigitalCovidCertificateClient.class,
-        DigitalSigningCertificatesToProtobufMapping.class, DigitalSigningCertificatesClient.class},
+    classes = {
+        DigitalGreenCertificateToProtobufMapping.class,
+        DigitalGreenCertificateToCborMapping.class,
+        CryptoProvider.class, DistributionServiceConfig.class,
+        ProdDigitalCovidCertificateClient.class,
+        DigitalSigningCertificatesToProtobufMapping.class,
+        DigitalCovidValidationCertificateToProtobufMapping.class,
+        DigitalSigningCertificatesClient.class,
+        BusinessRulesArchiveBuilder.class
+    },
     initializers = ConfigDataApplicationContextInitializer.class)
 class DccRulesNotFetchedStructureProviderTest {
 
@@ -67,6 +74,12 @@ class DccRulesNotFetchedStructureProviderTest {
 
   @Autowired
   DigitalSigningCertificatesToProtobufMapping digitalSigningCertificatesToProtobufMapping;
+
+  @Autowired
+  DigitalCovidValidationCertificateToProtobufMapping digitalCovidValidationCertificateToProtobufMapping;
+
+  @Autowired
+  BusinessRulesArchiveBuilder businessRulesArchiveBuilder;
 
   @MockBean
   OutputDirectoryProvider outputDirectoryProvider;
@@ -90,59 +103,8 @@ class DccRulesNotFetchedStructureProviderTest {
   }
 
   @Test
-  void should_not_contain_acceptance_or_invalidation_rules() throws FetchBusinessRulesException {
+  void shouldNotContainAcceptanceOrInvalidationRules() throws FetchBusinessRulesException {
     when(digitalCovidCertificateClient.getRules()).thenThrow(FetchBusinessRulesException.class);
-    when(digitalCovidCertificateClient.getCountryList()).thenReturn(Arrays.asList("DE", "RO"));
-
-    DirectoryOnDisk digitalGreenCertificates = getStructureProviderDirectory();
-    assertEquals("ehn-dgc", digitalGreenCertificates.getName());
-
-    List<Writable<WritableOnDisk>> businessRulesArchives = getBusinessRulesArchives(digitalGreenCertificates);
-    assertThat(businessRulesArchives).hasSize(2);
-
-    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("onboarded-countries"))).hasSize(1);
-    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("acceptance-rules"))).hasSize(0);
-    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("invalidation-rules"))).hasSize(0);
-  }
-
-  @Test
-  void should_contain_empty_acceptance_or_invalidation_rules() throws FetchBusinessRulesException {
-    when(digitalCovidCertificateClient.getRules()).thenReturn(Collections.emptyList());
-    when(digitalCovidCertificateClient.getCountryList()).thenReturn(Arrays.asList("DE", "RO"));
-
-    DirectoryOnDisk digitalGreenCertificates = getStructureProviderDirectory();
-    assertEquals("ehn-dgc", digitalGreenCertificates.getName());
-
-    List<Writable<WritableOnDisk>> businessRulesArchives = getBusinessRulesArchives(digitalGreenCertificates);
-    assertThat(businessRulesArchives).hasSize(4);
-
-    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("onboarded-countries"))).hasSize(1);
-    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("acceptance-rules"))).hasSize(1);
-    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("invalidation-rules"))).hasSize(1);
-    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("dscs"))).hasSize(1);
-
-  }
-
-  @Test
-  void should_contain_empty_invalidation_rules() throws FetchBusinessRulesException {
-    BusinessRuleItem businessRuleItem = new BusinessRuleItem();
-    businessRuleItem.setHash("test1");
-    businessRuleItem.setCountry("test1");
-
-    BusinessRuleItem businessRuleItem2 = new BusinessRuleItem();
-    businessRuleItem2.setHash("test2");
-    businessRuleItem2.setCountry("test2");
-
-    BusinessRule businessRule = new BusinessRule();
-    businessRule.setType(RuleType.Acceptance.name());
-    BusinessRule businessRule2 = new BusinessRule();
-    businessRule2.setType(RuleType.Acceptance.name());
-
-    when(digitalCovidCertificateClient.getRules()).thenReturn(Arrays.asList(businessRuleItem, businessRuleItem2));
-    when(digitalCovidCertificateClient.getCountryRuleByHash(eq("test1"), eq("test1")))
-        .thenReturn(businessRule);
-    when(digitalCovidCertificateClient.getCountryRuleByHash(eq("test2"), eq("test2")))
-        .thenReturn(businessRule);
     when(digitalCovidCertificateClient.getCountryList()).thenReturn(Arrays.asList("DE", "RO"));
 
     DirectoryOnDisk digitalGreenCertificates = getStructureProviderDirectory();
@@ -152,10 +114,67 @@ class DccRulesNotFetchedStructureProviderTest {
     assertThat(businessRulesArchives).hasSize(3);
 
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("onboarded-countries"))).hasSize(1);
+    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("acceptance-rules"))).isEmpty();
+    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("invalidation-rules"))).isEmpty();
+    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("validation-services"))).hasSize(1);
+
+  }
+
+  @Test
+  void shouldContainEmptyAcceptanceOrInvalidationRules() throws FetchBusinessRulesException {
+    when(digitalCovidCertificateClient.getRules()).thenReturn(Collections.emptyList());
+    when(digitalCovidCertificateClient.getCountryList()).thenReturn(Arrays.asList("DE", "RO"));
+
+    DirectoryOnDisk digitalGreenCertificates = getStructureProviderDirectory();
+    assertEquals("ehn-dgc", digitalGreenCertificates.getName());
+
+    List<Writable<WritableOnDisk>> businessRulesArchives = getBusinessRulesArchives(digitalGreenCertificates);
+    assertThat(businessRulesArchives).hasSize(5);
+
+    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("onboarded-countries"))).hasSize(1);
+    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("acceptance-rules"))).hasSize(1);
+    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("invalidation-rules"))).hasSize(1);
+    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("dscs"))).hasSize(1);
+    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("validation-services"))).hasSize(1);
+
+
+  }
+
+  @Test
+  void shouldContainEmptyInvalidationRules() throws FetchBusinessRulesException {
+    BusinessRuleItem businessRuleItem = new BusinessRuleItem();
+    businessRuleItem.setHash("test1");
+    businessRuleItem.setCountry("test1");
+
+    BusinessRuleItem businessRuleItem2 = new BusinessRuleItem();
+    businessRuleItem2.setHash("test2");
+    businessRuleItem2.setCountry("test2");
+
+    BusinessRule businessRule = new BusinessRule();
+    businessRule.setType(RuleType.ACCEPTANCE.getType());
+    BusinessRule businessRule2 = new BusinessRule();
+    businessRule2.setType(RuleType.ACCEPTANCE.getType());
+
+    when(digitalCovidCertificateClient.getRules()).thenReturn(Arrays.asList(businessRuleItem, businessRuleItem2));
+    when(digitalCovidCertificateClient.getCountryRuleByHash("test1", "test1"))
+        .thenReturn(businessRule);
+    when(digitalCovidCertificateClient.getCountryRuleByHash("test2", "test2"))
+        .thenReturn(businessRule);
+    when(digitalCovidCertificateClient.getCountryList()).thenReturn(Arrays.asList("DE", "RO"));
+
+    DirectoryOnDisk digitalGreenCertificates = getStructureProviderDirectory();
+    assertEquals("ehn-dgc", digitalGreenCertificates.getName());
+
+    List<Writable<WritableOnDisk>> businessRulesArchives = getBusinessRulesArchives(digitalGreenCertificates);
+    assertThat(businessRulesArchives).hasSize(4);
+
+    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("onboarded-countries"))).hasSize(1);
     // acceptance rules are invalid, they do not pass validation schema, thus archive won't be overwritten.
-    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("acceptance-rules"))).hasSize(0);
+    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("acceptance-rules"))).isEmpty();
     // there are no invalid rules, thus they will be overwritten.
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("invalidation-rules"))).hasSize(1);
+    // there are no invalid allowlist, thus they will be overwritten.
+    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("validation-services"))).hasSize(1);
 
   }
 
@@ -166,7 +185,9 @@ class DccRulesNotFetchedStructureProviderTest {
   private DirectoryOnDisk getStructureProviderDirectory() {
     DigitalCertificatesStructureProvider underTest = new DigitalCertificatesStructureProvider(
         distributionServiceConfig, cryptoProvider, dgcToProtobufMapping,
-        dgcToCborMappingMock, digitalSigningCertificatesToProtobufMapping);
+        dgcToCborMappingMock, digitalSigningCertificatesToProtobufMapping,
+        digitalCovidValidationCertificateToProtobufMapping, digitalCovidCertificateClient,
+        businessRulesArchiveBuilder);
     DirectoryOnDisk digitalGreenCertificates = underTest.getDigitalGreenCertificates();
     digitalGreenCertificates.prepare(new ImmutableStack<>());
 

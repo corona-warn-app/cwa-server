@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.shared.util.SerializationUtils;
@@ -17,6 +16,7 @@ import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRu
 import app.coronawarn.server.services.distribution.dgc.exception.FetchValueSetsException;
 import feign.FeignException.FeignClientException;
 import feign.RetryableException;
+import java.util.Arrays;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +26,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.http.ResponseEntity;
 
 @ExtendWith(MockitoExtension.class)
 class DigitalCovidCertificateClientUnitTest {
@@ -65,7 +66,7 @@ class DigitalCovidCertificateClientUnitTest {
 
   @Test
   void shouldThrowFetchExceptionWhenClientThrowsConnectionException() {
-    when(digitalCovidCertificateFeignClient.getCountryRule(eq("test"), eq("test")))
+    when(digitalCovidCertificateFeignClient.getCountryRule("test", "test"))
         .thenThrow(RetryableException.class);
     assertThrows(FetchBusinessRulesException.class,
         () -> prodDigitalCovidCertificateClient.getCountryRuleByHash(any(), any()));
@@ -77,6 +78,18 @@ class DigitalCovidCertificateClientUnitTest {
         .thenThrow(FeignClientException.class);
     assertThrows(FetchBusinessRulesException.class,
         () -> prodDigitalCovidCertificateClient.getCountryList());
+  }
+
+  @Test
+  void checkEUFiltering() throws FetchBusinessRulesException {
+    try (MockedStatic<SerializationUtils> utilities = Mockito.mockStatic(SerializationUtils.class)) {
+      utilities.when(() -> SerializationUtils.readConfiguredJsonOrDefault(any(), any(), any(), any()))
+          .thenReturn(Optional.of(new String[]{"EU", "RO", "DE"}));
+      when(digitalCovidCertificateFeignClient.getCountryList())
+          .thenReturn(ResponseEntity.ok(Arrays.asList("EU", "RO", "DE")));
+      assertThat(testDigitalCovidCertificateClient.getCountryList()).hasSize(3);
+      assertThat(prodDigitalCovidCertificateClient.getCountryList()).hasSize(2);
+    }
   }
 
   @Test

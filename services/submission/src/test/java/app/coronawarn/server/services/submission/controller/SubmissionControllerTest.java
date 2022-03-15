@@ -547,7 +547,7 @@ class SubmissionControllerTest {
   @Test
   void testValidCheckinData() {
 
-    final long eventCheckinInThePast = LocalDateTime.ofInstant(Instant.now(), UTC).minusDays(10).toEpochSecond(UTC);
+    final long eventCheckinInThePast = LocalDateTime.ofInstant(Instant.now(), UTC).minusDays(9).toEpochSecond(UTC);
 
     final List<CheckIn> validCheckinData = List.of(
         CheckIn.newBuilder().setTransmissionRiskLevel(3)

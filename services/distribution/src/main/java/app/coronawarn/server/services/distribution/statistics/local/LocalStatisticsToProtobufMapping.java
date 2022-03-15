@@ -19,7 +19,6 @@ import app.coronawarn.server.services.distribution.statistics.file.StatisticJson
 import app.coronawarn.server.services.distribution.statistics.validation.StatisticsJsonValidator;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -45,7 +44,7 @@ public class LocalStatisticsToProtobufMapping {
   /**
    * Process the JSON file provided by TSI and map the it to Local Statistics protobuf object.
    *
-   * @param jsonFileLoader - Loader of the file from the system
+   * @param jsonFileLoader                 - Loader of the file from the system
    * @param localStatisticsDownloadService - Local Statistics Download Service for keeping track of ETags
    */
   public LocalStatisticsToProtobufMapping(StatisticJsonFileLoader jsonFileLoader,
@@ -57,11 +56,10 @@ public class LocalStatisticsToProtobufMapping {
   }
 
   /**
-   * Create protobuf local statistic map from raw JSON local statistics.
-   * Local statistics has to be uploaded on CDN in 7 packages. Each entry on the map represents 1 package.
-   * Packages of local statistics contains data about 1 up to 4 federal states and all their administrative units.
-   * For more info related to the grouping of the federal states into packages please look into
-   * https://github.com/corona-warn-app/cwa-app-tech-spec/blob/42e9e4f3c588cd2fd283f904e9f0ccd53a2b83d0/
+   * Create protobuf local statistic map from raw JSON local statistics. Local statistics has to be uploaded on CDN in 7
+   * packages. Each entry on the map represents 1 package. Packages of local statistics contains data about 1 up to 4
+   * federal states and all their administrative units. For more info related to the grouping of the federal states into
+   * packages please look into https://github.com/corona-warn-app/cwa-app-tech-spec/blob/42e9e4f3c588cd2fd283f904e9f0ccd53a2b83d0/
    * docs/spec/statistics.md#populate-local-statistical-data
    *
    * @return map containing local statistics grouped by archive id.
@@ -81,6 +79,8 @@ public class LocalStatisticsToProtobufMapping {
 
         List<LocalStatisticsJsonStringObject> onePerProvinceStatistics = deserializeAndValidate(file);
 
+        handleSpecialCase(onePerProvinceStatistics);
+
         onePerProvinceStatistics.forEach(localStatisticsJsonStringObject -> {
           if (localStatisticsJsonStringObject.getProvinceCode() != null) {
             int provinceCode = Integer.parseInt(localStatisticsJsonStringObject.getProvinceCode());
@@ -97,7 +97,7 @@ public class LocalStatisticsToProtobufMapping {
               fillLocalStatisticsFederalStatesGroupMap(
                   localStatisticsMap,
                   federalStateCode,
-                  administrativeUnitSupplier(provinceCode, localStatisticsJsonStringObject),
+                  administrativeUnitSupplier(localStatisticsJsonStringObject),
                   administrativeUnitEnhancer(localStatisticsJsonStringObject)
               );
             }
@@ -110,6 +110,46 @@ public class LocalStatisticsToProtobufMapping {
     }
 
     return localStatisticsMap;
+  }
+
+  private void handleSpecialCase(
+      List<LocalStatisticsJsonStringObject> localStatisticsJsonStringObjects) {
+
+    LocalStatisticsJsonStringObject eisenach = new LocalStatisticsJsonStringObject();
+    LocalStatisticsJsonStringObject wartburgkreis = localStatsBasedOnProvinceCode(localStatisticsJsonStringObjects,
+        "16063");
+
+    if (wartburgkreis != null) {
+      eisenach.setUpdateTimestamp(wartburgkreis.getUpdateTimestamp());
+      eisenach.setEffectiveDate(wartburgkreis.getEffectiveDate());
+      eisenach.setProvinceCode("16056");
+      eisenach.setProvinceName("Eisenach");
+
+      eisenach.setSevenDayIncidence1stReportedDaily(wartburgkreis.getSevenDayIncidence1stReportedDaily());
+      eisenach.setSevenDayIncidence1stReportedGrowthrate(wartburgkreis.getSevenDayIncidence1stReportedGrowthrate());
+      eisenach
+          .setSevenDayIncidence1stReportedTrend1Percent(wartburgkreis.getSevenDayIncidence1stReportedTrend1Percent());
+
+      eisenach.setSevenDayHospitalization1stReportedDaily(wartburgkreis.getSevenDayHospitalization1stReportedDaily());
+      eisenach.setSevenDayHospitalization1stReportedGrowthrate(
+          wartburgkreis.getSevenDayHospitalization1stReportedGrowthrate());
+      eisenach.setSevenDayHospitalization1stReportedTrend1Percent(
+          wartburgkreis.getSevenDayHospitalization1stReportedTrend1Percent());
+      localStatisticsJsonStringObjects.add(eisenach);
+    }
+  }
+
+  private LocalStatisticsJsonStringObject localStatsBasedOnProvinceCode(
+      List<LocalStatisticsJsonStringObject> localStatisticsJsonStringObjects, String provinceCode) {
+
+    LocalStatisticsJsonStringObject resultedLocalStatsJsonStringObject = null;
+
+    for (LocalStatisticsJsonStringObject localStatisticsJsonStringObject : localStatisticsJsonStringObjects) {
+      if (localStatisticsJsonStringObject.getProvinceCode().equals(provinceCode)) {
+        resultedLocalStatsJsonStringObject = localStatisticsJsonStringObject;
+      }
+    }
+    return resultedLocalStatsJsonStringObject;
   }
 
   private Optional<JsonFile> getFile() {
@@ -127,20 +167,18 @@ public class LocalStatisticsToProtobufMapping {
   }
 
   /**
-   * Handles the addition or enhancing of Local Statistics objects in the map.
-   * If the map already contains the CDN package number for the current {@code federalStateCode}, the Local
-   * Statistics Object put on that key (CDN package number) will be enhanced using {@code statisticsEnhancer}
-   * EX: Map contains group 3 put on key 3. Group 3 is already represented in the map by an {@link LocalStatistics}
-   * object which contains data about BE and BB federal states.
-   * The method is called with {@code federalStateCode} representing MV federal state this time.
-   * In this case the data will be added on map value under key 3 ({@link LocalStatistics}) in the federal data list
-   * of this object.
-   * If the map does not contain the CDN package number for the current {@code federalStateCode},
-   * the Local Statistics Object supplied by {@code statisticsSupplier} will be put to the map with the key
-   * equal to the CDN package group in which the {@code federalStateCode} should stay.
+   * Handles the addition or enhancing of Local Statistics objects in the map. If the map already contains the CDN
+   * package number for the current {@code federalStateCode}, the Local Statistics Object put on that key (CDN package
+   * number) will be enhanced using {@code statisticsEnhancer} EX: Map contains group 3 put on key 3. Group 3 is already
+   * represented in the map by an {@link LocalStatistics} object which contains data about BE and BB federal states. The
+   * method is called with {@code federalStateCode} representing MV federal state this time. In this case the data will
+   * be added on map value under key 3 ({@link LocalStatistics}) in the federal data list of this object. If the map
+   * does not contain the CDN package number for the current {@code federalStateCode}, the Local Statistics Object
+   * supplied by {@code statisticsSupplier} will be put to the map with the key equal to the CDN package group in which
+   * the {@code federalStateCode} should stay.
    *
    * @param localStatisticsMap - local statistics map grouped by archive index.
-   * @param federalStateCode - federal state code
+   * @param federalStateCode   - federal state code
    * @param statisticsSupplier - supplier which builds local statistics
    * @param statisticsEnhancer - supplier which enhance local statistics
    */
@@ -186,22 +224,65 @@ public class LocalStatisticsToProtobufMapping {
     groupedByProvince.keySet().stream().forEach(key -> {
       List<LocalStatisticsJsonStringObject> sameProvinceStatistics = groupedByProvince.get(key);
       LocalStatisticsJsonStringObject mostRecentStatistic = null;
+      LocalStatisticsJsonStringObject mostRecentHospitalizationStatistic = null;
 
       for (LocalStatisticsJsonStringObject provinceStatistic : sameProvinceStatistics) {
-        if (mostRecentStatistic == null) {
+        if (hasEmptyMostRecentStatistics(mostRecentStatistic, mostRecentHospitalizationStatistic)) {
           mostRecentStatistic = provinceStatistic;
+          if (hasSevenDayHospitalizationStatistics(provinceStatistic)) {
+            mostRecentHospitalizationStatistic = provinceStatistic;
+          }
         } else {
-          if (LocalDate.parse(mostRecentStatistic.getEffectiveDate())
-              .isBefore(LocalDate.parse(provinceStatistic.getEffectiveDate()))) {
+          if (isBeforeMostRecentStatistics(mostRecentStatistic, provinceStatistic)) {
             mostRecentStatistic = provinceStatistic;
+          }
+          if (mostRecentHospitalizationStatistic == null) {
+            if (hasSevenDayHospitalizationStatistics(provinceStatistic)) {
+              mostRecentHospitalizationStatistic = provinceStatistic;
+            }
+          } else if (isBeforeMostRecentStatistics(mostRecentHospitalizationStatistic, provinceStatistic)
+              && hasSevenDayHospitalizationStatistics(provinceStatistic)) {
+            mostRecentHospitalizationStatistic = provinceStatistic;
           }
         }
       }
 
-      onePerProvinceStatistics.add(mostRecentStatistic);
+      onePerProvinceStatistics.add(enhanceWithHospitalization(mostRecentStatistic, mostRecentHospitalizationStatistic));
     });
 
     return onePerProvinceStatistics;
+  }
+
+  private boolean isBeforeMostRecentStatistics(LocalStatisticsJsonStringObject mostRecentHospitalizationStatistic,
+      LocalStatisticsJsonStringObject provinceStatistic) {
+    return LocalDate.parse(mostRecentHospitalizationStatistic.getEffectiveDate())
+        .isBefore(LocalDate.parse(provinceStatistic.getEffectiveDate()));
+  }
+
+  private boolean hasSevenDayHospitalizationStatistics(LocalStatisticsJsonStringObject provinceStatistic) {
+    return provinceStatistic.getSevenDayHospitalization1stReportedDaily() != null
+        && provinceStatistic.getSevenDayHospitalization1stReportedTrend1Percent() != null;
+  }
+
+  private boolean hasEmptyMostRecentStatistics(LocalStatisticsJsonStringObject mostRecentStatistic,
+      LocalStatisticsJsonStringObject mostRecentHospitalizationStatistic) {
+    return mostRecentStatistic == null && mostRecentHospitalizationStatistic == null;
+  }
+
+  private LocalStatisticsJsonStringObject enhanceWithHospitalization(
+      LocalStatisticsJsonStringObject mostRecentStatistics,
+      LocalStatisticsJsonStringObject mostRecentHospitalizationStatistics) {
+    if (mostRecentHospitalizationStatistics == null) {
+      return mostRecentStatistics;
+    }
+    mostRecentStatistics.setSevenDayHospitalization1stReportedDaily(
+        mostRecentHospitalizationStatistics.getSevenDayHospitalization1stReportedDaily());
+    mostRecentStatistics.setSevenDayHospitalization1stReportedGrowthrate(
+        mostRecentHospitalizationStatistics.getSevenDayHospitalization1stReportedGrowthrate());
+    mostRecentStatistics.setSevenDayHospitalization1stReportedTrend1Percent(
+        mostRecentHospitalizationStatistics.getSevenDayHospitalization1stReportedTrend1Percent());
+    mostRecentStatistics.setHospitalizationEffectiveDate(mostRecentHospitalizationStatistics.getEffectiveDate());
+    return mostRecentStatistics;
   }
 
   private List<LocalStatisticsJsonStringObject> deserializeAndValidate(JsonFile file) throws IOException {

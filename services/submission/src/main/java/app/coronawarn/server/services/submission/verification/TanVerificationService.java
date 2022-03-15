@@ -13,7 +13,7 @@ public abstract class TanVerificationService {
   protected static final Marker SECURITY = MarkerFactory.getMarker("SECURITY");
 
 
-  private static final Logger logger = LoggerFactory.getLogger(TanVerifier.class);
+  private static final Logger logger = LoggerFactory.getLogger(TanVerificationService.class);
   final VerificationServerClient verificationServerClient;
 
   /**
@@ -21,7 +21,7 @@ public abstract class TanVerificationService {
    *
    * @param verificationServerClient The REST client to communicate with the verification server
    */
-  public TanVerificationService(VerificationServerClient verificationServerClient) {
+  protected TanVerificationService(VerificationServerClient verificationServerClient) {
     this.verificationServerClient = verificationServerClient;
   }
 

@@ -98,8 +98,8 @@ public class DiagnosisKeyServiceTestHelper {
 
   /**
    * @param hours number of hours
-   * @return A key whos rolling period ended today (relative to test the test run) at 00:00, but was submitted X hours
-   * after that time. Altough the application uses minutes for expiration policies, the submission times are computed
+   * @return A key which's rolling period ended today (relative to test the test run) at 00:00, but was submitted X hours
+   * after that time. Although the application uses minutes for expiration policies, the submission times are computed
    * relative to the top of the hours.
    */
   public static DiagnosisKey getKeySubmittedHoursAfterMidnightExpiration(int hours) {
@@ -132,6 +132,21 @@ public class DiagnosisKeyServiceTestHelper {
         .withKeyDataAndSubmissionType(randomByteData(), submissionType)
         .withRollingStartIntervalNumber((int) submissionTimestamp * 6)
         .withTransmissionRiskLevel(2)
+        .withConsentToFederation(consentToShare)
+        .withCountryCode("DE")
+        .withDaysSinceOnsetOfSymptoms(random.nextInt(13))
+        .withSubmissionTimestamp(submissionTimestamp)
+        .withVisitedCountries(Set.of("FR", "DK"))
+        .withReportType(ReportType.CONFIRMED_TEST)
+        .build();
+  }
+
+  public static DiagnosisKey generateRandomDiagnosisKeyWithSpecifiedTrl(boolean consentToShare, long submissionTimestamp,
+      SubmissionType submissionType, int transmissionRiskLevel) {
+    return DiagnosisKey.builder()
+        .withKeyDataAndSubmissionType(randomByteData(), submissionType)
+        .withRollingStartIntervalNumber((int) submissionTimestamp * 6)
+        .withTransmissionRiskLevel(transmissionRiskLevel)
         .withConsentToFederation(consentToShare)
         .withCountryCode("DE")
         .withDaysSinceOnsetOfSymptoms(random.nextInt(13))

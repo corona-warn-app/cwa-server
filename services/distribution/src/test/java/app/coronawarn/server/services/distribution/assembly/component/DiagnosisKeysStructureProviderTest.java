@@ -1,10 +1,14 @@
 package app.coronawarn.server.services.distribution.assembly.component;
 
 import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeys;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.ProdDiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
@@ -13,7 +17,9 @@ import app.coronawarn.server.services.distribution.assembly.transformation.EnfPa
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.TransmissionRiskLevelEncoding;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.Assertions;
@@ -54,7 +60,8 @@ class DiagnosisKeysStructureProviderTest {
 
   @BeforeEach
   void setup() {
-    diagnosisKeys = IntStream.range(0, 30)
+    // Generates 75 ( 15 * 5 ) keys with TRL 2
+    diagnosisKeys = IntStream.range(0, 15)
         .mapToObj(currentHour -> buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0).plusHours(currentHour), 5))
         .flatMap(List::stream)
         .collect(Collectors.toList());

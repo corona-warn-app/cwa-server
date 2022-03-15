@@ -35,8 +35,6 @@ public class DigitalGreenCertificateToProtobufMapping {
   public static final String TEST_RESULT_DEFAULT_PATH = "dgc/test-result.json";
   public static final String TEST_TYPE_DEFAULT_PATH = "dgc/test-type.json";
 
-  private static final Logger logger = LoggerFactory.getLogger(DigitalGreenCertificateToProtobufMapping.class);
-
   @Autowired
   DigitalCovidCertificateClient dccClient;
 

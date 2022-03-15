@@ -38,19 +38,18 @@ public class BuildLocalStatisticsHelper {
    */
   public static Function<LocalStatistics, LocalStatistics> federalStateEnhancer(int federalStateCode,
       LocalStatisticsJsonStringObject localStatisticsJsonStringObject) {
-    return (localStatistics) -> addFederalStateData(localStatistics, federalStateCode, localStatisticsJsonStringObject);
+    return localStatistics -> addFederalStateData(localStatistics, federalStateCode, localStatisticsJsonStringObject);
   }
 
   /**
    * Supplies with an newly created Local Statistics protobuf containing Administrative Unit statistics.
    *
-   * @param federalStateCode                - federal state code.
    * @param localStatisticsJsonStringObject - local statistics json object.
    * @return - Local Statistics supplier
    */
-  public static Supplier<LocalStatistics> administrativeUnitSupplier(int federalStateCode,
+  public static Supplier<LocalStatistics> administrativeUnitSupplier(
       LocalStatisticsJsonStringObject localStatisticsJsonStringObject) {
-    return () -> buildAdministrativeUnitStatistics(federalStateCode, localStatisticsJsonStringObject);
+    return () -> buildAdministrativeUnitStatistics(localStatisticsJsonStringObject);
   }
 
   /**
@@ -61,7 +60,7 @@ public class BuildLocalStatisticsHelper {
    */
   public static Function<LocalStatistics, LocalStatistics> administrativeUnitEnhancer(
       LocalStatisticsJsonStringObject localStatisticsJsonStringObject) {
-    return (localStatistics) ->
+    return localStatistics ->
         addAdministrativeUnitData(localStatistics, localStatisticsJsonStringObject);
   }
 
@@ -124,11 +123,10 @@ public class BuildLocalStatisticsHelper {
    * Build local statistics containing administrative unit statistics from an instance of {@link
    * LocalStatisticsJsonStringObject}.
    *
-   * @param federalStateCode                - federal state code.
    * @param localStatisticsJsonStringObject - local statistics json object.
    * @return - Local Statistics protobuf.
    */
-  private static LocalStatistics buildAdministrativeUnitStatistics(int federalStateCode,
+  private static LocalStatistics buildAdministrativeUnitStatistics(
       LocalStatisticsJsonStringObject localStatisticsJsonStringObject) {
     return LocalStatistics.newBuilder()
         .addAdministrativeUnitData(buildAdministrativeUnitData(localStatisticsJsonStringObject))
@@ -194,10 +192,48 @@ public class BuildLocalStatisticsHelper {
    */
   private static FederalStateData buildFederalStateData(int federalStateCode,
       LocalStatisticsJsonStringObject localStatisticsJsonStringObject) {
-    return FederalStateData.newBuilder()
-        .setFederalState(FederalState.forNumber(getFederalStateConfigIndex(federalStateCode)))
-        .setSevenDayIncidence(buildSevenDaysIncidence(localStatisticsJsonStringObject))
-        .setUpdatedAt(toEpochSecondsUtc(LocalDate.parse(localStatisticsJsonStringObject.getEffectiveDate())))
+    if (hasSevenDayHospitalizationStatistics(localStatisticsJsonStringObject)) {
+      return FederalStateData.newBuilder()
+          .setFederalState(FederalState.forNumber(getFederalStateConfigIndex(federalStateCode)))
+          .setSevenDayIncidence(buildSevenDaysIncidence(localStatisticsJsonStringObject))
+          .setUpdatedAt(toEpochSecondsUtc(LocalDate.parse(localStatisticsJsonStringObject.getEffectiveDate())))
+          .setSevenDayHospitalizationIncidence(buildSevenDayHospitalizationIncidence(localStatisticsJsonStringObject))
+          .setSevenDayHospitalizationIncidenceUpdatedAt(
+              toEpochSecondsUtc(LocalDate.parse(localStatisticsJsonStringObject.getHospitalizationEffectiveDate())))
+          .build();
+    } else {
+      return FederalStateData.newBuilder()
+          .setFederalState(FederalState.forNumber(getFederalStateConfigIndex(federalStateCode)))
+          .setSevenDayIncidence(buildSevenDaysIncidence(localStatisticsJsonStringObject))
+          .setUpdatedAt(toEpochSecondsUtc(LocalDate.parse(localStatisticsJsonStringObject.getEffectiveDate()))).build();
+    }
+  }
+
+  /**
+   * Checks if {@link LocalStatisticsJsonStringObject} contains data for Seven Day Hospitalization.
+   *
+   * @param localStatisticsJsonStringObject - - local statistics json object.
+   * @return - boolean true if data for Seven Day Hospitalization exists.
+   */
+  private static boolean hasSevenDayHospitalizationStatistics(
+      LocalStatisticsJsonStringObject localStatisticsJsonStringObject) {
+    return localStatisticsJsonStringObject.getSevenDayHospitalization1stReportedDaily() != null
+        && localStatisticsJsonStringObject.getSevenDayHospitalization1stReportedTrend1Percent() != null;
+  }
+
+  /**
+   * Build Seven Day Hospitalization Incidence Data from an instance of {@link LocalStatisticsJsonStringObject}. Used
+   * for populating Local Statistics.
+   *
+   * @param localStatisticsJsonStringObject - - local statistics json object.
+   * @return - Seven Days Hospitalization Incidence Data protobuf.
+   */
+  private static SevenDayIncidenceData buildSevenDayHospitalizationIncidence(
+      LocalStatisticsJsonStringObject localStatisticsJsonStringObject) {
+    return SevenDayIncidenceData.newBuilder()
+        .setValue(localStatisticsJsonStringObject.getSevenDayHospitalization1stReportedDaily())
+        .setTrend(findTrendBySevenDayIncidence(
+            localStatisticsJsonStringObject.getSevenDayHospitalization1stReportedTrend1Percent()))
         .build();
   }
 

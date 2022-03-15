@@ -2,3 +2,10 @@ coronaRapidAntigenTestParameters:
   # validation rule for hoursToDeemTestOutdated:
   #   * > 0
   hoursToDeemTestOutdated: 48
+  # validation rule for hoursSinceSampleCollectionToEncourageRemoval:
+  #   * > 0
+  hoursSinceSampleCollectionToShowRiskCard: 168 # 7 days x 24 hours
+coronaPCRTestParameters:
+  # validation rule for hoursSinceTestRegistrationToEncourageRemoval:
+  #   * > 0
+  hoursSinceTestRegistrationToShowRiskCard: 264 # 11 days x 24 hours

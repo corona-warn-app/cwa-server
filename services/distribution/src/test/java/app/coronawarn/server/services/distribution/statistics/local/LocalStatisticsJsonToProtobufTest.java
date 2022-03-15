@@ -93,7 +93,56 @@ class LocalStatisticsJsonToProtobufTest {
         .containsExactly(8326,
             TimeUtils.toEpochSecondsUtc(LocalDate.of(2021, 5, 16)));
 
-
+    // Federal state 12 (group 3) contains data for Seven Day Hospitalization
+    assertThat(localStatisticsMap.get(3).getFederalStateData(1))
+        .extracting(FederalStateData::getFederalState, FederalStateData::getUpdatedAt,
+            FederalStateData::getSevenDayHospitalizationIncidenceUpdatedAt)
+        .containsExactly(FederalState.FEDERAL_STATE_BB,
+            TimeUtils.toEpochSecondsUtc(LocalDate.of(2021, 5, 17)),
+            TimeUtils.toEpochSecondsUtc(LocalDate.of(2021, 5, 16)));
   }
 
+
+  @Test
+  void shouldReturnCorrectNumberOfAdministrativeUnits() {
+
+    // -> 3 administrative units: LK Rottweil, LK Schwarzwald-Baar-Kreis, LK Ortenaukreis.
+    assertThat(localStatisticsMap.get(1).getAdministrativeUnitData(0).getAdministrativeUnitShortId()).isEqualTo(8325);
+    assertThat(localStatisticsMap.get(1).getAdministrativeUnitData(1).getAdministrativeUnitShortId()).isEqualTo(8326);
+    assertThat(localStatisticsMap.get(1).getAdministrativeUnitData(2).getAdministrativeUnitShortId()).isEqualTo(8317);
+
+    // -> 0 administrative units
+    assertThat(localStatisticsMap.get(2).getAdministrativeUnitDataCount()).isZero();
+
+    // -> 2 administrative units: LK Ostprignitz-Ruppin and SK Berlin Pankow
+    assertThat(localStatisticsMap.get(3).getAdministrativeUnitData(0).getAdministrativeUnitShortId()).isEqualTo(12068);
+    assertThat(localStatisticsMap.get(3).getAdministrativeUnitData(1).getAdministrativeUnitShortId()).isEqualTo(11003);
+
+    // -> 0 administrative units
+    assertThat(localStatisticsMap.get(4).getAdministrativeUnitDataCount()).isZero();
+
+    // -> 2 administrative units: LK Märkischer Kreis and SK Oberhausen
+    assertThat(localStatisticsMap.get(5).getAdministrativeUnitData(0).getAdministrativeUnitShortId()).isEqualTo(5962);
+    assertThat(localStatisticsMap.get(5).getAdministrativeUnitData(1).getAdministrativeUnitShortId()).isEqualTo(5119);
+
+    // -> 2 administrative units: Wartburgkreis and Eisenach
+    assertThat(localStatisticsMap.get(6).getAdministrativeUnitData(0).getAdministrativeUnitShortId()).isEqualTo(16063);
+    assertThat(localStatisticsMap.get(6).getAdministrativeUnitData(1).getAdministrativeUnitShortId()).isEqualTo(16056);
+
+    // -> 0 administrative units
+    assertThat(localStatisticsMap.get(7).getAdministrativeUnitDataCount()).isZero();
+  }
+
+
+  @Test
+  void shouldCreateEisenAndGiveTheDefaultValuesFromWartburgkreis() {
+
+    AdministrativeUnitData eisenach = localStatisticsMap.get(6).getAdministrativeUnitData(0);
+    AdministrativeUnitData wartburgkreis = localStatisticsMap.get(6).getAdministrativeUnitData(1);
+
+    assertThat(eisenach.getSevenDayIncidence().getValue()).isEqualTo(wartburgkreis.getSevenDayIncidence().getValue());
+    assertThat(eisenach.getSevenDayIncidence().getTrend()).isEqualTo(wartburgkreis.getSevenDayIncidence().getTrend());
+
+    assertThat(eisenach.getUpdatedAt()).isEqualTo(wartburgkreis.getUpdatedAt());
+  }
 }

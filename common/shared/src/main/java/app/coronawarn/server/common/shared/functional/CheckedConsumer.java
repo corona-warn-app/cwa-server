@@ -24,7 +24,7 @@ public interface CheckedConsumer<T, E extends Exception> {
       try {
         consumer.apply(input);
       } catch (Exception e) {
-        throw new RuntimeException(e);
+        throw new CheckedFunctionAndConsumerException(e);
       }
     };
   }

@@ -27,6 +27,7 @@ public class CwaApiStructureProvider {
   private final QrCodePosterTemplateStructureProvider qrCodeTemplateStructureProvider;
   private final DigitalCertificatesStructureProvider dgcStructureProvider;
   private final BoosterNotificationStructureProvider boosterNotificationStructureProvider;
+  private final CommonCovidLogicStructureProvider commonCovidLogicStructureProvider;
 
   /**
    * Creates a new CwaApiStructureProvider.
@@ -41,7 +42,8 @@ public class CwaApiStructureProvider {
       QrCodePosterTemplateStructureProvider qrCodeTemplateStructureProvider,
       DigitalCertificatesStructureProvider dgcStructureProvider,
       BoosterNotificationStructureProvider boosterNotificationStructureProvider,
-      DistributionServiceConfig distributionServiceConfig) {
+      DistributionServiceConfig distributionServiceConfig,
+      CommonCovidLogicStructureProvider commonCovidLogicStructureProvider) {
     this.appConfigurationStructureProvider = appConfigurationStructureProvider;
     this.appConfigurationV2StructureProvider = appConfigurationV2StructureProvider;
     this.statisticsStructureProvider = statisticsStructureProvider;
@@ -52,6 +54,7 @@ public class CwaApiStructureProvider {
     this.qrCodeTemplateStructureProvider = qrCodeTemplateStructureProvider;
     this.dgcStructureProvider = dgcStructureProvider;
     this.boosterNotificationStructureProvider = boosterNotificationStructureProvider;
+    this.commonCovidLogicStructureProvider = commonCovidLogicStructureProvider;
   }
 
   /**
@@ -64,7 +67,6 @@ public class CwaApiStructureProvider {
         distributionServiceConfig.getApi().getVersionPath(),
         ignoredValue -> Set.of(distributionServiceConfig.getApi().getVersionV1()),
         Object::toString);
-
 
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.of(appConfigurationStructureProvider.getAppConfiguration()));
@@ -79,17 +81,18 @@ public class CwaApiStructureProvider {
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.ofNullable(dgcStructureProvider.getDigitalGreenCertificates()));
     versionDirectory.addWritableToAll(
-        ignoredValue -> Optional.ofNullable(boosterNotificationStructureProvider.getBoosterNotificationRules()));
+        ignoredValue -> boosterNotificationStructureProvider.getBoosterNotificationRules());
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.of(diagnosisKeysStructureProvider.getDiagnosisKeys()));
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.of(traceWarningsStructureProvider.getTraceWarningsDirectory()));
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.ofNullable(statisticsStructureProvider.getStatistics()));
+    versionDirectory.addWritableToAll(
+        ignoredValue -> commonCovidLogicStructureProvider.getCommonCovidLogicRules());
 
-    localStatisticsStructureProvider.getLocalStatisticsList().forEach(archive -> {
-      versionDirectory.addWritableToAll(ignoredValue -> Optional.ofNullable(archive));
-    });
+    localStatisticsStructureProvider.getLocalStatisticsList().forEach(archive ->
+        versionDirectory.addWritableToAll(ignoredValue -> Optional.ofNullable(archive)));
 
     return new IndexingDecoratorOnDisk<>(versionDirectory, distributionServiceConfig.getOutputFileName());
   }

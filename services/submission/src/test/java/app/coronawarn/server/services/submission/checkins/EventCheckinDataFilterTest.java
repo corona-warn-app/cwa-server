@@ -62,13 +62,13 @@ class EventCheckinDataFilterTest {
             .setTransmissionRiskLevel(3).build());
 
     List<CheckIn> result = underTest.filter(checkins);
-    assertEquals(result.size(), 1);
+    assertEquals(1, result.size());
     CheckIn filteredCheckin = result.iterator().next();
     assertEquals(filteredCheckin.getStartIntervalNumber(),
         TEN_MINUTE_INTERVAL_DERIVATION.apply(acceptableEventCheckoutDate - 10));
     assertEquals(filteredCheckin.getEndIntervalNumber(),
         TEN_MINUTE_INTERVAL_DERIVATION.apply(acceptableEventCheckoutDate));
-    assertEquals(filteredCheckin.getTransmissionRiskLevel(), 3);
+    assertEquals(3, filteredCheckin.getTransmissionRiskLevel());
   }
 
   @Test
@@ -95,13 +95,13 @@ class EventCheckinDataFilterTest {
             .setTransmissionRiskLevel(3).build());
 
     List<CheckIn> result = underTest.filter(checkins);
-    assertEquals(result.size(), 1);
+    assertEquals(1, result.size());
     CheckIn filteredCheckin = result.iterator().next();
     assertEquals(filteredCheckin.getStartIntervalNumber(),
         TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast - 10));
     assertEquals(filteredCheckin.getEndIntervalNumber(),
         TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast));
-    assertEquals(filteredCheckin.getTransmissionRiskLevel(), 3);
+    assertEquals(3, filteredCheckin.getTransmissionRiskLevel());
   }
 
 
@@ -151,13 +151,13 @@ class EventCheckinDataFilterTest {
             .setTransmissionRiskLevel(3).build());
 
     List<CheckIn> result = underTest.filter(checkins);
-    assertEquals(result.size(), 1);
+    assertEquals(1, result.size());
     CheckIn filteredCheckin = result.iterator().next();
     assertEquals(filteredCheckin.getStartIntervalNumber(),
         TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast));
     assertEquals(filteredCheckin.getEndIntervalNumber(),
         TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast + 10));
-    assertEquals(filteredCheckin.getTransmissionRiskLevel(), 3);
+    assertEquals(3, filteredCheckin.getTransmissionRiskLevel());
   }
 
   @Test

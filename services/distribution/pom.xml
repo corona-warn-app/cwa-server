@@ -65,12 +65,20 @@
       <artifactId>junit-jupiter</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.github.tomakehurst</groupId>
+      <artifactId>wiremock-jre8</artifactId>
+    </dependency>
+    <dependency>
       <groupId>${project.parent.groupId}</groupId>
       <artifactId>jupiterHelpers</artifactId>
     </dependency>
     <dependency>
       <groupId>org.everit.json</groupId>
       <artifactId>org.everit.json.schema</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.vdurmont</groupId>
+      <artifactId>semver4j</artifactId>
     </dependency>
   </dependencies>
 </project>

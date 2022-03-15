@@ -47,32 +47,35 @@
     <sonar.projectKey>${sonar.organization}_cwa-${project.artifactId}</sonar.projectKey>
 
     <!-- https://spring.io/projects/spring-boot -->
-    <spring-boot.version>2.5.4</spring-boot.version>
+    <spring-boot.version>2.6.4</spring-boot.version>
     <!-- https://spring.io/projects/spring-cloud#release-trains -->
-    <spring-cloud.version>2020.0.3</spring-cloud.version>
+    <spring-cloud.version>2021.0.1</spring-cloud.version>
     <!-- If you update spring-cloud, see if it references the correct spring-vault-core version again, then remove the following: -->
     <spring-vault-core.version>2.3.2</spring-vault-core.version>
-    <spring-retry.version>1.3.1</spring-retry.version>
-    <protobuf.version>3.17.3</protobuf.version>
+    <spring-retry.version>1.3.2</spring-retry.version>
+    <protobuf.version>3.19.4</protobuf.version>
     <json-simple.version>1.1.1</json-simple.version>
     <everit-json.version>1.5.1</everit-json.version>
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
     <commons-io.version>2.11.0</commons-io.version>
-    <feign.version>11.6</feign.version>
+    <log4j.version>2.17.2</log4j.version>
+    <feign.version>11.8</feign.version>
     <commons-math3.version>3.6.1</commons-math3.version>
-    <bouncycastle.version>1.69</bouncycastle.version>
+    <bouncycastle.version>1.70</bouncycastle.version>
     <dom4j.version>2.1.3</dom4j.version>
-    <awssdk-s3.version>2.17.2</awssdk-s3.version>
-    <guava.version>30.1.1-jre</guava.version>
-    <jackson.version>2.12.5</jackson.version>
-    <test-containers.version>1.16.0</test-containers.version>
-    <postgresql.version>42.2.23</postgresql.version>
-    <wiremock.version>2.31.0</wiremock.version>
+    <awssdk-s3.version>2.17.103</awssdk-s3.version>
+    <io-netty.version>4.1.75.Final</io-netty.version>
+    <guava.version>31.1-jre</guava.version>
+    <jackson.version>2.13.2</jackson.version>
+    <test-containers.version>1.16.3</test-containers.version>
+    <postgresql.version>42.3.3</postgresql.version>
+    <wiremock.version>2.32.0</wiremock.version>
     <httpclient.version>4.5.13</httpclient.version>
     <junit.version>4.13.2</junit.version>
-    <tomcat-embed-core.version>9.0.52</tomcat-embed-core.version>
+    <tomcat.version>9.0.60</tomcat.version>
     <findify-s3mock.version>0.2.6</findify-s3mock.version>
-    <checkstyle.version>9.0</checkstyle.version>
+    <checkstyle.version>10.0</checkstyle.version>
+    <semver4j.version>3.1.0</semver4j.version>
   </properties>
 
   <dependencyManagement>
@@ -118,6 +121,23 @@
         <version>${spring-cloud.version}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter</artifactId>
+        <version>${spring-boot.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-log4j2</artifactId>
+        <version>${spring-boot.version}</version>
+        <scope>runtime</scope>
       </dependency>
       <dependency>
         <groupId>org.springframework.boot</groupId>
@@ -177,6 +197,26 @@
         <version>${feign.version}</version>
       </dependency>
       <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-core</artifactId>
+        <version>${log4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-jul</artifactId>
+        <version>${log4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-slf4j-impl</artifactId>
+        <version>${log4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-api</artifactId>
+        <version>${log4j.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-math3</artifactId>
         <version>${commons-math3.version}</version>
@@ -195,6 +235,11 @@
         <groupId>software.amazon.awssdk</groupId>
         <artifactId>s3</artifactId>
         <version>${awssdk-s3.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.netty</groupId>
+        <artifactId>netty-codec-http</artifactId>
+        <version>${io-netty.version}</version>
       </dependency>
       <dependency>
         <artifactId>spring-retry</artifactId>
@@ -221,6 +266,11 @@
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpclient</artifactId>
         <version>${httpclient.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.vdurmont</groupId>
+        <artifactId>semver4j</artifactId>
+        <version>${semver4j.version}</version>
       </dependency>
       <dependency>
         <groupId>org.postgresql</groupId>
@@ -268,7 +318,17 @@
       <dependency>
         <groupId>org.apache.tomcat.embed</groupId>
         <artifactId>tomcat-embed-core</artifactId>
-        <version>${tomcat-embed-core.version}</version>
+        <version>${tomcat.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat.embed</groupId>
+        <artifactId>tomcat-embed-el</artifactId>
+        <version>${tomcat.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat</groupId>
+        <artifactId>tomcat-annotations-api</artifactId>
+        <version>${tomcat.version}</version>
       </dependency>
       <dependency>
         <groupId>io.findify</groupId>
@@ -279,6 +339,11 @@
       <dependency>
         <groupId>com.fasterxml.jackson.dataformat</groupId>
         <artifactId>jackson-dataformat-cbor</artifactId>
+        <version>${jackson.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
         <version>${jackson.version}</version>
       </dependency>
     </dependencies>
@@ -352,7 +417,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.8.1</version>
+          <version>3.10.1</version>
           <configuration>
             <compilerArgs>
               <arg>-Xlint:all</arg>
@@ -382,7 +447,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>3.2.0</version>
+          <version>3.2.2</version>
         </plugin>
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
@@ -438,7 +503,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.3.1</version>
+          <version>3.3.2</version>
           <configuration>
             <bottom>
               <![CDATA[
@@ -455,11 +520,11 @@
         </plugin>
         <plugin>
           <artifactId>maven-project-info-reports-plugin</artifactId>
-          <version>3.1.2</version>
+          <version>3.2.2</version>
         </plugin>
         <plugin>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.9.1</version>
+          <version>3.11.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
@@ -480,7 +545,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>versions-maven-plugin</artifactId>
-          <version>2.8.1</version>
+          <version>2.9.0</version>
           <configuration>
             <rulesUri>file:///${session.executionRootDirectory}/.mvn/maven-version-rules.xml</rulesUri>
           </configuration>

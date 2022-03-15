@@ -72,7 +72,7 @@ public class DownloadForChgsIntegrationTest extends GatewayServiceIntegrationSui
   @ParameterizedTest
   @EnumSource(value = FederationBatchSourceSystem.class, names = {"CHGS"})
   void downloadShouldDelete2Keys(FederationBatchSourceSystem source) {
-    assertEquals(batchInfoRepository.countForDateAndSourceSystem(LocalDate.now(ZoneId.of("UTC")), source), 2);
-    assertEquals(batchInfoRepository.countForDateAndSourceSystem(LocalDate.now(ZoneId.of("UTC")), EFGS), 2);
+    assertEquals(2, batchInfoRepository.countForDateAndSourceSystem(LocalDate.now(ZoneId.of("UTC")), source));
+    assertEquals(2, batchInfoRepository.countForDateAndSourceSystem(LocalDate.now(ZoneId.of("UTC")), EFGS));
   }
 }

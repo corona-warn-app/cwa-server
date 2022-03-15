@@ -6,7 +6,10 @@
     "province_name": "Schleswig-Holstein",
     "seven_day_incidence_1st_reported_daily": 39.1,
     "seven_day_incidence_1st_reported_growthrate": 0.913551401869159,
-    "seven_day_incidence_1st_reported_trend_1percent": -1
+    "seven_day_incidence_1st_reported_trend_1percent": -1,
+    "seven_day_hospitalization_1st_reported_daily": null,
+    "seven_day_hospitalization_1st_reported_growthrate": null,
+    "seven_day_hospitalization_1st_reported_trend_1percent": null
   },
   {
     "update_timestamp": "2021-05-19T12:19:33,103",
@@ -15,7 +18,10 @@
     "province_name": "Hamburg",
     "seven_day_incidence_1st_reported_daily": 49.2,
     "seven_day_incidence_1st_reported_growthrate": 0.9144981412639406,
-    "seven_day_incidence_1st_reported_trend_1percent": -1
+    "seven_day_incidence_1st_reported_trend_1percent": -1,
+    "seven_day_hospitalization_1st_reported_daily": null,
+    "seven_day_hospitalization_1st_reported_growthrate": null,
+    "seven_day_hospitalization_1st_reported_trend_1percent": null
   },
   {
     "update_timestamp": "2021-05-19T12:19:33,103",
@@ -24,7 +30,10 @@
     "province_name": "Niedersachsen",
     "seven_day_incidence_1st_reported_daily": 56.3,
     "seven_day_incidence_1st_reported_growthrate": 0.9526226734348561,
-    "seven_day_incidence_1st_reported_trend_1percent": -1
+    "seven_day_incidence_1st_reported_trend_1percent": -1,
+    "seven_day_hospitalization_1st_reported_daily": null,
+    "seven_day_hospitalization_1st_reported_growthrate": null,
+    "seven_day_hospitalization_1st_reported_trend_1percent": null
   },
   {
     "update_timestamp": "2021-05-19T12:19:33,103",
@@ -33,7 +42,10 @@
     "province_name": "Bremen",
     "seven_day_incidence_1st_reported_daily": 62.8,
     "seven_day_incidence_1st_reported_growthrate": 0.9874213836477986,
-    "seven_day_incidence_1st_reported_trend_1percent": -1
+    "seven_day_incidence_1st_reported_trend_1percent": -1,
+    "seven_day_hospitalization_1st_reported_daily": null,
+    "seven_day_hospitalization_1st_reported_growthrate": null,
+    "seven_day_hospitalization_1st_reported_trend_1percent": null
   },
   {
     "update_timestamp": "2021-05-19T12:19:33,103",
@@ -42,7 +54,10 @@
     "province_name": "Nordrhein-Westfalen",
     "seven_day_incidence_1st_reported_daily": 86.4,
     "seven_day_incidence_1st_reported_growthrate": 0.9610678531701891,
-    "seven_day_incidence_1st_reported_trend_1percent": -1
+    "seven_day_incidence_1st_reported_trend_1percent": -1,
+    "seven_day_hospitalization_1st_reported_daily": null,
+    "seven_day_hospitalization_1st_reported_growthrate": null,
+    "seven_day_hospitalization_1st_reported_trend_1percent": null
   },
   {
     "update_timestamp": "2021-05-19T12:19:33,103",
@@ -51,7 +66,10 @@
     "province_name": "Nordrhein-Westfalen",
     "seven_day_incidence_1st_reported_daily": 103.4,
     "seven_day_incidence_1st_reported_growthrate": 0.9281867145421903,
-    "seven_day_incidence_1st_reported_trend_1percent": -1
+    "seven_day_incidence_1st_reported_trend_1percent": -1,
+    "seven_day_hospitalization_1st_reported_daily": null,
+    "seven_day_hospitalization_1st_reported_growthrate": null,
+    "seven_day_hospitalization_1st_reported_trend_1percent": null
   },
   {
     "update_timestamp": "2021-05-19T12:19:33,103",
@@ -60,7 +78,10 @@
     "province_name": "LK M\u00e4rkischer Kreis",
     "seven_day_incidence_1st_reported_daily": 97.5,
     "seven_day_incidence_1st_reported_growthrate": 0.9615384615384615,
-    "seven_day_incidence_1st_reported_trend_1percent": -1
+    "seven_day_incidence_1st_reported_trend_1percent": -1,
+    "seven_day_hospitalization_1st_reported_daily": null,
+    "seven_day_hospitalization_1st_reported_growthrate": null,
+    "seven_day_hospitalization_1st_reported_trend_1percent": null
   },
   {
     "update_timestamp": "2021-05-19T12:19:33,103",
@@ -69,7 +90,10 @@
     "province_name": "SK Oberhausen",
     "seven_day_incidence_1st_reported_daily": 69.7,
     "seven_day_incidence_1st_reported_growthrate": 0.8745294855708908,
-    "seven_day_incidence_1st_reported_trend_1percent": -1
+    "seven_day_incidence_1st_reported_trend_1percent": -1,
+    "seven_day_hospitalization_1st_reported_daily": null,
+    "seven_day_hospitalization_1st_reported_growthrate": null,
+    "seven_day_hospitalization_1st_reported_trend_1percent": null
   },
   {
     "update_timestamp": "2021-05-19T12:19:33,103",
@@ -78,7 +102,10 @@
     "province_name": "Hessen",
     "seven_day_incidence_1st_reported_daily": 93.0,
     "seven_day_incidence_1st_reported_growthrate": 0.9327983951855566,
-    "seven_day_incidence_1st_reported_trend_1percent": -1
+    "seven_day_incidence_1st_reported_trend_1percent": -1,
+    "seven_day_hospitalization_1st_reported_daily": null,
+    "seven_day_hospitalization_1st_reported_growthrate": null,
+    "seven_day_hospitalization_1st_reported_trend_1percent": null
   },
   {
     "update_timestamp": "2021-05-19T12:19:33,103",
@@ -87,7 +114,10 @@
     "province_name": "Rheinland-Pfalz",
     "seven_day_incidence_1st_reported_daily": 73.8,
     "seven_day_incidence_1st_reported_growthrate": 0.9437340153452685,
-    "seven_day_incidence_1st_reported_trend_1percent": -1
+    "seven_day_incidence_1st_reported_trend_1percent": -1,
+    "seven_day_hospitalization_1st_reported_daily": null,
+    "seven_day_hospitalization_1st_reported_growthrate": null,
+    "seven_day_hospitalization_1st_reported_trend_1percent": null
   },
   {
     "update_timestamp": "2021-05-19T12:19:33,103",
@@ -96,7 +126,10 @@
     "province_name": "Baden-W\u00fcrttemberg",
     "seven_day_incidence_1st_reported_daily": 95.0,
     "seven_day_incidence_1st_reported_growthrate": 0.9405940594059405,
-    "seven_day_incidence_1st_reported_trend_1percent": -1
+    "seven_day_incidence_1st_reported_trend_1percent": -1,
+    "seven_day_hospitalization_1st_reported_daily": null,
+    "seven_day_hospitalization_1st_reported_growthrate": null,
+    "seven_day_hospitalization_1st_reported_trend_1percent": null
   },
   {
     "update_timestamp": "2021-05-19T12:19:33,103",
@@ -105,7 +138,10 @@
     "province_name": "Baden-W\u00fcrttemberg",
     "seven_day_incidence_1st_reported_daily": 119.1,
     "seven_day_incidence_1st_reported_growthrate": 0.931924882629108,
-    "seven_day_incidence_1st_reported_trend_1percent": -1
+    "seven_day_incidence_1st_reported_trend_1percent": -1,
+    "seven_day_hospitalization_1st_reported_daily": null,
+    "seven_day_hospitalization_1st_reported_growthrate": null,
+    "seven_day_hospitalization_1st_reported_trend_1percent": null
   },
   {
     "update_timestamp": "2021-05-19T12:19:33,103",
@@ -114,7 +150,10 @@
     "province_name": "LK Rottweil",
     "seven_day_incidence_1st_reported_daily": 140.8,
     "seven_day_incidence_1st_reported_growthrate": 0.8638036809815952,
-    "seven_day_incidence_1st_reported_trend_1percent": -1
+    "seven_day_incidence_1st_reported_trend_1percent": -1,
+    "seven_day_hospitalization_1st_reported_daily": null,
+    "seven_day_hospitalization_1st_reported_growthrate": null,
+    "seven_day_hospitalization_1st_reported_trend_1percent": null
   },
   {
     "update_timestamp": "2021-05-19T12:19:33,103",
@@ -123,7 +162,10 @@
     "province_name": "LK Ortenaukreis",
     "seven_day_incidence_1st_reported_daily": 68.9,
     "seven_day_incidence_1st_reported_growthrate": 0.8788265306122449,
-    "seven_day_incidence_1st_reported_trend_1percent": -1
+    "seven_day_incidence_1st_reported_trend_1percent": -1,
+    "seven_day_hospitalization_1st_reported_daily": null,
+    "seven_day_hospitalization_1st_reported_growthrate": null,
+    "seven_day_hospitalization_1st_reported_trend_1percent": null
   },
   {
     "update_timestamp": "2021-05-19T12:19:33,103",
@@ -132,7 +174,10 @@
     "province_name": "LK Schwarzwald-Baar-Kreis",
     "seven_day_incidence_1st_reported_daily": 137.9,
     "seven_day_incidence_1st_reported_growthrate": 0.9361846571622539,
-    "seven_day_incidence_1st_reported_trend_1percent": -1
+    "seven_day_incidence_1st_reported_trend_1percent": -1,
+    "seven_day_hospitalization_1st_reported_daily": null,
+    "seven_day_hospitalization_1st_reported_growthrate": null,
+    "seven_day_hospitalization_1st_reported_trend_1percent": null
   },
   {
     "update_timestamp": "2021-05-19T12:19:33,103",
@@ -141,7 +186,10 @@
     "province_name": "LK Schwarzwald-Baar-Kreis",
     "seven_day_incidence_1st_reported_daily": 137.9,
     "seven_day_incidence_1st_reported_growthrate": 0.9361846571622539,
-    "seven_day_incidence_1st_reported_trend_1percent": -1
+    "seven_day_incidence_1st_reported_trend_1percent": -1,
+    "seven_day_hospitalization_1st_reported_daily": null,
+    "seven_day_hospitalization_1st_reported_growthrate": null,
+    "seven_day_hospitalization_1st_reported_trend_1percent": null
   },
   {
     "update_timestamp": "2021-05-19T12:19:33,103",
@@ -150,7 +198,10 @@
     "province_name": "Bayern",
     "seven_day_incidence_1st_reported_daily": 85.8,
     "seven_day_incidence_1st_reported_growthrate": 0.9003147953830011,
-    "seven_day_incidence_1st_reported_trend_1percent": -1
+    "seven_day_incidence_1st_reported_trend_1percent": -1,
+    "seven_day_hospitalization_1st_reported_daily": null,
+    "seven_day_hospitalization_1st_reported_growthrate": null,
+    "seven_day_hospitalization_1st_reported_trend_1percent": null
   },
   {
     "update_timestamp": "2021-05-19T12:19:33,103",
@@ -159,7 +210,10 @@
     "province_name": "Saarland",
     "seven_day_incidence_1st_reported_daily": 90.5,
     "seven_day_incidence_1st_reported_growthrate": 0.8889980353634578,
-    "seven_day_incidence_1st_reported_trend_1percent": -1
+    "seven_day_incidence_1st_reported_trend_1percent": -1,
+    "seven_day_hospitalization_1st_reported_daily": null,
+    "seven_day_hospitalization_1st_reported_growthrate": null,
+    "seven_day_hospitalization_1st_reported_trend_1percent": null
   },
   {
     "update_timestamp": "2021-05-19T12:19:33,103",
@@ -168,7 +222,10 @@
     "province_name": "Berlin",
     "seven_day_incidence_1st_reported_daily": 66.9,
     "seven_day_incidence_1st_reported_growthrate": 0.9940564635958397,
-    "seven_day_incidence_1st_reported_trend_1percent": 0
+    "seven_day_incidence_1st_reported_trend_1percent": 0,
+    "seven_day_hospitalization_1st_reported_daily": null,
+    "seven_day_hospitalization_1st_reported_growthrate": null,
+    "seven_day_hospitalization_1st_reported_trend_1percent": null
   },
   {
     "update_timestamp": "2021-05-19T12:19:33,103",
@@ -177,7 +234,10 @@
     "province_name": "SK Berlin Pankow",
     "seven_day_incidence_1st_reported_daily": 48.2,
     "seven_day_incidence_1st_reported_growthrate": 1.0,
-    "seven_day_incidence_1st_reported_trend_1percent": 0
+    "seven_day_incidence_1st_reported_trend_1percent": 0,
+    "seven_day_hospitalization_1st_reported_daily": null,
+    "seven_day_hospitalization_1st_reported_growthrate": null,
+    "seven_day_hospitalization_1st_reported_trend_1percent": null
   },
   {
     "update_timestamp": "2021-05-19T12:19:33,103",
@@ -186,7 +246,22 @@
     "province_name": "Brandenburg",
     "seven_day_incidence_1st_reported_daily": 59.8,
     "seven_day_incidence_1st_reported_growthrate": 0.9692058346839545,
-    "seven_day_incidence_1st_reported_trend_1percent": -1
+    "seven_day_incidence_1st_reported_trend_1percent": -1,
+    "seven_day_hospitalization_1st_reported_daily": null,
+    "seven_day_hospitalization_1st_reported_growthrate": null,
+    "seven_day_hospitalization_1st_reported_trend_1percent": null
+  },
+  {
+    "update_timestamp": "2021-05-19T12:19:33,103",
+    "effective_date": "2021-05-16",
+    "province_code": 12,
+    "province_name": "Brandenburg",
+    "seven_day_incidence_1st_reported_daily": 59.8,
+    "seven_day_incidence_1st_reported_growthrate": 0.9692058346839545,
+    "seven_day_incidence_1st_reported_trend_1percent": -1,
+    "seven_day_hospitalization_1st_reported_daily": 168.5,
+    "seven_day_hospitalization_1st_reported_growthrate": 0.86,
+    "seven_day_hospitalization_1st_reported_trend_1percent": 1
   },
   {
     "update_timestamp": "2021-05-19T12:19:33,103",
@@ -195,7 +270,10 @@
     "province_name": "LK Ostprignitz-Ruppin",
     "seven_day_incidence_1st_reported_daily": 47.5,
     "seven_day_incidence_1st_reported_growthrate": 1.0674157303370786,
-    "seven_day_incidence_1st_reported_trend_1percent": 1
+    "seven_day_incidence_1st_reported_trend_1percent": 1,
+    "seven_day_hospitalization_1st_reported_daily": null,
+    "seven_day_hospitalization_1st_reported_growthrate": null,
+    "seven_day_hospitalization_1st_reported_trend_1percent": null
   },
   {
     "update_timestamp": "2021-05-19T12:19:33,103",
@@ -204,7 +282,10 @@
     "province_name": "Mecklenburg-Vorpommern",
     "seven_day_incidence_1st_reported_daily": 71.9,
     "seven_day_incidence_1st_reported_growthrate": 0.954847277556441,
-    "seven_day_incidence_1st_reported_trend_1percent": -1
+    "seven_day_incidence_1st_reported_trend_1percent": -1,
+    "seven_day_hospitalization_1st_reported_daily": null,
+    "seven_day_hospitalization_1st_reported_growthrate": null,
+    "seven_day_hospitalization_1st_reported_trend_1percent": null
   },
   {
     "update_timestamp": "2021-05-19T12:19:33,103",
@@ -213,7 +294,10 @@
     "province_name": "Sachsen",
     "seven_day_incidence_1st_reported_daily": 133.9,
     "seven_day_incidence_1st_reported_growthrate": 0.9557458957887224,
-    "seven_day_incidence_1st_reported_trend_1percent": -1
+    "seven_day_incidence_1st_reported_trend_1percent": -1,
+    "seven_day_hospitalization_1st_reported_daily": null,
+    "seven_day_hospitalization_1st_reported_growthrate": null,
+    "seven_day_hospitalization_1st_reported_trend_1percent": null
   },
   {
     "update_timestamp": "2021-05-19T12:19:33,103",
@@ -222,7 +306,10 @@
     "province_name": "Sachsen-Anhalt",
     "seven_day_incidence_1st_reported_daily": 92.1,
     "seven_day_incidence_1st_reported_growthrate": 0.8907156673114119,
-    "seven_day_incidence_1st_reported_trend_1percent": -1
+    "seven_day_incidence_1st_reported_trend_1percent": -1,
+    "seven_day_hospitalization_1st_reported_daily": null,
+    "seven_day_hospitalization_1st_reported_growthrate": null,
+    "seven_day_hospitalization_1st_reported_trend_1percent": null
   },
   {
     "update_timestamp": "2021-05-19T12:19:33,103",
@@ -231,7 +318,10 @@
     "province_name": "Th\u00fcringen",
     "seven_day_incidence_1st_reported_daily": 132.1,
     "seven_day_incidence_1st_reported_growthrate": 0.8895622895622896,
-    "seven_day_incidence_1st_reported_trend_1percent": -1
+    "seven_day_incidence_1st_reported_trend_1percent": -1,
+    "seven_day_hospitalization_1st_reported_daily": null,
+    "seven_day_hospitalization_1st_reported_growthrate": null,
+    "seven_day_hospitalization_1st_reported_trend_1percent": null
   },
   {
     "update_timestamp": null,
@@ -240,7 +330,10 @@
     "province_name": "Th\u00fcringen",
     "seven_day_incidence_1st_reported_daily": 132.1,
     "seven_day_incidence_1st_reported_growthrate": 0.8895622895622896,
-    "seven_day_incidence_1st_reported_trend_1percent": -1
+    "seven_day_incidence_1st_reported_trend_1percent": -1,
+    "seven_day_hospitalization_1st_reported_daily": null,
+    "seven_day_hospitalization_1st_reported_growthrate": null,
+    "seven_day_hospitalization_1st_reported_trend_1percent": null
   },
   {
     "update_timestamp": null,
@@ -249,6 +342,21 @@
     "province_name": "Th\u00fcringen",
     "seven_day_incidence_1st_reported_daily": 132.1,
     "seven_day_incidence_1st_reported_growthrate": 0.8895622895622896,
-    "seven_day_incidence_1st_reported_trend_1percent": -1
+    "seven_day_incidence_1st_reported_trend_1percent": -1,
+    "seven_day_hospitalization_1st_reported_daily": null,
+    "seven_day_hospitalization_1st_reported_growthrate": null,
+    "seven_day_hospitalization_1st_reported_trend_1percent": null
+  },
+  {
+    "update_timestamp": "2021-05-19T12:19:33,103",
+    "effective_date": "2021-05-20",
+    "province_code": 16063,
+    "province_name": "Wartburgkreis",
+    "seven_day_incidence_1st_reported_daily": 75.555,
+    "seven_day_incidence_1st_reported_growthrate": 0.75,
+    "seven_day_incidence_1st_reported_trend_1percent": -1,
+    "seven_day_hospitalization_1st_reported_daily": null,
+    "seven_day_hospitalization_1st_reported_growthrate": null,
+    "seven_day_hospitalization_1st_reported_trend_1percent": null
   }
 ]

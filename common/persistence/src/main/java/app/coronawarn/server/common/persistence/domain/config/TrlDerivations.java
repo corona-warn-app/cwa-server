@@ -13,9 +13,6 @@ public class TrlDerivations {
 
   private Map<Integer, Integer> trlMapping;
 
-  public TrlDerivations() {
-  }
-
   public Map<Integer, Integer> getTrlMapping() {
     return trlMapping;
   }

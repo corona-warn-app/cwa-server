@@ -1,7 +1,10 @@
 package app.coronawarn.server.services.distribution.dgc;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonInclude(Include.NON_NULL)
 public class ValueSetObject {
 
   @JsonProperty("display")
@@ -13,11 +16,11 @@ public class ValueSetObject {
   @JsonProperty("active")
   private boolean active;
 
-  @JsonProperty("version")
-  private String version;
-
   @JsonProperty("system")
   private String system;
+
+  @JsonProperty("version")
+  private String version;
 
   @JsonProperty("valueSetId")
   private String valueSetId;

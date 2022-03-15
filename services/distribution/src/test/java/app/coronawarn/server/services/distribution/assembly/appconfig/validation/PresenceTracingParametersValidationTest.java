@@ -7,7 +7,7 @@ import app.coronawarn.server.common.shared.exception.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.assembly.appconfig.YamlLoader;
 import org.junit.jupiter.api.Test;
 
-public class PresenceTracingParametersValidationTest {
+class PresenceTracingParametersValidationTest {
 
   private static final String PRESENCE_TRACING_PARAMETERS_FILE = "configtests/presence-tracing-parameters.yaml";
 
@@ -15,7 +15,7 @@ public class PresenceTracingParametersValidationTest {
   void testIfTheYamlFileWasLoadedInTheObject() throws UnableToLoadFileException {
     PresenceTracingParameters.Builder presenceTracingParameters =
         YamlLoader.loadYamlIntoProtobufBuilder(PRESENCE_TRACING_PARAMETERS_FILE,
-        PresenceTracingParameters.Builder.class);
+            PresenceTracingParameters.Builder.class);
 
     assertThat(presenceTracingParameters.getSubmissionParameters()).isNotNull();
     assertThat(presenceTracingParameters.getSubmissionParameters().getDurationFiltersCount()).isOne();
@@ -31,11 +31,11 @@ public class PresenceTracingParametersValidationTest {
     assertThat(presenceTracingParameters.getRevokedTraceLocationVersionsList()).isEmpty();
     assertThat(presenceTracingParameters.getPlausibleDeniabilityParameters()).isNotNull();
     assertThat(presenceTracingParameters.getPlausibleDeniabilityParameters()
-        .getCheckInSizesInBytesCount()).isEqualTo(0);
+        .getCheckInSizesInBytesCount()).isZero();
     assertThat(presenceTracingParameters.getPlausibleDeniabilityParameters()
         .getProbabilityToFakeCheckInsIfNoCheckIns()).isZero();
     assertThat(presenceTracingParameters.getPlausibleDeniabilityParameters()
-        .getProbabilityToFakeCheckInsIfSomeCheckIns()).isEqualTo(0);
+        .getProbabilityToFakeCheckInsIfSomeCheckIns()).isZero();
     assertThat(presenceTracingParameters.getPlausibleDeniabilityParameters()
         .getNumberOfFakeCheckInsFunctionParametersCount()).isOne();
     assertThat(presenceTracingParameters.getQrCodeDescriptorsCount()).isEqualTo(1);

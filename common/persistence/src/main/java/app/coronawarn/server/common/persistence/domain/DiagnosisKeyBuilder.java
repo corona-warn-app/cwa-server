@@ -1,11 +1,11 @@
 package app.coronawarn.server.common.persistence.domain;
 
-import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.Builder;
-import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.FinalBuilder;
-import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.RollingStartIntervalNumberBuilder;
-import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.TransmissionRiskLevelBuilder;
 import static app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionTimestampValidator.SECONDS_PER_HOUR;
 
+import app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.Builder;
+import app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.FinalBuilder;
+import app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.RollingStartIntervalNumberBuilder;
+import app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.TransmissionRiskLevelBuilder;
 import app.coronawarn.server.common.persistence.domain.normalization.DiagnosisKeyNormalizer;
 import app.coronawarn.server.common.persistence.domain.normalization.NormalizableFields;
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
@@ -13,8 +13,9 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Repo
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -68,7 +69,8 @@ public class DiagnosisKeyBuilder implements
 
   @Override
   public FinalBuilder fromTemporaryExposureKeyAndMetadata(TemporaryExposureKey protoBufObject,
-      SubmissionType submissionType, List<String> visitedCountries, String originCountry, boolean consentToFederation) {
+      SubmissionType submissionType, Collection<String> visitedCountries, String originCountry,
+      boolean consentToFederation) {
     return this
         .withKeyDataAndSubmissionType(protoBufObject.getKeyData().toByteArray(), submissionType)
         .withRollingStartIntervalNumber(protoBufObject.getRollingStartIntervalNumber())
@@ -77,7 +79,7 @@ public class DiagnosisKeyBuilder implements
         .withRollingPeriod(protoBufObject.getRollingPeriod())
         .withReportType(protoBufObject.getReportType()).withDaysSinceOnsetOfSymptoms(
             protoBufObject.hasDaysSinceOnsetOfSymptoms() ? protoBufObject.getDaysSinceOnsetOfSymptoms() : null)
-        .withVisitedCountries(new HashSet<>(visitedCountries))
+        .withVisitedCountries(collectionToTinySet(visitedCountries))
         .withCountryCode(originCountry)
         .withConsentToFederation(consentToFederation);
   }
@@ -93,8 +95,40 @@ public class DiagnosisKeyBuilder implements
         .withRollingPeriod(federationDiagnosisKey.getRollingPeriod())
         .withCountryCode(federationDiagnosisKey.getOrigin())
         .withReportType(federationDiagnosisKey.getReportType())
-        .withVisitedCountries(new HashSet<>(federationDiagnosisKey.getVisitedCountriesList()))
+        .withVisitedCountries(collectionToTinySet(federationDiagnosisKey.getVisitedCountriesList()))
         .withDaysSinceOnsetOfSymptoms(federationDiagnosisKey.getDaysSinceOnsetOfSymptoms());
+  }
+
+  /**
+   * Try to use smallest (memory) possible Set implementation.
+   * 
+   * @param <E>        generic
+   * @param collection to be turned into Set
+   * @return <code>null</code> if collection is null or empty, otherwise a Set
+   */
+  public static <E> Set<E> collectionToTinySet(Collection<E> collection) {
+    if (collection == null || collection.isEmpty()) {
+      return null;
+    }
+    if (collection instanceof Set<?>) {
+      return (Set<E>) collection;
+    }
+    if (collection.size() == 1) {
+      return Set.of(collection.iterator().next());
+    }
+    if (collection.size() == 2) {
+      Iterator<E> it = collection.iterator();
+      E v1 = it.next();
+      E v2 = it.next();
+      if (v1.equals(v2)) {
+        return Set.of(v1);
+      }
+      return Set.of(v1, v2);
+    }
+
+    final Set<E> set = new HashSet<>(collection.size(), 1f);
+    set.addAll(collection);
+    return set;
   }
 
   @Override
@@ -152,11 +186,6 @@ public class DiagnosisKeyBuilder implements
       submissionTimestamp = Instant.now().getEpochSecond() / SECONDS_PER_HOUR;
     }
 
-    if (visitedCountries == null || visitedCountries.isEmpty()) {
-      visitedCountries = new HashSet<>();
-      visitedCountries.add(countryCode);
-    }
-
     NormalizableFields normalizedValues = normalizeValues();
 
     var diagnosisKey = new DiagnosisKey(keyData, submissionType, rollingStartIntervalNumber, rollingPeriod,
@@ -167,12 +196,13 @@ public class DiagnosisKeyBuilder implements
   }
 
   private Set<String> enhanceVisitedCountriesWithOriginCountry() {
-    Set<String> enhancedVisitedCountries = new HashSet<>();
-
-    if (visitedCountries == null) {
-      visitedCountries = new HashSet<>();
+    if (visitedCountries == null || visitedCountries.isEmpty()) {
+      return Set.of(countryCode);
     }
-
+    if (visitedCountries.contains(countryCode)) {
+      return visitedCountries;
+    }
+    final Set<String> enhancedVisitedCountries = new HashSet<>(visitedCountries.size() + 1, 1f);
     enhancedVisitedCountries.addAll(visitedCountries);
     enhancedVisitedCountries.add(countryCode);
     return enhancedVisitedCountries;
@@ -193,7 +223,7 @@ public class DiagnosisKeyBuilder implements
   }
 
   /**
-   * If a {@link DiagnosisKeyNormalizer} object was configured in this builder, apply normalization where possibile, and
+   * If a {@link DiagnosisKeyNormalizer} object was configured in this builder, apply normalization where possible, and
    * return a container with the new values. Otherwise return a container with the original unchanged values. For boxed
    * types, primitive zero like values will be chosen if they have not been provided by the client of the builder.
    */

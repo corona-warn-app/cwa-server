@@ -23,10 +23,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.springframework.vault</groupId>
-      <artifactId>spring-vault-core</artifactId>
-    </dependency>
-    <dependency>
       <!-- The cloud bootstrap starter is needed due to a breaking change implemented in Spring Cloud 2020.0.0 which turns off the Bootstrap 
         context (used throughout the services for vault config) by default -->
       <groupId>org.springframework.cloud</groupId>
@@ -35,12 +31,6 @@
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-vault-config</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.springframework.vault</groupId>
-          <artifactId>spring-vault-core</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
@@ -61,24 +51,10 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-starter-logging</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-log4j2</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.yaml</groupId>

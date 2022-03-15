@@ -1,7 +1,7 @@
 package app.coronawarn.server.services.distribution.objectstore.publish;
 
 import static app.coronawarn.server.services.distribution.assembly.component.DigitalCertificatesStructureProvider.ACCEPTANCE_RULES;
-import static app.coronawarn.server.services.distribution.assembly.component.DigitalCertificatesStructureProvider.DSCS;
+import static app.coronawarn.server.services.distribution.assembly.component.DigitalCertificatesStructureProvider.DIGITAL_CERTIFICATES_STRUCTURE_PROVIDER;
 import static app.coronawarn.server.services.distribution.assembly.component.DigitalCertificatesStructureProvider.INVALIDATION_RULES;
 import static app.coronawarn.server.services.distribution.assembly.component.DigitalCertificatesStructureProvider.ONBOARDED_COUNTRIES;
 
@@ -80,7 +80,7 @@ public abstract class LocalFile {
    */
   public String getContentType() {
     if (isConfigFile() || isStatisticFile() || isKeyFile() || isQrPosterTemplate() || isVaccineValueSet()
-        || isDscFile()) {
+        || isDscFile() || isCclConfigFile()) {
       return "application/zip";
     }
     // list of versions, dates, hours
@@ -94,7 +94,7 @@ public abstract class LocalFile {
    * @return <code>true</code> if and only if the {@link #s3Key} ends with a digit, false otherwise.
    */
   public boolean isKeyFile() {
-    return s3Key.matches(".*\\d") && !isStatisticFile();
+    return s3Key.matches(".*\\d") && !isStatisticFile() && !isCclConfigFile();
   }
 
   public boolean isQrPosterTemplate() {
@@ -109,12 +109,16 @@ public abstract class LocalFile {
     return s3Key.endsWith("stats") || s3Key.matches(".*local_stats_\\d");
   }
 
+  private boolean isCclConfigFile() {
+    return s3Key.matches(".*config-v\\d");
+  }
+
   private boolean isVaccineValueSet() {
     return s3Key.endsWith("value-sets");
   }
 
   private boolean isDscFile() {
     return s3Key.endsWith(INVALIDATION_RULES) || s3Key.endsWith(ACCEPTANCE_RULES) || s3Key.endsWith(ONBOARDED_COUNTRIES)
-        || s3Key.endsWith(DSCS);
+        || s3Key.endsWith(DIGITAL_CERTIFICATES_STRUCTURE_PROVIDER);
   }
 }

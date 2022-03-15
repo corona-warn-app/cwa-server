@@ -1,6 +1,7 @@
 package app.coronawarn.server.common.federation.client;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import app.coronawarn.server.common.federation.client.config.FederationGatewayConfig;
 import app.coronawarn.server.common.federation.client.config.FederationGatewayConfig.Ssl;
@@ -27,6 +28,24 @@ class CloudFederationFeignHttpClientProviderSmokeTest {
     CloudFederationFeignHttpClientProvider cut = new CloudFederationFeignHttpClientProvider(config,
         new DefaultHostnameVerifierProvider());
     assertThat(cut.createFeignClient()).isNotNull();
+  }
+
+  @Test
+  void testThrowException() {
+    Ssl ssl = new Ssl();
+    ssl.setKeyStore(new File("Incorrect"));
+    ssl.setKeyStorePassword("Incorrect");
+    ssl.setCertificateType("Incorrect");
+    ssl.setTrustStore(new File("Incorrect"));
+    ssl.setTrustStorePassword("Incorrect");
+    FederationGatewayConfig config = new FederationGatewayConfig();
+    config.setConnectionPoolSize(1);
+    config.setSsl(ssl);
+
+    CloudFederationFeignHttpClientProvider provider = new CloudFederationFeignHttpClientProvider(config,
+        new DefaultHostnameVerifierProvider());
+    assertThatExceptionOfType(CloudFeignHttpClientProviderException.class)
+        .isThrownBy(() -> provider.createFeignClient());
   }
 
 }

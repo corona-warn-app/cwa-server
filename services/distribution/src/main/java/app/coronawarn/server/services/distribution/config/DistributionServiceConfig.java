@@ -2,6 +2,10 @@ package app.coronawarn.server.services.distribution.config;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
 import app.coronawarn.server.common.shared.util.SerializationUtils;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,6 +16,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
+import org.bouncycastle.util.encoders.Hex;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
@@ -33,7 +38,7 @@ public class DistributionServiceConfig {
   private static final String ALGORITHM_OID_REGEX = "^[0-9]{1,256}[\\.[0-9]{1,256}]{0,256}$";
   private static final String BUNDLE_REGEX = "^[a-z-]{1,256}[\\.[a-z-]{1,256}]{0,256}$";
   private static final String PRIVATE_KEY_REGEX =
-      "^(classpath:|file:[/]{1,8})[a-zA-Z0-9_-]{1,256}[/[a-zA-Z0-9_-]{1,256}]{0,256}(.pem)?$";
+      "^(classpath:|file:\\.?[/]{1,8})[a-zA-Z0-9_-]{1,256}:?[/[a-zA-Z0-9_-]{1,256}]{0,256}(.pem)?$";
 
   private Paths paths;
   private TestData testData;
@@ -73,6 +78,9 @@ public class DistributionServiceConfig {
   private PresenceTracingParameters presenceTracingParameters;
   private DigitalGreenCertificate digitalGreenCertificate;
   private Integer connectionPoolSize;
+  private String defaultArchiveName;
+  private Integer minimumTrlValueAllowed;
+  private Integer daysToPublish;
 
   public Paths getPaths() {
     return paths;
@@ -96,6 +104,14 @@ public class DistributionServiceConfig {
 
   public void setRetentionDays(Integer retentionDays) {
     this.retentionDays = retentionDays;
+  }
+
+  public Integer getDaysToPublish() {
+    return daysToPublish == null ? retentionDays : daysToPublish;
+  }
+
+  public void setDaysToPublish(Integer daysToPublish) {
+    this.daysToPublish = daysToPublish;
   }
 
   public Integer getExpiryPolicyMinutes() {
@@ -265,6 +281,14 @@ public class DistributionServiceConfig {
 
   public void setStatistics(StatisticsConfig statistics) {
     this.statistics = statistics;
+  }
+
+  public Integer getMinimumTrlValueAllowed() {
+    return minimumTrlValueAllowed;
+  }
+
+  public void setMinimumTrlValueAllowed(Integer minimumTrlValueAllowed) {
+    this.minimumTrlValueAllowed = minimumTrlValueAllowed;
   }
 
   /**
@@ -889,6 +913,14 @@ public class DistributionServiceConfig {
     this.connectionPoolSize = connectionPoolSize;
   }
 
+  public String getDefaultArchiveName() {
+    return defaultArchiveName;
+  }
+
+  public void setDefaultArchiveName(String defaultArchiveName) {
+    this.defaultArchiveName = defaultArchiveName;
+  }
+
   public static class ObjectStore {
 
     @Pattern(regexp = NO_WHITESPACE_REGEX)
@@ -1082,8 +1114,6 @@ public class DistributionServiceConfig {
   public static class AppFeature {
 
     private String label;
-    @Min(0)
-    @Max(1)
     private Integer value;
 
     public String getLabel() {
@@ -1599,6 +1629,12 @@ public class DistributionServiceConfig {
       @Max(100)
       private Integer expirationThresholdInDays;
 
+      private DgcBlocklistParameters blockListParameters;
+
+      private String iosDgcReissueServicePublicKeyDigest;
+
+      private String androidDgcReissueServicePublicKeyDigest;
+
       public DgcTestCertificateParameters getTestCertificateParameters() {
         return dgcTestCertificateParameters;
       }
@@ -1613,6 +1649,30 @@ public class DistributionServiceConfig {
 
       public void setExpirationThresholdInDays(Integer expirationThresholdInDays) {
         this.expirationThresholdInDays = expirationThresholdInDays;
+      }
+
+      public DgcBlocklistParameters getBlockListParameters() {
+        return blockListParameters;
+      }
+
+      public void setBlockListParameters(DgcBlocklistParameters blockListParameters) {
+        this.blockListParameters = blockListParameters;
+      }
+
+      public byte[] getIosDgcReissueServicePublicKeyDigest() {
+        return Hex.decode(iosDgcReissueServicePublicKeyDigest);
+      }
+
+      public void setIosDgcReissueServicePublicKeyDigest(String iosDgcReissueServicePublicKeyDigest) {
+        this.iosDgcReissueServicePublicKeyDigest = iosDgcReissueServicePublicKeyDigest;
+      }
+
+      public byte[] getAndroidDgcReissueServicePublicKeyDigest() {
+        return Hex.decode(androidDgcReissueServicePublicKeyDigest);
+      }
+
+      public void setAndroidDgcReissueServicePublicKeyDigest(String androidDgcReissueServicePublicKeyDigest) {
+        this.androidDgcReissueServicePublicKeyDigest = androidDgcReissueServicePublicKeyDigest;
       }
 
       public static class DgcTestCertificateParameters {
@@ -1642,6 +1702,56 @@ public class DistributionServiceConfig {
         }
       }
 
+      public static class DgcBlocklistParameters {
+
+        private String blockedUvciChunks;
+
+        /**
+         * Parse String from application.yaml parameter.
+         *
+         * @return parsed string in a list of DgcBlockedUvciChunk.
+         */
+        public List<DgcBlockedUvciChunk> getBlockedUvciChunks() {
+          return SerializationUtils.deserializeJson(blockedUvciChunks,
+              typeFactory -> typeFactory
+                  .constructCollectionType(List.class, DgcBlockedUvciChunk.class));
+        }
+
+        public void setBlockedUvciChunks(String blockedUvciChunks) {
+          this.blockedUvciChunks = blockedUvciChunks;
+        }
+
+        public static class DgcBlockedUvciChunk {
+
+          List<Integer> indices;
+          String hash;
+          Integer validFrom;
+
+          public List<Integer> getIndices() {
+            return indices;
+          }
+
+          public void setIndices(List<Integer> indices) {
+            this.indices = indices;
+          }
+
+          public byte[] getHash() {
+            return Hex.decode(hash);
+          }
+
+          public void setHash(String hash) {
+            this.hash = hash;
+          }
+
+          public Integer getValidFrom() {
+            return validFrom;
+          }
+
+          public void setValidFrom(Integer validFrom) {
+            this.validFrom = validFrom;
+          }
+        }
+      }
     }
   }
 
@@ -1680,7 +1790,19 @@ public class DistributionServiceConfig {
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String valuesetsFileName;
 
+    private String cclDirectory;
+
+    private String[] cclAllowList;
+
+    private String allowList;
+
+    private String allowListSignature;
+
+    private String allowListCertificate;
+
     private String[] supportedLanguages;
+
+    private String exportArchiveName;
 
     private Client client;
 
@@ -1774,6 +1896,57 @@ public class DistributionServiceConfig {
       this.supportedLanguages = supportedLanguages;
     }
 
+    public String getCclDirectory() {
+      return cclDirectory;
+    }
+
+    public void setCclDirectory(String cclDirectory) {
+      this.cclDirectory = cclDirectory;
+    }
+
+    public String[] getCclAllowList() {
+      return cclAllowList;
+    }
+
+    public void setCclAllowList(String[] cclAllowList) {
+      this.cclAllowList = cclAllowList;
+    }
+
+    /**
+     * getAllowList.
+     *
+     * @return AllowList
+     */
+    public AllowList getAllowList() {
+      return SerializationUtils.deserializeJson(allowList,
+          typeFactory -> typeFactory
+              .constructType(AllowList.class));
+    }
+
+    public String getAllowListAsString() {
+      return allowList;
+    }
+
+    public void setAllowList(String allowList) {
+      this.allowList = allowList;
+    }
+
+    public byte[] getAllowListSignature() {
+      return Hex.decode(allowListSignature);
+    }
+
+    public void setAllowListSignature(String allowListSignature) {
+      this.allowListSignature = allowListSignature;
+    }
+
+    public String getAllowListCertificate() {
+      return allowListCertificate;
+    }
+
+    public void setAllowListCertificate(String allowListCertificate) {
+      this.allowListCertificate = allowListCertificate;
+    }
+
     public Client getClient() {
       return client;
     }
@@ -1788,6 +1961,112 @@ public class DistributionServiceConfig {
 
     public void setDscClient(Client dscClient) {
       this.dscClient = dscClient;
+    }
+
+    public String getExportArchiveName() {
+      return exportArchiveName;
+    }
+
+    public void setExportArchiveName(String exportArchiveName) {
+      this.exportArchiveName = exportArchiveName;
+    }
+  }
+
+  public static class AllowList {
+
+    private List<CertificateAllowList> certificates;
+
+    private List<ServiceProvider> serviceProviders;
+
+    public List<CertificateAllowList> getCertificates() {
+      return certificates;
+    }
+
+    @JsonProperty("certificates")
+    public void setCertificates(List<CertificateAllowList> certificates) {
+      this.certificates = certificates;
+    }
+
+    public List<ServiceProvider> getServiceProviders() {
+      return serviceProviders;
+    }
+
+    @JsonProperty("serviceProviders")
+    public void setServiceProviders(List<ServiceProvider> serviceProviders) {
+      this.serviceProviders = serviceProviders;
+    }
+
+    @JsonInclude(Include.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class ServiceProvider {
+
+      @JsonProperty("serviceProviderAllowlistEndpoint")
+      private String serviceProviderAllowlistEndpoint;
+      @JsonProperty("fingerprint256")
+      private String fingerprint256;
+
+      public String getServiceProviderAllowlistEndpoint() {
+        return serviceProviderAllowlistEndpoint;
+      }
+
+      public void setServiceProviderAllowlistEndpoint(String serviceProviderAllowlistEndpoint) {
+        this.serviceProviderAllowlistEndpoint = serviceProviderAllowlistEndpoint;
+      }
+
+      public String getFingerprint256() {
+        return fingerprint256;
+      }
+
+      public void setFingerprint256(String fingerprint256) {
+        this.fingerprint256 = fingerprint256;
+      }
+    }
+
+    @JsonInclude(Include.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class CertificateAllowList {
+
+      private String serviceProvider;
+      private String hostname;
+      private String fingerprint256;
+
+      @JsonProperty("serviceProviderAllowlistEndpoint")
+      private String serviceProviderAllowlistEndpoint;
+
+      public String getServiceProvider() {
+        return serviceProvider;
+      }
+
+      @JsonProperty("serviceProvider")
+      public void setServiceProvider(String serviceProvider) {
+        this.serviceProvider = serviceProvider;
+      }
+
+      public String getHostname() {
+        return hostname;
+      }
+
+      @JsonProperty("hostname")
+      public void setHostname(String hostname) {
+        this.hostname = hostname;
+      }
+
+      public String getFingerprint256() {
+        return fingerprint256;
+      }
+
+      @JsonProperty("fingerprint256")
+      public void setFingerprint256(String fingerprint256) {
+        this.fingerprint256 = fingerprint256;
+      }
+
+      public String getServiceProviderAllowlistEndpoint() {
+        return serviceProviderAllowlistEndpoint;
+      }
+
+      public void setServiceProviderAllowlistEndpoint(String serviceProviderAllowlistEndpoint) {
+        this.serviceProviderAllowlistEndpoint = serviceProviderAllowlistEndpoint;
+      }
     }
   }
 }

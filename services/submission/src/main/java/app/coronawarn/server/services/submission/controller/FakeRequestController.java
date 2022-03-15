@@ -2,6 +2,8 @@
 
 package app.coronawarn.server.services.submission.controller;
 
+import static app.coronawarn.server.services.submission.controller.SubmissionController.CWA_FILTERED_CHECKINS_HEADER;
+import static app.coronawarn.server.services.submission.controller.SubmissionController.CWA_SAVED_CHECKINS_HEADER;
 import static app.coronawarn.server.services.submission.controller.SubmissionController.SUBMISSION_ROUTE;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
@@ -40,12 +42,17 @@ public class FakeRequestController {
    */
   @PostMapping(value = SUBMISSION_ROUTE, headers = {"cwa-fake!=0"})
   @Timed(description = "Time spent handling fake submission.")
+  @SuppressWarnings("unchecked")
   public DeferredResult<ResponseEntity<Void>> fakeRequest(@RequestHeader("cwa-fake") Integer fake) {
     submissionMonitor.incrementRequestCounter();
     submissionMonitor.incrementFakeRequestCounter();
     long delay = fakeDelayManager.getJitteredFakeDelay();
     DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
-    scheduledExecutor.schedule(() -> deferredResult.setResult(ResponseEntity.ok().build()), delay, MILLISECONDS);
+    ResponseEntity<Void> response = ResponseEntity.ok()
+        .header(CWA_FILTERED_CHECKINS_HEADER, String.valueOf(0))
+        .header(CWA_SAVED_CHECKINS_HEADER, String.valueOf(0))
+        .build();
+    scheduledExecutor.schedule(() -> deferredResult.setResult(response), delay, MILLISECONDS);
     return deferredResult;
   }
 }

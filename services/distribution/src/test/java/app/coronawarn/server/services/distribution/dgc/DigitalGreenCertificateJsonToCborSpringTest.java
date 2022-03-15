@@ -1,33 +1,23 @@
 package app.coronawarn.server.services.distribution.dgc;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleType;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.exception.DigitalCovidCertificateException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
-import org.json.JSONObject;
+import java.util.List;
+import java.util.function.Predicate;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
@@ -40,10 +30,8 @@ class DigitalGreenCertificateJsonToCborSpringTest {
   public static final String ID_ACCEPTANCE_1 = "RR-NL-0000";
   public static final String ID_ACCEPTANCE_2 = "TR-DE-0003";
   public static final String ID_INVALIDATION_1 = "RR-NL-0003";
-  public static final String ID_BN_1 = "RR-NL-0004";
-  public static final String RANDOM_STRING = "random_string";
+  public static final String ID_BN_1 = "BNR-DE-3298";
   public static final String DE = "DE";
-  public static final String BAD_IDENTIFIER = "BAD-IDENTIFIER";
 
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
@@ -51,47 +39,56 @@ class DigitalGreenCertificateJsonToCborSpringTest {
   @Autowired
   DigitalGreenCertificateToCborMapping digitalGreenCertificateToCborMapping;
 
+  @Autowired
+  DigitalCovidCertificateClient digitalCovidCertificateClient;
+
   @Test
   void shouldConstructCorrectAcceptanceRules() throws DigitalCovidCertificateException, FetchBusinessRulesException {
-    List<BusinessRule> businessRules = digitalGreenCertificateToCborMapping.constructRules(RuleType.Acceptance);
+    List<BusinessRule> businessRules = digitalGreenCertificateToCborMapping
+        .constructRules(RuleType.ACCEPTANCE, digitalCovidCertificateClient::getRules,
+            digitalCovidCertificateClient::getCountryRuleByHash);
 
     assertThat(businessRules).hasSize(2);
-    assertThat(businessRules.stream().filter(filterByRuleType(RuleType.Acceptance))).hasSize(2);
+    assertThat(businessRules.stream().filter(filterByRuleType(RuleType.ACCEPTANCE))).hasSize(2);
     assertThat(businessRules.stream().filter(filterByRuleIdentifier(ID_ACCEPTANCE_1)).findAny()).isPresent();
     assertThat(businessRules.stream().filter(filterByRuleIdentifier(ID_ACCEPTANCE_2)).findAny()).isPresent();
   }
 
   @Test
   void shouldConstructCorrectBnRules() throws DigitalCovidCertificateException, FetchBusinessRulesException {
-    List<BusinessRule> businessRules = digitalGreenCertificateToCborMapping.constructRules(RuleType.BoosterNotification);
-
+    List<BusinessRule> businessRules = digitalGreenCertificateToCborMapping
+        .constructRules(RuleType.BOOSTER_NOTIFICATION, digitalCovidCertificateClient::getBoosterNotificationRules,
+            digitalCovidCertificateClient::getBoosterNotificationRuleByHash);
     assertThat(businessRules).hasSize(1);
-    assertThat(businessRules.stream().filter(filterByRuleType(RuleType.BoosterNotification))).hasSize(1);
+    assertThat(businessRules.stream().filter(filterByRuleType(RuleType.BOOSTER_NOTIFICATION))).hasSize(1);
     assertThat(businessRules.stream().filter(filterByRuleIdentifier(ID_BN_1)).findAny()).isPresent();
   }
 
   @Test
   void shouldConstructCorrectInvalidationRules() throws DigitalCovidCertificateException, FetchBusinessRulesException {
-    List<BusinessRule> businessRules = digitalGreenCertificateToCborMapping.constructRules(RuleType.Invalidation);
+    List<BusinessRule> businessRules = digitalGreenCertificateToCborMapping
+        .constructRules(RuleType.INVALIDATION, digitalCovidCertificateClient::getRules,
+            digitalCovidCertificateClient::getCountryRuleByHash);
 
     assertThat(businessRules).hasSize(1);
-    assertThat(businessRules.stream().filter(filterByRuleType(RuleType.Invalidation))).hasSize(1);
+    assertThat(businessRules.stream().filter(filterByRuleType(RuleType.INVALIDATION))).hasSize(1);
     assertThat(businessRules.stream().filter(filterByRuleIdentifier(ID_INVALIDATION_1)).findAny()).isPresent();
   }
 
   @Test
   void shouldConstructCborAcceptanceRules() throws DigitalCovidCertificateException, FetchBusinessRulesException {
-    byte[] businessRules = digitalGreenCertificateToCborMapping.constructCborRules(RuleType.Acceptance);
+    byte[] businessRules = digitalGreenCertificateToCborMapping
+        .constructCborRules(RuleType.ACCEPTANCE, digitalCovidCertificateClient::getRules,
+            digitalCovidCertificateClient::getCountryRuleByHash);
 
     assertThat(businessRules).isNotEmpty();
   }
 
   private Predicate<BusinessRule> filterByRuleType(RuleType ruleType) {
-    return businessRule -> businessRule.getType().equalsIgnoreCase(ruleType.name());
+    return businessRule -> businessRule.getType().equalsIgnoreCase(ruleType.getType());
   }
 
   private Predicate<BusinessRule> filterByRuleIdentifier(String identifier) {
     return businessRule -> businessRule.getIdentifier().equalsIgnoreCase(identifier);
   }
-
 }
