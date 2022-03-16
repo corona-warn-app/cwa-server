@@ -27,6 +27,11 @@ public class HashUtils {
     public String getName() {
       return name;
     }
+
+    @Override
+    public String toString() {
+      return name;
+    }
   }
 
   private HashUtils() {
@@ -74,7 +79,7 @@ public class HashUtils {
     try {
       return MessageDigest.getInstance(algorithm.getName()).digest(data);
     } catch (NoSuchAlgorithmException e) {
-      logger.error("Digest algorithm does not exist", e);
+      logger.error("Digest algorithm (" + algorithm + ") does not exist", e);
     }
     return new byte[0];
   }
