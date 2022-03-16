@@ -25,10 +25,11 @@ import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.ObjectUtils;
 
+@SuppressWarnings("deprecation")
 @Constraint(validatedBy = ValidSubmissionPayload.SubmissionPayloadValidator.class)
 @Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
@@ -164,7 +165,7 @@ public @interface ValidSubmissionPayload {
     private boolean checkOriginCountryIsValid(SubmissionPayload submissionPayload,
         ConstraintValidatorContext validatorContext) {
       String originCountry = submissionPayload.getOrigin();
-      if (submissionPayload.hasOrigin() && !StringUtils.isEmpty(originCountry)
+      if (submissionPayload.hasOrigin() && !ObjectUtils.isEmpty(originCountry)
           && !originCountry.equals(defaultOriginCountry)) {
         addViolation(validatorContext,
             String.format("Origin country %s is not part of the supported countries list", originCountry));
