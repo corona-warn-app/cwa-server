@@ -43,6 +43,7 @@ class HashUtilsTest {
     byte[] hash = byteStringDigest(TEST_STRING, SHA_256);
     assertThat(hash).hasSize(32);
   }
+
   @Test
   void testByteStringDigest2() {
     byte[] hash = byteStringDigest(ByteString.copyFromUtf8(TEST_STRING), SHA_256);
@@ -52,9 +53,10 @@ class HashUtilsTest {
   @Test
   void testInvalidAlgorithm() {
     try (MockedStatic<MessageDigest> utilities = Mockito.mockStatic(MessageDigest.class)) {
-      utilities.when(() -> MessageDigest.getInstance(any())).thenThrow(new NoSuchAlgorithmException());
+      utilities.when(() -> MessageDigest.getInstance(any()))
+          .thenThrow(new NoSuchAlgorithmException("Mock Exception from HashUtilsTest"));
 
-      byte[] result = byteStringDigest(new byte[] {0,0}, SHA_256);
+      byte[] result = byteStringDigest(new byte[] { 0, 0 }, SHA_256);
       assertEquals(0, result.length);
     }
   }
