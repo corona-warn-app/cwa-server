@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.assembly.component;
 
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
@@ -7,10 +5,10 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.io.IOException;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.util.FileSystemUtils;
 
 /**
  * Creates and clears a {@link Directory} on disk, which is defined by the application properties.
@@ -41,7 +39,7 @@ public class OutputDirectoryProvider {
   public void clear() throws IOException {
     logger.debug("Clearing output directory...");
     java.io.File outputDirectory = getFileOnDisk();
-    FileUtils.deleteDirectory(outputDirectory);
+    FileSystemUtils.deleteRecursively(outputDirectory);
     if (!outputDirectory.mkdirs()) {
       throw new IOException("Failed to clear output directory.");
     }
