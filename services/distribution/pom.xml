@@ -21,33 +21,23 @@
       <artifactId>s3</artifactId>
     </dependency>
     <dependency>
-      <artifactId>bcpkix-jdk15on</artifactId>
-      <groupId>org.bouncycastle</groupId>
-    </dependency>
-    <dependency>
       <artifactId>json-simple</artifactId>
       <groupId>com.googlecode.json-simple</groupId>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.dataformat</groupId>
-      <artifactId>jackson-dataformat-cbor</artifactId>
-    </dependency>
-    <dependency>
-      <artifactId>commons-math3</artifactId>
-      <groupId>org.apache.commons</groupId>
     </dependency>
     <dependency>
       <artifactId>spring-retry</artifactId>
       <groupId>org.springframework.retry</groupId>
     </dependency>
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-aop</artifactId>
+      <groupId>com.vdurmont</groupId>
+      <artifactId>semver4j</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.testcontainers</groupId>
-      <artifactId>postgresql</artifactId>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
     </dependency>
+
+    <!-- test scope only -->
     <dependency>
       <groupId>io.findify</groupId>
       <artifactId>s3mock_2.13</artifactId>
@@ -69,16 +59,10 @@
       <artifactId>jupiterHelpers</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.everit.json</groupId>
-      <artifactId>org.everit.json.schema</artifactId>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>postgresql</artifactId>
     </dependency>
-    <dependency>
-      <groupId>com.vdurmont</groupId>
-      <artifactId>semver4j</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-    </dependency>
+
+    <!-- plus some more dependencies defined in services.pom -->
   </dependencies>
 </project>
