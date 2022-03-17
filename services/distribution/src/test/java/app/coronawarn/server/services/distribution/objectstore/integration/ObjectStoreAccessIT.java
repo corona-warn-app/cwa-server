@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.objectstore.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,9 +18,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.test.context.ActiveProfiles;
 
 class ObjectStoreAccessIT extends BaseS3IntegrationTest {
 

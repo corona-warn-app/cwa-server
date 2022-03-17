@@ -3,7 +3,7 @@ package app.coronawarn.server.services.callback.registration;
 import app.coronawarn.server.common.federation.client.FederationGatewayClient;
 import app.coronawarn.server.common.shared.util.HashUtils;
 import app.coronawarn.server.services.callback.config.CallbackServiceConfig;
-import org.apache.commons.lang3.StringUtils;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
@@ -39,7 +39,7 @@ public class RegistrationRunner implements ApplicationRunner {
     logger.info("Starting callback registration for ID '{}' URL '{}'.", registrationId, endpointUrl);
 
     boolean callbackUrlIsAlreadyRegistered = federationGatewayClient.getCallbackRegistrations().getBody().stream()
-        .anyMatch(registrationResponse -> StringUtils.equals(registrationId, registrationResponse.getId()));
+        .anyMatch(registrationResponse -> Objects.equals(registrationId, registrationResponse.getId()));
     if (callbackUrlIsAlreadyRegistered) {
       logger.info("Callback with id '{}' was already registered.", registrationId);
       return;
