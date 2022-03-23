@@ -72,7 +72,7 @@ normalized-time-per-day-to-risk-level-mapping:
 
 transmission-risk-level-multiplier: 0.2
 
-max-encounter-age-in-days: 10
+max-encounter-age-in-days: ${MAX-ENCOUNTER-AGE-IN-DAYS:10}
 
 trlEncoding:
   infectiousnessOffsetStandard: 1

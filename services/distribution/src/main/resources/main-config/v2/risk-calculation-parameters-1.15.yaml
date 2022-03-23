@@ -62,7 +62,7 @@ transmission-risk-level-multiplier: 0 # deprecated
 # configuration shared by multiple services
 # transmission-risk-value-mapping:
 
-max-encounter-age-in-days: 10
+max-encounter-age-in-days: ${MAX-ENCOUNTER-AGE-IN-DAYS:10}
 
 trlEncoding:
   infectiousnessOffsetStandard: 1
