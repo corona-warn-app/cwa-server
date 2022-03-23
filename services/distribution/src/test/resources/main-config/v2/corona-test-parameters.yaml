@@ -1,0 +1,7 @@
+# YamlLoaderTest
+
+coronaRapidAntigenTestParameters:
+  hoursToDeemTestOutdated: 48
+  hoursSinceSampleCollectionToShowRiskCard: ${HOURSSINCESAMPLECOLLECTIONTOSHOWRISKCARD:42} # 7 days x 24 hours
+coronaPCRTestParameters:
+  hoursSinceTestRegistrationToShowRiskCard: ${HOURSSINCETESTREGISTRATIONTOSHOWRISKCARD:42} # 7 days x 24 hours

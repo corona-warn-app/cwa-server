@@ -1,0 +1,76 @@
+# YamlLoaderTest
+
+minutes-at-attenuation-filters:
+  -
+    attenuation-range:
+      min: 0
+      max: 79
+      max-exclusive: true
+    drop-if-minutes-in-range:
+      min: 0
+      max: 5
+      max-exclusive: true
+
+trl-filters:
+  -
+    drop-if-trl-in-range:
+      min: 1
+      max: 2
+
+minutes-at-attenuation-weights:
+  -
+    attenuation-range:
+      min: 0
+      max: 63
+      max-exclusive: true
+    weight: 0.8
+  -
+    attenuation-range:
+      min: 63
+      max: 73
+      max-exclusive: true
+    weight: 1.0
+  -
+    attenuation-range:
+      min: 73
+      max: 79
+      max-exclusive: true
+    weight: 0.1
+
+normalized-time-per-e-w-to-risk-level-mapping:
+  -
+    normalized-time-range:
+      min: 0
+      max: 13
+      max-exclusive: true
+    risk-level: 1
+  -
+    normalized-time-range:
+      min: 13
+      max: 9999
+    risk-level: 2
+
+normalized-time-per-day-to-risk-level-mapping:
+  -
+    normalized-time-range:
+      min: 0
+      max: 13
+      max-exclusive: true
+    risk-level: 1
+  -
+    normalized-time-range:
+      min: 13
+      max: 99999
+    risk-level: 2
+
+transmission-risk-level-multiplier: 0.2
+
+max-encounter-age-in-days: ${MAX-ENCOUNTER-AGE-IN-DAYS:42}
+
+trlEncoding:
+  infectiousnessOffsetStandard: 1
+  infectiousnessOffsetHigh: 2
+  reportTypeOffsetRecursive: 0
+  reportTypeOffsetSelfReport: 2
+  reportTypeOffsetConfirmedClinicalDiagnosis: 4
+  reportTypeOffsetConfirmedTest: 6
