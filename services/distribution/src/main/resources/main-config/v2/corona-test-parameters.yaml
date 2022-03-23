@@ -8,4 +8,4 @@ coronaRapidAntigenTestParameters:
 coronaPCRTestParameters:
   # validation rule for hoursSinceTestRegistrationToEncourageRemoval:
   #   * > 0
-  hoursSinceTestRegistrationToShowRiskCard: 264 # 11 days x 24 hours
+  hoursSinceTestRegistrationToShowRiskCard: 168 # 11 days x 24 hours
