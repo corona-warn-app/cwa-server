@@ -291,7 +291,7 @@ is responsible for reading the values, using the [`DistributionServiceConfig`](/
 
 At the end of the process these URLs are created to allow retrieving the protobuf files: `ehn-dgc/{supportedLanguage}/value-sets`.
 
-The supported languages are [configurable](https://github.com/corona-warn-app/cwa-server/blob/5e47a2e485585043a05ec4173204dd020c757585/services/distribution/src/main/resources/application.yaml#L208), for now they are: DE, EN, BG, PL, RO, TR.
+The supported languages are [configurable](https://github.com/corona-warn-app/cwa-server/blob/5e47a2e485585043a05ec4173204dd020c757585/services/distribution/src/main/resources/application.yaml#L208), for now they are: DE, EN, BG, PL, RO, TR, UK.
 
 For local testing the following value sets may be consumed:
 

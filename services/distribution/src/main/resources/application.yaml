@@ -251,7 +251,7 @@ services:
       test-type-path: ${DIGITAL_GREEN_CERTIFICATE_TEST_TYPE_JSON_PATH:}
       dgc-directory: ${DIGITAL_GREEN_CERTIFICATE_DIRECTORY:ehn-dgc}
       valuesets-file-name: ${DIGITAL_GREEN_CERTIFICATE_VALUESETS_FILE_NAME:value-sets}
-      supported-languages: ${DIGITAL_GREEN_CERTIFICATE_SUPPORTED_LANGUAGES:DE, EN, BG, PL, RO, TR}
+      supported-languages: ${DIGITAL_GREEN_CERTIFICATE_SUPPORTED_LANGUAGES:DE, EN, BG, PL, RO, TR, UK}
       booster-notification: ${BOOSTER_NOTIFICATION_DIRECTORY:booster-notification-rules}
       export-archive-name: ${DIGITAL_GREEN_CERTIFICATE_ARCHIVE_NAME:export.bin}
       allow-list: ${DCC_VALIDATION_SERVICE_ALLOWLIST}
