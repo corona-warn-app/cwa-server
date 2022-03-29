@@ -189,7 +189,7 @@ services:
       booster-notification: booster-notification-rules
       dgc-directory: ehn-dgc
       valuesets-file-name: value-sets
-      supported-languages: DE, EN, BG, PL, RO, TR
+      supported-languages: de, en, bg, pl, ro, tr, uk
       export-archive-name: ${DIGITAL_GREEN_CERTIFICATE_ARCHIVE_NAME:export.bin}
       allow-list: ${DCC_VALIDATION_SERVICE_ALLOWLIST:{"certificates":[{"serviceProvider":"ACME Inc.","hostname":"validation-service.acme.org","fingerprint256":"E87E26EB9D22280125E113F755BE2F9F90DB076DD011D5940E0A78DD2F20EDFA"}],"serviceProviders":[{"serviceProviderAllowlistEndpoint":"https://validation-service.acme.org/serviceproviders","fingerprint256":"E87E26EB9D22280125E113F755BE2F9F90DB076DD011D5940E0A78DD2F20EDFA"}]}}
       allow-list-signature: ${DCC_VALIDATION_SERVICE_ALLOWLIST_SIGNATURE:3046022100945f80f1fa7b32cc9f4f951ec826fab13274472299089cc980448d66ff4e3055022100917dda6bedb1ac209715352b6355142fc23a0e5d5e5743559e3813be54a1b0b8}
