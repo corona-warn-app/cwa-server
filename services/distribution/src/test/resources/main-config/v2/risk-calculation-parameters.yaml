@@ -1,4 +1,4 @@
-# YamlLoaderTest
+  # YamlLoaderTest
 
 minutes-at-attenuation-filters:
   -
@@ -68,7 +68,7 @@ transmission-risk-level-multiplier: 0.2
 max-encounter-age-in-days: ${MAX-ENCOUNTER-AGE-IN-DAYS:42}
 
 trlEncoding:
-  infectiousnessOffsetStandard: 1
+  infectiousnessOffsetStandard: ${:1}
   infectiousnessOffsetHigh: 2
   reportTypeOffsetRecursive: 0
   reportTypeOffsetSelfReport: 2
