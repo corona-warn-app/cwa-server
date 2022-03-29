@@ -68,6 +68,7 @@ class YamlLoaderTest {
     RiskCalculationParameters.Builder riskCalculationParameterBuilder = YamlLoader.loadYamlIntoProtobufBuilder(
         ApplicationConfigurationV2PublicationConfig.V1_RISK_PARAMETERS_FILE,
         RiskCalculationParameters.Builder.class);
+    
     assertEquals(42, riskCalculationParameterBuilder.getMaxEncounterAgeInDays());
 
     CoronaTestParameters.Builder coronaTestParameters = YamlLoader.loadYamlIntoProtobufBuilder(
