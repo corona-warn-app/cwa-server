@@ -73,15 +73,15 @@ public class ApplicationConfigurationV2PublicationConfig {
   /**
    * The location of the exposure configuration source files for Android and Ios.
    */
-  private static final String V1_RISK_PARAMETERS_FILE = "main-config/v2/risk-calculation-parameters.yaml";
-  private static final String V2_RISK_PARAMETERS_FILE = "main-config/v2/risk-calculation-parameters-1.15.yaml";
-  private static final String PRESENCE_TRACING_PARAMETERS_FILE = "main-config/v2/presence-tracing-parameters.yaml";
-  private static final String CORONA_TEST_PARAMETERS_FILE = "main-config/v2/corona-test-parameters.yaml";
-  private static final String PLAUSIBLE_DENIABILITY_PARAMETERS = "main-config/v2/plausible-deniability-parameters.yaml";
-  private static final String REVOKED_TRACE_LOCATION = "main-config/v2/revoked-trace-location-versions.yaml";
-  private static final String ANDROID_V2_DATA_MAPPING_FILE = "main-config/v2/diagnosis-keys-data-mapping.yaml";
-  private static final String ANDROID_V2_DAILY_SUMMARIES_FILE = "main-config/v2/daily-summaries-config.yaml";
-  private static final String IOS_V2_EXPOSURE_CONFIGURATION_FILE = "main-config/v2/exposure-configuration.yaml";
+  public static final String V1_RISK_PARAMETERS_FILE = "main-config/v2/risk-calculation-parameters.yaml";
+  public static final String V2_RISK_PARAMETERS_FILE = "main-config/v2/risk-calculation-parameters-1.15.yaml";
+  public static final String PRESENCE_TRACING_PARAMETERS_FILE = "main-config/v2/presence-tracing-parameters.yaml";
+  public static final String CORONA_TEST_PARAMETERS_FILE = "main-config/v2/corona-test-parameters.yaml";
+  public static final String PLAUSIBLE_DENIABILITY_PARAMETERS = "main-config/v2/plausible-deniability-parameters.yaml";
+  public static final String REVOKED_TRACE_LOCATION = "main-config/v2/revoked-trace-location-versions.yaml";
+  public static final String ANDROID_V2_DATA_MAPPING_FILE = "main-config/v2/diagnosis-keys-data-mapping.yaml";
+  public static final String ANDROID_V2_DAILY_SUMMARIES_FILE = "main-config/v2/daily-summaries-config.yaml";
+  public static final String IOS_V2_EXPOSURE_CONFIGURATION_FILE = "main-config/v2/exposure-configuration.yaml";
 
   /**
    * Fetches the source configuration as a ApplicationConfigurationAndroid instance.

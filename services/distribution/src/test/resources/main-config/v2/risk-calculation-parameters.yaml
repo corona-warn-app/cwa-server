@@ -1,11 +1,4 @@
-#----------------------------------------------------------------------
-# This is the Corona Warn App source configuration file.
-# ----------------------------------------------------------------------
-#
-# This configuration file will be fetched by the mobile app in order to function.
-#
-# Change this file with caution!
-
+# YamlLoaderTest
 
 minutes-at-attenuation-filters:
   -
@@ -72,10 +65,10 @@ normalized-time-per-day-to-risk-level-mapping:
 
 transmission-risk-level-multiplier: 0.2
 
-max-encounter-age-in-days: ${MAX-ENCOUNTER-AGE-IN-DAYS:10}
+max-encounter-age-in-days: ${MAX-ENCOUNTER-AGE-IN-DAYS:42}
 
 trlEncoding:
-  infectiousnessOffsetStandard: 1
+  infectiousnessOffsetStandard: ${:1}
   infectiousnessOffsetHigh: 2
   reportTypeOffsetRecursive: 0
   reportTypeOffsetSelfReport: 2

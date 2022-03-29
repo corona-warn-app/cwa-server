@@ -4,8 +4,8 @@ coronaRapidAntigenTestParameters:
   hoursToDeemTestOutdated: 48
   # validation rule for hoursSinceSampleCollectionToEncourageRemoval:
   #   * > 0
-  hoursSinceSampleCollectionToShowRiskCard: 168 # 7 days x 24 hours
+  hoursSinceSampleCollectionToShowRiskCard: ${HOURSSINCESAMPLECOLLECTIONTOSHOWRISKCARD:168} # 7 days x 24 hours
 coronaPCRTestParameters:
   # validation rule for hoursSinceTestRegistrationToEncourageRemoval:
   #   * > 0
-  hoursSinceTestRegistrationToShowRiskCard: 168 # 7 days x 24 hours
+  hoursSinceTestRegistrationToShowRiskCard: ${HOURSSINCETESTREGISTRATIONTOSHOWRISKCARD:168} # 7 days x 24 hours
