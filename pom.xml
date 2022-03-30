@@ -336,6 +336,12 @@
         <version>${jackson.version}</version>
       </dependency>
       <dependency>
+        <!-- https://github.com/FasterXML/jackson-databind/issues/2816 -->
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>2.13.2.2</version>
+      </dependency>
+      <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-simple</artifactId>
         <version>${slf4j.version}</version>
