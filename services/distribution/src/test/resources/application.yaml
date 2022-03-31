@@ -232,7 +232,15 @@ services:
         ssl:
           trust-store: ../../docker-compose-test-secrets/dcc_truststore
           trust-store-password: 123456
-
+    dcc-revocation:
+      client:
+        public-key: ${DCC_REVOCATION_LIST_PUBLIC_KEY:MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE6Ft4aTjScTpsvY0tg2Lx0AK0Ih3Z2VKXnyBvoZxngB9cXmNtTg+Va3fY3QJduf+OXaWsE34xvMTIHxw+MpOLkw==}
+        base-url: ${DCC_REV_BASE_PATH:https://de.crl.test.dscg.ubirch.com}
+        retry-period: 2
+        max-retry-period: 5
+        max-retry-attempts: 2
+      dcc-list-path: /chunk.lst
+      certificate: ${DCC_REVOCATION_LIST_CERTIFICATE}
 spring:
   main:
     banner-mode: off

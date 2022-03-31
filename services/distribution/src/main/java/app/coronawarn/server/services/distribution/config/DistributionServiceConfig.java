@@ -81,6 +81,7 @@ public class DistributionServiceConfig {
   private String defaultArchiveName;
   private Integer minimumTrlValueAllowed;
   private Integer daysToPublish;
+  private DccRevocation dccRevocation;
 
   public Paths getPaths() {
     return paths;
@@ -302,6 +303,10 @@ public class DistributionServiceConfig {
             .setLabel(appFeature.getLabel())
             .setValue(appFeature.getValue()).build())
         .collect(Collectors.toList());
+  }
+
+  public DccRevocation getDccRevocation() {
+    return this.dccRevocation;
   }
 
   public static class StatisticsConfig {
@@ -2067,6 +2072,37 @@ public class DistributionServiceConfig {
       public void setServiceProviderAllowlistEndpoint(String serviceProviderAllowlistEndpoint) {
         this.serviceProviderAllowlistEndpoint = serviceProviderAllowlistEndpoint;
       }
+    }
+  }
+
+  public static class DccRevocation {
+
+    private Client client;
+    private String certificate;
+    private String dccListPath;
+
+    public Client getClient() {
+      return client;
+    }
+
+    public void setClient(Client client) {
+      this.client = client;
+    }
+
+    public String getCertificate() {
+      return certificate;
+    }
+
+    public void setCertificate(String certificate) {
+      this.certificate = certificate;
+    }
+
+    public String getDccListPath() {
+      return dccListPath;
+    }
+
+    public void setDccListPath(String dccListPath) {
+      this.dccListPath = dccListPath;
     }
   }
 }
