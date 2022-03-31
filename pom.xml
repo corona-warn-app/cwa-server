@@ -47,7 +47,7 @@
     <sonar.projectKey>${sonar.organization}_cwa-${project.artifactId}</sonar.projectKey>
 
     <!-- https://spring.io/projects/spring-boot -->
-    <spring-boot.version>2.6.5</spring-boot.version>
+    <spring-boot.version>2.6.6</spring-boot.version>
     <!-- https://spring.io/projects/spring-cloud#release-trains -->
     <spring-cloud.version>2021.0.1</spring-cloud.version>
     <!-- If you update spring-cloud, see if it references the correct spring-vault-core version again, then remove the following: -->
@@ -57,6 +57,7 @@
     <json-simple.version>1.1.1</json-simple.version>
     <everit-json.version>1.5.1</everit-json.version>
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
+    <commons-io.version>2.11.0</commons-io.version>
     <log4j.version>2.17.2</log4j.version>
     <slf4j.version>1.7.36</slf4j.version>
     <feign.version>11.8</feign.version>
@@ -244,6 +245,11 @@
         <groupId>commons-beanutils</groupId>
         <artifactId>commons-beanutils</artifactId>
         <version>${commons-beanutils.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>${commons-io.version}</version>
       </dependency>
       <dependency>
         <groupId>com.google.guava</groupId>
