@@ -1,9 +1,10 @@
 CREATE TABLE revocation_entry (
-    kid bytea PRIMARY KEY,
+    kid bytea NOT NULL,
     type bytea NOT NULL,
     hash bytea NOT NULL,
     x bytea NOT NULL,
-    y bytea NOT NULL
+    y bytea NOT NULL,
+    PRIMARY KEY(kid, type, hash)
 );
 
 CREATE TABLE revocation_etag (
