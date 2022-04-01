@@ -57,7 +57,7 @@ message PresenceTracingSubmissionParameters {
 message PresenceTracingPlausibleDeniabilityParameters {
 
   repeated uint32 checkInSizesInBytes = 1;
-
+  
   double probabilityToFakeCheckInsIfNoCheckIns = 2;
   double probabilityToFakeCheckInsIfSomeCheckIns = 3;
 
