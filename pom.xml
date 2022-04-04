@@ -481,7 +481,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>3.0.0-M4</version>
+          <version>3.0.0-M6</version>
           <executions>
             <execution>
               <configuration>
