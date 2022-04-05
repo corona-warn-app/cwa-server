@@ -2,7 +2,6 @@ package app.coronawarn.server.services.distribution.dgc.dsc;
 
 import static app.coronawarn.server.common.shared.util.SerializationUtils.readConfiguredJsonOrDefault;
 
-import app.coronawarn.server.services.distribution.dcc.decode.DccRevocationListDecoder;
 import app.coronawarn.server.services.distribution.dgc.Certificates;
 import java.util.Optional;
 import org.springframework.context.annotation.Profile;
