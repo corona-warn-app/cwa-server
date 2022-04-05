@@ -1,7 +1,11 @@
 package app.coronawarn.server.services.distribution.dgc.dsc;
 
-import app.coronawarn.server.services.distribution.dgc.Certificates;
+import app.coronawarn.server.common.persistence.domain.DccRevocationEntry;
+import app.coronawarn.server.services.distribution.dcc.FetchDccListException;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchDscTrustListException;
+import org.json.simple.parser.ParseException;
+import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -11,5 +15,6 @@ import java.util.Optional;
  */
 public interface DigitalSigningCertificatesClient {
 
-  Optional<Certificates> getDscTrustList() throws FetchDscTrustListException;
+  Optional<List<DccRevocationEntry>> getDscTrustList()
+      throws FetchDscTrustListException, IOException, ParseException, FetchDccListException;
 }

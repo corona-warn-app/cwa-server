@@ -1,16 +1,22 @@
 package app.coronawarn.server.common.shared.util;
 
 import app.coronawarn.server.common.shared.exception.UnableToLoadFileException;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JsonTokenId;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.fasterxml.jackson.dataformat.cbor.CBORFactory;
+import com.fasterxml.jackson.dataformat.cbor.CBORParser;
 import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.Optional;
 import java.util.function.Function;
 import org.everit.json.schema.Schema;
@@ -19,6 +25,8 @@ import org.everit.json.schema.loader.SchemaClient;
 import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ResourceLoader;
@@ -87,9 +95,37 @@ public final class SerializationUtils {
         typeFactory -> typeFactory.constructSimpleType(rawType, new JavaType[0])));
   }
 
+  public static org.json.simple.JSONObject jsonExtractCosePayload(byte[] byteSequence) throws IOException, ParseException {
+    CBORFactory cborFactory = new CBORFactory();
+    CBORParser cborParser = cborFactory.createParser(byteSequence);
+    JsonFactory jsonFactory = new JsonFactory();
+    StringWriter stringWriter = new StringWriter();
+    JsonGenerator jsonGenerator = jsonFactory.createGenerator(stringWriter);
+    StringWriter stringWriter2 = new StringWriter();
+    JsonGenerator jsonGenerator2 = jsonFactory.createGenerator(stringWriter2);
+    JSONParser parser = new JSONParser();
+
+    int i = 0;
+    while (cborParser.nextToken() != null) {
+      if (JsonTokenId.ID_EMBEDDED_OBJECT == cborParser.getCurrentToken().id() && ++i == 2) {
+        byte[] obj = (byte[]) cborParser.getEmbeddedObject();
+        CBORParser payload = cborFactory.createParser(obj);
+        while (payload.nextToken() != null) {
+          jsonGenerator2.copyCurrentEvent(payload);
+        }
+        i++;
+      }
+      jsonGenerator.copyCurrentEvent(cborParser);
+    }
+    jsonGenerator.flush();
+    jsonGenerator2.flush();
+
+    return (org.json.simple.JSONObject) parser.parse(stringWriter2.toString());
+  }
+
   /**
-   * Reads and convers a JSON object from a classpath file or if it does not find it
-   * returns a default.
+   * Reads and convers a JSON object from a classpath file or if it does not find it returns a default.
+   *
    * @param resourceLoader - resource loader.
    * @param path           - JSON path.
    * @param defaultPath    - default JSON path.
@@ -122,7 +158,7 @@ public final class SerializationUtils {
 
   /**
    * Encodes an object to CBOR.
-   * 
+   *
    * @param object - object to be encoded
    * @return - CBOR encoded byte array
    * @throws JsonProcessingException - if JSON processing of the object fails.
@@ -134,7 +170,7 @@ public final class SerializationUtils {
 
   /**
    * Validates an object (JSON) based on a provided schema containing validation rules.
-   * 
+   *
    * @param validateObject       - object to be validated
    * @param schemaValidationJson - validation schema
    * @throws JsonProcessingException - if object to be validated fails on JSON processing
