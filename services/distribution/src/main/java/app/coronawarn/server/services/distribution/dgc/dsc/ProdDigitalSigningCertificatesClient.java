@@ -1,9 +1,8 @@
 package app.coronawarn.server.services.distribution.dgc.dsc;
 
-import app.coronawarn.server.common.persistence.domain.DccRevocationEntry;
+import app.coronawarn.server.services.distribution.dgc.Certificates;
 import app.coronawarn.server.services.distribution.dgc.dsc.decode.DscListDecoder;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchDscTrustListException;
-import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +30,7 @@ public class ProdDigitalSigningCertificatesClient implements DigitalSigningCerti
   }
 
   @Override
-  public Optional<List<DccRevocationEntry>> getDscTrustList() throws FetchDscTrustListException {
+  public Optional<Certificates> getDscTrustList() throws FetchDscTrustListException {
     logger.debug("Get rules from DCC");
     try {
       return Optional.of(dscListDecoder.decode(digitalSigningCertificatesFeignClient.getDscTrustList().getBody()));

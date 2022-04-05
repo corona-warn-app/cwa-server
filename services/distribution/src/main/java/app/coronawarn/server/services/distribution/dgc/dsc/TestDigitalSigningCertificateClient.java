@@ -1,11 +1,9 @@
 package app.coronawarn.server.services.distribution.dgc.dsc;
 
-import app.coronawarn.server.common.persistence.domain.DccRevocationEntry;
-import app.coronawarn.server.services.distribution.dcc.FetchDccListException;
+import static app.coronawarn.server.common.shared.util.SerializationUtils.readConfiguredJsonOrDefault;
+
 import app.coronawarn.server.services.distribution.dcc.decode.DccRevocationListDecoder;
-import com.google.protobuf.ByteString;
-import java.io.InputStream;
-import java.util.List;
+import app.coronawarn.server.services.distribution.dgc.Certificates;
 import java.util.Optional;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ResourceLoader;
@@ -20,21 +18,13 @@ import org.springframework.stereotype.Component;
 public class TestDigitalSigningCertificateClient implements DigitalSigningCertificatesClient {
 
   private final ResourceLoader resourceLoader;
-  private DccRevocationListDecoder dccRevocationListDecoder;
 
-  public TestDigitalSigningCertificateClient(ResourceLoader resourceLoader,
-      DccRevocationListDecoder dccRevocationListDecoder) {
+  public TestDigitalSigningCertificateClient(ResourceLoader resourceLoader) {
     this.resourceLoader = resourceLoader;
-    this.dccRevocationListDecoder = dccRevocationListDecoder;
   }
 
   @Override
-  public Optional<List<DccRevocationEntry>> getDscTrustList() throws FetchDccListException {
-    InputStream input = getClass().getResourceAsStream("/revocation/chunk.lst");
-    try {
-      return Optional.of(dccRevocationListDecoder.decode(ByteString.copyFrom(input.readAllBytes())));
-    } catch (Exception e) {
-      throw new FetchDccListException("DCC Revocation List could not be fetched because of: ", e);
-    }
+  public Optional<Certificates> getDscTrustList() {
+    return readConfiguredJsonOrDefault(resourceLoader, null, "trustList/ubirchDSC.json", Certificates.class);
   }
 }
