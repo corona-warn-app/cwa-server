@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.services.distribution.assembly.component.CwaApiStructureProvider;
+import app.coronawarn.server.services.distribution.assembly.component.DccRevocationListStructureProvider;
 import app.coronawarn.server.services.distribution.assembly.component.OutputDirectoryProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
@@ -32,6 +33,9 @@ class AssemblyRunnerTest {
 
   @MockBean
   OutputDirectoryProvider outputDirectoryProvider;
+
+  @MockBean
+  DccRevocationListStructureProvider dccRevocationListStructureProvider;
 
   @MockBean
   CwaApiStructureProvider cwaApiStructureProvider;

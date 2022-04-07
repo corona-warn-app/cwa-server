@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("!fake-dcc-revocation")
+@Profile("revocation")
 public class CloudDccRevocationFeignHttpClientProvider implements DccRevocationFeignHttpClientProvider {
 
   private static final Logger logger = LoggerFactory.getLogger(CloudDccRevocationFeignHttpClientProvider.class);
@@ -33,7 +33,7 @@ public class CloudDccRevocationFeignHttpClientProvider implements DccRevocationF
    * Creates an {@link ApacheHttpClientFactory} that with no SSL certificates and no host names.
    */
   @Bean
-  @Profile("dsc-client-factory")
+  @Profile("dsc-rev-client-factory")
   private ApacheHttpClientFactory dccHttpClientFactory() {
     return new DefaultApacheHttpClientFactory(HttpClientBuilder.create()
         .setMaxConnPerRoute(connectionPoolSize)
@@ -47,7 +47,7 @@ public class CloudDccRevocationFeignHttpClientProvider implements DccRevocationF
    * @param config - distribution configuration
    */
   public CloudDccRevocationFeignHttpClientProvider(DistributionServiceConfig config) {
-    Ssl ssl = config.getDigitalGreenCertificate().getDscClient().getSsl();
+    Ssl ssl = config.getDccRevocation().getClient().getSsl();
 
     this.connectionPoolSize = config.getConnectionPoolSize();
     this.trustStore = ssl.getTrustStore();
@@ -59,7 +59,7 @@ public class CloudDccRevocationFeignHttpClientProvider implements DccRevocationF
    */
   @Override
   @Bean
-  public Client createFeignClient() {
+  public Client createDccRevocationFeignClient() {
     return new ApacheHttpClient(
         dccHttpClientFactory().createBuilder().build());
   }

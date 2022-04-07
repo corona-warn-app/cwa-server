@@ -95,7 +95,15 @@ public final class SerializationUtils {
         typeFactory -> typeFactory.constructSimpleType(rawType, new JavaType[0])));
   }
 
-  public static org.json.simple.JSONObject jsonExtractCosePayload(byte[] byteSequence) throws IOException, ParseException {
+  /**
+   * Extracts JSONObject from COSE byte sequence.
+   * @param byteSequence payload to be parsed
+   * @return parsed payload as JSON object
+   * @throws IOException if parser cannot be created
+   * @throws ParseException if byte sequence cannot be parsed
+   */
+  public static org.json.simple.JSONObject jsonExtractCosePayload(byte[] byteSequence)
+      throws IOException, ParseException {
     CBORFactory cborFactory = new CBORFactory();
     CBORParser cborParser = cborFactory.createParser(byteSequence);
     JsonFactory jsonFactory = new JsonFactory();
@@ -103,8 +111,6 @@ public final class SerializationUtils {
     JsonGenerator jsonGenerator = jsonFactory.createGenerator(stringWriter);
     StringWriter stringWriter2 = new StringWriter();
     JsonGenerator jsonGenerator2 = jsonFactory.createGenerator(stringWriter2);
-    JSONParser parser = new JSONParser();
-
     int i = 0;
     while (cborParser.nextToken() != null) {
       if (JsonTokenId.ID_EMBEDDED_OBJECT == cborParser.getCurrentToken().id() && ++i == 2) {
@@ -119,6 +125,7 @@ public final class SerializationUtils {
     }
     jsonGenerator.flush();
     jsonGenerator2.flush();
+    JSONParser parser = new JSONParser();
 
     return (org.json.simple.JSONObject) parser.parse(stringWriter2.toString());
   }

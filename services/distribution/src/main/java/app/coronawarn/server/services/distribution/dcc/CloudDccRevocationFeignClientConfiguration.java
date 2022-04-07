@@ -18,23 +18,24 @@ public class CloudDccRevocationFeignClientConfiguration {
 
   private static final Logger logger = LoggerFactory.getLogger(CloudDccRevocationFeignClientConfiguration.class);
 
-  private final CloudDccRevocationFeignHttpClientProvider feignClientProvider;
+  private final CloudDccRevocationFeignHttpClientProvider feignDccRevocationClientProvider;
 
   private final DistributionServiceConfig.Client clientConfig;
 
   /**
    * Create an instance.
    */
-  public CloudDccRevocationFeignClientConfiguration(CloudDccRevocationFeignHttpClientProvider feignClientProvider,
+  public CloudDccRevocationFeignClientConfiguration(
+      CloudDccRevocationFeignHttpClientProvider feignDccRevocationClientProvider,
       DistributionServiceConfig distributionServiceConfig) {
     logger.debug("Creating Cloud DCC Revocation Feign Client Configuration");
-    this.feignClientProvider = feignClientProvider;
+    this.feignDccRevocationClientProvider = feignDccRevocationClientProvider;
     this.clientConfig = distributionServiceConfig.getDccRevocation().getClient();
   }
 
   @Bean
-  public Client dccFeignClient() {
-    return feignClientProvider.createFeignClient();
+  public Client dccRevocationFeignClient() {
+    return feignDccRevocationClientProvider.createDccRevocationFeignClient();
   }
 
   /**

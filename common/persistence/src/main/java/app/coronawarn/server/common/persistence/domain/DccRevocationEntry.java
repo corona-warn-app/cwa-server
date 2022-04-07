@@ -1,19 +1,29 @@
 package app.coronawarn.server.common.persistence.domain;
 
+
 public class DccRevocationEntry {
 
   private final byte[] kid;
   private final byte[] type;
   private final byte[] hash;
-  private final byte[] x;
-  private final byte[] y;
+  private final byte[] xhash;
+  private final byte[] yhash;
 
-  public DccRevocationEntry(byte[] kid, byte[] type, byte[] hash, byte[] x, byte[] y) {
+  /**
+   * DCC Revocation Entry.
+   *
+   * @param kid   byte sequence of the key except for the last byte
+   * @param type  last byte of the key
+   * @param hash  byte sequence of the item
+   * @param xhash first byte of hash
+   * @param yhash second byte of hash
+   */
+  public DccRevocationEntry(byte[] kid, byte[] type, byte[] hash, byte[] xhash, byte[] yhash) {
     this.kid = kid;
     this.type = type;
     this.hash = hash;
-    this.x = x;
-    this.y = y;
+    this.xhash = xhash;
+    this.yhash = yhash;
   }
 
   public byte[] getKid() {
@@ -28,11 +38,11 @@ public class DccRevocationEntry {
     return hash;
   }
 
-  public byte[] getX() {
-    return x;
+  public byte[] getXhash() {
+    return xhash;
   }
 
-  public byte[] getY() {
-    return y;
+  public byte[] getYhash() {
+    return yhash;
   }
 }

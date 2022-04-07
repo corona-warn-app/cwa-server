@@ -1,23 +1,15 @@
 package app.coronawarn.server.services.distribution.dcc.decode;
 
-import static app.coronawarn.server.common.shared.util.SecurityUtils.base64decode;
 import static app.coronawarn.server.common.shared.util.SerializationUtils.jsonExtractCosePayload;
 
 import app.coronawarn.server.common.persistence.domain.DccRevocationEntry;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import app.coronawarn.server.services.distribution.dgc.CertificateStructure;
-import app.coronawarn.server.services.distribution.dgc.Certificates;
 import app.coronawarn.server.services.distribution.dgc.exception.DscListDecodeException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.ByteString;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
@@ -50,11 +42,7 @@ public class DccRevocationListDecoder {
   public List<DccRevocationEntry> decode(ByteString data) throws DccRevocationListDecodeException {
     ArrayList<DccRevocationEntry> revocationEntries = new ArrayList<>();
     try {
-      /**TODO: Signature verification
-       * PublicKey publicKey =
-       * getPublicKeyFromString(distributionServiceConfig.getDccRevocation().getClient().getPublicKey());
-       *
-       */
+
       ObjectMapper mapper = new ObjectMapper();
       JSONObject jsonPayload = jsonExtractCosePayload(data.toByteArray());
 
@@ -74,8 +62,8 @@ public class DccRevocationListDecoder {
         });
       });
     } catch (Exception e) {
-      throw new DccRevocationListDecodeException("DSC list NOT decoded.", e);
+      throw new DccRevocationListDecodeException("DCC revocation list NOT decoded.", e);
     }
-    return revocationEntries  ;
+    return revocationEntries;
   }
 }

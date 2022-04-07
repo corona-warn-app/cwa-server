@@ -7,8 +7,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 
-@FeignClient(name = "dcc-server", configuration = CloudDccRevocationFeignClientConfiguration.class,
-    url = "${services.distribution.dcc-revocation.base-url}")
+@FeignClient(name = "dcc-rev-server", configuration = CloudDccRevocationFeignClientConfiguration.class,
+    url = "${services.distribution.dcc-revocation.client.base-url}")
 public interface DccRevocationFeignClient {
 
   @Timed

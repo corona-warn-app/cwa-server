@@ -309,6 +309,10 @@ public class DistributionServiceConfig {
     return this.dccRevocation;
   }
 
+  public void setDccRevocation(DccRevocation dccRevocation) {
+    this.dccRevocation = dccRevocation;
+  }
+
   public static class StatisticsConfig {
 
     private String statisticPath;
