@@ -13,5 +13,5 @@ public interface DccRevocationFeignClient {
 
   @Timed
   @GetMapping(value = "${services.distribution.dcc-revocation.dcc-list-path}")
-  ResponseEntity<ByteString> getRevocationList();
+  ResponseEntity<byte[]> getRevocationList();
 }

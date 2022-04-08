@@ -1,13 +1,19 @@
 package app.coronawarn.server.common.persistence.domain;
 
 
-public class DccRevocationEntry {
+import org.springframework.data.annotation.Id;
 
+public class RevocationEntry {
+
+  @Id
+  private long id;
   private final byte[] kid;
   private final byte[] type;
   private final byte[] hash;
   private final byte[] xhash;
   private final byte[] yhash;
+
+
 
   /**
    * DCC Revocation Entry.
@@ -18,13 +24,14 @@ public class DccRevocationEntry {
    * @param xhash first byte of hash
    * @param yhash second byte of hash
    */
-  public DccRevocationEntry(byte[] kid, byte[] type, byte[] hash, byte[] xhash, byte[] yhash) {
+  public RevocationEntry(byte[] kid, byte[] type, byte[] hash, byte[] xhash, byte[] yhash) {
     this.kid = kid;
     this.type = type;
     this.hash = hash;
     this.xhash = xhash;
     this.yhash = yhash;
   }
+
 
   public byte[] getKid() {
     return kid;
@@ -44,5 +51,9 @@ public class DccRevocationEntry {
 
   public byte[] getYhash() {
     return yhash;
+  }
+
+  public long getId() {
+    return id;
   }
 }

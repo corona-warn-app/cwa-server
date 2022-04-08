@@ -56,7 +56,7 @@ public class Assembly implements ApplicationRunner {
       Directory<WritableOnDisk> outputDirectory = this.outputDirectoryProvider.getDirectory();
       if (Arrays.stream(environment.getActiveProfiles()).anyMatch(
           env -> (env.equalsIgnoreCase("revocation")))) {
-        dccRevocationListStructureProvider.storeDccRevocationList();
+        dccRevocationListStructureProvider.fetchDccRevocationList();
       } else {
         outputDirectory.addWritable(cwaApiStructureProvider.getDirectory());
         outputDirectory.addWritable(cwaApiStructureProvider.getDirectoryV2());

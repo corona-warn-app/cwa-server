@@ -1,6 +1,6 @@
 package app.coronawarn.server.services.distribution.dcc;
 
-import app.coronawarn.server.common.persistence.domain.DccRevocationEntry;
+import app.coronawarn.server.common.persistence.domain.RevocationEntry;
 import app.coronawarn.server.services.distribution.dcc.decode.DccRevocationListDecoder;
 import app.coronawarn.server.services.distribution.dgc.client.ProdDigitalCovidCertificateClient;
 import java.util.List;
@@ -30,7 +30,7 @@ public class ProdDccRevocationClient implements DccRevocationClient {
   }
 
   @Override
-  public Optional<List<DccRevocationEntry>> getDccRevocationList() throws FetchDccListException {
+  public Optional<List<RevocationEntry>> getDccRevocationList() throws FetchDccListException {
     logger.debug("Get Revocation List from DCC");
     try {
       return Optional.of(dccRevocationListDecoder.decode(dccRevocationFeignClient.getRevocationList().getBody()));

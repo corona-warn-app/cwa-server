@@ -1,9 +1,12 @@
 package app.coronawarn.server.services.distribution.assembly.component;
 
+import app.coronawarn.server.common.persistence.domain.RevocationEntry;
 import app.coronawarn.server.common.persistence.service.DccRevocationListService;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dcc.DccRevocationClient;
 import app.coronawarn.server.services.distribution.dcc.FetchDccListException;
+import java.util.List;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
@@ -33,11 +36,12 @@ public class DccRevocationListStructureProvider {
   }
 
   /**
-   * Store DCC Revocation List.
+   * Fetch DCC Revocation List.
    */
-  public void storeDccRevocationList() {
+  public void fetchDccRevocationList() {
     try {
-      dccRevocationListService.store(dccRevocationClient.getDccRevocationList().get());
+      Optional<List<RevocationEntry>> revocationEntryList = dccRevocationClient.getDccRevocationList();
+      revocationEntryList.ifPresent(revocationList -> dccRevocationListService.store(revocationList));
     } catch (FetchDccListException e) {
       logger.warn("Fetching DCC Revocation List failed. ", e);
     } catch (Exception e) {

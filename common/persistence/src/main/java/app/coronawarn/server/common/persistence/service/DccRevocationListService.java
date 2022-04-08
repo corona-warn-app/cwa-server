@@ -2,7 +2,7 @@ package app.coronawarn.server.common.persistence.service;
 
 import static org.springframework.data.util.StreamUtils.createStreamFromIterator;
 
-import app.coronawarn.server.common.persistence.domain.DccRevocationEntry;
+import app.coronawarn.server.common.persistence.domain.RevocationEntry;
 import app.coronawarn.server.common.persistence.repository.DccRevocationListRepository;
 import java.util.Collection;
 import java.util.List;
@@ -25,7 +25,7 @@ public class DccRevocationListService {
    * Store the DCC Revocation List entries.
    * @param revocationEntries list with parsed entries from DCC chuck.lst
    */
-  public void store(Collection<DccRevocationEntry> revocationEntries) {
+  public void store(Collection<RevocationEntry> revocationEntries) {
     logger.info("Saving Revocation list entries...");
     dccRevocationListRepository.saveAll(revocationEntries);
     logger.info("Revocation list entries has been saved!");
@@ -35,8 +35,8 @@ public class DccRevocationListService {
    * Retrieves DCC Revocation List entries.
    * @return list of DCCRevocationEntries
    */
-  public List<DccRevocationEntry> getRevocationListEntries() {
-    List<DccRevocationEntry> revocationEntries =
+  public List<RevocationEntry> getRevocationListEntries() {
+    List<RevocationEntry> revocationEntries =
         createStreamFromIterator(dccRevocationListRepository.findAll().iterator()).collect(Collectors.toList());
     return revocationEntries;
   }

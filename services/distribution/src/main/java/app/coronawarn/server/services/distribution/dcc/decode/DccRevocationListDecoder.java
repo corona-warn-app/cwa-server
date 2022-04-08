@@ -2,12 +2,11 @@ package app.coronawarn.server.services.distribution.dcc.decode;
 
 import static app.coronawarn.server.common.shared.util.SerializationUtils.jsonExtractCosePayload;
 
-import app.coronawarn.server.common.persistence.domain.DccRevocationEntry;
+import app.coronawarn.server.common.persistence.domain.RevocationEntry;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dgc.exception.DscListDecodeException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.protobuf.ByteString;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,12 +38,12 @@ public class DccRevocationListDecoder {
    * @throws DscListDecodeException - thrown if any exception is caught and special treatment if signature verification
    *                                fails.
    */
-  public List<DccRevocationEntry> decode(ByteString data) throws DccRevocationListDecodeException {
-    ArrayList<DccRevocationEntry> revocationEntries = new ArrayList<>();
+  public List<RevocationEntry> decode(byte[] data) throws DccRevocationListDecodeException {
+    ArrayList<RevocationEntry> revocationEntries = new ArrayList<>();
     try {
 
       ObjectMapper mapper = new ObjectMapper();
-      JSONObject jsonPayload = jsonExtractCosePayload(data.toByteArray());
+      JSONObject jsonPayload = jsonExtractCosePayload(data);
 
       jsonPayload.forEach((keyAndType, values) -> {
         byte[] kid = keyAndType.toString().substring(0, keyAndType.toString().length() - 1).getBytes();
@@ -57,7 +56,7 @@ public class DccRevocationListDecoder {
           e.printStackTrace();
         }
         valuesArray.forEach(hash -> {
-          revocationEntries.add(new DccRevocationEntry(kid, type, hash.getBytes(),
+          revocationEntries.add(new RevocationEntry(kid, type, hash.getBytes(),
               hash.substring(0, 2).getBytes(), hash.substring(2, 4).getBytes()));
         });
       });

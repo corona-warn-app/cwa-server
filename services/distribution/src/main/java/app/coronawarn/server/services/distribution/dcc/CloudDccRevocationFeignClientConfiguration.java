@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Profile;
 
 @Configuration
 @EnableFeignClients
-@Profile("!fake-dcc-revocation")
+@Profile("!fake-dcc-revocation & revocation")
 public class CloudDccRevocationFeignClientConfiguration {
 
   private static final Logger logger = LoggerFactory.getLogger(CloudDccRevocationFeignClientConfiguration.class);

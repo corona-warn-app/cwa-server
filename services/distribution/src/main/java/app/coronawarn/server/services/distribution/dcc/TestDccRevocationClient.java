@@ -1,8 +1,7 @@
 package app.coronawarn.server.services.distribution.dcc;
 
-import app.coronawarn.server.common.persistence.domain.DccRevocationEntry;
+import app.coronawarn.server.common.persistence.domain.RevocationEntry;
 import app.coronawarn.server.services.distribution.dcc.decode.DccRevocationListDecoder;
-import com.google.protobuf.ByteString;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
@@ -23,10 +22,10 @@ public class TestDccRevocationClient implements DccRevocationClient {
   }
 
   @Override
-  public Optional<List<DccRevocationEntry>> getDccRevocationList() throws FetchDccListException {
+  public Optional<List<RevocationEntry>> getDccRevocationList() throws FetchDccListException {
     InputStream input = resourceLoader.getClassLoader().getResourceAsStream("/revocation/chunk.lst");
     try {
-      return Optional.of(dccRevocationListDecoder.decode(ByteString.copyFrom(input.readAllBytes())));
+      return Optional.of(dccRevocationListDecoder.decode(input.toString().getBytes()));
     } catch (Exception e) {
       throw new FetchDccListException("DCC Revocation List could not be fetched because of: ", e);
     }
