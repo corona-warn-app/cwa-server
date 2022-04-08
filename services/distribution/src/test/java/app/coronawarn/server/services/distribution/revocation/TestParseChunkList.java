@@ -3,6 +3,8 @@ package app.coronawarn.server.services.distribution.revocation;
 import static app.coronawarn.server.common.shared.util.SerializationUtils.jsonExtractCosePayload;
 import static org.junit.Assert.assertNotNull;
 
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.objectstore.client.ObjectStorePublishingConfig;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -11,11 +13,18 @@ import java.util.ArrayList;
 import java.util.List;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-
-public class TestParseChunkLst {
+@ExtendWith({SpringExtension.class})
+@SpringBootTest(classes = {ObjectStorePublishingConfig.class})
+@EnableConfigurationProperties(value = DistributionServiceConfig.class)
+public class TestParseChunkList {
 
   @Test
   void cborToJson() throws IOException, ParseException {
@@ -24,6 +33,8 @@ public class TestParseChunkLst {
 
     ObjectMapper mapper = new ObjectMapper();
     JSONObject jsonPayload = jsonExtractCosePayload(input.readAllBytes());
+    Assertions.assertNotNull(jsonPayload);
+
 
     jsonPayload.forEach((keyAndType, values) -> {
       byte[] kid = keyAndType.toString().substring(0, keyAndType.toString().length() - 1).getBytes();
@@ -35,11 +46,12 @@ public class TestParseChunkLst {
       } catch (IOException e) {
         e.printStackTrace();
       }
-      System.out.println(kid);
-      System.out.println(type);
+
+      Assertions.assertNotNull(kid);
+      Assertions.assertNotNull(type);
       valuesArray.forEach(hash -> {
-        System.out.println(hash.substring(0,2));
-        System.out.println(hash.substring(2,4));
+        Assertions.assertNotNull(hash.substring(0,2));
+        Assertions.assertNotNull(hash.substring(2,4));
       });
     });
   }
