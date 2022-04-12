@@ -1,6 +1,7 @@
 package app.coronawarn.server.common.persistence.domain;
 
 
+import java.util.Arrays;
 import org.springframework.data.annotation.Id;
 
 public class RevocationEntry {
@@ -12,8 +13,6 @@ public class RevocationEntry {
   private final byte[] hash;
   private final byte[] xhash;
   private final byte[] yhash;
-
-
 
   /**
    * DCC Revocation Entry.
@@ -32,6 +31,16 @@ public class RevocationEntry {
     this.yhash = yhash;
   }
 
+  /**
+   * Hash for kid and type.
+   * @return hash
+   */
+  public int getKidHash() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + Arrays.hashCode(kid);
+    return result;
+  }
 
   public byte[] getKid() {
     return kid;

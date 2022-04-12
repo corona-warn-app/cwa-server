@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("!fake-dcc-revocation")
+@Profile("!fake-dcc-revocation & revocation")
 public class ProdDccRevocationClient implements DccRevocationClient {
 
   private static final Logger logger = LoggerFactory.getLogger(ProdDigitalCovidCertificateClient.class);

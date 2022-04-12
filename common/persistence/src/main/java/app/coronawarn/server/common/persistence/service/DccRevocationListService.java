@@ -40,4 +40,8 @@ public class DccRevocationListService {
         createStreamFromIterator(dccRevocationListRepository.findAll().iterator()).collect(Collectors.toList());
     return revocationEntries;
   }
+
+  public Collection<RevocationEntry> getRevocationListByKidAndHash() {
+    return dccRevocationListRepository.getHashWithKidAndTypeConnected();
+  }
 }

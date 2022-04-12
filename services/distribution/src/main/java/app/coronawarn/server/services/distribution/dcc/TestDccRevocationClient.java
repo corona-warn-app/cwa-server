@@ -10,7 +10,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("fake-dcc-revocation")
+@Profile({"fake-dcc-revocation", "!revocation"})
 public class TestDccRevocationClient implements DccRevocationClient {
 
   private final ResourceLoader resourceLoader;

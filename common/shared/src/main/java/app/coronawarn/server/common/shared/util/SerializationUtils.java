@@ -1,31 +1,29 @@
 package app.coronawarn.server.common.shared.util;
 
 import app.coronawarn.server.common.shared.exception.UnableToLoadFileException;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.JsonTokenId;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.fasterxml.jackson.dataformat.cbor.CBORFactory;
-import com.fasterxml.jackson.dataformat.cbor.CBORParser;
 import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper;
+import com.upokecenter.cbor.CBORObject;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaClient;
 import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,37 +95,27 @@ public final class SerializationUtils {
 
   /**
    * Extracts JSONObject from COSE byte sequence.
+   *
    * @param byteSequence payload to be parsed
    * @return parsed payload as JSON object
-   * @throws IOException if parser cannot be created
+   * @throws IOException    if parser cannot be created
    * @throws ParseException if byte sequence cannot be parsed
    */
-  public static org.json.simple.JSONObject jsonExtractCosePayload(byte[] byteSequence)
+  public static Map<byte[], List<byte[]>> jsonExtractCosePayload(byte[] byteSequence)
       throws IOException, ParseException {
-    CBORFactory cborFactory = new CBORFactory();
-    CBORParser cborParser = cborFactory.createParser(byteSequence);
-    JsonFactory jsonFactory = new JsonFactory();
-    StringWriter stringWriter = new StringWriter();
-    JsonGenerator jsonGenerator = jsonFactory.createGenerator(stringWriter);
-    StringWriter stringWriter2 = new StringWriter();
-    JsonGenerator jsonGenerator2 = jsonFactory.createGenerator(stringWriter2);
-    int i = 0;
-    while (cborParser.nextToken() != null) {
-      if (JsonTokenId.ID_EMBEDDED_OBJECT == cborParser.getCurrentToken().id() && ++i == 2) {
-        byte[] obj = (byte[]) cborParser.getEmbeddedObject();
-        CBORParser payload = cborFactory.createParser(obj);
-        while (payload.nextToken() != null) {
-          jsonGenerator2.copyCurrentEvent(payload);
-        }
-        i++;
-      }
-      jsonGenerator.copyCurrentEvent(cborParser);
-    }
-    jsonGenerator.flush();
-    jsonGenerator2.flush();
-    JSONParser parser = new JSONParser();
 
-    return (org.json.simple.JSONObject) parser.parse(stringWriter2.toString());
+    CBORObject cborObject = CBORObject.DecodeFromBytes(byteSequence);
+    CBORObject payload = CBORObject.DecodeFromBytes(cborObject.get(2).GetByteString());
+
+    payload.getKeys().stream().map(key -> key.GetByteString()).collect(Collectors.toList());
+
+    Map<byte[], List<byte[]>> payloadEntries = new HashMap<>();
+    payload.getKeys().forEach(key -> {
+      List<byte[]> values = payload.get(key).getValues().stream()
+          .map(value -> value.GetByteString()).collect(Collectors.toList());
+      payloadEntries.put(key.GetByteString(), values);
+    });
+    return payloadEntries;
   }
 
   /**
