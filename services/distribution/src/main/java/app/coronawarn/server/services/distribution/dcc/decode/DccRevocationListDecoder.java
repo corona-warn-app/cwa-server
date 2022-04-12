@@ -47,8 +47,8 @@ public class DccRevocationListDecoder {
 
         values.forEach(hash -> {
           revocationEntries.add(new RevocationEntry(kid, type, hash,
-              Arrays.copyOfRange(hash, 0, 2),
-              Arrays.copyOfRange(hash, 2, 4)));
+              Arrays.copyOfRange(hash, 0, 1),
+              Arrays.copyOfRange(hash, 1, 2)));
         });
       });
     } catch (Exception e) {
