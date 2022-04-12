@@ -16,7 +16,7 @@ public class RevocationEntryId implements Serializable {
 
   /**
    * Primary Key.
-   * 
+   *
    * @param kid kid
    * @param type type
    * @param hash hash
@@ -59,17 +59,5 @@ public class RevocationEntryId implements Serializable {
     result = prime * result + Arrays.hashCode(kid);
     result = prime * result + Arrays.hashCode(type);
     return result;
-  }
-
-  public void setHash(final byte[] hash) {
-    this.hash = hash;
-  }
-
-  public void setKid(final byte[] kid) {
-    this.kid = kid;
-  }
-
-  public void setType(final byte[] type) {
-    this.type = type;
   }
 }

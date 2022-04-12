@@ -11,17 +11,7 @@ public class RevocationEntry {
   @Embedded(onEmpty = OnEmpty.USE_NULL)
   private RevocationEntryId id;
 
-  /**
-   * DCC Revocation Entry.
-   *
-   * @param kid   byte sequence of the key except for the last byte
-   * @param type  last byte of the key
-   * @param hash  byte sequence of the item
-   * @param xhash first byte of hash
-   * @param yhash second byte of hash
-   */
-  public RevocationEntry(byte[] kid, byte[] type, byte[] hash, byte[] xhash, byte[] yhash) {
-    id = new RevocationEntryId(kid, type, hash);
+  public RevocationEntry() {
   }
 
   /**
@@ -31,33 +21,30 @@ public class RevocationEntry {
    * @param type last byte of the key
    * @param hash byte sequence of the item
    */
-  public RevocationEntry(byte[] kid, byte[] type, byte[] hash) {
+  public RevocationEntry(final byte[] kid, final byte[] type, final byte[] hash) {
     id = new RevocationEntryId(kid, type, hash);
   }
 
-  /**
-   * Hash for kid and type.
-   * @return hash
-   */
-  public int getKidHash() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + Arrays.hashCode(kid);
-    return result;
-  }
-  public RevocationEntry() {
+  public byte[] getHash() {
+    return id.getHash();
   }
 
   public byte[] getKid() {
     return id.getKid();
   }
 
-  public byte[] getType() {
-    return id.getType();
+  /**
+   * Hash for kid and type.
+   *
+   * @see Arrays#hashCode(byte[])
+   * @return hash
+   */
+  public int getKidHash() {
+    return Arrays.hashCode(getKid());
   }
 
-  public byte[] getHash() {
-    return id.getHash();
+  public byte[] getType() {
+    return id.getType();
   }
 
   public byte[] getXhash() {

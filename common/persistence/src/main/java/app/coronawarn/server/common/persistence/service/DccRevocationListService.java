@@ -49,6 +49,6 @@ public class DccRevocationListService {
   }
 
   public Collection<RevocationEntry> getRevocationListByKidAndHash() {
-    return dccRevocationListRepository.getHashWithKidAndTypeConnected();
+    return repository.getHashWithKidAndTypeConnected();
   }
 }

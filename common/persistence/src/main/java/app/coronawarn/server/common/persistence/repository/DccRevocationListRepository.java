@@ -12,12 +12,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DccRevocationListRepository extends PagingAndSortingRepository<RevocationEntry, RevocationEntryId> {
 
-  @Query("SELECT id, kid || type AS kid, type, hash, xhash, yhash  FROM revocation_entry")
-  public Collection<RevocationEntry> getHashWithKidAndTypeConnected();
-
   @Modifying
-  @Query("INSERT INTO revocation_entry (kid, type, hash) VALUES (:kid, :type, :hash) "
-      + "ON CONFLICT DO NOTHING")
+  @Query("INSERT INTO revocation_entry (kid, type, hash) VALUES (:kid, :type, :hash) ON CONFLICT DO NOTHING")
   boolean saveDoNothingOnConflict(@Param("kid") byte[] kid, @Param("type") byte[] type, @Param("hash") byte[] hash);
+
+  @Query("SELECT kid || type AS kid, type, hash FROM revocation_entry")
+  public Collection<RevocationEntry> getHashWithKidAndTypeConnected();
 
 }
