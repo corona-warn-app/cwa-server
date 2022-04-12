@@ -1,14 +1,14 @@
-
-
 package app.coronawarn.server.common.persistence;
 
 import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
 import app.coronawarn.server.common.persistence.repository.CheckInProtectedReportsRepository;
+import app.coronawarn.server.common.persistence.repository.DccRevocationListRepository;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import app.coronawarn.server.common.persistence.repository.FederationBatchInfoRepository;
 import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRepository;
 import app.coronawarn.server.common.persistence.repository.StatisticsDownloadRepository;
 import app.coronawarn.server.common.persistence.repository.TraceTimeIntervalWarningRepository;
+import app.coronawarn.server.common.persistence.service.DccRevocationListService;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import app.coronawarn.server.common.persistence.service.FederationUploadKeyService;
@@ -55,7 +55,8 @@ public class TestApplication {
   }
 
   @Bean
-  FederationBatchInfoService createFederationBatchInfoService(FederationBatchInfoRepository federationBatchInfoRepository) {
+  FederationBatchInfoService createFederationBatchInfoService(
+      FederationBatchInfoRepository federationBatchInfoRepository) {
     return new FederationBatchInfoService(federationBatchInfoRepository);
   }
 
@@ -79,5 +80,10 @@ public class TestApplication {
   @Bean
   YamlPropertySourceFactory propertySourceFactory() {
     return new YamlPropertySourceFactory();
+  }
+
+  @Bean
+  DccRevocationListService createDccRevocationListService(DccRevocationListRepository repository) {
+    return new DccRevocationListService(repository);
   }
 }
