@@ -25,20 +25,6 @@ public class RevocationEntry {
     id = new RevocationEntryId(kid, type, hash);
   }
 
-  /**
-   * DCC Revocation Entry.
-   *
-   * @param kid   byte sequence of the key except for the last byte
-   * @param type  last byte of the key
-   * @param hash  byte sequence of the item
-   * @param xhash first byte of hash
-   * @param yhash second byte of hash
-   */
-  public RevocationEntry(final byte[] kid, final byte[] type, final byte[] hash, final byte[] xhash,
-      final byte[] yhash) {
-    id = new RevocationEntryId(kid, type, hash);
-  }
-
   public byte[] getHash() {
     return id.getHash();
   }
@@ -50,13 +36,11 @@ public class RevocationEntry {
   /**
    * Hash for kid and type.
    *
+   * @see Arrays#hashCode(byte[])
    * @return hash
    */
   public int getKidHash() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + Arrays.hashCode(getKid());
-    return result;
+    return Arrays.hashCode(getKid());
   }
 
   public byte[] getType() {
