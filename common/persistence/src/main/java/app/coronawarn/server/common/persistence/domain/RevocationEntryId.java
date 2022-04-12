@@ -16,7 +16,7 @@ public class RevocationEntryId implements Serializable {
 
   /**
    * Primary Key.
-   * 
+   *
    * @param kid kid
    * @param type type
    * @param hash hash
