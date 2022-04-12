@@ -47,8 +47,4 @@ public class DccRevocationListService {
     }
     logger.info("Revocation list entries has been saved!");
   }
-
-  public Collection<RevocationEntry> getRevocationListByKidAndHash() {
-    return repository.getHashWithKidAndTypeConnected();
-  }
 }
