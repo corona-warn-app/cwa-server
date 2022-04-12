@@ -1,5 +1,7 @@
 package app.coronawarn.server.common.persistence.domain;
 
+import static java.lang.Integer.toHexString;
+
 import java.util.Arrays;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Embedded;
@@ -53,5 +55,20 @@ public class RevocationEntry {
 
   public byte[] getYhash() {
     return Arrays.copyOfRange(getHash(), 1, 2);
+  }
+
+  /**
+   * Return hexadecimal representation of {@link #getKid()} || {@link #getType()}.
+   */
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    for (byte b : getKid()) {
+      sb.append(toHexString(b));
+    }
+    for (byte b : getType()) {
+      sb.append(toHexString(b));
+    }
+    return sb.toString();
   }
 }
