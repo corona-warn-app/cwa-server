@@ -45,6 +45,6 @@ public class DccRevocationListService {
     for (final RevocationEntry entry : revocationEntries) {
       repository.saveDoNothingOnConflict(entry.getKid(), entry.getType(), entry.getType());
     }
-    logger.info("Revocation list entries has been saved!");
+    logger.info("Revocation list entries saved!");
   }
 }
