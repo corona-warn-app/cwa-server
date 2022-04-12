@@ -2084,6 +2084,7 @@ public class DistributionServiceConfig {
     private Client client;
     private String certificate;
     private String dccListPath;
+    private String dccRevocationDirectory;
 
     public Client getClient() {
       return client;
@@ -2107,6 +2108,14 @@ public class DistributionServiceConfig {
 
     public void setDccListPath(String dccListPath) {
       this.dccListPath = dccListPath;
+    }
+
+    public String getDccRevocationDirectory() {
+      return dccRevocationDirectory;
+    }
+
+    public void setDccRevocationDirectory(String dccRevocationDirectory) {
+      this.dccRevocationDirectory = dccRevocationDirectory;
     }
   }
 }

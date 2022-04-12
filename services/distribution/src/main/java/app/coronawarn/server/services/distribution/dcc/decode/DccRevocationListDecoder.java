@@ -5,12 +5,10 @@ import static app.coronawarn.server.common.shared.util.SerializationUtils.jsonEx
 import app.coronawarn.server.common.persistence.domain.RevocationEntry;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dgc.exception.DscListDecodeException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import org.json.simple.JSONObject;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
@@ -41,23 +39,16 @@ public class DccRevocationListDecoder {
   public List<RevocationEntry> decode(byte[] data) throws DccRevocationListDecodeException {
     ArrayList<RevocationEntry> revocationEntries = new ArrayList<>();
     try {
-
-      ObjectMapper mapper = new ObjectMapper();
-      JSONObject jsonPayload = jsonExtractCosePayload(data);
+      Map<byte[], List<byte[]>> jsonPayload = jsonExtractCosePayload(data);
 
       jsonPayload.forEach((keyAndType, values) -> {
-        byte[] kid = keyAndType.toString().substring(0, keyAndType.toString().length() - 1).getBytes();
-        byte[] type = keyAndType.toString().substring(keyAndType.toString().length() - 1).getBytes();
-        List<String> valuesArray = new ArrayList<>();
-        try {
-          valuesArray = mapper.readValue(values.toString(), new TypeReference<>() {
-          });
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-        valuesArray.forEach(hash -> {
-          revocationEntries.add(new RevocationEntry(kid, type, hash.getBytes(),
-              hash.substring(0, 2).getBytes(), hash.substring(2, 4).getBytes()));
+        byte[] kid = Arrays.copyOfRange(keyAndType, 0, keyAndType.length - 1);
+        byte[] type = Arrays.copyOfRange(keyAndType, keyAndType.length - 1, keyAndType.length);
+
+        values.forEach(hash -> {
+          revocationEntries.add(new RevocationEntry(kid, type, hash,
+              Arrays.copyOfRange(hash, 0, 1),
+              Arrays.copyOfRange(hash, 1, 2)));
         });
       });
     } catch (Exception e) {

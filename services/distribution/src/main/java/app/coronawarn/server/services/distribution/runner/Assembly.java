@@ -57,6 +57,14 @@ public class Assembly implements ApplicationRunner {
       if (Arrays.stream(environment.getActiveProfiles()).anyMatch(
           env -> (env.equalsIgnoreCase("revocation")))) {
         dccRevocationListStructureProvider.fetchDccRevocationList();
+        outputDirectory.addWritable(dccRevocationListStructureProvider.getDccRevocationDirectory());
+        this.outputDirectoryProvider.clear();
+        logger.debug("Preparing files...");
+        logger.info("Start signing...");
+        outputDirectory.prepare(new ImmutableStack<>());
+        logger.debug("Writing files...");
+        outputDirectory.write();
+        logger.debug("Distribution data assembled successfully.");
       } else {
         outputDirectory.addWritable(cwaApiStructureProvider.getDirectory());
         outputDirectory.addWritable(cwaApiStructureProvider.getDirectoryV2());
