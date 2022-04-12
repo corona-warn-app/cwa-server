@@ -1,68 +1,57 @@
 package app.coronawarn.server.common.persistence.domain;
 
-
 import java.util.Arrays;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Embedded;
+import org.springframework.data.relational.core.mapping.Embedded.OnEmpty;
 
 public class RevocationEntry {
 
   @Id
-  private long id;
-  private final byte[] kid;
-  private final byte[] type;
-  private final byte[] hash;
-  private final byte[] xhash;
-  private final byte[] yhash;
+  @Embedded(onEmpty = OnEmpty.USE_NULL)
+  private RevocationEntryId id;
+
+  public RevocationEntry() {
+  }
 
   /**
    * DCC Revocation Entry.
    *
-   * @param kid   byte sequence of the key except for the last byte
-   * @param type  last byte of the key
-   * @param hash  byte sequence of the item
-   * @param xhash first byte of hash
-   * @param yhash second byte of hash
+   * @param kid  byte sequence of the key except for the last byte
+   * @param type last byte of the key
+   * @param hash byte sequence of the item
    */
-  public RevocationEntry(byte[] kid, byte[] type, byte[] hash, byte[] xhash, byte[] yhash) {
-    this.kid = kid;
-    this.type = type;
-    this.hash = hash;
-    this.xhash = xhash;
-    this.yhash = yhash;
+  public RevocationEntry(final byte[] kid, final byte[] type, final byte[] hash) {
+    id = new RevocationEntryId(kid, type, hash);
+  }
+
+  public byte[] getHash() {
+    return id.getHash();
+  }
+
+  public byte[] getKid() {
+    return id.getKid();
   }
 
   /**
    * Hash for kid and type.
+   *
+   * @see Arrays#hashCode(byte[])
    * @return hash
    */
   public int getKidHash() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + Arrays.hashCode(kid);
-    return result;
-  }
-
-  public byte[] getKid() {
-    return kid;
+    return Arrays.hashCode(getKid());
   }
 
   public byte[] getType() {
-    return type;
-  }
-
-  public byte[] getHash() {
-    return hash;
+    return id.getType();
   }
 
   public byte[] getXhash() {
-    return xhash;
+    return Arrays.copyOfRange(getHash(), 0, 1);
   }
 
   public byte[] getYhash() {
-    return yhash;
-  }
-
-  public long getId() {
-    return id;
+    return Arrays.copyOfRange(getHash(), 1, 2);
   }
 }
