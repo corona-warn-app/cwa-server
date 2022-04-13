@@ -43,12 +43,8 @@ public class DccRevocationListService {
   public void store(final Collection<RevocationEntry> revocationEntries) {
     logger.info("Saving Revocation list entries...");
     for (final RevocationEntry entry : revocationEntries) {
-      repository.saveDoNothingOnConflict(entry.getKid(), entry.getType(), entry.getType());
+      repository.saveDoNothingOnConflict(entry.getKid(), entry.getType(), entry.getHash());
     }
     logger.info("Revocation list entries saved!");
-  }
-
-  public Collection<RevocationEntry> getRevocationListByKidAndHash() {
-    return repository.getHashWithKidAndTypeConnected();
   }
 }

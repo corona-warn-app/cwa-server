@@ -14,11 +14,12 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import app.coronawarn.server.services.distribution.dcc.DccRevocationClient;
 import app.coronawarn.server.services.distribution.dcc.DccRevocationListToProtobufMapping;
 import app.coronawarn.server.services.distribution.dcc.FetchDccListException;
-import app.coronawarn.server.services.distribution.dcc.structure.DccRevocationDirectory;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.bouncycastle.util.encoders.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -28,6 +29,7 @@ public class DccRevocationListStructureProvider {
 
   private static final Logger logger = LoggerFactory.getLogger(DccRevocationListStructureProvider.class);
   private static final String KID_ARCHIVE = "kid";
+  public static final String CHUNK = "chunk";
 
   private final CryptoProvider cryptoProvider;
   private final DistributionServiceConfig distributionServiceConfig;
@@ -67,10 +69,85 @@ public class DccRevocationListStructureProvider {
     return constructArchiveToPublish(cryptoProvider);
   }
 
-  private DccRevocationDirectory constructArchiveToPublish(CryptoProvider cryptoProvider) {
-    DccRevocationDirectory dccRlDirectory = new DccRevocationDirectory(distributionServiceConfig, cryptoProvider);
+  private DirectoryOnDisk constructArchiveToPublish(CryptoProvider cryptoProvider) {
+
+    DirectoryOnDisk dccRlDirectory = new DirectoryOnDisk(
+        distributionServiceConfig.getDccRevocation().getDccRevocationDirectory());
+    Map<Integer, List<RevocationEntry>> revocationEntriesByKidAndHash =
+        dccRevocationListService.getRevocationListEntries()
+            .stream().collect(Collectors.groupingBy(RevocationEntry::getKidTypeHash));
     getDccRevocationKidListArchive().ifPresent(dccRlDirectory::addWritable);
+    getDccRevocationKidTypeDirectories(revocationEntriesByKidAndHash).forEach(kidTypeDirectory ->
+        dccRlDirectory.addWritable(kidTypeDirectory));
     return dccRlDirectory;
+  }
+
+  private List<DirectoryOnDisk> getDccRevocationKidTypeDirectories(
+      Map<Integer, List<RevocationEntry>> revocationEntriesByKidAndHash) {
+    List<DirectoryOnDisk> kidTypeDirectories = new ArrayList<>();
+    revocationEntriesByKidAndHash.keySet().forEach(kidType -> {
+      DirectoryOnDisk kidTypeDirectory =
+          new DirectoryOnDisk(revocationEntriesByKidAndHash.get(kidType).get(0).toString());
+      getDccRevocationKidTypeArchive(revocationEntriesByKidAndHash.get(kidType))
+          .ifPresent(kidTypeDirectory::addWritable);
+      getKidTypeXandYDirectories(revocationEntriesByKidAndHash.get(kidType))
+          .forEach(directoryXY -> kidTypeDirectory.addWritable(directoryXY));
+      kidTypeDirectories.add(kidTypeDirectory);
+    });
+    return kidTypeDirectories;
+  }
+
+  private List<DirectoryOnDisk> getKidTypeXandYDirectories(List<RevocationEntry> revocationEntryList) {
+    List<DirectoryOnDisk> directoryXY = new ArrayList<>();
+    Map<Integer, List<RevocationEntry>> revocationEntriesGrouped = revocationEntryList.stream()
+        .collect(Collectors.groupingBy(RevocationEntry::getXHash));
+
+    revocationEntriesGrouped.keySet().forEach(xhashRevocationEntry -> {
+      DirectoryOnDisk directoryX = new DirectoryOnDisk(
+          Hex.toHexString(revocationEntriesGrouped.get(xhashRevocationEntry)
+              .get(0).getXhash()));
+
+      getDccRevocationYDirectories(revocationEntriesGrouped.get(xhashRevocationEntry))
+          .forEach(yhashDirectory -> directoryX.addWritable(yhashDirectory));
+      directoryXY.add(directoryX);
+    });
+    return directoryXY;
+  }
+
+  private List<DirectoryOnDisk> getDccRevocationYDirectories(
+      List<RevocationEntry> xrevocationEntryList) {
+
+    Map<Integer, List<RevocationEntry>> revocationEntriesGroupedByHashY = xrevocationEntryList.stream()
+        .collect(Collectors.groupingBy(RevocationEntry::getYHash));
+    List<DirectoryOnDisk> yhashDirectories = new ArrayList<>();
+    revocationEntriesGroupedByHashY.keySet().forEach(yhashEntry -> {
+      DirectoryOnDisk directoryHashY = new DirectoryOnDisk(Hex.toHexString(
+          revocationEntriesGroupedByHashY.get(yhashEntry).get(0).getYhash()));
+      getDccRevocationKidTypeChunk(revocationEntriesGroupedByHashY.get(yhashEntry))
+          .ifPresent(directoryHashY::addWritable);
+      yhashDirectories.add(directoryHashY);
+    });
+    return yhashDirectories;
+  }
+
+  private Optional<Writable<WritableOnDisk>> getDccRevocationKidTypeChunk(
+      List<RevocationEntry> yhashRevocationEntryList) {
+    ArchiveOnDisk kidArchive = new ArchiveOnDisk(CHUNK);
+
+    try {
+      kidArchive
+          .addWritable(new FileOnDisk(EXPORT_BIN,
+              dccRevocationToProtobufMapping.constructProtobufMappingChunkList(yhashRevocationEntryList)
+                  .toByteArray()));
+      logger.info("Kid Revocation list archive has been added to the dcc-rl distribution folder");
+
+      return Optional.of(new DistributionArchiveSigningDecorator(kidArchive, cryptoProvider,
+          distributionServiceConfig));
+    } catch (Exception e) {
+      logger.error("Creating Kid Revocation list archive has failed :", e);
+    }
+
+    return Optional.empty();
   }
 
   private Optional<Writable<WritableOnDisk>> getDccRevocationKidListArchive() {
@@ -81,7 +158,8 @@ public class DccRevocationListStructureProvider {
     try {
       kidArchive
           .addWritable(new FileOnDisk(EXPORT_BIN,
-              dccRevocationToProtobufMapping.constructProtobufMapping(revocationEntriesByKidAndHash).toByteArray()));
+              dccRevocationToProtobufMapping.constructProtobufMappingKidList(revocationEntriesByKidAndHash)
+                  .toByteArray()));
       logger.info("Kid Revocation list archive has been added to the dcc-rl distribution folder");
 
       return Optional.of(new DistributionArchiveSigningDecorator(kidArchive, cryptoProvider,
@@ -90,6 +168,24 @@ public class DccRevocationListStructureProvider {
       logger.error("Creating Kid Revocation list archive has failed :", e);
     }
 
+    return Optional.empty();
+  }
+
+  private Optional<Writable<WritableOnDisk>> getDccRevocationKidTypeArchive(List<RevocationEntry> revocationEntries) {
+
+    ArchiveOnDisk kidTypeArchive = new ArchiveOnDisk(distributionServiceConfig.getOutputFileName());
+    try {
+      kidTypeArchive
+          .addWritable(new FileOnDisk(EXPORT_BIN,
+              dccRevocationToProtobufMapping.constructProtobufMappingKidType(revocationEntries)
+                  .toByteArray()));
+      logger.info("Kid Type Revocation index archive has been added to the dcc-rl distribution folder");
+
+      return Optional.of(new DistributionArchiveSigningDecorator(kidTypeArchive, cryptoProvider,
+          distributionServiceConfig));
+    } catch (Exception e) {
+      logger.error("Creating Kid Type Revocation index archive has failed :", e);
+    }
     return Optional.empty();
   }
 }

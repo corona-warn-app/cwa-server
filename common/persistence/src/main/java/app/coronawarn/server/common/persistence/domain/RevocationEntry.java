@@ -1,7 +1,6 @@
 package app.coronawarn.server.common.persistence.domain;
 
-import static java.lang.Integer.toHexString;
-
+import java.math.BigInteger;
 import java.util.Arrays;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Embedded;
@@ -36,13 +35,47 @@ public class RevocationEntry {
   }
 
   /**
-   * Hash for kid and type.
+   * Hash for kid.
    *
-   * @see Arrays#hashCode(byte[])
    * @return hash
+   * @see Arrays#hashCode(byte[])
    */
   public int getKidHash() {
     return Arrays.hashCode(getKid());
+  }
+
+  /**
+   * Hash for kid.
+   *
+   * @return hash
+   * @see Arrays#hashCode(byte[])
+   */
+  public int getKidTypeHash() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + Arrays.hashCode(getKid());
+    result = prime * result + Arrays.hashCode(getType());
+    return result;
+  }
+
+  /**
+   * Hash for X.
+   *
+   * @return hash
+   * @see Arrays#hashCode(byte[])
+   */
+  public int getXHash() {
+    return Arrays.hashCode(getXhash());
+  }
+
+  /**
+   * Hash for X.
+   *
+   * @return hash
+   * @see Arrays#hashCode(byte[])
+   */
+  public int getYHash() {
+    return Arrays.hashCode(getYhash());
   }
 
   public byte[] getType() {
@@ -63,12 +96,16 @@ public class RevocationEntry {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    for (byte b : getKid()) {
+    sb.append(new BigInteger(1, getKid()).toString(16));
+    sb.append('0');
+    sb.append(new BigInteger(1, getType()).toString(16));
+
+    /* for (byte b : getKid()) {
       sb.append(toHexString(b));
     }
     for (byte b : getType()) {
       sb.append(toHexString(b));
-    }
+    }*/
     return sb.toString();
   }
 }
