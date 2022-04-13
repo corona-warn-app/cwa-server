@@ -107,8 +107,6 @@ public final class SerializationUtils {
     CBORObject cborObject = CBORObject.DecodeFromBytes(byteSequence);
     CBORObject payload = CBORObject.DecodeFromBytes(cborObject.get(2).GetByteString());
 
-    payload.getKeys().stream().map(key -> key.GetByteString()).collect(Collectors.toList());
-
     Map<byte[], List<byte[]>> payloadEntries = new HashMap<>();
     payload.getKeys().forEach(key -> {
       List<byte[]> values = payload.get(key).getValues().stream()
