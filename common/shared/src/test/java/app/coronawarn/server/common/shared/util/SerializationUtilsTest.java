@@ -104,7 +104,7 @@ class SerializationUtilsTest {
   }
 
   @Test
-  void shouldDecodCosePayload() throws Exception {
+  void shouldDecodeCosePayload() throws Exception {
     try (InputStream input = getClass().getClassLoader().getResourceAsStream(REVOCATION_CHUNK_LST)) {
       assertNotNull(jsonExtractCosePayload(input.readAllBytes()));
     }
