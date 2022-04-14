@@ -31,7 +31,7 @@ public class DccRevocationListStructureProvider {
 
   private static final Logger logger = LoggerFactory.getLogger(DccRevocationListStructureProvider.class);
   private static final String KID_ARCHIVE = "kid";
-  public static final String CHUNK = "chunk";
+  private static final String CHUNK = "chunk";
 
   private final CryptoProvider cryptoProvider;
   private final DistributionServiceConfig distributionServiceConfig;
