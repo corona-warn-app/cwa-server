@@ -36,6 +36,14 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.googlecode.json-simple</groupId>
+      <artifactId>json-simple</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.upokecenter</groupId>
+      <artifactId>cbor</artifactId>
+    </dependency>
 
     <!-- test scope only -->
     <dependency>
@@ -50,15 +58,5 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
     </dependency>
-      <dependency>
-          <groupId>com.googlecode.json-simple</groupId>
-          <artifactId>json-simple</artifactId>
-      </dependency>
-      <dependency>
-          <groupId>com.upokecenter</groupId>
-          <artifactId>cbor</artifactId>
-          <version>4.5.2</version>
-          <scope>compile</scope>
-      </dependency>
   </dependencies>
 </project>

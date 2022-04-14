@@ -117,7 +117,7 @@ public final class SerializationUtils {
   }
 
   /**
-   * Reads and convers a JSON object from a classpath file or if it does not find it returns a default.
+   * Reads and converts a JSON object from a classpath file or (if not found), it returns a default.
    *
    * @param resourceLoader - resource loader.
    * @param path           - JSON path.
