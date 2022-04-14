@@ -24,8 +24,8 @@ public class TestDccRevocationClient implements DccRevocationClient {
   @Override
   public Optional<List<RevocationEntry>> getDccRevocationList() throws FetchDccListException {
     try {
-      InputStream input = resourceLoader.getClassLoader().getResourceAsStream("/revocation/chunk.lst");
-      return Optional.of(dccRevocationListDecoder.decode(input.toString().getBytes()));
+      InputStream input = resourceLoader.getClassLoader().getResourceAsStream("revocation/chunk.lst");
+      return Optional.of(dccRevocationListDecoder.decode(input.readAllBytes()));
     } catch (Exception e) {
       throw new FetchDccListException("DCC Revocation List could not be fetched because of: ", e);
     }

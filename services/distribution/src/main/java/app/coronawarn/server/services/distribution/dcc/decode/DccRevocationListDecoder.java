@@ -11,11 +11,9 @@ import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("!fake-dcc-revocation")
 public class DccRevocationListDecoder {
 
   private static final Logger logger = LoggerFactory.getLogger(DccRevocationListDecoder.class);
