@@ -8,6 +8,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.signing.DistributionArchiveSigningDecorator;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 import org.bouncycastle.util.encoders.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -65,7 +67,7 @@ public class DccRevocationListStructureProvider {
     }
   }
 
-  public DirectoryOnDisk getDccRevocationDirectory() {
+  public Directory<WritableOnDisk> getDccRevocationDirectory() {
     return constructArchiveToPublish(cryptoProvider);
   }
 
