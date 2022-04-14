@@ -99,13 +99,7 @@ public class RevocationEntry {
     sb.append(new BigInteger(1, getKid()).toString(16));
     sb.append('0');
     sb.append(new BigInteger(1, getType()).toString(16));
-
-    /* for (byte b : getKid()) {
-      sb.append(toHexString(b));
-    }
-    for (byte b : getType()) {
-      sb.append(toHexString(b));
-    }*/
+    
     return sb.toString();
   }
 }
