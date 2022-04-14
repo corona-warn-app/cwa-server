@@ -1,13 +1,19 @@
 package app.coronawarn.server.services.distribution.runner;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import app.coronawarn.server.services.distribution.assembly.component.CwaApiStructureProvider;
 import app.coronawarn.server.services.distribution.assembly.component.DccRevocationListStructureProvider;
 import app.coronawarn.server.services.distribution.assembly.component.OutputDirectoryProvider;
-import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import java.io.IOException;
 import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,19 +26,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import java.io.IOException;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Assembly.class}, initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles("revocation")
 public class AssemblyDccRunnerTest {
+
   @MockBean
   OutputDirectoryProvider outputDirectoryProvider;
 
@@ -64,7 +64,6 @@ public class AssemblyDccRunnerTest {
   @Test
   void shouldCorrectlyCreatePrepareAndWriteDirectories() throws IOException {
     Directory<WritableOnDisk> spyParentDirectory = spy(parentDirectory);
-
 
     when(outputDirectoryProvider.getDirectory()).thenReturn(spyParentDirectory);
     when(dccRevocationListStructureProvider.getDccRevocationDirectory()).thenReturn(childDirectory);
