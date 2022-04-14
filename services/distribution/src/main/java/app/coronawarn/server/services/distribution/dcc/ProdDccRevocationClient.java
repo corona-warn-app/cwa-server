@@ -1,6 +1,7 @@
 package app.coronawarn.server.services.distribution.dcc;
 
 import app.coronawarn.server.common.persistence.domain.RevocationEntry;
+import app.coronawarn.server.services.distribution.dcc.decode.DccRevocationListDecodeException;
 import app.coronawarn.server.services.distribution.dcc.decode.DccRevocationListDecoder;
 import app.coronawarn.server.services.distribution.dgc.client.ProdDigitalCovidCertificateClient;
 import java.util.List;
@@ -34,8 +35,11 @@ public class ProdDccRevocationClient implements DccRevocationClient {
     logger.debug("Get Revocation List from DCC");
     try {
       return Optional.of(dccRevocationListDecoder.decode(dccRevocationFeignClient.getRevocationList().getBody()));
+    } catch (DccRevocationListDecodeException e) {
+      logger.info("DCC Revocation List could not be decoded.");
     } catch (Exception e) {
       throw new FetchDccListException("DCC Revocation List could not be fetched because of: ", e);
     }
+    return Optional.empty();
   }
 }

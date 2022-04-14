@@ -243,6 +243,7 @@ services:
         max-retry-period: 5
         max-retry-attempts: 2
       dcc-list-path: /chunk.lst
+      dcc-revocation-directory: dcc-rl
       certificate: ${DCC_REVOCATION_LIST_CERTIFICATE}
 spring:
   main:
