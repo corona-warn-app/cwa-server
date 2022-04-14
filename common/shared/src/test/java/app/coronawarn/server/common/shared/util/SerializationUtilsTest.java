@@ -105,12 +105,9 @@ class SerializationUtilsTest {
   }
 
   @Test
-  void shouldDecodCosePayload() {
-    try (InputStream input = getClass().getClassLoader().getResourceAsStream(REVOCATION_CHUNK_LST)) {
-      assertNotNull(jsonExtractCosePayload(input.readAllBytes()));
-    } catch (IOException | ParseException e) {
-      e.printStackTrace();
-    }
+  void shouldDecodCosePayload() throws IOException, ParseException {
+    InputStream input = getClass().getClassLoader().getResourceAsStream(REVOCATION_CHUNK_LST);
+    assertNotNull(jsonExtractCosePayload(input.readAllBytes()));
   }
 
   public static class TestObject implements Serializable {
