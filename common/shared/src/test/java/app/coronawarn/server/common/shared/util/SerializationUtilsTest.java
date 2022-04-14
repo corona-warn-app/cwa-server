@@ -18,7 +18,6 @@ import java.io.InputStream;
 import java.io.Serializable;
 import org.everit.json.schema.ValidationException;
 import org.json.JSONException;
-import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Test;
 
 
@@ -105,9 +104,10 @@ class SerializationUtilsTest {
   }
 
   @Test
-  void shouldDecodCosePayload() throws IOException, ParseException {
-    InputStream input = getClass().getClassLoader().getResourceAsStream(REVOCATION_CHUNK_LST);
-    assertNotNull(jsonExtractCosePayload(input.readAllBytes()));
+  void shouldDecodCosePayload() throws Exception {
+    try (InputStream input = getClass().getClassLoader().getResourceAsStream(REVOCATION_CHUNK_LST)) {
+      assertNotNull(jsonExtractCosePayload(input.readAllBytes()));
+    }
   }
 
   public static class TestObject implements Serializable {
