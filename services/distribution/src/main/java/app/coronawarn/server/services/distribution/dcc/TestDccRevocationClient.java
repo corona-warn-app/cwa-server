@@ -1,6 +1,7 @@
 package app.coronawarn.server.services.distribution.dcc;
 
 import app.coronawarn.server.common.persistence.domain.RevocationEntry;
+import app.coronawarn.server.services.distribution.dcc.decode.DccRevocationListDecodeException;
 import app.coronawarn.server.services.distribution.dcc.decode.DccRevocationListDecoder;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,8 +32,8 @@ public class TestDccRevocationClient implements DccRevocationClient {
   public Optional<List<RevocationEntry>> getDccRevocationList() throws FetchDccListException {
     try (InputStream input = resourceLoader.getClassLoader().getResourceAsStream(REVOCATION_CHUNK_LST)) {
       return Optional.of(dccRevocationListDecoder.decode(input.readAllBytes()));
-    } catch (IOException e) {
-      logger.error("Error reading {} cose object.", REVOCATION_CHUNK_LST, e);
+    } catch (DccRevocationListDecodeException e) {
+      logger.error("Error decoding {} cose object.", REVOCATION_CHUNK_LST, e);
     } catch (Exception e) {
       throw new FetchDccListException("DCC Revocation List could not be fetched because of: ", e);
     }
