@@ -76,6 +76,7 @@
     <findify-s3mock.version>0.2.6</findify-s3mock.version>
     <checkstyle.version>10.1</checkstyle.version>
     <semver4j.version>3.1.0</semver4j.version>
+    <upokecenter-cbor.version>4.5.2</upokecenter-cbor.version>
   </properties>
 
   <dependencyManagement>
@@ -346,6 +347,11 @@
         <artifactId>slf4j-simple</artifactId>
         <version>${slf4j.version}</version>
         <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.upokecenter</groupId>
+        <artifactId>cbor</artifactId>
+        <version>${upokecenter-cbor.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

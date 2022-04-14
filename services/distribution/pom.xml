@@ -36,11 +36,6 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
     </dependency>
-    <dependency>
-      <groupId>com.upokecenter</groupId>
-      <artifactId>cbor</artifactId>
-      <version>4.5.2</version>
-    </dependency>
 
     <!-- test scope only -->
     <dependency>
