@@ -2,6 +2,7 @@ package app.coronawarn.server.common.persistence.domain;
 
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.Objects;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Embedded;
 import org.springframework.data.relational.core.mapping.Embedded.OnEmpty;
@@ -101,5 +102,22 @@ public class RevocationEntry {
     sb.append(new BigInteger(1, getType()).toString(16));
 
     return sb.toString();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    RevocationEntry that = (RevocationEntry) o;
+    return id.equals(that.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id);
   }
 }
