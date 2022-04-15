@@ -119,7 +119,7 @@ public class DccRevocationListStructureProvider {
       List<RevocationEntry> xrevocationEntryList) {
 
     Map<Integer, List<RevocationEntry>> revocationEntriesGroupedByHashY = xrevocationEntryList.stream()
-        .collect(Collectors.groupingBy(RevocationEntry::getYHash));
+        .collect(Collectors.groupingBy(RevocationEntry::getYHashCode));
     List<DirectoryOnDisk> yhashDirectories = new ArrayList<>();
     revocationEntriesGroupedByHashY.keySet().forEach(yhashEntry -> {
       DirectoryOnDisk directoryHashY = new DirectoryOnDisk(Hex.toHexString(

@@ -74,7 +74,7 @@ public class RevocationEntry {
    * @return hash
    * @see Arrays#hashCode(byte[])
    */
-  public int getYHash() {
+  public int getYHashCode() {
     return Arrays.hashCode(getYhash());
   }
 
