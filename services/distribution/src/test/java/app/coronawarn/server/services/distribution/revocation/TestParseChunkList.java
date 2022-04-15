@@ -1,16 +1,10 @@
 package app.coronawarn.server.services.distribution.revocation;
 
-import static org.junit.Assert.assertNotNull;
-
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import app.coronawarn.server.services.distribution.dcc.DccRevocationClient;
 import app.coronawarn.server.services.distribution.dcc.FetchDccListException;
 import app.coronawarn.server.services.distribution.dcc.TestDccRevocationClient;
 import app.coronawarn.server.services.distribution.dcc.decode.DccRevocationListDecoder;
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStorePublishingConfig;
-import java.io.IOException;
-import java.io.InputStream;
-import org.json.simple.parser.ParseException;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +26,7 @@ public class TestParseChunkList {
   TestDccRevocationClient dccRevocationClient;
 
   @Test
-  void cborToMap() throws IOException, ParseException, FetchDccListException {
+  void cborToMap() throws FetchDccListException {
     dccRevocationClient.getDccRevocationList().ifPresent(payloadEntries -> {
 
       payloadEntries.forEach(revocationEntry -> {

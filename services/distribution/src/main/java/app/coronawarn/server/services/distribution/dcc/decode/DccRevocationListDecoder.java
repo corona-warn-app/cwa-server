@@ -18,7 +18,6 @@ public class DccRevocationListDecoder {
 
   private static final Logger logger = LoggerFactory.getLogger(DccRevocationListDecoder.class);
 
-  public static final char CONTENT_STARTS_CHAR = '{';
   private final DistributionServiceConfig distributionServiceConfig;
 
   public DccRevocationListDecoder(DistributionServiceConfig distributionServiceConfig) {

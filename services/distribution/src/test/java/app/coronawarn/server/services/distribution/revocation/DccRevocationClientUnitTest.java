@@ -11,6 +11,7 @@ import app.coronawarn.server.services.distribution.dcc.ProdDccRevocationClient;
 import app.coronawarn.server.services.distribution.dcc.TestDccRevocationClient;
 import app.coronawarn.server.services.distribution.dcc.decode.DccRevocationListDecodeException;
 import app.coronawarn.server.services.distribution.dcc.decode.DccRevocationListDecoder;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +19,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.ResponseEntity;
-import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class DccRevocationClientUnitTest {
@@ -44,7 +44,7 @@ class DccRevocationClientUnitTest {
 
   @Test
   void shouldThrowDccRevocationListFetchException() {
-    when(resourceLoader.getClassLoader()).thenThrow(NullPointerException.class);
+    when(resourceLoader.getResource(any())).thenThrow(NullPointerException.class);
     assertThrows(FetchDccListException.class, () -> testDccRevocationClient.getDccRevocationList());
   }
 

@@ -3,7 +3,6 @@ package app.coronawarn.server.services.distribution.dcc;
 import app.coronawarn.server.common.persistence.domain.RevocationEntry;
 import app.coronawarn.server.services.distribution.dcc.decode.DccRevocationListDecodeException;
 import app.coronawarn.server.services.distribution.dcc.decode.DccRevocationListDecoder;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +18,7 @@ public class TestDccRevocationClient implements DccRevocationClient {
 
   private static final Logger logger = LoggerFactory.getLogger(TestDccRevocationClient.class);
 
-  public static final String REVOCATION_CHUNK_LST = "revocation/chunk.lst";
+  public static final String REVOCATION_CHUNK_LST = "classpath:revocation/chunk.lst";
   private final ResourceLoader resourceLoader;
   private final DccRevocationListDecoder dccRevocationListDecoder;
 
@@ -30,7 +29,7 @@ public class TestDccRevocationClient implements DccRevocationClient {
 
   @Override
   public Optional<List<RevocationEntry>> getDccRevocationList() throws FetchDccListException {
-    try (InputStream input = resourceLoader.getClassLoader().getResourceAsStream(REVOCATION_CHUNK_LST)) {
+    try (InputStream input = resourceLoader.getResource(REVOCATION_CHUNK_LST).getInputStream()) {
       return Optional.of(dccRevocationListDecoder.decode(input.readAllBytes()));
     } catch (DccRevocationListDecodeException e) {
       logger.error("Error decoding {} cose object.", REVOCATION_CHUNK_LST, e);
