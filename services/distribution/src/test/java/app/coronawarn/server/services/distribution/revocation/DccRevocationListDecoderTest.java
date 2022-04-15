@@ -27,7 +27,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
     DccRevocationListDecoder.class}, initializers = ConfigDataApplicationContextInitializer.class)
-public class DccRevocationListDecoderTest {
+class DccRevocationListDecoderTest {
 
   @Autowired
   DccRevocationListDecoder dccRevocationListDecoder;
@@ -36,7 +36,7 @@ public class DccRevocationListDecoderTest {
   void testDccRevocationListDecoderShouldReturnListOfEntries() throws IOException, DccRevocationListDecodeException {
     InputStream inputStream = getClass().getClassLoader().getResourceAsStream("revocation/chunk.lst");
     List<RevocationEntry> revocationEntryList = dccRevocationListDecoder.decode(inputStream.readAllBytes());
-    assertEquals(revocationEntryList.size(), 586);
+    assertEquals(586, revocationEntryList.size());
   }
 
   @Test

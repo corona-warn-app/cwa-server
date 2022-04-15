@@ -110,7 +110,7 @@ public final class SerializationUtils {
     Map<byte[], List<byte[]>> payloadEntries = new HashMap<>();
     payload.getKeys().forEach(key -> {
       List<byte[]> values = payload.get(key).getValues().stream()
-          .map(value -> value.GetByteString()).collect(Collectors.toList());
+          .map(CBORObject::GetByteString).collect(Collectors.toList());
       payloadEntries.put(key.GetByteString(), values);
     });
     return payloadEntries;

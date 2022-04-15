@@ -40,7 +40,7 @@ public class RevocationEntry {
    * @return hash
    * @see Arrays#hashCode(byte[])
    */
-  public int getKidHash() {
+  public int getKidHashCode() {
     return Arrays.hashCode(getKid());
   }
 
@@ -50,7 +50,7 @@ public class RevocationEntry {
    * @return hash
    * @see Arrays#hashCode(byte[])
    */
-  public int getKidTypeHash() {
+  public int getKidTypeHashCode() {
     final int prime = 31;
     int result = 1;
     result = prime * result + Arrays.hashCode(getKid());
@@ -64,7 +64,7 @@ public class RevocationEntry {
    * @return hash
    * @see Arrays#hashCode(byte[])
    */
-  public int getXHash() {
+  public int getXHashCode() {
     return Arrays.hashCode(getXhash());
   }
 
@@ -99,7 +99,7 @@ public class RevocationEntry {
     sb.append(new BigInteger(1, getKid()).toString(16));
     sb.append('0');
     sb.append(new BigInteger(1, getType()).toString(16));
-    
+
     return sb.toString();
   }
 }

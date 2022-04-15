@@ -3,25 +3,17 @@ package app.coronawarn.server.services.distribution.dcc.decode;
 import static app.coronawarn.server.common.shared.util.SerializationUtils.jsonExtractCosePayload;
 
 import app.coronawarn.server.common.persistence.domain.RevocationEntry;
-import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dgc.exception.DscListDecodeException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DccRevocationListDecoder {
 
-  private static final Logger logger = LoggerFactory.getLogger(DccRevocationListDecoder.class);
-
-  private final DistributionServiceConfig distributionServiceConfig;
-
-  public DccRevocationListDecoder(DistributionServiceConfig distributionServiceConfig) {
-    this.distributionServiceConfig = distributionServiceConfig;
+  public DccRevocationListDecoder() {
   }
 
   /**
@@ -42,9 +34,8 @@ public class DccRevocationListDecoder {
         byte[] kid = Arrays.copyOfRange(keyAndType, 0, keyAndType.length - 1);
         byte[] type = Arrays.copyOfRange(keyAndType, keyAndType.length - 1, keyAndType.length);
 
-        values.forEach(hash -> {
-          revocationEntries.add(new RevocationEntry(kid, type, hash));
-        });
+        values.forEach(hash ->
+            revocationEntries.add(new RevocationEntry(kid, type, hash)));
       });
     } catch (Exception e) {
       throw new DccRevocationListDecodeException("DCC revocation list NOT decoded.", e);

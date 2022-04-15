@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 import org.bouncycastle.util.encoders.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -68,16 +67,16 @@ public class DccRevocationListStructureProvider {
   }
 
   public Directory<WritableOnDisk> getDccRevocationDirectory() {
-    return constructArchiveToPublish(cryptoProvider);
+    return constructArchiveToPublish();
   }
 
-  private DirectoryOnDisk constructArchiveToPublish(CryptoProvider cryptoProvider) {
+  private DirectoryOnDisk constructArchiveToPublish() {
 
     DirectoryOnDisk dccRlDirectory = new DirectoryOnDisk(
         distributionServiceConfig.getDccRevocation().getDccRevocationDirectory());
     Map<Integer, List<RevocationEntry>> revocationEntriesByKidAndHash =
         dccRevocationListService.getRevocationListEntries()
-            .stream().collect(Collectors.groupingBy(RevocationEntry::getKidTypeHash));
+            .stream().collect(Collectors.groupingBy(RevocationEntry::getKidTypeHashCode));
     getDccRevocationKidListArchive().ifPresent(dccRlDirectory::addWritable);
     getDccRevocationKidTypeDirectories(revocationEntriesByKidAndHash).forEach(kidTypeDirectory ->
         dccRlDirectory.addWritable(kidTypeDirectory));
@@ -102,7 +101,7 @@ public class DccRevocationListStructureProvider {
   private List<DirectoryOnDisk> getKidTypeXandYDirectories(List<RevocationEntry> revocationEntryList) {
     List<DirectoryOnDisk> directoryXY = new ArrayList<>();
     Map<Integer, List<RevocationEntry>> revocationEntriesGrouped = revocationEntryList.stream()
-        .collect(Collectors.groupingBy(RevocationEntry::getXHash));
+        .collect(Collectors.groupingBy(RevocationEntry::getXHashCode));
 
     revocationEntriesGrouped.keySet().forEach(xhashRevocationEntry -> {
       DirectoryOnDisk directoryX = new DirectoryOnDisk(
@@ -156,7 +155,7 @@ public class DccRevocationListStructureProvider {
     ArchiveOnDisk kidArchive = new ArchiveOnDisk(KID_ARCHIVE);
     Map<Integer, List<RevocationEntry>> revocationEntriesByKidAndHash =
         dccRevocationListService.getRevocationListEntries()
-            .stream().collect(Collectors.groupingBy(RevocationEntry::getKidHash));
+            .stream().collect(Collectors.groupingBy(RevocationEntry::getKidHashCode));
     try {
       kidArchive
           .addWritable(new FileOnDisk(EXPORT_BIN,

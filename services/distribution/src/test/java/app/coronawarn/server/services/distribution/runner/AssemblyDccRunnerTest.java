@@ -31,7 +31,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Assembly.class}, initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles("revocation")
-public class AssemblyDccRunnerTest {
+class AssemblyDccRunnerTest {
 
   @MockBean
   OutputDirectoryProvider outputDirectoryProvider;

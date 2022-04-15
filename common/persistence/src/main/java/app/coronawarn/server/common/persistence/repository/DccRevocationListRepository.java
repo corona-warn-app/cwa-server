@@ -2,7 +2,6 @@ package app.coronawarn.server.common.persistence.repository;
 
 import app.coronawarn.server.common.persistence.domain.RevocationEntry;
 import app.coronawarn.server.common.persistence.domain.RevocationEntryId;
-import java.util.Collection;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;

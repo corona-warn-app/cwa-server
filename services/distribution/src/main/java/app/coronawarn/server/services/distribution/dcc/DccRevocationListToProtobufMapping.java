@@ -1,7 +1,6 @@
 package app.coronawarn.server.services.distribution.dcc;
 
 import app.coronawarn.server.common.persistence.domain.RevocationEntry;
-import app.coronawarn.server.common.persistence.service.DccRevocationListService;
 import app.coronawarn.server.common.protocols.internal.dgc.RevocationChunk;
 import app.coronawarn.server.common.protocols.internal.dgc.RevocationKidList;
 import app.coronawarn.server.common.protocols.internal.dgc.RevocationKidListItem;
@@ -19,11 +18,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class DccRevocationListToProtobufMapping {
 
-  private final DccRevocationListService dccRevocationListService;
-
-
-  public DccRevocationListToProtobufMapping(DccRevocationListService dccRevocationListService) {
-    this.dccRevocationListService = dccRevocationListService;
+  public DccRevocationListToProtobufMapping() {
   }
 
   public RevocationKidList constructProtobufMappingKidList(Map<Integer, List<RevocationEntry>> revocationEntryList) {
@@ -35,9 +30,8 @@ public class DccRevocationListToProtobufMapping {
     List<RevocationKidListItem> revocationKidListItems = new ArrayList<>();
     revocationEntriesByKidAndHash.keySet().forEach(kid -> {
       Set<ByteString> types = new HashSet<>();
-      revocationEntriesByKidAndHash.get(kid).forEach(revocationEntry -> {
-        types.add(ByteString.copyFrom(revocationEntry.getType()));
-      });
+      revocationEntriesByKidAndHash.get(kid).forEach(revocationEntry ->
+          types.add(ByteString.copyFrom(revocationEntry.getType())));
       revocationKidListItems.add(
           RevocationKidListItem.newBuilder()
               .setKid(ByteString.copyFrom(revocationEntriesByKidAndHash.get(kid).get(0).getKid()))
@@ -52,7 +46,7 @@ public class DccRevocationListToProtobufMapping {
    */
   public RevocationKidTypeIndex constructProtobufMappingKidType(List<RevocationEntry> revocationEntries) {
     Map<Integer, List<RevocationEntry>> revocationEntriesGrouped = revocationEntries.stream()
-        .collect(Collectors.groupingBy(RevocationEntry::getXHash));
+        .collect(Collectors.groupingBy(RevocationEntry::getXHashCode));
     List<RevocationKidTypeIndexItem> revocationKidTypeIndexItems = new ArrayList<>();
     revocationEntriesGrouped.keySet().forEach(revocationBasedOnxHash -> {
       List<ByteString> hashesForY = revocationEntriesGrouped.get(revocationBasedOnxHash).stream()

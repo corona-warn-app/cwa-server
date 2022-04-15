@@ -1,7 +1,6 @@
 package app.coronawarn.server.services.distribution.dcc;
 
 
-import com.google.protobuf.ByteString;
 import io.micrometer.core.annotation.Timed;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;

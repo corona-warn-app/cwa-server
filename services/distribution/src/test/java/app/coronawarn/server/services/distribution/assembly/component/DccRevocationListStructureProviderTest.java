@@ -104,7 +104,7 @@ class DccRevocationListStructureProviderTest {
             map(ydirectory -> ((DirectoryOnDisk) ydirectory).getWritables().iterator().next())
         // verify archive name for yhash directory
         .forEach(archive -> {
-          assertEquals(archive.getName(), "chunk");
+          assertEquals("chunk", archive.getName());
           List<String> archiveContent = ((DistributionArchiveSigningDecorator) archive).getWritables().stream()
               .map(Writable::getName).collect(Collectors.toList());
           assertTrue((archiveContent).containsAll(Set.of("export.bin", "export.sig")));

@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 @Profile("!fake-dcc-revocation & revocation")
 public class ProdDccRevocationClient implements DccRevocationClient {
 
-  private static final Logger logger = LoggerFactory.getLogger(ProdDigitalCovidCertificateClient.class);
+  private static final Logger logger = LoggerFactory.getLogger(ProdDccRevocationClient.class);
 
   public static final Marker AUDIT = MarkerFactory.getMarker("AUDIT");
 

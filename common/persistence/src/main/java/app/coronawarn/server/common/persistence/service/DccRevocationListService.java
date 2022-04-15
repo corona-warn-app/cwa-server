@@ -28,9 +28,8 @@ public class DccRevocationListService {
    * @return list of DCCRevocationEntries
    */
   public Collection<RevocationEntry> getRevocationListEntries() {
-    final Collection<RevocationEntry> revocationEntries = createStreamFromIterator(repository.findAll().iterator())
+    return createStreamFromIterator(repository.findAll().iterator())
         .collect(Collectors.toList());
-    return revocationEntries;
   }
 
   /**

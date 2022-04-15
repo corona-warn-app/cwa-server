@@ -20,7 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
     DccRevocationListDecoder.class})
 @ActiveProfiles("fake-dcc-revocation")
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
-public class TestParseChunkList {
+class TestParseChunkList {
 
   @Autowired
   TestDccRevocationClient dccRevocationClient;
