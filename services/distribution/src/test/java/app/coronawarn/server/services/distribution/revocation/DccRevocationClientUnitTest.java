@@ -49,7 +49,7 @@ class DccRevocationClientUnitTest {
   }
 
   @Test
-  void shouldThrowDccDecodeException() throws DccRevocationListDecodeException, FetchDccListException {
+  void shouldReturnEmptyWhenThrowDccDecodeException() throws DccRevocationListDecodeException, FetchDccListException {
     when(dccRevocationFeignClient.getRevocationList()).thenReturn(ResponseEntity.ok().body(new byte[]{}));
     when(dccRevocationListDecoder.decode(any())).thenThrow(DccRevocationListDecodeException.class);
     assertEquals(prodDccRevocationClient.getDccRevocationList(), Optional.empty());
