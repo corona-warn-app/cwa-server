@@ -101,7 +101,8 @@ public final class SerializationUtils {
    * @throws IOException    if parser cannot be created
    * @throws ParseException if byte sequence cannot be parsed
    */
-  public static Map<byte[], List<byte[]>> jsonExtractCosePayload(byte[] byteSequence) {
+  public static Map<byte[], List<byte[]>> jsonExtractCosePayload(byte[] byteSequence)
+      throws IOException, ParseException {
 
     CBORObject cborObject = CBORObject.DecodeFromBytes(byteSequence);
     CBORObject payload = CBORObject.DecodeFromBytes(cborObject.get(2).GetByteString());
