@@ -1,6 +1,7 @@
 package app.coronawarn.server.common.persistence.domain;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.junit.jupiter.api.Test;
 
@@ -13,18 +14,18 @@ class RevocationEntryTest {
 
   @Test
   void testRevocationEntryIdHashCode() {
-    assertTrue(0 != revocationEntryId.hashCode());
+    assertNotEquals(0, revocationEntryId.hashCode());
   }
 
   @Test
   void testRevocationEntryIdEquals() {
-    assertTrue(revocationEntryId.equals(new RevocationEntryId(new byte[]{10}, new byte[]{10}, new byte[]{10})));
+    assertEquals(revocationEntryId, (new RevocationEntryId(new byte[]{10}, new byte[]{10}, new byte[]{10})));
   }
 
   @Test
   void testRevocationEntryHashCode() {
-    assertTrue(0 != revocationEntry.getKidTypeHashCode());
-    assertTrue(0 != revocationEntry.getYHashCode());
-    assertTrue(0 != revocationEntry.getXHashCode());
+    assertNotEquals(0, revocationEntry.getKidTypeHashCode());
+    assertNotEquals(0, revocationEntry.getYHashCode());
+    assertNotEquals(0, revocationEntry.getXHashCode());
   }
 }
