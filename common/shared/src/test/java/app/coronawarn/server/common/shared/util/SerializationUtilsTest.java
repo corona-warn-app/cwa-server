@@ -2,11 +2,13 @@ package app.coronawarn.server.common.shared.util;
 
 import static app.coronawarn.server.common.shared.util.SerializationUtils.cborEncode;
 import static app.coronawarn.server.common.shared.util.SerializationUtils.deserializeJson;
+import static app.coronawarn.server.common.shared.util.SerializationUtils.jsonExtractCosePayload;
 import static app.coronawarn.server.common.shared.util.SerializationUtils.stringifyObject;
 import static app.coronawarn.server.common.shared.util.SerializationUtils.validateJsonSchema;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -29,6 +31,7 @@ class SerializationUtilsTest {
   public static final String VALIDATION_SCHEMA_JSON = "validation_schema.json";
   public static final String VALIDATION_SCHEMA_OK = "TEST-OK";
   public static final String VALIDATION_SCHEMA_NOT_OKAY = "TEST-NOTOK";
+  private static final String REVOCATION_CHUNK_LST = "chunk.lst";
 
   @Test
   void testDeserializeJsonInputStream() throws IOException {
@@ -100,6 +103,13 @@ class SerializationUtilsTest {
     assertThat(serialized).isNotEmpty();
   }
 
+  @Test
+  void shouldDecodeCosePayload() throws Exception {
+    try (InputStream input = getClass().getClassLoader().getResourceAsStream(REVOCATION_CHUNK_LST)) {
+      assertNotNull(jsonExtractCosePayload(input.readAllBytes()));
+    }
+  }
+
   public static class TestObject implements Serializable {
 
     private static final long serialVersionUID = 0L;
@@ -116,6 +126,7 @@ class SerializationUtilsTest {
   }
 
   private static class ClassThatJacksonCannotSerialize {
+
     private final ClassThatJacksonCannotSerialize self = this;
 
     @Override

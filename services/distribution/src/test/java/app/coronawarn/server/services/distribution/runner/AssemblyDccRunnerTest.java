@@ -23,13 +23,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Assembly.class}, initializers = ConfigDataApplicationContextInitializer.class)
-class AssemblyRunnerTest {
+@ActiveProfiles("revocation")
+class AssemblyDccRunnerTest {
 
   @MockBean
   OutputDirectoryProvider outputDirectoryProvider;
@@ -56,23 +58,21 @@ class AssemblyRunnerTest {
     var outputSubDirectory = outputFolder.newFolder("parent/child");
     parentDirectory = new DirectoryOnDisk(outputDirectory);
     childDirectory = new DirectoryOnDisk(outputSubDirectory);
+
   }
 
   @Test
   void shouldCorrectlyCreatePrepareAndWriteDirectories() throws IOException {
     Directory<WritableOnDisk> spyParentDirectory = spy(parentDirectory);
 
-
     when(outputDirectoryProvider.getDirectory()).thenReturn(spyParentDirectory);
-    when(cwaApiStructureProvider.getDirectory()).thenReturn(childDirectory);
-    when(cwaApiStructureProvider.getDirectoryV2()).thenReturn(childDirectory);
+    when(dccRevocationListStructureProvider.getDccRevocationDirectory()).thenReturn(childDirectory);
 
     assembly.run(null);
 
     verify(outputDirectoryProvider, times(1)).getDirectory();
     verify(outputDirectoryProvider, times(1)).clear();
-    verify(cwaApiStructureProvider, times(1)).getDirectory();
-    verify(cwaApiStructureProvider, times(1)).getDirectoryV2();
+    verify(dccRevocationListStructureProvider, times(1)).getDccRevocationDirectory();
     verify(spyParentDirectory, times(1)).prepare(any());
     verify(spyParentDirectory, times(1)).write();
   }

@@ -9,16 +9,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper;
+import com.upokecenter.cbor.CBORObject;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaClient;
 import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ResourceLoader;
@@ -88,8 +94,31 @@ public final class SerializationUtils {
   }
 
   /**
-   * Reads and convers a JSON object from a classpath file or if it does not find it
-   * returns a default.
+   * Extracts JSONObject from COSE byte sequence.
+   *
+   * @param byteSequence payload to be parsed
+   * @return parsed payload as JSON object
+   * @throws IOException    if parser cannot be created
+   * @throws ParseException if byte sequence cannot be parsed
+   */
+  public static Map<byte[], List<byte[]>> jsonExtractCosePayload(byte[] byteSequence)
+      throws IOException, ParseException {
+
+    CBORObject cborObject = CBORObject.DecodeFromBytes(byteSequence);
+    CBORObject payload = CBORObject.DecodeFromBytes(cborObject.get(2).GetByteString());
+
+    Map<byte[], List<byte[]>> payloadEntries = new HashMap<>();
+    payload.getKeys().forEach(key -> {
+      List<byte[]> values = payload.get(key).getValues().stream()
+          .map(CBORObject::GetByteString).collect(Collectors.toList());
+      payloadEntries.put(key.GetByteString(), values);
+    });
+    return payloadEntries;
+  }
+
+  /**
+   * Reads and converts a JSON object from a classpath file or (if not found), it returns a default.
+   *
    * @param resourceLoader - resource loader.
    * @param path           - JSON path.
    * @param defaultPath    - default JSON path.
@@ -122,7 +151,7 @@ public final class SerializationUtils {
 
   /**
    * Encodes an object to CBOR.
-   * 
+   *
    * @param object - object to be encoded
    * @return - CBOR encoded byte array
    * @throws JsonProcessingException - if JSON processing of the object fails.
@@ -134,7 +163,7 @@ public final class SerializationUtils {
 
   /**
    * Validates an object (JSON) based on a provided schema containing validation rules.
-   * 
+   *
    * @param validateObject       - object to be validated
    * @param schemaValidationJson - validation schema
    * @throws JsonProcessingException - if object to be validated fails on JSON processing
