@@ -37,28 +37,28 @@ public class Assembly implements ApplicationRunner {
   private final DccRevocationListStructureProvider dccRevocationListStructureProvider;
 
   /**
-   * Creates an Assembly, using {@link OutputDirectoryProvider}, {@link CwaApiStructureProvider} and {@link
-   * ApplicationContext}.
+   * Creates an Assembly, using {@link OutputDirectoryProvider}, {@link CwaApiStructureProvider} and
+   * {@link ApplicationContext}.
    */
-  Assembly(OutputDirectoryProvider outputDirectoryProvider,
-      CwaApiStructureProvider cwaApiStructureProvider, ApplicationContext applicationContext,
-      Environment environment, DccRevocationListStructureProvider dccRevocationListStructureProviders) {
+  Assembly(final OutputDirectoryProvider outputDirectoryProvider,
+      final CwaApiStructureProvider cwaApiStructureProvider, final ApplicationContext applicationContext,
+      final Environment environment, final DccRevocationListStructureProvider dccRevocationListStructureProvider) {
     this.outputDirectoryProvider = outputDirectoryProvider;
     this.cwaApiStructureProvider = cwaApiStructureProvider;
     this.applicationContext = applicationContext;
     this.environment = environment;
-    this.dccRevocationListStructureProvider = dccRevocationListStructureProviders;
+    this.dccRevocationListStructureProvider = dccRevocationListStructureProvider;
   }
 
   @Override
-  public void run(ApplicationArguments args) {
+  public void run(final ApplicationArguments args) {
     try {
-      Directory<WritableOnDisk> outputDirectory = this.outputDirectoryProvider.getDirectory();
+      final Directory<WritableOnDisk> outputDirectory = outputDirectoryProvider.getDirectory();
       if (Arrays.stream(environment.getActiveProfiles()).anyMatch(
-          env -> (env.equalsIgnoreCase("revocation")))) {
+          env -> env.equalsIgnoreCase("revocation"))) {
         dccRevocationListStructureProvider.fetchDccRevocationList();
         outputDirectory.addWritable(dccRevocationListStructureProvider.getDccRevocationDirectory());
-        this.outputDirectoryProvider.clear();
+        outputDirectoryProvider.clear();
         logger.debug("Preparing files...");
         logger.info("Start signing...");
         outputDirectory.prepare(new ImmutableStack<>());
@@ -68,7 +68,7 @@ public class Assembly implements ApplicationRunner {
       } else {
         outputDirectory.addWritable(cwaApiStructureProvider.getDirectory());
         outputDirectory.addWritable(cwaApiStructureProvider.getDirectoryV2());
-        this.outputDirectoryProvider.clear();
+        outputDirectoryProvider.clear();
         logger.debug("Preparing files...");
         logger.info("Start signing...");
         outputDirectory.prepare(new ImmutableStack<>());
@@ -76,7 +76,7 @@ public class Assembly implements ApplicationRunner {
         outputDirectory.write();
         logger.debug("Distribution data assembled successfully.");
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       logger.error("Distribution data assembly failed.", e);
       Application.killApplication(applicationContext);
     }
