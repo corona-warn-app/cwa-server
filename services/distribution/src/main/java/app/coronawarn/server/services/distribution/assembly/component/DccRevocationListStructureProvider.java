@@ -76,7 +76,7 @@ public class DccRevocationListStructureProvider {
         distributionServiceConfig.getDccRevocation().getDccRevocationDirectory());
     Map<Integer, List<RevocationEntry>> revocationEntriesByKidAndHash =
         dccRevocationListService.getRevocationListEntries()
-            .stream().collect(Collectors.groupingBy(RevocationEntry::getKidTypeHashCode));
+        .stream().collect(Collectors.groupingBy(RevocationEntry::getKidTypeHashCode));
     getDccRevocationKidListArchive().ifPresent(dccRlDirectory::addWritable);
     getDccRevocationKidTypeDirectories(revocationEntriesByKidAndHash).forEach(kidTypeDirectory ->
         dccRlDirectory.addWritable(kidTypeDirectory));
@@ -140,12 +140,12 @@ public class DccRevocationListStructureProvider {
           .addWritable(new FileOnDisk(EXPORT_BIN,
               dccRevocationToProtobufMapping.constructProtobufMappingChunkList(yhashRevocationEntryList)
                   .toByteArray()));
-      logger.info("Kid Revocation list archive has been added to the dcc-rl distribution folder");
+      logger.info("Kid Revocation list archive({}) has been added to the dcc-rl distribution folder".concat(CHUNK));
 
       return Optional.of(new DistributionArchiveSigningDecorator(kidArchive, cryptoProvider,
           distributionServiceConfig));
     } catch (Exception e) {
-      logger.error("Creating Kid Revocation list archive has failed :", e);
+      logger.error("Creating Kid Revocation list archive (" + CHUNK + ") has failed :", e);
     }
 
     return Optional.empty();
@@ -161,12 +161,12 @@ public class DccRevocationListStructureProvider {
           .addWritable(new FileOnDisk(EXPORT_BIN,
               dccRevocationToProtobufMapping.constructProtobufMappingKidList(revocationEntriesByKidAndHash)
                   .toByteArray()));
-      logger.info("Kid Revocation list archive has been added to the dcc-rl distribution folder");
+      logger.info("Kid Revocation list archive ({}) has been added to the dcc-rl distribution folder", KID_ARCHIVE);
 
       return Optional.of(new DistributionArchiveSigningDecorator(kidArchive, cryptoProvider,
           distributionServiceConfig));
     } catch (Exception e) {
-      logger.error("Creating Kid Revocation list archive has failed :", e);
+      logger.error("Creating Kid Revocation list archive (" + KID_ARCHIVE + ") has failed :", e);
     }
 
     return Optional.empty();
