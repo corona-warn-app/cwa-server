@@ -3,13 +3,10 @@ package app.coronawarn.server.services.distribution.dcc;
 import app.coronawarn.server.common.persistence.domain.RevocationEntry;
 import app.coronawarn.server.services.distribution.dcc.decode.DccRevocationListDecodeException;
 import app.coronawarn.server.services.distribution.dcc.decode.DccRevocationListDecoder;
-import app.coronawarn.server.services.distribution.dgc.client.ProdDigitalCovidCertificateClient;
 import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -18,8 +15,6 @@ import org.springframework.stereotype.Component;
 public class ProdDccRevocationClient implements DccRevocationClient {
 
   private static final Logger logger = LoggerFactory.getLogger(ProdDccRevocationClient.class);
-
-  public static final Marker AUDIT = MarkerFactory.getMarker("AUDIT");
 
   private final DccRevocationFeignClient dccRevocationFeignClient;
   private final DccRevocationListDecoder dccRevocationListDecoder;
@@ -36,7 +31,7 @@ public class ProdDccRevocationClient implements DccRevocationClient {
     try {
       return Optional.of(dccRevocationListDecoder.decode(dccRevocationFeignClient.getRevocationList().getBody()));
     } catch (DccRevocationListDecodeException e) {
-      logger.info("DCC Revocation List could not be decoded.");
+      logger.error("DCC Revocation List could not be decoded.", e);
     } catch (Exception e) {
       throw new FetchDccListException("DCC Revocation List could not be fetched because of: ", e);
     }

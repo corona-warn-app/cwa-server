@@ -60,9 +60,9 @@ public class DccRevocationListStructureProvider {
       Optional<List<RevocationEntry>> revocationEntryList = dccRevocationClient.getDccRevocationList();
       revocationEntryList.ifPresent(revocationList -> dccRevocationListService.store(revocationList));
     } catch (FetchDccListException e) {
-      logger.warn("Fetching DCC Revocation List failed. ", e);
+      logger.error("Fetching DCC Revocation List failed. ", e);
     } catch (Exception e) {
-      logger.warn("Storing DCC Revocation List failed. ", e);
+      logger.error("Storing DCC Revocation List failed. ", e);
     }
   }
 
