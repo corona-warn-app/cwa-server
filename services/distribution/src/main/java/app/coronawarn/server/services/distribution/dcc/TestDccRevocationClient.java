@@ -13,7 +13,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile({"fake-dcc-revocation", "!revocation"})
+@Profile({ "fake-dcc-revocation", "!revocation" })
 public class TestDccRevocationClient implements DccRevocationClient {
 
   private static final Logger logger = LoggerFactory.getLogger(TestDccRevocationClient.class);
@@ -32,7 +32,7 @@ public class TestDccRevocationClient implements DccRevocationClient {
     try (InputStream input = resourceLoader.getResource(REVOCATION_CHUNK_LST).getInputStream()) {
       return Optional.of(dccRevocationListDecoder.decode(input.readAllBytes()));
     } catch (DccRevocationListDecodeException e) {
-      logger.error("Error decoding {} cose object.", REVOCATION_CHUNK_LST, e);
+      logger.error("Error decoding (" + REVOCATION_CHUNK_LST + ") cose object.", e);
     } catch (Exception e) {
       throw new FetchDccListException("DCC Revocation List could not be fetched because of: ", e);
     }
