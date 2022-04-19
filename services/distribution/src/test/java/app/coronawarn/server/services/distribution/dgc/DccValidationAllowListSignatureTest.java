@@ -15,56 +15,32 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AllowList;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalCovidValidationCertificateToProtobufMapping;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.PublicKey;
-import java.security.SignatureException;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
-import org.apache.http.Header;
-import org.apache.http.HeaderIterator;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.HttpVersion;
-import org.apache.http.ProtocolVersion;
-import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
+import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.net.ssl.SSLSession;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicHttpResponse;
-import org.apache.http.params.HttpParams;
-import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.testcontainers.shaded.okhttp3.OkHttpClient;
-import javax.net.ssl.SSLPeerUnverifiedException;
-import javax.net.ssl.SSLSession;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
@@ -135,7 +111,8 @@ class DccValidationAllowListSignatureTest {
   @Test
   void testValidateSchemaInvalid() {
     AllowList allowList = distributionServiceConfig.getDigitalGreenCertificate().getAllowList();
-    allowList.getCertificates().forEach(certificateAllowList -> certificateAllowList.setFingerprint256("notAcceptedChar$"));
+    allowList.getCertificates()
+        .forEach(certificateAllowList -> certificateAllowList.setFingerprint256("notAcceptedChar$"));
     assertThat(digitalCovidValidationCertificateToProtobufMapping.validateSchema(allowList))
         .isFalse();
   }
@@ -152,7 +129,7 @@ class DccValidationAllowListSignatureTest {
     try (MockedStatic<SecurityUtils> utilities = Mockito.mockStatic(SecurityUtils.class)) {
       utilities.when(() -> getPublicKeyFromString(any())).thenThrow(new NoSuchAlgorithmException());
       Optional<ValidationServiceAllowlist> validationServiceAllowlist =
-        digitalCovidValidationCertificateToProtobufMapping.constructProtobufMapping();
+          digitalCovidValidationCertificateToProtobufMapping.constructProtobufMapping();
       assertThat(validationServiceAllowlist).isEmpty();
     }
   }
@@ -160,7 +137,8 @@ class DccValidationAllowListSignatureTest {
   @Test
   void testConstructProtobufMappingEmpty2() {
     try (MockedStatic<SerializationUtils> utilities = Mockito.mockStatic(SerializationUtils.class)) {
-      utilities.when(() -> SerializationUtils.validateJsonSchema(any(), any())).thenThrow(new ValidationException(null, String.class, null));
+      utilities.when(() -> SerializationUtils.validateJsonSchema(any(), any()))
+          .thenThrow(new ValidationException(null, String.class, null));
       Optional<ValidationServiceAllowlist> validationServiceAllowlist =
           digitalCovidValidationCertificateToProtobufMapping.constructProtobufMapping();
       assertThat(validationServiceAllowlist).isEmpty();

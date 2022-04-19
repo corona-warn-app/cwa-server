@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 import org.junit.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils;
+import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
 
 public class FakeCheckinsGeneratorTest {
 
@@ -27,7 +27,8 @@ public class FakeCheckinsGeneratorTest {
     List<CheckIn> originalData = Stream.generate(this::randomCheckin)
         .limit(originalCheckinsListSize).collect(Collectors.toList());
     List<CheckIn> fakeCheckins =
-        underTest.generateFakeCheckins(originalData, numberOfFakesToCreate, HashUtils.generateSecureRandomByteArrayData(16));
+        underTest.generateFakeCheckins(originalData, numberOfFakesToCreate,
+            HashUtils.generateSecureRandomByteArrayData(16));
 
     assertThat(fakeCheckins).hasSize(originalCheckinsListSize * numberOfFakesToCreate);
   }
@@ -46,14 +47,14 @@ public class FakeCheckinsGeneratorTest {
   private void assertContentDerivedCorrectly(CheckIn original, CheckIn fake, byte[] pepper) {
     assertThat(fake.getLocationId()).isNotEmpty();
     assertThat(fake.getLocationId()).isNotEqualTo(original.getLocationId());
-    assertThat(fake.getLocationId()).isEqualTo(original.getLocationId().concat(ByteString.copyFrom(pepper).concat(ByteString.copyFromUtf8("1"))));
+    assertThat(fake.getLocationId()).isEqualTo(
+        original.getLocationId().concat(ByteString.copyFrom(pepper).concat(ByteString.copyFromUtf8("0"))));
     assertThat(fake.getTransmissionRiskLevel()).isEqualTo(original.getTransmissionRiskLevel());
   }
 
   private CheckIn randomCheckin() {
     Random random = new Random();
     int boundedInt = random.nextInt(1000000);
-    RandomStringUtils.randomAlphanumeric(10);
 
     return CheckIn.newBuilder().setStartIntervalNumber(boundedInt)
         .setEndIntervalNumber(boundedInt + 1000)
