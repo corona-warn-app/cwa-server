@@ -73,6 +73,7 @@ public class RetentionPolicy implements ApplicationRunner {
     try {
       if (Application.isDccRevocation()) {
         dccRevocationListService.truncate();
+        s3RetentionPolicy.deleteDccRevocationDir();
       } else {
         diagnosisKeyService.applyRetentionPolicy(retentionDays);
         traceTimeIntervalWarningService.applyRetentionPolicy(retentionDays);
