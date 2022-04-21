@@ -63,6 +63,11 @@ class S3RetentionPolicyTest {
   }
 
   @Test
+  void testDeleteDccRevocationDir() {
+    s3RetentionPolicy.deleteDccRevocationDir();
+  }
+
+  @Test
   void shouldDeleteDiagnosisKeyHourFiles() {
     var toBeKept = generateDiagnosisKeyHourFilesForDay(getUtcDate().minusDays(1), "DE");
     var toBeDeleted = generateDiagnosisKeyHourFilesForDay(getUtcDate().minusDays(2), "DE");
