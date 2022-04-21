@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -34,9 +33,6 @@ public class Application implements EnvironmentAware {
 
   private static final Logger logger = LoggerFactory.getLogger(Application.class);
 
-  @Autowired
-  private static Environment env;
-
   public static void main(String[] args) {
     SpringApplication.run(Application.class);
   }
@@ -44,14 +40,6 @@ public class Application implements EnvironmentAware {
   @Bean
   public static Validator configurationPropertiesValidator() {
     return new DistributionServiceConfigValidator();
-  }
-
-  public static boolean isActive(final String profile) {
-    return Arrays.stream(env.getActiveProfiles()).anyMatch(env -> env.equalsIgnoreCase(profile));
-  }
-
-  public static boolean isDccRevocation() {
-    return isActive("revocation");
   }
 
   /**
@@ -71,9 +59,6 @@ public class Application implements EnvironmentAware {
     if (profiles.contains("disable-ssl-client-postgres")) {
       logger.warn("The distribution runner is started with postgres connection TLS disabled. "
           + "This should never be used in PRODUCTION!");
-    }
-    if (env == null) {
-      env = environment;
     }
   }
 }

@@ -7,12 +7,14 @@ import app.coronawarn.server.common.persistence.service.TraceTimeIntervalWarning
 import app.coronawarn.server.services.distribution.Application;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.objectstore.S3RetentionPolicy;
+import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 /**
@@ -41,6 +43,8 @@ public class RetentionPolicy implements ApplicationRunner {
 
   private DccRevocationListService dccRevocationListService;
 
+  private final Environment environment;
+
   /**
    * Creates a new RetentionPolicy.
    *
@@ -57,6 +61,7 @@ public class RetentionPolicy implements ApplicationRunner {
       DistributionServiceConfig distributionServiceConfig,
       S3RetentionPolicy s3RetentionPolicy,
       DccRevocationListService dccRevocationListService,
+      final Environment environment,
       StatisticsDownloadService statisticsDownloadService) {
     this.diagnosisKeyService = diagnosisKeyService;
     this.traceTimeIntervalWarningService = traceTimeIntervalWarningService;
@@ -65,13 +70,14 @@ public class RetentionPolicy implements ApplicationRunner {
     this.hourFileRetentionDays = distributionServiceConfig.getObjectStore().getHourFileRetentionDays();
     this.s3RetentionPolicy = s3RetentionPolicy;
     this.dccRevocationListService = dccRevocationListService;
+    this.environment = environment;
     this.statisticsDownloadService = statisticsDownloadService;
   }
 
   @Override
   public void run(ApplicationArguments args) {
     try {
-      if (Application.isDccRevocation()) {
+      if (isDccRevocation()) {
         dccRevocationListService.truncate();
         s3RetentionPolicy.deleteDccRevocationDir();
       } else {
@@ -87,5 +93,9 @@ public class RetentionPolicy implements ApplicationRunner {
       logger.error("Application of retention policy failed.", e);
       Application.killApplication(applicationContext);
     }
+  }
+
+  public boolean isDccRevocation() {
+    return Arrays.stream(environment.getActiveProfiles()).anyMatch(env -> env.equalsIgnoreCase("revocation"));
   }
 }

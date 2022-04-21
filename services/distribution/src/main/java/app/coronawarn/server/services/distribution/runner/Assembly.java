@@ -7,12 +7,14 @@ import app.coronawarn.server.services.distribution.assembly.component.DccRevocat
 import app.coronawarn.server.services.distribution.assembly.component.OutputDirectoryProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
+import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 /**
@@ -30,6 +32,8 @@ public class Assembly implements ApplicationRunner {
 
   private final ApplicationContext applicationContext;
 
+  private final Environment environment;
+
   private final DccRevocationListStructureProvider dccRevocationListStructureProvider;
 
   /**
@@ -38,10 +42,11 @@ public class Assembly implements ApplicationRunner {
    */
   Assembly(final OutputDirectoryProvider outputDirectoryProvider,
       final CwaApiStructureProvider cwaApiStructureProvider, final ApplicationContext applicationContext,
-      final DccRevocationListStructureProvider dccRevocationListStructureProvider) {
+      final Environment environment, final DccRevocationListStructureProvider dccRevocationListStructureProvider) {
     this.outputDirectoryProvider = outputDirectoryProvider;
     this.cwaApiStructureProvider = cwaApiStructureProvider;
     this.applicationContext = applicationContext;
+    this.environment = environment;
     this.dccRevocationListStructureProvider = dccRevocationListStructureProvider;
   }
 
@@ -49,7 +54,7 @@ public class Assembly implements ApplicationRunner {
   public void run(final ApplicationArguments args) {
     try {
       final Directory<WritableOnDisk> outputDirectory = outputDirectoryProvider.getDirectory();
-      if (Application.isDccRevocation()) {
+      if (isDccRevocation()) {
         dccRevocationListStructureProvider.fetchDccRevocationList();
         outputDirectory.addWritable(dccRevocationListStructureProvider.getDccRevocationDirectory());
         outputDirectoryProvider.clear();
@@ -74,5 +79,9 @@ public class Assembly implements ApplicationRunner {
       logger.error("Distribution data assembly failed.", e);
       Application.killApplication(applicationContext);
     }
+  }
+
+  public boolean isDccRevocation() {
+    return Arrays.stream(environment.getActiveProfiles()).anyMatch(env -> env.equalsIgnoreCase("revocation"));
   }
 }

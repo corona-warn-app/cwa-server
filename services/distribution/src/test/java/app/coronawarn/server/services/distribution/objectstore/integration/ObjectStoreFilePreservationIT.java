@@ -31,10 +31,11 @@ import org.junit.rules.TemporaryFolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.env.Environment;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.test.context.ActiveProfiles;
 
-@ActiveProfiles({"no-hour-retention", "local-json-stats"})
+@ActiveProfiles({ "no-hour-retention", "local-json-stats" })
 class ObjectStoreFilePreservationIT extends BaseS3IntegrationTest {
 
   @Autowired
@@ -55,6 +56,8 @@ class ObjectStoreFilePreservationIT extends BaseS3IntegrationTest {
   private StatisticsDownloadService statisticsDownloadService;
   @Autowired
   private DccRevocationListService dccRevocationListService;
+  @Autowired
+  private Environment environment;
 
   @MockBean
   private OutputDirectoryProvider distributionDirectoryProvider;
@@ -69,16 +72,17 @@ class ObjectStoreFilePreservationIT extends BaseS3IntegrationTest {
   }
 
   /**
-   * The test covers a behaviour that manifests itself when data retention and shifting policies cause the file
-   * distribution logic to generate, in subsequent runs, different content for the same timeframes. Below the
-   * distribution problem is described with a concerete daily scenario.
+   * The test covers a behavior that manifests itself when data retention and shifting policies cause the file
+   * distribution logic to generate, in subsequent runs, different content for the same time frames. Below the
+   * distribution problem is described with a concrete daily scenario.
    * <p>
    * The test presumes there are 4 consecutive days with 80 keys submitted daily. Running a distribution in Day 4 would
    * result in:
    * <p>
-   * Day 1   -> submission of 80 keys   -> 1 empty file distributed<br> Day 2   -> submission of 80 keys   -> 1
-   * distributed containing 160 keys<br> Day 3   -> submission of 80 keys   -> 1 empty file distributed<br> Day 4   ->
-   * submission of 80 keys   -> 1 distributed containing 160 keys<br>
+   * Day 1 -> submission of 80 keys -> 1 empty file distributed<br>
+   * Day 2 -> submission of 80 keys -> 1 distributed containing 160 keys<br>
+   * Day 3 -> submission of 80 keys -> 1 empty file distributed<br>
+   * Day 4 -> submission of 80 keys -> 1 distributed containing 160 keys<br>
    * <p>
    * All day & hour files already generated should not be changed/removed from S3 even after retention policies have
    * been applied and a second distribution is triggered.
@@ -86,9 +90,9 @@ class ObjectStoreFilePreservationIT extends BaseS3IntegrationTest {
    * If for example, data in Day 1 gets removed completely, then a second distribution run causes a shifting of keys in
    * different files compared to the previous run, the result being:
    * <p>
-   * Day 2   -> submission of 80 keys   -> 1 empty file generated (different than what is currently on S3)<br> Day 3 ->
-   * submission of 80 keys   -> 1 distributed containing 160 keys (different than 1 empty file on S3)<br> Day 4   ->
-   * submission of 80 keys   -> 1 empty file (different than 1 empty file on S3)<br>
+   * Day 2 -> submission of 80 keys -> 1 empty file generated (different than what is currently on S3)<br>
+   * Day 3 -> submission of 80 keys -> 1 distributed containing 160 keys (different than 1 empty file on S3)<br>
+   * Day 4 -> submission of 80 keys -> 1 empty file (different than 1 empty file on S3)<br>
    */
   @Test
   void files_once_published_to_objectstore_should_not_be_overriden_because_of_retention_or_shifting_policies()
@@ -154,7 +158,8 @@ class ObjectStoreFilePreservationIT extends BaseS3IntegrationTest {
     mockDistributionConfig.setRetentionDays(numberOfDaysSince(fromDate));
     mockDistributionConfig.setObjectStore(distributionServiceConfig.getObjectStore());
     new RetentionPolicy(diagnosisKeyService, traceTimeIntervalWarningService, applicationContext,
-        mockDistributionConfig, s3RetentionPolicy, dccRevocationListService, statisticsDownloadService).run(null);
+        mockDistributionConfig, s3RetentionPolicy, dccRevocationListService, environment, statisticsDownloadService)
+            .run(null);
   }
 
   private Integer numberOfDaysSince(LocalDate testStartDate) {
