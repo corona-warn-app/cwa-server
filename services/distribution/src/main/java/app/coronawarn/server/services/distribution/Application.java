@@ -26,15 +26,17 @@ import org.springframework.validation.Validator;
 @SpringBootApplication
 @EnableJdbcRepositories(basePackages = "app.coronawarn.server.common.persistence")
 @EntityScan(basePackages = "app.coronawarn.server.common.persistence")
-@ComponentScan({"app.coronawarn.server.common.persistence", "app.coronawarn.server.services.distribution",
-    "app.coronawarn.server.common.federation.client.hostname"})
-@EnableConfigurationProperties({DistributionServiceConfig.class})
+@ComponentScan({ "app.coronawarn.server.common.persistence", "app.coronawarn.server.services.distribution",
+    "app.coronawarn.server.common.federation.client.hostname" })
+@EnableConfigurationProperties({ DistributionServiceConfig.class })
 public class Application implements EnvironmentAware {
 
   private static final Logger logger = LoggerFactory.getLogger(Application.class);
 
+  private static ApplicationContext context;
+
   public static void main(String[] args) {
-    SpringApplication.run(Application.class);
+    context = SpringApplication.run(Application.class);
   }
 
   @Bean
@@ -42,8 +44,17 @@ public class Application implements EnvironmentAware {
     return new DistributionServiceConfigValidator();
   }
 
+  public static boolean isActive(final String profile) {
+    return Arrays.stream(context.getEnvironment().getActiveProfiles()).anyMatch(env -> env.equalsIgnoreCase(profile));
+  }
+
+  public static boolean isDccRevocation() {
+    return isActive("revocation");
+  }
+
   /**
    * Terminates this application with exit code 1 (general error).
+   * 
    * @param appContext type ApplicationContext
    */
   public static void killApplication(ApplicationContext appContext) {
