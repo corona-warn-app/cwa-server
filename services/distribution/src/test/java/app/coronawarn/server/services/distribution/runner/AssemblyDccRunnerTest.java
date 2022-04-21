@@ -6,6 +6,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import app.coronawarn.server.services.distribution.Application;
 import app.coronawarn.server.services.distribution.assembly.component.CwaApiStructureProvider;
 import app.coronawarn.server.services.distribution.assembly.component.DccRevocationListStructureProvider;
 import app.coronawarn.server.services.distribution.assembly.component.OutputDirectoryProvider;
@@ -65,6 +66,7 @@ class AssemblyDccRunnerTest {
   void shouldCorrectlyCreatePrepareAndWriteDirectories() throws IOException {
     Directory<WritableOnDisk> spyParentDirectory = spy(parentDirectory);
 
+    when(Application.isDccRevocation()).thenReturn(true);
     when(outputDirectoryProvider.getDirectory()).thenReturn(spyParentDirectory);
     when(dccRevocationListStructureProvider.getDccRevocationDirectory()).thenReturn(childDirectory);
 
