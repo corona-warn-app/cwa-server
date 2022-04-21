@@ -1,9 +1,8 @@
-
-
 package app.coronawarn.server.services.distribution.objectstore.integration;
 
 import static org.mockito.Mockito.when;
 
+import app.coronawarn.server.common.persistence.service.DccRevocationListService;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.StatisticsDownloadService;
 import app.coronawarn.server.common.persistence.service.TraceTimeIntervalWarningService;
@@ -54,6 +53,8 @@ class ObjectStoreFilePreservationIT extends BaseS3IntegrationTest {
   private DistributionServiceConfig distributionServiceConfig;
   @Autowired
   private StatisticsDownloadService statisticsDownloadService;
+  @Autowired
+  private DccRevocationListService dccRevocationListService;
 
   @MockBean
   private OutputDirectoryProvider distributionDirectoryProvider;
@@ -153,7 +154,7 @@ class ObjectStoreFilePreservationIT extends BaseS3IntegrationTest {
     mockDistributionConfig.setRetentionDays(numberOfDaysSince(fromDate));
     mockDistributionConfig.setObjectStore(distributionServiceConfig.getObjectStore());
     new RetentionPolicy(diagnosisKeyService, traceTimeIntervalWarningService, applicationContext,
-        mockDistributionConfig, s3RetentionPolicy, statisticsDownloadService).run(null);
+        mockDistributionConfig, s3RetentionPolicy, dccRevocationListService, statisticsDownloadService).run(null);
   }
 
   private Integer numberOfDaysSince(LocalDate testStartDate) {

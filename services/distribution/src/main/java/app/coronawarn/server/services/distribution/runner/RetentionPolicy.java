@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.distribution.runner;
 
+import app.coronawarn.server.common.persistence.service.DccRevocationListService;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.StatisticsDownloadService;
 import app.coronawarn.server.common.persistence.service.TraceTimeIntervalWarningService;
@@ -38,6 +39,7 @@ public class RetentionPolicy implements ApplicationRunner {
 
   private final StatisticsDownloadService statisticsDownloadService;
 
+  private DccRevocationListService dccRevocationListService;
 
   /**
    * Creates a new RetentionPolicy.
@@ -54,6 +56,7 @@ public class RetentionPolicy implements ApplicationRunner {
       ApplicationContext applicationContext,
       DistributionServiceConfig distributionServiceConfig,
       S3RetentionPolicy s3RetentionPolicy,
+      DccRevocationListService dccRevocationListService,
       StatisticsDownloadService statisticsDownloadService) {
     this.diagnosisKeyService = diagnosisKeyService;
     this.traceTimeIntervalWarningService = traceTimeIntervalWarningService;
@@ -61,18 +64,23 @@ public class RetentionPolicy implements ApplicationRunner {
     this.retentionDays = distributionServiceConfig.getRetentionDays();
     this.hourFileRetentionDays = distributionServiceConfig.getObjectStore().getHourFileRetentionDays();
     this.s3RetentionPolicy = s3RetentionPolicy;
+    this.dccRevocationListService = dccRevocationListService;
     this.statisticsDownloadService = statisticsDownloadService;
   }
 
   @Override
   public void run(ApplicationArguments args) {
     try {
-      diagnosisKeyService.applyRetentionPolicy(retentionDays);
-      traceTimeIntervalWarningService.applyRetentionPolicy(retentionDays);
-      s3RetentionPolicy.applyDiagnosisKeyDayRetentionPolicy(retentionDays);
-      s3RetentionPolicy.applyDiagnosisKeyHourRetentionPolicy(hourFileRetentionDays);
-      s3RetentionPolicy.applyTraceTimeWarningHourRetentionPolicy(retentionDays);
-      statisticsDownloadService.applyRetentionPolicy(retentionDays);
+      if (Application.isDccRevocation()) {
+        dccRevocationListService.truncate();
+      } else {
+        diagnosisKeyService.applyRetentionPolicy(retentionDays);
+        traceTimeIntervalWarningService.applyRetentionPolicy(retentionDays);
+        s3RetentionPolicy.applyDiagnosisKeyDayRetentionPolicy(retentionDays);
+        s3RetentionPolicy.applyDiagnosisKeyHourRetentionPolicy(hourFileRetentionDays);
+        s3RetentionPolicy.applyTraceTimeWarningHourRetentionPolicy(retentionDays);
+        statisticsDownloadService.applyRetentionPolicy(retentionDays);
+      }
       logger.debug("Retention policy applied successfully.");
     } catch (Exception e) {
       logger.error("Application of retention policy failed.", e);

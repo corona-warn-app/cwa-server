@@ -46,4 +46,8 @@ public class DccRevocationListService {
     }
     logger.info("{} Revocation list entries saved!", revocationEntries.size());
   }
+
+  public void truncate() {
+    repository.truncate();
+  }
 }
