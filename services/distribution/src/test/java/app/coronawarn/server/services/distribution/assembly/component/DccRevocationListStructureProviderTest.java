@@ -87,12 +87,19 @@ class DccRevocationListStructureProviderTest {
     Directory<WritableOnDisk> dccRevocationDirectory = underTest.getDccRevocationDirectory();
     dccRevocationDirectory.prepare(new ImmutableStack<>());
 
-    assertEquals("dcc-rl", dccRevocationDirectory.getName());
+    assertEquals("version", dccRevocationDirectory.getName());
+    DirectoryOnDisk v1Directory = (DirectoryOnDisk) dccRevocationDirectory.getWritables().stream()
+        .filter(writableOnDisk -> writableOnDisk instanceof DirectoryOnDisk).iterator().next();
+    assertEquals("v1", v1Directory.getName());
+    DirectoryOnDisk dccDirectory = (DirectoryOnDisk) v1Directory.getWritables().stream()
+        .filter(writableOnDisk -> writableOnDisk instanceof DirectoryOnDisk).iterator().next();
+    assertEquals("dcc-rl", dccDirectory.getName());
+
     List<String> kidTypeDirectoriesName = dccRevocationDirectory.getWritables().stream()
         .map(Writable::getName).collect(Collectors.toList());
     assertNotNull(kidTypeDirectoriesName);
 
-    dccRevocationDirectory.getWritables().stream()
+    dccDirectory.getWritables().stream()
         .filter(writableOnDisk -> writableOnDisk instanceof DirectoryOnDisk)
         //iterate through dcc-rl directory structure
         .map(directory -> ((DirectoryOnDisk) directory).getWritables().stream()

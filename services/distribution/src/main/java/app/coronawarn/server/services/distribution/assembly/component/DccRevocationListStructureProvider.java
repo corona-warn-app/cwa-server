@@ -10,6 +10,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.archive.Ar
 import app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.signing.DistributionArchiveSigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dcc.DccRevocationClient;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.bouncycastle.util.encoders.Hex;
 import org.slf4j.Logger;
@@ -71,16 +73,21 @@ public class DccRevocationListStructureProvider {
   }
 
   private DirectoryOnDisk constructArchiveToPublish() {
+    IndexDirectoryOnDisk<String> versionDirectory = new IndexDirectoryOnDisk<>(
+        distributionServiceConfig.getApi().getVersionPath(),
+        ignoredValue -> Set.of(distributionServiceConfig.getApi().getVersionV1()),
+        Object::toString);
 
     DirectoryOnDisk dccRlDirectory = new DirectoryOnDisk(
         distributionServiceConfig.getDccRevocation().getDccRevocationDirectory());
     Map<Integer, List<RevocationEntry>> revocationEntriesByKidAndHash =
         dccRevocationListService.getRevocationListEntries()
-        .stream().collect(Collectors.groupingBy(RevocationEntry::getKidTypeHashCode));
+            .stream().collect(Collectors.groupingBy(RevocationEntry::getKidTypeHashCode));
     getDccRevocationKidListArchive().ifPresent(dccRlDirectory::addWritable);
     getDccRevocationKidTypeDirectories(revocationEntriesByKidAndHash).forEach(kidTypeDirectory ->
         dccRlDirectory.addWritable(kidTypeDirectory));
-    return dccRlDirectory;
+    versionDirectory.addWritableToAll(ignoredValue -> Optional.of(dccRlDirectory));
+    return versionDirectory;
   }
 
   private List<DirectoryOnDisk> getDccRevocationKidTypeDirectories(
