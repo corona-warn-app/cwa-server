@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import app.coronawarn.server.common.persistence.domain.RevocationEntry;
-import app.coronawarn.server.common.persistence.repository.DccRevocationListRepository;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -19,12 +18,9 @@ class DccRevocationListServiceTest {
   @Autowired
   private DccRevocationListService service;
 
-  @Autowired
-  private DccRevocationListRepository repository;
-
   @AfterEach
   public void tearDown() {
-    repository.deleteAll();
+    service.truncate();
   }
 
   @Test
