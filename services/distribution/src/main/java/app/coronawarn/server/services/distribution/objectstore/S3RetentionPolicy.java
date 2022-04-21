@@ -63,7 +63,8 @@ public class S3RetentionPolicy {
     this.failedObjectStoreOperationsCounter = failedOperationsCounter;
     this.originCountry = distributionServiceConfig.getApi().getOriginCountry();
     this.euPackageName = distributionServiceConfig.getEuPackageName();
-    dccRevocationDirectory = distributionServiceConfig.getDccRevocation().getDccRevocationDirectory();
+    dccRevocationDirectory = api.getVersionPath() + "/" + api.getVersionV1() + "/"
+        + distributionServiceConfig.getDccRevocation().getDccRevocationDirectory();
   }
 
   /**
@@ -137,7 +138,6 @@ public class S3RetentionPolicy {
       failedObjectStoreOperationsCounter.incrementAndCheckThreshold(e);
     }
   }
-
 
   private boolean isDiagnosisKeyFilePathOnHourFolder(S3Object s3Object) {
     Matcher matcher = hourPathPattern.matcher(s3Object.getObjectName());
