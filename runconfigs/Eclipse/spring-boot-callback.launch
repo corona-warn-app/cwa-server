@@ -16,26 +16,20 @@
     <mapAttribute key="org.eclipse.debug.core.environmentVariables">
         <mapEntry key="OBJECTSTORE_ACCESSKEY" value="accessKey1"/>
         <mapEntry key="OBJECTSTORE_SECRETKEY" value="verySecretKey1"/>
-        <mapEntry key="PGADMIN_DEFAULT_EMAIL" value="user@domain.com"/>
-        <mapEntry key="PGADMIN_DEFAULT_PASSWORD" value="password"/>
         <mapEntry key="POSTGRESQL_SERVICE_HOST" value="localhost"/>
         <mapEntry key="POSTGRESQL_SERVICE_PORT" value="8001"/>
         <mapEntry key="POSTGRES_CALLBACK_PASSWORD" value="local_setup_callback"/>
         <mapEntry key="POSTGRES_CALLBACK_USER" value="local_setup_callback"/>
         <mapEntry key="POSTGRES_DB" value="cwa"/>
-        <mapEntry key="POSTGRES_DISTRIBUTION_PASSWORD" value="local_setup_distribution"/>
-        <mapEntry key="POSTGRES_DISTRIBUTION_USER" value="local_setup_distribution"/>
         <mapEntry key="POSTGRES_FLYWAY_PASSWORD" value="local_setup_flyway"/>
         <mapEntry key="POSTGRES_FLYWAY_USER" value="local_setup_flyway"/>
         <mapEntry key="POSTGRES_PASSWORD" value="postgres"/>
-        <mapEntry key="POSTGRES_SUBMISSION_PASSWORD" value="local_setup_submission"/>
-        <mapEntry key="POSTGRES_SUBMISSION_USER" value="local_setup_submission"/>
         <mapEntry key="POSTGRES_USER" value="postgres"/>
         <mapEntry key="SECRET_PRIVATE" value="file:/secrets/private.pem"/>
         <mapEntry key="SPRING_PROFILES_ACTIVE" value="disable-ssl-client-postgres"/>
-        <mapEntry key="SSL_CALLBACK_KEYSTORE_PATH" value="file:$PROJECT_DIR$/docker-compose-test-secrets/ssl.p12"/>
+        <mapEntry key="SSL_CALLBACK_KEYSTORE_PATH" value="${file_uri:${project_loc:server}}/docker-compose-test-secrets/ssl.p12"/>
         <mapEntry key="SSL_CALLBACK_KEYSTORE_PASSWORD" value="123456"/>
-        <mapEntry key="SSL_FEDERATION_TRUSTSTORE_PATH" value="file:$PROJECT_DIR$/docker-compose-test-secrets/contains_efgs_truststore.jks"/>
+        <mapEntry key="SSL_FEDERATION_TRUSTSTORE_PATH" value="${file_uri:${project_loc:server}}/docker-compose-test-secrets/contains_efgs_truststore.jks"/>
         <mapEntry key="SSL_FEDERATION_TRUSTSTORE_PASSWORD" value="123456"/>
     </mapAttribute>
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_CLASSPATH_ONLY_JAR" value="false"/>

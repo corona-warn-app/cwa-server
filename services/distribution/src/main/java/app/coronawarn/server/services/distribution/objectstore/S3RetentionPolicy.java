@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -41,8 +42,12 @@ public class S3RetentionPolicy {
   private final Pattern epochHourPattern = Pattern.compile(EPOCH_HOUR_REGEX);
   private final Pattern hourPathPattern = Pattern.compile(HOUR_PATH_REGEX);
 
-  private static final Logger logger = LoggerFactory
-      .getLogger(S3RetentionPolicy.class);
+  private static final Logger logger = LoggerFactory.getLogger(S3RetentionPolicy.class);
+
+  /**
+   * 'dcc-rl'.
+   */
+  private final String dccRevocationDirectory;
 
   /**
    * Creates an {@link S3RetentionPolicy} instance with the specified parameters.
@@ -58,6 +63,8 @@ public class S3RetentionPolicy {
     this.failedObjectStoreOperationsCounter = failedOperationsCounter;
     this.originCountry = distributionServiceConfig.getApi().getOriginCountry();
     this.euPackageName = distributionServiceConfig.getEuPackageName();
+    dccRevocationDirectory = api.getVersionPath() + "/" + api.getVersionV1() + "/"
+        + distributionServiceConfig.getDccRevocation().getDccRevocationDirectory();
   }
 
   /**
@@ -132,7 +139,6 @@ public class S3RetentionPolicy {
     }
   }
 
-
   private boolean isDiagnosisKeyFilePathOnHourFolder(S3Object s3Object) {
     Matcher matcher = hourPathPattern.matcher(s3Object.getObjectName());
     return matcher.matches();
@@ -166,5 +172,14 @@ public class S3RetentionPolicy {
   private String getTraceTimeWarningPrefix(String country) {
     return api.getVersionPath() + "/" + api.getVersionV1() + "/" + api.getTraceWarningsPath() + "/"
         + api.getCountryPath() + "/" + country + "/" + api.getHourPath() + "/";
+  }
+
+  /**
+   * Delete the whole folder {@link #dccRevocationDirectory}.
+   */
+  public void deleteDccRevocationDir() {
+    final Collection<S3Object> s3Objects = objectStoreAccess.getObjectsWithPrefix(dccRevocationDirectory);
+    logger.info("Deleting {} dccRevocationDirectory files", s3Objects.size());
+    s3Objects.forEach(this::deleteS3Object);
   }
 }

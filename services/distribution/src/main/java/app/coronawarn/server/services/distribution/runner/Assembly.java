@@ -54,8 +54,7 @@ public class Assembly implements ApplicationRunner {
   public void run(final ApplicationArguments args) {
     try {
       final Directory<WritableOnDisk> outputDirectory = outputDirectoryProvider.getDirectory();
-      if (Arrays.stream(environment.getActiveProfiles()).anyMatch(
-          env -> env.equalsIgnoreCase("revocation"))) {
+      if (isDccRevocation()) {
         dccRevocationListStructureProvider.fetchDccRevocationList();
         outputDirectory.addWritable(dccRevocationListStructureProvider.getDccRevocationDirectory());
         outputDirectoryProvider.clear();
@@ -64,7 +63,7 @@ public class Assembly implements ApplicationRunner {
         outputDirectory.prepare(new ImmutableStack<>());
         logger.debug("Writing files...");
         outputDirectory.write();
-        logger.debug("Distribution data assembled successfully.");
+        logger.debug("DCC Revocation data assembled successfully.");
       } else {
         outputDirectory.addWritable(cwaApiStructureProvider.getDirectory());
         outputDirectory.addWritable(cwaApiStructureProvider.getDirectoryV2());
@@ -77,8 +76,12 @@ public class Assembly implements ApplicationRunner {
         logger.debug("Distribution data assembled successfully.");
       }
     } catch (final Exception e) {
-      logger.error("Distribution data assembly failed.", e);
+      logger.error("Data assembly failed.", e);
       Application.killApplication(applicationContext);
     }
+  }
+
+  public boolean isDccRevocation() {
+    return Arrays.stream(environment.getActiveProfiles()).anyMatch(env -> env.equalsIgnoreCase("revocation"));
   }
 }

@@ -13,5 +13,9 @@ public interface DccRevocationListRepository extends PagingAndSortingRepository<
 
   @Modifying
   @Query("INSERT INTO revocation_entry (kid, type, hash) VALUES (:kid, :type, :hash) ON CONFLICT DO NOTHING")
-  boolean saveDoNothingOnConflict(@Param("kid") byte[] kid, @Param("type") byte[] type, @Param("hash") byte[] hash);
+  void saveDoNothingOnConflict(@Param("kid") byte[] kid, @Param("type") byte[] type, @Param("hash") byte[] hash);
+
+  @Modifying
+  @Query("TRUNCATE revocation_entry")
+  void truncate();
 }

@@ -3,6 +3,7 @@ package app.coronawarn.server.services.distribution.runner;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import app.coronawarn.server.common.persistence.service.DccRevocationListService;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.StatisticsDownloadService;
 import app.coronawarn.server.common.persistence.service.TraceTimeIntervalWarningService;
@@ -39,6 +40,9 @@ class RetentionPolicyRunnerTest {
 
   @Autowired
   RetentionPolicy retentionPolicy;
+  
+  @MockBean
+  DccRevocationListService dccRevocationListService;
 
   @Test
   void shouldCallDatabaseAndS3RetentionRunner() {
