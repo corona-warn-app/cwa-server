@@ -63,7 +63,7 @@ public class Assembly implements ApplicationRunner {
         outputDirectory.prepare(new ImmutableStack<>());
         logger.debug("Writing files...");
         outputDirectory.write();
-        logger.debug("Distribution data assembled successfully.");
+        logger.debug("DCC Revocation data assembled successfully.");
       } else {
         outputDirectory.addWritable(cwaApiStructureProvider.getDirectory());
         outputDirectory.addWritable(cwaApiStructureProvider.getDirectoryV2());
@@ -76,7 +76,7 @@ public class Assembly implements ApplicationRunner {
         logger.debug("Distribution data assembled successfully.");
       }
     } catch (final Exception e) {
-      logger.error("Distribution data assembly failed.", e);
+      logger.error("Data assembly failed.", e);
       Application.killApplication(applicationContext);
     }
   }
