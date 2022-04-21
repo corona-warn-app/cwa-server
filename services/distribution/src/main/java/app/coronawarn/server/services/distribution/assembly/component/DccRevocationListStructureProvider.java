@@ -140,7 +140,7 @@ public class DccRevocationListStructureProvider {
           .addWritable(new FileOnDisk(EXPORT_BIN,
               dccRevocationToProtobufMapping.constructProtobufMappingChunkList(yhashRevocationEntryList)
                   .toByteArray()));
-      logger.info("Kid Revocation list archive ({}) has been added to the dcc-rl distribution folder".concat(CHUNK));
+      logger.info("Kid Revocation list archive ({}) has been added to the dcc-rl distribution folder", CHUNK);
 
       return Optional.of(new DistributionArchiveSigningDecorator(kidArchive, cryptoProvider,
           distributionServiceConfig));
