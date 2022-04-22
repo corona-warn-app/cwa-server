@@ -7,4 +7,6 @@ import java.util.Optional;
 public interface DccRevocationClient {
 
   Optional<List<RevocationEntry>> getDccRevocationList() throws FetchDccListException;
+
+  String getETag() throws FetchDccListException;
 }

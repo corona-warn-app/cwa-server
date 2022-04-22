@@ -37,4 +37,13 @@ public class ProdDccRevocationClient implements DccRevocationClient {
     }
     return Optional.empty();
   }
+
+  @Override
+  public String getETag() throws FetchDccListException {
+    try {
+      return dccRevocationFeignClient.head().getHeaders().getETag().replaceAll("\"", "");
+    } catch (Exception e) {
+      throw new FetchDccListException("http-HEAD for DCC Revocation List failed", e);
+    }
+  }
 }
