@@ -8,6 +8,7 @@ import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.StatisticsDownloadService;
 import app.coronawarn.server.common.persistence.service.TraceTimeIntervalWarningService;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.dcc.DccRevocationClient;
 import app.coronawarn.server.services.distribution.objectstore.S3RetentionPolicy;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +21,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {RetentionPolicy.class}, initializers = ConfigDataApplicationContextInitializer.class)
+@ContextConfiguration(classes = { RetentionPolicy.class }, initializers = ConfigDataApplicationContextInitializer.class)
 class RetentionPolicyRunnerTest {
 
   @MockBean
@@ -40,9 +41,12 @@ class RetentionPolicyRunnerTest {
 
   @Autowired
   RetentionPolicy retentionPolicy;
-  
+
   @MockBean
   DccRevocationListService dccRevocationListService;
+
+  @MockBean
+  DccRevocationClient dccRevocationClient;
 
   @Test
   void shouldCallDatabaseAndS3RetentionRunner() {
