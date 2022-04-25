@@ -44,8 +44,14 @@ class DccRevocationListServiceTest {
     some.setPath("bar");
 
     service.store(some);
+    service.store(some);
 
     assertTrue(service.etagExists("foo"));
     assertFalse(service.etagExists("42"));
+  }
+
+  @Test
+  void testEtagExists() {
+    assertFalse(service.etagExists(null));
   }
 }
