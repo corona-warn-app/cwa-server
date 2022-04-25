@@ -141,7 +141,7 @@ public class DccRevocationListStructureProvider {
     return yhashDirectories;
   }
 
-  private Optional<Writable<WritableOnDisk>> getDccRevocationKidTypeChunk(
+  Optional<Writable<WritableOnDisk>> getDccRevocationKidTypeChunk(
       List<RevocationEntry> yhashRevocationEntryList) {
     ArchiveOnDisk kidArchive = new ArchiveOnDisk(CHUNK);
 
@@ -161,7 +161,7 @@ public class DccRevocationListStructureProvider {
     return Optional.empty();
   }
 
-  private Optional<Writable<WritableOnDisk>> getDccRevocationKidListArchive() {
+  Optional<Writable<WritableOnDisk>> getDccRevocationKidListArchive() {
     ArchiveOnDisk kidArchive = new ArchiveOnDisk(KID_ARCHIVE);
     Map<Integer, List<RevocationEntry>> revocationEntriesByKidAndHash =
         dccRevocationListService.getRevocationListEntries()
@@ -182,7 +182,7 @@ public class DccRevocationListStructureProvider {
     return Optional.empty();
   }
 
-  private Optional<Writable<WritableOnDisk>> getDccRevocationKidTypeArchive(List<RevocationEntry> revocationEntries) {
+  Optional<Writable<WritableOnDisk>> getDccRevocationKidTypeArchive(List<RevocationEntry> revocationEntries) {
 
     ArchiveOnDisk kidTypeArchive = new ArchiveOnDisk(distributionServiceConfig.getOutputFileName());
     try {
