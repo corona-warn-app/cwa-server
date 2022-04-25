@@ -60,10 +60,12 @@ public class DccRevocationListStructureProvider {
    */
   public void fetchDccRevocationList() {
     try {
-      final RevocationEtag etag = new RevocationEtag(CHUNK, dccRevocationClient.getETag());
       Optional<List<RevocationEntry>> revocationEntryList = dccRevocationClient.getDccRevocationList();
-      revocationEntryList.ifPresent(revocationList -> dccRevocationListService.store(revocationList));
-      dccRevocationListService.store(etag);
+      final RevocationEtag etag = new RevocationEtag(CHUNK, dccRevocationClient.getETag());
+      revocationEntryList.ifPresent(revocationList -> {
+        dccRevocationListService.store(revocationList);
+        dccRevocationListService.store(etag);
+      });
     } catch (FetchDccListException e) {
       logger.error("Fetching DCC Revocation List failed. ", e);
     } catch (Exception e) {

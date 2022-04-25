@@ -27,11 +27,11 @@ class DccRevocationListServiceTest {
 
   @Test
   void testStore() {
-    final Collection<RevocationEntry> some = new ArrayList<>();
+    Collection<RevocationEntry> some = new ArrayList<>();
     some.add(new RevocationEntry("foo".getBytes(), "A".getBytes(), "bar".getBytes()));
     service.store(some);
 
-    final var actKeys = service.getRevocationListEntries();
+    var actKeys = service.getRevocationListEntries();
 
     assertEquals(1, actKeys.size());
     assertTrue(Arrays.equals("foo".getBytes(), actKeys.iterator().next().getKid()));

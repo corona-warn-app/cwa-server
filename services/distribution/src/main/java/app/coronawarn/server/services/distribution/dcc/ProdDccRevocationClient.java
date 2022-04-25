@@ -35,7 +35,7 @@ public class ProdDccRevocationClient implements DccRevocationClient {
       final Optional<List<RevocationEntry>> list = Optional.of(dccRevocationListDecoder.decode(response.getBody()));
       etag = getETag(response);
       return list;
-    } catch (final DccRevocationListDecodeException e) {
+    } catch (DccRevocationListDecodeException e) {
       logger.error("DCC Revocation List could not be decoded.", e);
     } catch (Exception e) {
       throw new FetchDccListException("DCC Revocation List could not be fetched because of: ", e);
