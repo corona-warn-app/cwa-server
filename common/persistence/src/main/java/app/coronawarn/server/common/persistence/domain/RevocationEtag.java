@@ -9,6 +9,14 @@ public class RevocationEtag {
 
   private String etag;
 
+  public RevocationEtag() {
+  }
+
+  public RevocationEtag(final String path, final String etag) {
+    this.path = path;
+    this.etag = etag;
+  }
+
   public String getEtag() {
     return etag;
   }
