@@ -3,6 +3,7 @@ package app.coronawarn.server.services.distribution.assembly.component;
 import static app.coronawarn.server.services.distribution.assembly.component.DigitalCertificatesStructureProvider.EXPORT_BIN;
 
 import app.coronawarn.server.common.persistence.domain.RevocationEntry;
+import app.coronawarn.server.common.persistence.domain.RevocationEtag;
 import app.coronawarn.server.common.persistence.service.DccRevocationListService;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
@@ -59,8 +60,10 @@ public class DccRevocationListStructureProvider {
    */
   public void fetchDccRevocationList() {
     try {
+      final RevocationEtag etag = new RevocationEtag(CHUNK, dccRevocationClient.getETag());
       Optional<List<RevocationEntry>> revocationEntryList = dccRevocationClient.getDccRevocationList();
       revocationEntryList.ifPresent(revocationList -> dccRevocationListService.store(revocationList));
+      dccRevocationListService.store(etag);
     } catch (FetchDccListException e) {
       logger.error("Fetching DCC Revocation List failed. ", e);
     } catch (Exception e) {
