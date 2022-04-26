@@ -3,6 +3,7 @@ package app.coronawarn.server.services.distribution.assembly.component;
 import static app.coronawarn.server.services.distribution.assembly.component.DigitalCertificatesStructureProvider.EXPORT_BIN;
 
 import app.coronawarn.server.common.persistence.domain.RevocationEntry;
+import app.coronawarn.server.common.persistence.domain.RevocationEtag;
 import app.coronawarn.server.common.persistence.service.DccRevocationListService;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
@@ -60,7 +61,11 @@ public class DccRevocationListStructureProvider {
   public void fetchDccRevocationList() {
     try {
       Optional<List<RevocationEntry>> revocationEntryList = dccRevocationClient.getDccRevocationList();
-      revocationEntryList.ifPresent(revocationList -> dccRevocationListService.store(revocationList));
+      final RevocationEtag etag = new RevocationEtag(CHUNK, dccRevocationClient.getETag());
+      revocationEntryList.ifPresent(revocationList -> {
+        dccRevocationListService.store(revocationList);
+        dccRevocationListService.store(etag);
+      });
     } catch (FetchDccListException e) {
       logger.error("Fetching DCC Revocation List failed. ", e);
     } catch (Exception e) {
@@ -138,7 +143,7 @@ public class DccRevocationListStructureProvider {
     return yhashDirectories;
   }
 
-  private Optional<Writable<WritableOnDisk>> getDccRevocationKidTypeChunk(
+  Optional<Writable<WritableOnDisk>> getDccRevocationKidTypeChunk(
       List<RevocationEntry> yhashRevocationEntryList) {
     ArchiveOnDisk kidArchive = new ArchiveOnDisk(CHUNK);
 
@@ -158,7 +163,7 @@ public class DccRevocationListStructureProvider {
     return Optional.empty();
   }
 
-  private Optional<Writable<WritableOnDisk>> getDccRevocationKidListArchive() {
+  Optional<Writable<WritableOnDisk>> getDccRevocationKidListArchive() {
     ArchiveOnDisk kidArchive = new ArchiveOnDisk(KID_ARCHIVE);
     Map<Integer, List<RevocationEntry>> revocationEntriesByKidAndHash =
         dccRevocationListService.getRevocationListEntries()
@@ -179,7 +184,7 @@ public class DccRevocationListStructureProvider {
     return Optional.empty();
   }
 
-  private Optional<Writable<WritableOnDisk>> getDccRevocationKidTypeArchive(List<RevocationEntry> revocationEntries) {
+  Optional<Writable<WritableOnDisk>> getDccRevocationKidTypeArchive(List<RevocationEntry> revocationEntries) {
 
     ArchiveOnDisk kidTypeArchive = new ArchiveOnDisk(distributionServiceConfig.getOutputFileName());
     try {

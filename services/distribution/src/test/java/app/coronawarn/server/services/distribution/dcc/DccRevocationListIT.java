@@ -1,14 +1,9 @@
-package app.coronawarn.server.services.distribution.revocation;
+package app.coronawarn.server.services.distribution.dcc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.common.persistence.domain.RevocationEntry;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import app.coronawarn.server.services.distribution.dcc.CloudDccRevocationFeignClientConfiguration;
-import app.coronawarn.server.services.distribution.dcc.CloudDccRevocationFeignHttpClientProvider;
-import app.coronawarn.server.services.distribution.dcc.DccRevocationClient;
-import app.coronawarn.server.services.distribution.dcc.FetchDccListException;
-import app.coronawarn.server.services.distribution.dcc.ProdDccRevocationClient;
 import app.coronawarn.server.services.distribution.dcc.decode.DccRevocationListDecoder;
 import app.coronawarn.server.services.distribution.dgc.ApacheHttpTestConfiguration;
 import java.util.List;
@@ -25,12 +20,15 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {DistributionServiceConfig.class, ProdDccRevocationClient.class,
-    CloudDccRevocationFeignClientConfiguration.class, CloudDccRevocationFeignHttpClientProvider.class,
-    DccRevocationListDecoder.class, ApacheHttpTestConfiguration.class},
-    initializers = ConfigDataApplicationContextInitializer.class)
-@ImportAutoConfiguration({FeignAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class})
-@ActiveProfiles({"dsc-rev-client-factory", "revocation"})
+@ContextConfiguration(classes = { DistributionServiceConfig.class,
+                                  ProdDccRevocationClient.class,
+                                  CloudDccRevocationFeignClientConfiguration.class,
+                                  CloudDccRevocationFeignHttpClientProvider.class,
+                                  DccRevocationListDecoder.class,
+                                  ApacheHttpTestConfiguration.class }, 
+                      initializers = ConfigDataApplicationContextInitializer.class)
+@ImportAutoConfiguration({ FeignAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class })
+@ActiveProfiles({ "dsc-rev-client-factory", "revocation" })
 class DccRevocationListIT {
 
   @Autowired
@@ -40,5 +38,12 @@ class DccRevocationListIT {
   void should_fetch_dcc_revocation_list() throws FetchDccListException {
     Optional<List<RevocationEntry>> revocationEntryList = dccRevocationClient.getDccRevocationList();
     assertThat(revocationEntryList).isPresent();
+  }
+
+  @Test
+  void should_fetch_etag() throws FetchDccListException {
+    final String etag = dccRevocationClient.getETag();
+    assertThat(etag).isNotBlank();
+    assertThat(etag).doesNotContain("\"");
   }
 }

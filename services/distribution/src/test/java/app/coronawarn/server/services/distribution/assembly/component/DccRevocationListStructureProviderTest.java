@@ -3,6 +3,8 @@ package app.coronawarn.server.services.distribution.assembly.component;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.persistence.domain.RevocationEntry;
@@ -35,17 +37,17 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@EnableConfigurationProperties(value = {DistributionServiceConfig.class})
+@EnableConfigurationProperties(value = { DistributionServiceConfig.class })
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(
     classes = {DccRevocationListStructureProvider.class,
-        CryptoProvider.class, DistributionServiceConfig.class,
-        TestDccRevocationClient.class,
-        DccRevocationListToProtobufMapping.class,
-        DccRevocationListDecoder.class,
+    CryptoProvider.class, DistributionServiceConfig.class,
+    TestDccRevocationClient.class,
+    DccRevocationListToProtobufMapping.class,
+    DccRevocationListDecoder.class,
     },
     initializers = ConfigDataApplicationContextInitializer.class)
-@ActiveProfiles({"fake-dcc-revocation", "revocation"})
+@ActiveProfiles({ "fake-dcc-revocation", "revocation" })
 class DccRevocationListStructureProviderTest {
 
   private static final String PARENT_TEST_FOLDER = "parent";
@@ -60,7 +62,7 @@ class DccRevocationListStructureProviderTest {
   DccRevocationListToProtobufMapping dccRevocationListToProtobufMapping;
 
   @Autowired
-  TestDccRevocationClient prodDccRevocationClient;
+  TestDccRevocationClient dccRevocationClient;
 
   @MockBean
   OutputDirectoryProvider outputDirectoryProvider;
@@ -101,14 +103,14 @@ class DccRevocationListStructureProviderTest {
 
     dccDirectory.getWritables().stream()
         .filter(writableOnDisk -> writableOnDisk instanceof DirectoryOnDisk)
-        //iterate through dcc-rl directory structure
+        // iterate through dcc-rl directory structure
         .map(directory -> ((DirectoryOnDisk) directory).getWritables().stream()
             .filter(writableOnDisk -> writableOnDisk instanceof DirectoryOnDisk).iterator().next())
-        //iterate through xhash directory structure
+        // iterate through xhash directory structure
         .map(xdirectory -> ((DirectoryOnDisk) xdirectory).getWritables().stream()
-            .filter(writableOnDisk -> writableOnDisk instanceof DirectoryOnDisk).iterator().next()).
-        //iterate through yhash directory structure
-            map(ydirectory -> ((DirectoryOnDisk) ydirectory).getWritables().iterator().next())
+            .filter(writableOnDisk -> writableOnDisk instanceof DirectoryOnDisk).iterator().next())
+        // iterate through yhash directory structure
+        .map(ydirectory -> ((DirectoryOnDisk) ydirectory).getWritables().iterator().next())
         // verify archive name for yhash directory
         .forEach(archive -> {
           assertEquals("chunk", archive.getName());
@@ -116,5 +118,16 @@ class DccRevocationListStructureProviderTest {
               .map(Writable::getName).collect(Collectors.toList());
           assertTrue((archiveContent).containsAll(Set.of("export.bin", "export.sig")));
         });
+  }
+
+  @Test
+  void coverFetchDccRevocationList() {
+    underTest.fetchDccRevocationList();
+  }
+
+  @Test
+  void coverFetchDccRevocationListException() throws Exception {
+    doThrow(RuntimeException.class).when(dccRevocationListService).store(anyList());
+    underTest.fetchDccRevocationList();
   }
 }
