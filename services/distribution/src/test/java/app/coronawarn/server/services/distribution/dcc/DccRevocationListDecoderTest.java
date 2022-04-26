@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.distribution.revocation;
+package app.coronawarn.server.services.distribution.dcc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

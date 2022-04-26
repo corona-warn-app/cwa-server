@@ -2,6 +2,7 @@ package app.coronawarn.server.common.persistence;
 
 import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
 import app.coronawarn.server.common.persistence.repository.CheckInProtectedReportsRepository;
+import app.coronawarn.server.common.persistence.repository.DccRevocationEtagRepository;
 import app.coronawarn.server.common.persistence.repository.DccRevocationListRepository;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import app.coronawarn.server.common.persistence.repository.FederationBatchInfoRepository;
@@ -24,23 +25,26 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+@SuppressWarnings("removal")
 @SpringBootApplication
 @Configuration
 public class TestApplication {
 
   @Bean
-  ValidDiagnosisKeyFilter validDiagnosisKeyFilter() {
-    return new ValidDiagnosisKeyFilter();
+  DccRevocationListService createDccRevocationListService(final DccRevocationListRepository repository,
+      final DccRevocationEtagRepository etagRepository) {
+    return new DccRevocationListService(repository, etagRepository);
   }
 
   @Bean
-  KeySharingPoliciesChecker keySharingPoliciesChecker() {
-    return new KeySharingPoliciesChecker();
-  }
-
-  @Bean
-  DiagnosisKeyService createDiagnosisKeyService(DiagnosisKeyRepository keyRepository) {
+  DiagnosisKeyService createDiagnosisKeyService(final DiagnosisKeyRepository keyRepository) {
     return new DiagnosisKeyService(keyRepository, validDiagnosisKeyFilter());
+  }
+
+  @Bean
+  FederationBatchInfoService createFederationBatchInfoService(
+      final FederationBatchInfoRepository federationBatchInfoRepository) {
+    return new FederationBatchInfoService(federationBatchInfoRepository);
   }
 
   @Bean
@@ -55,26 +59,13 @@ public class TestApplication {
   }
 
   @Bean
-  FederationBatchInfoService createFederationBatchInfoService(
-      FederationBatchInfoRepository federationBatchInfoRepository) {
-    return new FederationBatchInfoService(federationBatchInfoRepository);
-  }
-
-  @Bean
-  StatisticsDownloadService createStatisticsDownloadService(StatisticsDownloadRepository repository) {
+  StatisticsDownloadService createStatisticsDownloadService(final StatisticsDownloadRepository repository) {
     return new StatisticsDownloadService(repository);
   }
 
   @Bean
-  TraceTimeIntervalWarningService traceTimeIntervalWarningService(
-      TraceTimeIntervalWarningRepository timeIntervalWarningRepository,
-      CheckInProtectedReportsRepository checkInProtectedReportsRepository) throws NoSuchAlgorithmException {
-    return new TraceTimeIntervalWarningService(timeIntervalWarningRepository, checkInProtectedReportsRepository);
-  }
-
-  @Bean
-  TekFieldDerivations tekFieldDerivations() {
-    return TekFieldDerivations.from(Map.of(3997, 8), Map.of(8, 3997), 3);
+  KeySharingPoliciesChecker keySharingPoliciesChecker() {
+    return new KeySharingPoliciesChecker();
   }
 
   @Bean
@@ -83,7 +74,19 @@ public class TestApplication {
   }
 
   @Bean
-  DccRevocationListService createDccRevocationListService(DccRevocationListRepository repository) {
-    return new DccRevocationListService(repository);
+  TekFieldDerivations tekFieldDerivations() {
+    return TekFieldDerivations.from(Map.of(3997, 8), Map.of(8, 3997), 3);
+  }
+
+  @Bean
+  TraceTimeIntervalWarningService traceTimeIntervalWarningService(
+      final TraceTimeIntervalWarningRepository timeIntervalWarningRepository,
+      final CheckInProtectedReportsRepository checkInProtectedReportsRepository) throws NoSuchAlgorithmException {
+    return new TraceTimeIntervalWarningService(timeIntervalWarningRepository, checkInProtectedReportsRepository);
+  }
+
+  @Bean
+  ValidDiagnosisKeyFilter validDiagnosisKeyFilter() {
+    return new ValidDiagnosisKeyFilter();
   }
 }
