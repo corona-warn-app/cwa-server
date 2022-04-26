@@ -52,6 +52,7 @@ public class ProdDccRevocationClient implements DccRevocationClient {
       etag = getETag(dccRevocationFeignClient.head());
       return etag;
     } catch (final Exception e) {
+      logger.error(e.getMessage(), e);
       throw new FetchDccListException("http-HEAD for DCC Revocation List failed", e);
     }
   }
@@ -64,8 +65,8 @@ public class ProdDccRevocationClient implements DccRevocationClient {
    * @throws NullPointerException if there is no ETag in the {@link ResponseEntity#getHeaders()}.
    */
   public static String getETag(final ResponseEntity<?> response) {
-    final String string = response.getHeaders().getETag().replaceAll("\"", "");
-    logger.info("got DCC Revocation List ETag: {}", string);
+    final String string = response.getHeaders().getETag();
+    logger.info("got DCC Revocation List ETag: '{}'", string);
     return string;
   }
 }

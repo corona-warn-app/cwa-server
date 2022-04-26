@@ -44,6 +44,6 @@ class DccRevocationListIT {
   void should_fetch_etag() throws FetchDccListException {
     final String etag = dccRevocationClient.getETag();
     assertThat(etag).isNotBlank();
-    assertThat(etag).doesNotContain("\"");
+    assertThat(etag).doesNotContain("test");
   }
 }

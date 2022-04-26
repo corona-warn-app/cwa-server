@@ -8,10 +8,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DccRevocationListDecoder {
+
+  private static final Logger logger = LoggerFactory.getLogger(DccRevocationListDecoder.class);
 
   public DccRevocationListDecoder() {
   }
@@ -38,6 +42,7 @@ public class DccRevocationListDecoder {
             revocationEntries.add(new RevocationEntry(kid, type, hash)));
       });
     } catch (Exception e) {
+      logger.error(e.getMessage(), e);
       throw new DccRevocationListDecodeException("DCC revocation list NOT decoded.", e);
     }
     return revocationEntries;

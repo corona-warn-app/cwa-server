@@ -31,7 +31,7 @@
         <mapEntry key="POSTGRES_PASSWORD" value="postgres"/>
         <mapEntry key="POSTGRES_USER" value="postgres"/>
         <mapEntry key="SECRET_PRIVATE" value="file:/secrets/private.pem"/>
-        <mapEntry key="SPRING_PROFILES_ACTIVE" value="testdata,disable-ssl-client-postgres,signature-dev,local-json-stats,revocation"/>
+        <mapEntry key="SPRING_PROFILES_ACTIVE" value="testdata,disable-ssl-client-postgres,signature-dev,local-json-stats,revocation,dsc-rev-client-factory"/>
         <mapEntry key="STATISTICS_FILE_ACCESS_KEY_ID" value="fakeAccessKey"/>
         <mapEntry key="STATISTICS_FILE_S3_BUCKET" value="obs-cwa-public-dev"/>
         <mapEntry key="STATISTICS_FILE_S3_ENDPOINT" value="http://localhost:8013"/>
