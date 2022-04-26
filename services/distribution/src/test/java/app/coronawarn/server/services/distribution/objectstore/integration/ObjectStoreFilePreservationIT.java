@@ -10,6 +10,7 @@ import app.coronawarn.server.services.distribution.assembly.component.OutputDire
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.common.DiagnosisTestData;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.dcc.DccRevocationClient;
 import app.coronawarn.server.services.distribution.objectstore.FailedObjectStoreOperationsCounter;
 import app.coronawarn.server.services.distribution.objectstore.ObjectStoreAccess;
 import app.coronawarn.server.services.distribution.objectstore.S3Publisher;
@@ -58,6 +59,8 @@ class ObjectStoreFilePreservationIT extends BaseS3IntegrationTest {
   private DccRevocationListService dccRevocationListService;
   @Autowired
   private Environment environment;
+  @Autowired
+  private DccRevocationClient dccRevocationClient;
 
   @MockBean
   private OutputDirectoryProvider distributionDirectoryProvider;
@@ -158,8 +161,8 @@ class ObjectStoreFilePreservationIT extends BaseS3IntegrationTest {
     mockDistributionConfig.setRetentionDays(numberOfDaysSince(fromDate));
     mockDistributionConfig.setObjectStore(distributionServiceConfig.getObjectStore());
     new RetentionPolicy(diagnosisKeyService, traceTimeIntervalWarningService, applicationContext,
-        mockDistributionConfig, s3RetentionPolicy, dccRevocationListService, environment, statisticsDownloadService)
-            .run(null);
+        mockDistributionConfig, s3RetentionPolicy, dccRevocationListService, environment, dccRevocationClient,
+        statisticsDownloadService).run(null);
   }
 
   private Integer numberOfDaysSince(LocalDate testStartDate) {

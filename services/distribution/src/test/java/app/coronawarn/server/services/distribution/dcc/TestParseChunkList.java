@@ -1,8 +1,6 @@
-package app.coronawarn.server.services.distribution.revocation;
+package app.coronawarn.server.services.distribution.dcc;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import app.coronawarn.server.services.distribution.dcc.FetchDccListException;
-import app.coronawarn.server.services.distribution.dcc.TestDccRevocationClient;
 import app.coronawarn.server.services.distribution.dcc.decode.DccRevocationListDecoder;
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStorePublishingConfig;
 import org.junit.Assert;
@@ -13,7 +11,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
 
 @ExtendWith({SpringExtension.class})
 @SpringBootTest(classes = {ObjectStorePublishingConfig.class, TestDccRevocationClient.class,
@@ -26,9 +23,8 @@ class TestParseChunkList {
   TestDccRevocationClient dccRevocationClient;
 
   @Test
-  void cborToMap() throws FetchDccListException {
+  void cborToMap() throws Exception {
     dccRevocationClient.getDccRevocationList().ifPresent(payloadEntries -> {
-
       payloadEntries.forEach(revocationEntry -> {
         Assert.assertNotNull(revocationEntry);
         Assert.assertNotNull(revocationEntry.getKid());
@@ -37,7 +33,4 @@ class TestParseChunkList {
       });
     });
   }
-
 }
-
-

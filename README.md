@@ -222,4 +222,4 @@ Please see the [detailed licensing information](https://api.reuse.software/info/
 
 [Postgres]: https://www.postgresql.org/
 
-[Zenko CloudServer]: https://github.com/scality/cloudserver
+[Zenko CloudServer]: https://www.zenko.io/cloudserver/

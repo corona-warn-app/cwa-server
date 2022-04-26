@@ -6,12 +6,14 @@ import app.coronawarn.server.common.persistence.service.StatisticsDownloadServic
 import app.coronawarn.server.common.persistence.service.TraceTimeIntervalWarningService;
 import app.coronawarn.server.services.distribution.Application;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.dcc.DccRevocationClient;
 import app.coronawarn.server.services.distribution.objectstore.S3RetentionPolicy;
 import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
@@ -45,6 +47,8 @@ public class RetentionPolicy implements ApplicationRunner {
 
   private final Environment environment;
 
+  private DccRevocationClient dccRevocationClient;
+
   /**
    * Creates a new RetentionPolicy.
    *
@@ -62,6 +66,7 @@ public class RetentionPolicy implements ApplicationRunner {
       S3RetentionPolicy s3RetentionPolicy,
       DccRevocationListService dccRevocationListService,
       final Environment environment,
+      final DccRevocationClient dccRevocationClient,
       StatisticsDownloadService statisticsDownloadService) {
     this.diagnosisKeyService = diagnosisKeyService;
     this.traceTimeIntervalWarningService = traceTimeIntervalWarningService;
@@ -71,6 +76,7 @@ public class RetentionPolicy implements ApplicationRunner {
     this.s3RetentionPolicy = s3RetentionPolicy;
     this.dccRevocationListService = dccRevocationListService;
     this.environment = environment;
+    this.dccRevocationClient = dccRevocationClient;
     this.statisticsDownloadService = statisticsDownloadService;
   }
 
@@ -78,6 +84,11 @@ public class RetentionPolicy implements ApplicationRunner {
   public void run(ApplicationArguments args) {
     try {
       if (isDccRevocation()) {
+        if (dccRevocationListService.etagExists(dccRevocationClient.getETag())) {
+          logger.info("DCC Revocation - ETag didn't change, nothing to do, shutting down.");
+          SpringApplication.exit(applicationContext);
+          return;
+        }
         dccRevocationListService.truncate();
         s3RetentionPolicy.deleteDccRevocationDir();
       } else {
