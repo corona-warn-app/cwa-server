@@ -48,7 +48,7 @@ class DccRevocationClientUnitTest {
 
   @Test
   void coverTestDccRevocationClient3() throws Exception {
-    assertEquals("62620c23-2953", testDccRevocationClient.getETag());
+    assertEquals("62620c23-test", testDccRevocationClient.getETag());
   }
 
   @Test

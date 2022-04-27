@@ -41,6 +41,6 @@ public class TestDccRevocationClient implements DccRevocationClient {
 
   @Override
   public String getETag() throws FetchDccListException {
-    return "62620c23-2953";
+    return "62620c23-test";
   }
 }
