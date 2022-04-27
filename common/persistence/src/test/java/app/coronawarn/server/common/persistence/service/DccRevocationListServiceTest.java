@@ -9,7 +9,6 @@ import app.coronawarn.server.common.persistence.domain.RevocationEtag;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
@@ -19,11 +18,6 @@ class DccRevocationListServiceTest {
 
   @Autowired
   private DccRevocationListService service;
-
-  @AfterEach
-  public void tearDown() {
-    service.truncate();
-  }
 
   @Test
   void testStore() {

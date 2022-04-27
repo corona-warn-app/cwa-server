@@ -60,6 +60,8 @@ public class DccRevocationListService {
   @Timed
   @Transactional
   public void store(final Collection<RevocationEntry> revocationEntries) {
+    logger.info("Truncate Revocation list...");
+    repository.truncate();
     logger.info("Saving Revocation list entries...");
     for (final RevocationEntry entry : revocationEntries) {
       repository.saveDoNothingOnConflict(entry.getKid(), entry.getType(), entry.getHash());
@@ -78,9 +80,5 @@ public class DccRevocationListService {
       etagRepository.deleteById(etag.getPath());
     }
     etagRepository.save(etag.getPath(), etag.getEtag());
-  }
-
-  public void truncate() {
-    repository.truncate();
   }
 }
