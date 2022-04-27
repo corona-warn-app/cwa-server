@@ -3,6 +3,7 @@ package app.coronawarn.server.services.distribution.runner;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import app.coronawarn.server.common.persistence.service.DccRevocationListService;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.StatisticsDownloadService;
 import app.coronawarn.server.common.persistence.service.TraceTimeIntervalWarningService;
@@ -23,7 +24,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = { RetentionPolicy.class }, initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles("revocation")
-class RetentionPolicyTestRevocation {
+class RetentionPolicyDccRevocationTest {
 
   @MockBean
   DiagnosisKeyService diagnosisKeyService;
@@ -42,6 +43,9 @@ class RetentionPolicyTestRevocation {
 
   @Autowired
   RetentionPolicy retentionPolicy;
+
+  @MockBean
+  DccRevocationListService dccRevocationListService;
 
   @MockBean
   DccRevocationClient dccRevocationClient;
