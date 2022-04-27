@@ -87,9 +87,9 @@ public class RetentionPolicy implements ApplicationRunner {
         if (dccRevocationListService.etagExists(dccRevocationClient.getETag())) {
           logger.info("DCC Revocation - ETag didn't change, nothing to do, shutting down.");
           SpringApplication.exit(applicationContext);
+          System.exit(0);
           return;
         }
-        dccRevocationListService.truncate();
         s3RetentionPolicy.deleteDccRevocationDir();
       } else {
         diagnosisKeyService.applyRetentionPolicy(retentionDays);

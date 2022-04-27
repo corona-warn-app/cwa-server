@@ -60,8 +60,7 @@ public class CloudDccRevocationFeignHttpClientProvider implements DccRevocationF
   @Override
   @Bean
   public Client createDccRevocationFeignClient() {
-    return new ApacheHttpClient(
-        dccHttpClientFactory().createBuilder().build());
+    return new DccRevocationClientDelegator(new ApacheHttpClient(dccHttpClientFactory().createBuilder().build()));
   }
 
   /**
@@ -73,7 +72,7 @@ public class CloudDccRevocationFeignHttpClientProvider implements DccRevocationF
     logger.info("Instantiating DCC Revocation client - SSL context with truststore: {}", trustStorePath.getName());
     try {
       return SSLContextBuilder.create().loadTrustMaterial(trustStorePath,
-              emptyCharrArrayIfNull(trustStorePass))
+          emptyCharrArrayIfNull(trustStorePass))
           .build();
     } catch (Exception e) {
       logger.error("Problem on creating DCC Revocation client - SSL context with truststore: "

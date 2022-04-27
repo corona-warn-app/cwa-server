@@ -2,6 +2,7 @@ package app.coronawarn.server.services.distribution.runner;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.persistence.service.DccRevocationListService;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
@@ -9,13 +10,17 @@ import app.coronawarn.server.common.persistence.service.StatisticsDownloadServic
 import app.coronawarn.server.common.persistence.service.TraceTimeIntervalWarningService;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dcc.DccRevocationClient;
+import app.coronawarn.server.services.distribution.dcc.FetchDccListException;
 import app.coronawarn.server.services.distribution.objectstore.S3RetentionPolicy;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -24,7 +29,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = { RetentionPolicy.class }, initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles("revocation")
-class RetentionPolicyTestRevocation {
+class RetentionPolicyDccRevocationTest {
 
   @MockBean
   DiagnosisKeyService diagnosisKeyService;
@@ -50,6 +55,9 @@ class RetentionPolicyTestRevocation {
   @MockBean
   DccRevocationClient dccRevocationClient;
 
+  @MockBean
+  ApplicationContext applicationContext;
+
   @Test
   void shouldCallDatabaseAndS3RetentionRunner() {
     retentionPolicy.run(null);
@@ -60,7 +68,16 @@ class RetentionPolicyTestRevocation {
     verify(traceTimeIntervalWarningService, times(0))
         .applyRetentionPolicy(distributionServiceConfig.getRetentionDays());
 
-    verify(dccRevocationListService, times(1)).truncate();
+    verify(s3RetentionPolicy, times(1)).deleteDccRevocationDir();
+  }
+
+  @Test
+  void shouldCheckForEtag() throws FetchDccListException {
+    retentionPolicy.run(null);
+
+    when(dccRevocationListService.etagExists(dccRevocationClient.getETag())).thenReturn(true);
+    Assertions.assertThat(retentionPolicy.isDccRevocation()).isTrue();
+    Assertions.assertThat(SpringApplication.exit(applicationContext));
     verify(s3RetentionPolicy, times(1)).deleteDccRevocationDir();
   }
 }
