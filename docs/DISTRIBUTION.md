@@ -346,12 +346,27 @@ The resulting certificates list is converted to Protobuf format by [`DigitalSign
 
 Digital Signing Certificates are distributed on CDN on the following path: `ehn-dgc/dscs`.
 
-### Certificate Revocation
+## Certificate Revocation
 
 The revoked certificates are provided by IBM/Ubirch.
 
 - Prod: `https://de.crl.dscg.ubirch.com`
 - Test: `https://de.crl.test.dscg.ubirch.com`
+
+### DCC Revocation Payload Signature verification
+
+For DCC Revocation List payload, the signature is present on the forth element of the COSE encoded response body.
+The response is returned as a byte sequence that represents a COSE message from the Feign Client [`DccRevocationFeignClient`](services/distribution/src/main/java/app/coronawarn/server/services/distribution/dcc/DccRevocationFeignClient.java).
+The message is processed by [`DccRevocationListDecoder`](services/distribution/src/main/java/app/coronawarn/server/services/distribution/dcc/decode/DccRevocationListDecoder.java). The decoder use the signature from the forth element in the COSE message
+and verifies the signature using the signed content from the third element in the COSE message and the public key.
+
+### CDN distribution
+
+The resulting Dcc Revocation list is converted to Protobuf format by [`DccRevocationListToProtobufMapping`](services/distribution/src/main/java/app/coronawarn/server/services/distribution/dcc/DccRevocationListToProtobufMapping.java).
+
+DCC Revocation KID List is distributed on CDN on the following path: `dcc-rl/kid`.
+DCC Revocation Kid-Type index is distributed on CDN on the following path: `dcc-rl/<kid><type>`.
+DCC Revocation KID-Type-X-Y Chunk is distributed on CDN on the following path: `<kid><type>/<x>/<y>/chunk`.
 
 ## App Features
 
