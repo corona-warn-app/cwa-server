@@ -340,7 +340,7 @@ The encryption algorithm is ECDSA.
 
 The content part of the body is also checked to be a valid X509 certificate.
 
-### CDN distribution
+### CDN Signing Certificate distribution
 
 The resulting certificates list is converted to Protobuf format by [`DigitalSigningCertificatesToProtobufMapping`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/dgc/dsc/DigitalSigningCertificatesToProtobufMapping.java).
 
@@ -360,7 +360,7 @@ The response is returned as a byte sequence that represents a COSE message from 
 The message is processed by [`DccRevocationListDecoder`](services/distribution/src/main/java/app/coronawarn/server/services/distribution/dcc/decode/DccRevocationListDecoder.java). The decoder use the signature from the forth element in the COSE message
 and verifies the signature using the signed content from the third element in the COSE message and the public key.
 
-### CDN distribution
+### CDN Revocation List distribution
 
 The resulting Dcc Revocation list is converted to Protobuf format by [`DccRevocationListToProtobufMapping`](services/distribution/src/main/java/app/coronawarn/server/services/distribution/dcc/DccRevocationListToProtobufMapping.java).
 
