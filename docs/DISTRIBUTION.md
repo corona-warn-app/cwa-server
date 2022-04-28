@@ -368,6 +368,8 @@ DCC Revocation KID List is distributed on CDN on the following path: `dcc-rl/kid
 DCC Revocation Kid-Type index is distributed on CDN on the following path: `dcc-rl/<kid><type>`.
 DCC Revocation KID-Type-X-Y Chunk is distributed on CDN on the following path: `<kid><type>/<x>/<y>/chunk`.
 
+The published data in the CDN will be deleted and recreated just in case is received new Revocation List data(with new Etag) from IBM/Ubirch.
+
 ## App Features
 
 Starting with version 2.8 there is now the possibility to submit encrypted check-ins. For clients to check whether this feature is enabled on the cwa-server a new app feature [```EVREG_UNENCRYPTED_CHECKINS_ENABLED```](../services/distribution/src/main/resources/application.yaml) is introduced.
