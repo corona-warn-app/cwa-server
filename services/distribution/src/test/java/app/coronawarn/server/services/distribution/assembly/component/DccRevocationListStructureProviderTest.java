@@ -21,6 +21,7 @@ import app.coronawarn.server.services.distribution.dcc.TestDccRevocationClient;
 import app.coronawarn.server.services.distribution.dcc.decode.DccRevocationListDecoder;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -41,10 +42,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(
     classes = {DccRevocationListStructureProvider.class,
-    CryptoProvider.class, DistributionServiceConfig.class,
-    TestDccRevocationClient.class,
-    DccRevocationListToProtobufMapping.class,
-    DccRevocationListDecoder.class,
+        CryptoProvider.class, DistributionServiceConfig.class,
+        TestDccRevocationClient.class,
+        DccRevocationListToProtobufMapping.class,
+        DccRevocationListDecoder.class,
     },
     initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles({ "fake-dcc-revocation", "revocation" })
@@ -79,9 +80,8 @@ class DccRevocationListStructureProviderTest {
     File outputDirectory = testOutputFolder.newFolder(PARENT_TEST_FOLDER);
     Directory<WritableOnDisk> testDirectory = new DirectoryOnDisk(outputDirectory);
     when(outputDirectoryProvider.getDirectory()).thenReturn(testDirectory);
-    when(dccRevocationListService.getRevocationListEntries()).thenReturn(
-        List.of(
-            new RevocationEntry("7805b250c759584".getBytes(), "0a".getBytes(), "MEyOtQZC1g6sMVle2FP5cA==".getBytes())));
+    when(dccRevocationListService.getRevocationListEntries()).thenReturn(List.of(
+        new RevocationEntry("7805b250c759584".getBytes(), "0a".getBytes(), "MEyOtQZC1g6sMVle2FP5cA==".getBytes())));
   }
 
   @Test
@@ -97,7 +97,7 @@ class DccRevocationListStructureProviderTest {
         .filter(writableOnDisk -> writableOnDisk instanceof DirectoryOnDisk).iterator().next();
     assertEquals("dcc-rl", dccDirectory.getName());
 
-    List<String> kidTypeDirectoriesName = dccRevocationDirectory.getWritables().stream()
+    List<String> kidTypeDirectoriesName = dccDirectory.getWritables().stream()
         .map(Writable::getName).collect(Collectors.toList());
     assertNotNull(kidTypeDirectoriesName);
 
@@ -118,6 +118,28 @@ class DccRevocationListStructureProviderTest {
               .map(Writable::getName).collect(Collectors.toList());
           assertTrue((archiveContent).containsAll(Set.of("export.bin", "export.sig")));
         });
+  }
+
+  @Test
+  void shouldCreateCorrectFileStructureFromEmptyDbList() {
+    when(dccRevocationListService.getRevocationListEntries()).thenReturn(
+        Collections.emptyList());
+    Directory<WritableOnDisk> dccRevocationDirectory = underTest.getDccRevocationDirectory();
+    dccRevocationDirectory.prepare(new ImmutableStack<>());
+
+    assertEquals("version", dccRevocationDirectory.getName());
+    DirectoryOnDisk v1Directory = (DirectoryOnDisk) dccRevocationDirectory.getWritables().stream()
+        .filter(writableOnDisk -> writableOnDisk instanceof DirectoryOnDisk).iterator().next();
+    assertEquals("v1", v1Directory.getName());
+    DirectoryOnDisk dccDirectory = (DirectoryOnDisk) v1Directory.getWritables().stream()
+        .filter(writableOnDisk -> writableOnDisk instanceof DirectoryOnDisk).iterator().next();
+    assertEquals("dcc-rl", dccDirectory.getName());
+
+    List<String> kidTypeDirectoriesName = dccDirectory.getWritables().stream()
+        .map(Writable::getName).collect(Collectors.toList());
+    assertNotNull(kidTypeDirectoriesName);
+    assertEquals("kid", kidTypeDirectoriesName.get(0));
+
   }
 
   @Test
