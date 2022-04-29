@@ -80,4 +80,13 @@ class RetentionPolicyDccRevocationTest {
     Assertions.assertThat(SpringApplication.exit(applicationContext));
     verify(s3RetentionPolicy, times(1)).deleteDccRevocationDir();
   }
+
+  @Test
+  void shouldThrowExceptionForEtag() throws FetchDccListException {
+    when(dccRevocationClient.getETag()).thenThrow(FetchDccListException.class);
+    retentionPolicy.run(null);
+
+    Assertions.assertThat(retentionPolicy.isDccRevocation()).isTrue();
+    verify(s3RetentionPolicy, times(0)).deleteDccRevocationDir();
+  }
 }
