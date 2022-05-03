@@ -29,8 +29,9 @@ import software.amazon.awssdk.services.s3.model.DeleteObjectsResponse;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
+import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
 import software.amazon.awssdk.services.s3.model.ObjectIdentifier;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -114,17 +115,16 @@ public class S3ClientWrapper implements ObjectStoreClient {
   public List<S3Object> getObjects(String bucket, String prefix) {
     logRetryStatus("object download");
     List<S3Object> allS3Objects = new ArrayList<>();
-    String continuationToken = null;
-
+    String marker = null;
     do {
-      ListObjectsV2Request request =
-          ListObjectsV2Request.builder().prefix(prefix).bucket(bucket).continuationToken(continuationToken).build();
-      ListObjectsV2Response response = s3Client.listObjectsV2(request);
+      final ListObjectsRequest request = ListObjectsRequest.builder().prefix(prefix).bucket(bucket).marker(marker)
+          .build();
+      final ListObjectsResponse response = s3Client.listObjects(request);
+      marker = TRUE.equals(response.isTruncated()) ? response.nextMarker() : null;
       response.contents().stream()
           .map(s3Object -> buildS3Object(s3Object, bucket))
           .forEach(allS3Objects::add);
-      continuationToken = TRUE.equals(response.isTruncated()) ? response.nextContinuationToken() : null;
-    } while (continuationToken != null);
+    } while (marker != null);
 
     return allS3Objects;
   }
