@@ -56,6 +56,8 @@ import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
+import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
+import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
@@ -125,20 +127,20 @@ class S3ClientWrapperTest {
 
   @Test
   void testGetObjectsSendsCorrectRequest() {
-    when(s3Client.listObjectsV2(any(ListObjectsV2Request.class))).thenReturn(ListObjectsV2Response.builder().build());
+    when(s3Client.listObjects(any(ListObjectsRequest.class))).thenReturn(ListObjectsResponse.builder().build());
 
     s3ClientWrapper.getObjects(VALID_BUCKET_NAME, VALID_PREFIX);
 
-    ListObjectsV2Request expRequest = ListObjectsV2Request.builder()
+    ListObjectsRequest expRequest = ListObjectsRequest.builder()
         .prefix(VALID_PREFIX).bucket(VALID_BUCKET_NAME).build();
-    verify(s3Client, atLeastOnce()).listObjectsV2(eq(expRequest));
+    verify(s3Client, atLeastOnce()).listObjects(eq(expRequest));
   }
 
   @ParameterizedTest
   @MethodSource("createGetObjectsResults")
   void testGetObjects(List<S3Object> expResult) {
-    ListObjectsV2Response actResponse = buildListObjectsResponse(expResult);
-    when(s3Client.listObjectsV2(any(ListObjectsV2Request.class))).thenReturn(actResponse);
+    ListObjectsResponse actResponse = buildListObjectsResponse(expResult);
+    when(s3Client.listObjects(any(ListObjectsRequest.class))).thenReturn(actResponse);
     when(s3Client.headObject(any(HeadObjectRequest.class))).thenReturn(HeadObjectResponse.builder().build());
 
     List<S3Object> actResult = s3ClientWrapper.getObjects(VALID_BUCKET_NAME, VALID_PREFIX);
@@ -148,21 +150,21 @@ class S3ClientWrapperTest {
 
   @Test
   void testContinuationToken() {
-    var continuationToken = "1ueGcxLPRx1Tr/XYExHnhbYLgveDs2J/wm36Hy4vbOwM=<";
+    var markerToken = "1ueGcxLPRx1Tr/XYExHnhbYLgveDs2J/wm36Hy4vbOwM=<";
 
-    when(s3Client.listObjectsV2(any(ListObjectsV2Request.class)))
-        .thenReturn(ListObjectsV2Response.builder().isTruncated(true).nextContinuationToken(continuationToken).build(),
-            ListObjectsV2Response.builder().isTruncated(false).build());
+    when(s3Client.listObjects(any(ListObjectsRequest.class)))
+        .thenReturn(ListObjectsResponse.builder().isTruncated(true).nextMarker(markerToken).build(),
+            ListObjectsResponse.builder().isTruncated(false).build());
 
     s3ClientWrapper.getObjects(VALID_BUCKET_NAME, VALID_PREFIX);
 
-    ListObjectsV2Request continuationRequest = ListObjectsV2Request.builder()
-        .prefix(VALID_PREFIX).bucket(VALID_BUCKET_NAME).continuationToken(continuationToken).build();
-    ListObjectsV2Request noContinuationRequest = ListObjectsV2Request.builder()
+    ListObjectsRequest markerRequest = ListObjectsRequest.builder()
+        .prefix(VALID_PREFIX).bucket(VALID_BUCKET_NAME).marker(markerToken).build();
+    ListObjectsRequest noMarkerRequest = ListObjectsRequest.builder()
         .prefix(VALID_PREFIX).bucket(VALID_BUCKET_NAME).build();
 
-    verify(s3Client, times(1)).listObjectsV2(eq(continuationRequest));
-    verify(s3Client, times(1)).listObjectsV2(eq(noContinuationRequest));
+    verify(s3Client, times(1)).listObjects(eq(markerRequest));
+    verify(s3Client, times(1)).listObjects(eq(noMarkerRequest));
   }
 
   private static Stream<Arguments> createGetObjectsResults() {
@@ -173,12 +175,12 @@ class S3ClientWrapperTest {
     ).map(Arguments::of);
   }
 
-  private ListObjectsV2Response buildListObjectsResponse(List<S3Object> s3Objects) {
+  private ListObjectsResponse buildListObjectsResponse(List<S3Object> s3Objects) {
     var responseObjects = s3Objects.stream().map(
             s3Object -> software.amazon.awssdk.services.s3.model.S3Object.builder()
                 .key(s3Object.getObjectName()))
         .map(SdkBuilder::build).collect(Collectors.toList());
-    return ListObjectsV2Response.builder().contents(responseObjects).build();
+    return ListObjectsResponse.builder().contents(responseObjects).build();
   }
 
   @ParameterizedTest
@@ -192,11 +194,11 @@ class S3ClientWrapperTest {
   @ParameterizedTest
   @ValueSource(classes = {NoSuchBucketException.class, S3Exception.class, SdkClientException.class, SdkException.class})
   void shouldRetryGettingObjectsAndThenThrow(Class<Exception> cause) {
-    when(s3Client.listObjectsV2(any(ListObjectsV2Request.class))).thenThrow(cause);
+    when(s3Client.listObjects(any(ListObjectsRequest.class))).thenThrow(cause);
     assertThatExceptionOfType(ObjectStoreOperationFailedException.class)
         .isThrownBy(() -> s3ClientWrapper.getObjects(VALID_BUCKET_NAME, VALID_PREFIX));
 
-    verify(s3Client, times(configuredNumberOfRetries)).listObjectsV2(any(ListObjectsV2Request.class));
+    verify(s3Client, times(configuredNumberOfRetries)).listObjects(any(ListObjectsRequest.class));
   }
 
   @Test
