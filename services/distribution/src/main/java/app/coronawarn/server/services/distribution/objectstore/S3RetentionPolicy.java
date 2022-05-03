@@ -127,9 +127,12 @@ public class S3RetentionPolicy {
 
   /**
    * Java stream do not support checked exceptions within streams. This helper method rethrows them as unchecked
-   * expressions, so they can be passed up to the Retention Policy.
+   * expressions, so they can be passed up to the Retention Policy.<br />
+   * <strong>Attention:</strong> this first queries all the objects from S3 with the same prefix!
    *
    * @param s3Object the S3 object, that should be deleted.
+   * 
+   * @see ObjectStoreAccess#deleteObjectsWithPrefix(String)
    */
   public void deleteS3Object(S3Object s3Object) {
     try {
@@ -139,6 +142,12 @@ public class S3RetentionPolicy {
     }
   }
 
+  /**
+   * Java stream do not support checked exceptions within streams. This helper method rethrows them as unchecked
+   * expressions, so they can be passed up to the Retention Policy.
+   *
+   * @param s3Object the S3 object, that should be deleted.
+   */
   public void deleteSingleS3Object(S3Object s3Object) {
     try {
       objectStoreAccess.deleteObject(s3Object);

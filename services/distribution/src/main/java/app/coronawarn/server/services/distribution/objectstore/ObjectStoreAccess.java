@@ -92,6 +92,8 @@ public class ObjectStoreAccess {
    * Deletes objects in the object store, based on the given prefix (folder structure).
    *
    * @param prefix the prefix, e.g. my/folder/
+   * 
+   * @see #getAllObjectsWithPrefix(String)
    */
   public void deleteObjectsWithPrefix(String prefix) {
     List<String> toDelete = getObjectsWithPrefix(prefix)
