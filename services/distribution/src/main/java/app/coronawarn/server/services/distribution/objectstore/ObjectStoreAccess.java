@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.objectstore;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
@@ -7,6 +5,7 @@ import app.coronawarn.server.services.distribution.objectstore.client.ObjectStor
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClient.HeaderKey;
 import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import app.coronawarn.server.services.distribution.objectstore.publish.LocalFile;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -104,6 +103,11 @@ public class ObjectStoreAccess {
     this.client.removeObjects(bucket, toDelete);
   }
 
+  public void deleteObject(S3Object toDelete) {
+    logger.info("Deleting {}", toDelete);
+    this.client.removeObjects(bucket, Collections.singletonList(toDelete.getObjectName()));
+  }
+
   /**
    * Fetches the list of objects in the store with the given prefix.
    *
@@ -112,6 +116,10 @@ public class ObjectStoreAccess {
    */
   public List<S3Object> getObjectsWithPrefix(String prefix) {
     return client.getObjects(bucket, prefix);
+  }
+
+  public List<S3Object> getAllObjectsWithPrefix(String prefix) {
+    return client.getObjects(bucket, prefix, null);
   }
 
   private Map<HeaderKey, String> createHeaders(int maxAge, LocalFile file) {

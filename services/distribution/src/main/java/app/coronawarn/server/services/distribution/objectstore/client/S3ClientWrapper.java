@@ -2,6 +2,7 @@ package app.coronawarn.server.services.distribution.objectstore.client;
 
 import static java.lang.Boolean.TRUE;
 import static java.util.stream.Collectors.toList;
+import static software.amazon.awssdk.services.s3.model.ListObjectsRequest.builder;
 
 import app.coronawarn.server.services.distribution.statistics.exceptions.NotModifiedException;
 import app.coronawarn.server.services.distribution.statistics.file.JsonFile;
@@ -48,8 +49,16 @@ public class S3ClientWrapper implements ObjectStoreClient {
 
   private final S3Client s3Client;
 
+  private final String dccListPath;
+
   public S3ClientWrapper(S3Client s3Client) {
     this.s3Client = s3Client;
+    this.dccListPath = null;
+  }
+
+  public S3ClientWrapper(final S3Client s3Client, final String dccListPath) {
+    this.s3Client = s3Client;
+    this.dccListPath = dccListPath;
   }
 
   @Override
@@ -113,11 +122,20 @@ public class S3ClientWrapper implements ObjectStoreClient {
       maxAttemptsExpression = "${services.distribution.objectstore.retry-attempts}",
       backoff = @Backoff(delayExpression = "${services.distribution.objectstore.retry-backoff}"))
   public List<S3Object> getObjects(String bucket, String prefix) {
+    return getObjects(bucket, prefix, dccListPath);
+  }
+
+  @Override
+  @Retryable(
+      value = SdkException.class,
+      maxAttemptsExpression = "${services.distribution.objectstore.retry-attempts}",
+      backoff = @Backoff(delayExpression = "${services.distribution.objectstore.retry-backoff}"))
+  public List<S3Object> getObjects(String bucket, String prefix, String delimiter) {
     logRetryStatus("object download");
     List<S3Object> allS3Objects = new ArrayList<>();
     String marker = null;
     do {
-      final ListObjectsRequest request = ListObjectsRequest.builder().prefix(prefix).bucket(bucket).marker(marker)
+      final ListObjectsRequest request = builder().prefix(prefix).bucket(bucket).marker(marker).delimiter(delimiter)
           .build();
       final ListObjectsResponse response = s3Client.listObjects(request);
       marker = TRUE.equals(response.isTruncated()) ? response.nextMarker() : null;

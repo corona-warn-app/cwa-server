@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.objectstore.client;
 
 import java.util.Objects;
@@ -30,7 +28,7 @@ public class S3Object {
    * Constructs a new S3Object for the given object name.
    *
    * @param objectName the target object name
-   * @param cwaHash the checksum for that file
+   * @param cwaHash    the checksum for that file
    */
   public S3Object(String objectName, String cwaHash) {
     this(objectName);
@@ -71,5 +69,10 @@ public class S3Object {
   @Override
   public int hashCode() {
     return Objects.hash(objectName, cwaHash);
+  }
+
+  @Override
+  public String toString() {
+    return getObjectName();
   }
 }

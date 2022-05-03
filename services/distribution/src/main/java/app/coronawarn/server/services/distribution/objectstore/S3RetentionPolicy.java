@@ -139,6 +139,14 @@ public class S3RetentionPolicy {
     }
   }
 
+  public void deleteSingleS3Object(S3Object s3Object) {
+    try {
+      objectStoreAccess.deleteObject(s3Object);
+    } catch (ObjectStoreOperationFailedException e) {
+      failedObjectStoreOperationsCounter.incrementAndCheckThreshold(e);
+    }
+  }
+
   private boolean isDiagnosisKeyFilePathOnHourFolder(S3Object s3Object) {
     Matcher matcher = hourPathPattern.matcher(s3Object.getObjectName());
     return matcher.matches();
@@ -178,8 +186,8 @@ public class S3RetentionPolicy {
    * Delete the whole folder {@link #dccRevocationDirectory}.
    */
   public void deleteDccRevocationDir() {
-    final Collection<S3Object> s3Objects = objectStoreAccess.getObjectsWithPrefix(dccRevocationDirectory);
+    final Collection<S3Object> s3Objects = objectStoreAccess.getAllObjectsWithPrefix(dccRevocationDirectory);
     logger.info("Deleting {} dccRevocationDirectory files", s3Objects.size());
-    s3Objects.forEach(this::deleteS3Object);
+    s3Objects.forEach(this::deleteSingleS3Object);
   }
 }
