@@ -58,8 +58,6 @@ import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
 import software.amazon.awssdk.services.s3.model.ObjectIdentifier;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -107,20 +105,20 @@ class S3ClientWrapperTest {
 
   @Test
   void testBucketExistsIfBucketExists() {
-    when(s3Client.listObjectsV2((any(ListObjectsV2Request.class)))).thenReturn(ListObjectsV2Response.builder().build());
+    when(s3Client.listObjects((any(ListObjectsRequest.class)))).thenReturn(ListObjectsResponse.builder().build());
     assertThat(s3ClientWrapper.bucketExists(VALID_BUCKET_NAME)).isTrue();
   }
 
   @Test
   void testBucketExistsIfBucketDoesNotExist() {
-    when(s3Client.listObjectsV2(any(ListObjectsV2Request.class))).thenThrow(NoSuchBucketException.class);
+    when(s3Client.listObjects(any(ListObjectsRequest.class))).thenThrow(NoSuchBucketException.class);
     assertThat(s3ClientWrapper.bucketExists(VALID_BUCKET_NAME)).isFalse();
   }
 
   @ParameterizedTest
   @ValueSource(classes = {S3Exception.class, SdkClientException.class, SdkException.class})
   void bucketExistsThrowsObjectStoreOperationFailedExceptionIfClientThrows(Class<Exception> cause) {
-    when(s3Client.listObjectsV2(any(ListObjectsV2Request.class))).thenThrow(cause);
+    when(s3Client.listObjects(any(ListObjectsRequest.class))).thenThrow(cause);
     assertThatExceptionOfType(ObjectStoreOperationFailedException.class)
         .isThrownBy(() -> s3ClientWrapper.bucketExists(VALID_BUCKET_NAME));
   }
@@ -186,7 +184,7 @@ class S3ClientWrapperTest {
   @ParameterizedTest
   @ValueSource(classes = {NoSuchBucketException.class, S3Exception.class, SdkClientException.class, SdkException.class})
   void getObjectsThrowsObjectStoreOperationFailedExceptionIfClientThrows(Class<Exception> cause) {
-    when(s3Client.listObjectsV2(any(ListObjectsV2Request.class))).thenThrow(cause);
+    when(s3Client.listObjects(any(ListObjectsRequest.class))).thenThrow(cause);
     assertThatExceptionOfType(ObjectStoreOperationFailedException.class)
         .isThrownBy(() -> s3ClientWrapper.getObjects(VALID_BUCKET_NAME, VALID_PREFIX));
   }
