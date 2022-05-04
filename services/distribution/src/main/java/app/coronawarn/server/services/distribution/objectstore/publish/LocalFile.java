@@ -80,7 +80,7 @@ public abstract class LocalFile {
    */
   public String getContentType() {
     if (isConfigFile() || isStatisticFile() || isKeyFile() || isQrPosterTemplate() || isVaccineValueSet()
-        || isDscFile() || isCclConfigFile()) {
+        || isDscFile() || isCclConfigFile() || isDccRevocation()) {
       return "application/zip";
     }
     // list of versions, dates, hours
@@ -120,5 +120,9 @@ public abstract class LocalFile {
   private boolean isDscFile() {
     return s3Key.endsWith(INVALIDATION_RULES) || s3Key.endsWith(ACCEPTANCE_RULES) || s3Key.endsWith(ONBOARDED_COUNTRIES)
         || s3Key.endsWith(DIGITAL_CERTIFICATES_STRUCTURE_PROVIDER);
+  }
+
+  private boolean isDccRevocation() {
+    return s3Key.matches(".*dcc-rl.*");
   }
 }

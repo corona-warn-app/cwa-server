@@ -127,13 +127,30 @@ public class S3RetentionPolicy {
 
   /**
    * Java stream do not support checked exceptions within streams. This helper method rethrows them as unchecked
-   * expressions, so they can be passed up to the Retention Policy.
+   * expressions, so they can be passed up to the Retention Policy.<br />
+   * <strong>Attention:</strong> this first queries all the objects from S3 with the same prefix!
    *
    * @param s3Object the S3 object, that should be deleted.
+   * 
+   * @see ObjectStoreAccess#deleteObjectsWithPrefix(String)
    */
   public void deleteS3Object(S3Object s3Object) {
     try {
       objectStoreAccess.deleteObjectsWithPrefix(s3Object.getObjectName());
+    } catch (ObjectStoreOperationFailedException e) {
+      failedObjectStoreOperationsCounter.incrementAndCheckThreshold(e);
+    }
+  }
+
+  /**
+   * Java stream do not support checked exceptions within streams. This helper method rethrows them as unchecked
+   * expressions, so they can be passed up to the Retention Policy.
+   *
+   * @param s3Object the S3 object, that should be deleted.
+   */
+  public void deleteSingleS3Object(S3Object s3Object) {
+    try {
+      objectStoreAccess.deleteObject(s3Object);
     } catch (ObjectStoreOperationFailedException e) {
       failedObjectStoreOperationsCounter.incrementAndCheckThreshold(e);
     }
@@ -178,8 +195,8 @@ public class S3RetentionPolicy {
    * Delete the whole folder {@link #dccRevocationDirectory}.
    */
   public void deleteDccRevocationDir() {
-    final Collection<S3Object> s3Objects = objectStoreAccess.getObjectsWithPrefix(dccRevocationDirectory);
+    final Collection<S3Object> s3Objects = objectStoreAccess.getAllObjectsWithPrefix(dccRevocationDirectory);
     logger.info("Deleting {} dccRevocationDirectory files", s3Objects.size());
-    s3Objects.forEach(this::deleteS3Object);
+    s3Objects.forEach(this::deleteSingleS3Object);
   }
 }

@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.objectstore.client;
 
 import app.coronawarn.server.services.distribution.statistics.exceptions.NotModifiedException;
@@ -22,6 +20,8 @@ public interface ObjectStoreClient {
    * @throws ObjectStoreOperationFailedException if the operation could not be performed.
    */
   List<S3Object> getObjects(String bucket, String prefix);
+
+  List<S3Object> getObjects(final String bucket, final String prefix, final String delimiter);
 
   JsonFile getSingleObjectContent(String bucket, String key);
 
