@@ -33,6 +33,8 @@ import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsRequest.Builder;
 import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
 import software.amazon.awssdk.services.s3.model.ObjectIdentifier;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -148,7 +150,7 @@ public class S3ClientWrapper implements ObjectStoreClient {
   }
 
   /**
-   * Pass in <code>null</code> as delimiter, when you really want to receive ALL existing {@link S3Objetcs}. 
+   * Pass in <code>null</code> as delimiter, when you really want to receive ALL existing {@link S3Objetcs}.
    */
   @Override
   @Retryable(
@@ -165,10 +167,30 @@ public class S3ClientWrapper implements ObjectStoreClient {
           .build();
       final ListObjectsResponse response = s3Client.listObjects(request);
       marker = TRUE.equals(response.isTruncated()) ? response.nextMarker() : null;
+      if (response.isTruncated() && marker == null) {
+        // the zenko/cloudserver during the tests doesn't support the old API as it's the case for OBS at TSI
+        return tryWithV2(bucket, prefix, delimiter);
+      }
       response.contents().stream()
           .map(s3Object -> buildS3Object(s3Object, bucket))
           .forEach(allS3Objects::add);
     } while (marker != null);
+
+    return allS3Objects;
+  }
+
+  private List<S3Object> tryWithV2(final String bucket, final String prefix, final String delimiter) {
+    logger.warn("using GET Bucket (List Objects) Version 2!?!");
+    final List<S3Object> allS3Objects = new ArrayList<>();
+    String continuationToken = null;
+    do {
+      final ListObjectsV2Request request = ListObjectsV2Request.builder().prefix(prefix).bucket(bucket)
+          .continuationToken(continuationToken).delimiter(delimiter)
+          .build();
+      final ListObjectsV2Response response = s3Client.listObjectsV2(request);
+      continuationToken = TRUE.equals(response.isTruncated()) ? response.nextContinuationToken() : null;
+      response.contents().stream().map(s3Object -> buildS3Object(s3Object, bucket)).forEach(allS3Objects::add);
+    } while (continuationToken != null);
 
     return allS3Objects;
   }
