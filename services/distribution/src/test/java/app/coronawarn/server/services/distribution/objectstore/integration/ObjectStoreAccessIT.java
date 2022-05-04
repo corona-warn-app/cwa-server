@@ -107,6 +107,7 @@ class ObjectStoreAccessIT extends BaseS3IntegrationTest {
     try {
       return resourceLoader.getResource(textFile).getFile().toPath();
     } catch (IOException e) {
+      e.printStackTrace();
       throw new RuntimeException(e);
     }
   }
@@ -115,6 +116,7 @@ class ObjectStoreAccessIT extends BaseS3IntegrationTest {
     try {
       return resourceLoader.getResource(rootTestFolder).getFile().toPath();
     } catch (IOException e) {
+      e.printStackTrace();
       throw new RuntimeException(e);
     }
   }

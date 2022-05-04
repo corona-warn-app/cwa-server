@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.objectstore.client;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
@@ -26,10 +24,11 @@ public class ObjectStorePublishingConfig {
 
   @Bean(name = "publish-s3")
   public ObjectStoreClient createObjectStoreClient(DistributionServiceConfig distributionServiceConfig) {
-    return createClient(distributionServiceConfig.getObjectStore());
+    return createClient(distributionServiceConfig.getObjectStore(),
+        distributionServiceConfig.getDccRevocation().getDccListPath());
   }
 
-  private ObjectStoreClient createClient(ObjectStore objectStore) {
+  private ObjectStoreClient createClient(final ObjectStore objectStore, final String dccListPath) {
     AwsCredentialsProvider credentialsProvider = StaticCredentialsProvider.create(
         AwsBasicCredentials.create(objectStore.getAccessKey(), objectStore.getSecretKey()));
     String endpoint = removeTrailingSlash(objectStore.getEndpoint()) + ":" + objectStore.getPort();
@@ -38,7 +37,7 @@ public class ObjectStorePublishingConfig {
         .region(DEFAULT_REGION)
         .endpointOverride(URI.create(endpoint))
         .credentialsProvider(credentialsProvider)
-        .build());
+        .build(), dccListPath);
   }
 
   private String removeTrailingSlash(String string) {
