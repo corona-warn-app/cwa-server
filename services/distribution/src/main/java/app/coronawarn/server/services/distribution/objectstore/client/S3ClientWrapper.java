@@ -167,7 +167,7 @@ public class S3ClientWrapper implements ObjectStoreClient {
           .build();
       final ListObjectsResponse response = s3Client.listObjects(request);
       marker = TRUE.equals(response.isTruncated()) ? response.nextMarker() : null;
-      if (response.isTruncated() && marker == null) {
+      if (TRUE.equals(response.isTruncated()) && marker == null) {
         // the zenko/cloudserver during the tests doesn't support the old API as it's the case for OBS at TSI
         return tryWithV2(bucket, prefix, delimiter);
       }
