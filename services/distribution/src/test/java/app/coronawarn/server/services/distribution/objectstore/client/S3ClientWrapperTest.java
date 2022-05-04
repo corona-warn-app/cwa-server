@@ -125,7 +125,7 @@ class S3ClientWrapperTest {
 
   @Test
   void testGetObjectsSendsCorrectRequest() {
-    when(s3Client.listObjects(any(ListObjectsRequest.class))).thenReturn(ListObjectsResponse.builder().build());
+    when(s3Client.listObjects(any(ListObjectsRequest.class))).thenReturn(ListObjectsResponse.builder().isTruncated(false).build());
 
     s3ClientWrapper.getObjects(VALID_BUCKET_NAME, VALID_PREFIX);
 
@@ -178,7 +178,7 @@ class S3ClientWrapperTest {
             s3Object -> software.amazon.awssdk.services.s3.model.S3Object.builder()
                 .key(s3Object.getObjectName()))
         .map(SdkBuilder::build).collect(Collectors.toList());
-    return ListObjectsResponse.builder().contents(responseObjects).build();
+    return ListObjectsResponse.builder().contents(responseObjects).isTruncated(false).build();
   }
 
   @ParameterizedTest
