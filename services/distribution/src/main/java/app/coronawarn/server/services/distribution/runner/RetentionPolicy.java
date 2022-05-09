@@ -7,6 +7,7 @@ import app.coronawarn.server.common.persistence.service.TraceTimeIntervalWarning
 import app.coronawarn.server.services.distribution.Application;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dcc.DccRevocationClient;
+import app.coronawarn.server.services.distribution.dcc.FetchDccListException;
 import app.coronawarn.server.services.distribution.objectstore.S3RetentionPolicy;
 import java.util.Arrays;
 import org.slf4j.Logger;
@@ -100,6 +101,8 @@ public class RetentionPolicy implements ApplicationRunner {
         statisticsDownloadService.applyRetentionPolicy(retentionDays);
       }
       logger.debug("Retention policy applied successfully.");
+    } catch (FetchDccListException e) {
+      logger.warn("Couldn't fetch ETag for DCC-Revocation, will continue with assembly...", e);
     } catch (Exception e) {
       logger.error("Application of retention policy failed.", e);
       Application.killApplication(applicationContext);

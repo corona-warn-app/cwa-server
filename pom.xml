@@ -63,13 +63,13 @@
     <feign.version>11.8</feign.version>
     <commons-math3.version>3.6.1</commons-math3.version>
     <bouncycastle.version>1.70</bouncycastle.version>
-    <awssdk-s3.version>2.17.103</awssdk-s3.version>
-    <io-netty.version>4.1.76.Final</io-netty.version>
+    <awssdk-s3.version>2.17.182</awssdk-s3.version>
+    <io-netty.version>4.1.77.Final</io-netty.version>
     <guava.version>31.1-jre</guava.version>
     <jackson.version>2.13.2</jackson.version>
     <test-containers.version>1.17.1</test-containers.version>
     <postgresql.version>42.3.4</postgresql.version>
-    <wiremock.version>2.33.1</wiremock.version>
+    <wiremock.version>2.33.2</wiremock.version>
     <httpclient.version>4.5.13</httpclient.version>
     <junit.version>4.13.2</junit.version>
     <tomcat.version>9.0.62</tomcat.version>

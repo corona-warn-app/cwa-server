@@ -2,6 +2,7 @@ package app.coronawarn.server.services.distribution.objectstore.client;
 
 import static java.lang.Boolean.TRUE;
 import static java.util.stream.Collectors.toList;
+import static software.amazon.awssdk.services.s3.model.ListObjectsRequest.builder;
 
 import app.coronawarn.server.services.distribution.statistics.exceptions.NotModifiedException;
 import app.coronawarn.server.services.distribution.statistics.file.JsonFile;
@@ -29,6 +30,9 @@ import software.amazon.awssdk.services.s3.model.DeleteObjectsResponse;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
+import software.amazon.awssdk.services.s3.model.ListObjectsRequest.Builder;
+import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
@@ -47,15 +51,38 @@ public class S3ClientWrapper implements ObjectStoreClient {
 
   private final S3Client s3Client;
 
+  /**
+   * Default value is coming from: 'services.distribution.dcc-revocation.dcc-revocation-directory' which is currently:
+   * 'dcc-rl'.
+   */
+  private final String dccListPath;
+
+  /**
+   * Standard constructor for reading analytics/statistics data from OBS.
+   * 
+   * @param s3Client delegator
+   */
   public S3ClientWrapper(S3Client s3Client) {
     this.s3Client = s3Client;
+    this.dccListPath = null;
+  }
+
+  /**
+   * Constructor which sets a default {@link Builder#delimiter(String)}.
+   * 
+   * @param s3Client    delegator
+   * @param dccListPath - {@link #dccListPath}.
+   */
+  public S3ClientWrapper(final S3Client s3Client, final String dccListPath) {
+    this.s3Client = s3Client;
+    this.dccListPath = dccListPath;
   }
 
   @Override
   public boolean bucketExists(String bucketName) {
     try {
-      // using S3Client.listObjectsV2 instead of S3Client.listBuckets/headBucket in order to limit required permissions
-      s3Client.listObjectsV2(ListObjectsV2Request.builder().bucket(bucketName).maxKeys(1).build());
+      // using S3Client.listObjects instead of S3Client.listBuckets/headBucket in order to limit required permissions
+      s3Client.listObjects(ListObjectsRequest.builder().bucket(bucketName).maxKeys(1).build());
       return true;
     } catch (NoSuchBucketException e) {
       return false;
@@ -72,7 +99,8 @@ public class S3ClientWrapper implements ObjectStoreClient {
   @Retryable(
       value = SdkException.class,
       maxAttemptsExpression = "${services.distribution.objectstore.retry-attempts}",
-      backoff = @Backoff(delayExpression = "${services.distribution.objectstore.retry-backoff}"))
+      backoff = @Backoff(
+          delayExpression = "${services.distribution.objectstore.retry-backoff}"))
   public JsonFile getSingleObjectContent(String bucket, String key) {
     GetObjectRequest request = GetObjectRequest.builder()
         .bucket(bucket)
@@ -87,7 +115,8 @@ public class S3ClientWrapper implements ObjectStoreClient {
       value = SdkException.class,
       exclude = NotModifiedException.class,
       maxAttemptsExpression = "${services.distribution.objectstore.retry-attempts}",
-      backoff = @Backoff(delayExpression = "${services.distribution.objectstore.retry-backoff}"))
+      backoff = @Backoff(
+          delayExpression = "${services.distribution.objectstore.retry-backoff}"))
   public JsonFile getSingleObjectContent(String bucket, String key, String ifNotETag) throws NotModifiedException {
     try {
       GetObjectRequest request = GetObjectRequest.builder()
@@ -106,24 +135,61 @@ public class S3ClientWrapper implements ObjectStoreClient {
     }
   }
 
+  /**
+   * Calls {@link #getSingleObjectContent(String, String, String)} but with {@link #dccListPath} as last parameter -
+   * aka. delimiter.
+   */
   @Override
   @Retryable(
       value = SdkException.class,
       maxAttemptsExpression = "${services.distribution.objectstore.retry-attempts}",
-      backoff = @Backoff(delayExpression = "${services.distribution.objectstore.retry-backoff}"))
+      backoff = @Backoff(
+          delayExpression = "${services.distribution.objectstore.retry-backoff}"))
   public List<S3Object> getObjects(String bucket, String prefix) {
+    return getObjects(bucket, prefix, dccListPath);
+  }
+
+  /**
+   * Pass in <code>null</code> as delimiter, when you really want to receive ALL existing {@link S3Objetcs}.
+   */
+  @Override
+  @Retryable(
+      value = SdkException.class,
+      maxAttemptsExpression = "${services.distribution.objectstore.retry-attempts}",
+      backoff = @Backoff(
+          delayExpression = "${services.distribution.objectstore.retry-backoff}"))
+  public List<S3Object> getObjects(String bucket, String prefix, String delimiter) {
     logRetryStatus("object download");
     List<S3Object> allS3Objects = new ArrayList<>();
-    String continuationToken = null;
-
+    String marker = null;
     do {
-      ListObjectsV2Request request =
-          ListObjectsV2Request.builder().prefix(prefix).bucket(bucket).continuationToken(continuationToken).build();
-      ListObjectsV2Response response = s3Client.listObjectsV2(request);
+      final ListObjectsRequest request = builder().prefix(prefix).bucket(bucket).marker(marker).delimiter(delimiter)
+          .build();
+      final ListObjectsResponse response = s3Client.listObjects(request);
+      marker = TRUE.equals(response.isTruncated()) ? response.nextMarker() : null;
+      if (TRUE.equals(response.isTruncated()) && marker == null) {
+        // the zenko/cloudserver during the tests doesn't support the old API as it's the case for OBS at TSI
+        return tryWithV2(bucket, prefix, delimiter);
+      }
       response.contents().stream()
           .map(s3Object -> buildS3Object(s3Object, bucket))
           .forEach(allS3Objects::add);
+    } while (marker != null);
+
+    return allS3Objects;
+  }
+
+  private List<S3Object> tryWithV2(final String bucket, final String prefix, final String delimiter) {
+    logger.warn("using GET Bucket (List Objects) Version 2!?!");
+    final List<S3Object> allS3Objects = new ArrayList<>();
+    String continuationToken = null;
+    do {
+      final ListObjectsV2Request request = ListObjectsV2Request.builder().prefix(prefix).bucket(bucket)
+          .continuationToken(continuationToken).delimiter(delimiter)
+          .build();
+      final ListObjectsV2Response response = s3Client.listObjectsV2(request);
       continuationToken = TRUE.equals(response.isTruncated()) ? response.nextContinuationToken() : null;
+      response.contents().stream().map(s3Object -> buildS3Object(s3Object, bucket)).forEach(allS3Objects::add);
     } while (continuationToken != null);
 
     return allS3Objects;
@@ -138,7 +204,8 @@ public class S3ClientWrapper implements ObjectStoreClient {
   @Retryable(
       value = SdkException.class,
       maxAttemptsExpression = "${services.distribution.objectstore.retry-attempts}",
-      backoff = @Backoff(delayExpression = "${services.distribution.objectstore.retry-backoff}"))
+      backoff = @Backoff(
+          delayExpression = "${services.distribution.objectstore.retry-backoff}"))
   public void putObject(String bucket, String objectName, Path filePath, Map<HeaderKey, String> headers) {
     logRetryStatus("object upload");
     var requestBuilder = PutObjectRequest.builder().bucket(bucket).key(objectName);
@@ -160,9 +227,12 @@ public class S3ClientWrapper implements ObjectStoreClient {
   }
 
   @Override
-  @Retryable(value = {SdkException.class, ObjectStoreOperationFailedException.class},
+  @Retryable(
+      value = { SdkException.class,
+          ObjectStoreOperationFailedException.class },
       maxAttemptsExpression = "${services.distribution.objectstore.retry-attempts}",
-      backoff = @Backoff(delayExpression = "${services.distribution.objectstore.retry-backoff}"))
+      backoff = @Backoff(
+          delayExpression = "${services.distribution.objectstore.retry-backoff}"))
   public void removeObjects(String bucket, List<String> objectNames) {
     if (objectNames.isEmpty()) {
       return;
@@ -202,8 +272,7 @@ public class S3ClientWrapper implements ObjectStoreClient {
 
   /**
    * Fetches the CWA Hash for the given S3Object. Unfortunately, this is necessary for the AWS SDK, as it does not
-   * support fetching metadata within the {@link ListObjectsV2Request}.<br> MinIO actually does support this, so when
-   * they release 7.0.3, we can remove this code here.
+   * support fetching metadata within the {@link ListObjectsRequest}.
    *
    * @param s3Object the S3Object to fetch the CWA hash for
    * @param bucket   the target bucket

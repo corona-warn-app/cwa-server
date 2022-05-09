@@ -31,6 +31,10 @@ class LocalFileTest {
       "version/v1/configuration/country/DE/app_config",
       "version/v1/diagnosis-keys/country/DE/date/2020-06-11",
       "version/v1/diagnosis-keys/country/DE/date/2020-06-11/hour/13",
+      "version/v1/dcc-rl/kid",
+      "version/v1/dcc-rl/138291851ea0ddb40a/20/3e/chunk",
+      "version/v1/dcc-rl/138291851ea0ddb40a/3e/a5/chunk",
+      "version/v1/dcc-rl/138291851ea0ddb40a/index",
       "version/v1/qr_code_poster_template_android",
       "version/v1/qr_code_poster_template_ios"})
   void testGetContentTypeZip(String path) {
