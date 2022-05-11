@@ -12,7 +12,7 @@ on:
 
 jobs:
     mvn-verify:
-        name: mvn verify
+        name: run mvn verify and do SonarCloud scan
         runs-on: ubuntu-latest
         steps:
         -   name: Checkout repository
@@ -25,10 +25,6 @@ jobs:
                 cache: maven
         -   name: mvn verify
             run: mvn -B -P integration-test verify --fail-fast --file pom.xml
-    sonar-scan:
-        name: SonarCloud scan
-        runs-on: ubuntu-latest
-        steps:
         -   name: SonarCloud Scan
             uses: SonarSource/sonarcloud-github-action@v1.6
             env:
