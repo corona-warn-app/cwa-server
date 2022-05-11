@@ -14,6 +14,7 @@ on:
 
 jobs:
     hadolint-callback:
+        name: Lint callback Dockerfile
         runs-on: ubuntu-latest
         steps:
         -   name: Checkout repository

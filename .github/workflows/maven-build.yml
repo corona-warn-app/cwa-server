@@ -30,10 +30,7 @@ jobs:
             env:
                 SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         -   name: Report JUnit results
-            uses: dorny/test-reporter@v1
+            uses: EnricoMi/publish-unit-test-result-action/composite@v1
             if: always()
             with:
-                name: Maven Tests
-                path: '**/surefire-reports/*.xml'
-                reporter: java-junit
-                fail-on-error: true
+                files: '**/surefire-reports/*.xml'
