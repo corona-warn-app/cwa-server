@@ -1,8 +1,14 @@
 name: hadolint-analysis-workflow
 
 on:
+    push:
+        branches:
+        - main
+        - release/**
     pull_request:
-        branches: [ main, release/** ]
+        branches:
+        - main
+        - release/**
         paths:
         - '**/Dockerfile'
 
@@ -10,40 +16,49 @@ jobs:
     hadolint-callback:
         runs-on: ubuntu-latest
         steps:
-        -   uses: actions/checkout@v2
+        -   name: Checkout repository
+            uses: actions/checkout@v3
         -   name: Pull HaDoLint image
             run: docker pull hadolint/hadolint
-        -   name: Lint Dockerfile
+        -   name: Lint callback Dockerfile
             run: docker run --rm --interactive hadolint/hadolint hadolint --ignore DL3059 - < ./services/callback/Dockerfile
     hadolint-distribution:
+        name: Lint distribution Dockerfile
         runs-on: ubuntu-latest
         steps:
-        -   uses: actions/checkout@v2
+        -   name: Checkout repository
+            uses: actions/checkout@v3
         -   name: Pull HaDoLint Image
             run: docker pull hadolint/hadolint
-        -   name: Lint Dockerfile
+        -   name: Lint distribution Dockerfile
             run: docker run --rm --interactive hadolint/hadolint hadolint --ignore DL3059 - < ./services/distribution/Dockerfile
     hadolint-download:
+        name: Lint download Dockerfile
         runs-on: ubuntu-latest
         steps:
-        -   uses: actions/checkout@v2
+        -   name: Checkout repository
+            uses: actions/checkout@v3
         -   name: Pull HaDoLint Image
             run: docker pull hadolint/hadolint
-        -   name: Lint Dockerfile
+        -   name: Lint download Dockerfile
             run: docker run --rm --interactive hadolint/hadolint hadolint --ignore DL3059 - < ./services/download/Dockerfile
     hadolint-submission:
+        name: Lint submission Dockerfile
         runs-on: ubuntu-latest
         steps:
-        -   uses: actions/checkout@v2
+        -   name: Checkout repository
+            uses: actions/checkout@v3
         -   name: Pull HaDoLint Image
             run: docker pull hadolint/hadolint
-        -   name: Lint Dockerfile
+        -   name: Lint submission Dockerfile
             run: docker run --rm --interactive hadolint/hadolint hadolint --ignore DL3059 - < ./services/submission/Dockerfile
     hadolint-upload:
+        name: Lint upload Dockerfile
         runs-on: ubuntu-latest
         steps:
-        -   uses: actions/checkout@v2
+        -   name: Checkout repository
+            uses: actions/checkout@v3
         -   name: Pull HaDoLint Image
             run: docker pull hadolint/hadolint
-        -   name: Lint Dockerfile
+        -   name: Lint upload Dockerfile
             run: docker run --rm --interactive hadolint/hadolint hadolint --ignore DL3059 - < ./services/upload/Dockerfile
