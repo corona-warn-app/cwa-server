@@ -26,10 +26,12 @@ jobs:
         -   name: mvn verify
             run: mvn -B -P integration-test verify --fail-fast --file pom.xml
     sonar-scan:
-        name: SonarCloud Scan
+        name: SonarCloud scan
         runs-on: ubuntu-latest
         steps:
         -   name: SonarCloud Scan
             uses: SonarSource/sonarcloud-github-action@v1.6
             env:
                 SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+            with:
+                args: -Dsonar.organization=corona-warn-app -Dsonar.projectKey=corona-warn-app_cwa-server
