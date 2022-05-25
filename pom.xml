@@ -68,7 +68,7 @@
     <guava.version>31.1-jre</guava.version>
     <jackson.version>2.13.3</jackson.version>
     <test-containers.version>1.17.2</test-containers.version>
-    <postgresql.version>42.3.5</postgresql.version>
+    <postgresql.version>42.3.6</postgresql.version>
     <wiremock.version>2.33.2</wiremock.version>
     <httpclient.version>4.5.13</httpclient.version>
     <junit.version>4.13.2</junit.version>
