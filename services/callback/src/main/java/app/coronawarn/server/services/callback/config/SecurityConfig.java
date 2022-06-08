@@ -13,18 +13,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
 
 @Configuration
-@EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig {
 
   private static final String CALLBACK_ROUTE =
       "/version/v1" + CallbackController.CALLBACK_ROUTE;
@@ -49,8 +47,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     return firewall;
   }
 
-  @Override
-  protected void configure(HttpSecurity http) throws Exception {
+  /**
+   * Security Filter Chain bean is configured here because it is encouraged a more component-based approach.
+   * Before this we used to extend WebSecurityConfigurerAdapter (now deprecated) and Override the configure method.
+   *
+   * @return newly configured http bean
+   */
+  @Bean
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry expressionInterceptUrlRegistry
         = http.authorizeRequests();
     expressionInterceptUrlRegistry
@@ -61,6 +65,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     expressionInterceptUrlRegistry
         .anyRequest().denyAll();
     http.headers().contentSecurityPolicy("default-src 'self'");
+    return http.build();
   }
 
 
@@ -71,7 +76,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
    * @return UserDetailsService
    */
   @Bean
-  @Override
   public UserDetailsService userDetailsService() {
     return username -> {
       if (username.equals(callbackServiceConfig.getCertCn())) {
