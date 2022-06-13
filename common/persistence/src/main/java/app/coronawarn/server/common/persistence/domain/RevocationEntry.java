@@ -97,10 +97,8 @@ public class RevocationEntry {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append(new BigInteger(1, getKid()).toString(16));
-    sb.append('0');
-    sb.append(new BigInteger(1, getType()).toString(16));
-
+    sb.append(String.format("%016x", new BigInteger(1, getKid())));
+    sb.append(String.format("%02x", new BigInteger(1, getType())));
     return sb.toString();
   }
 
