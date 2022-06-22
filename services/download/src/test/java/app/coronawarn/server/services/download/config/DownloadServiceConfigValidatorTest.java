@@ -1,8 +1,13 @@
-
-
 package app.coronawarn.server.services.download.config;
 
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import static app.coronawarn.server.common.persistence.domain.DiagnosisKey.MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS;
+import static app.coronawarn.server.common.persistence.domain.DiagnosisKey.MIN_TRANSMISSION_RISK_LEVEL;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -12,12 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
-import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = {DownloadServiceConfigValidator.class})
 @DirtiesContext
@@ -64,7 +63,7 @@ class DownloadServiceConfigValidatorTest {
         {0, 8},
         {-1, 6},
         {-3, 3},
-        {-14, 1}
+        { MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS, 1 }
     }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 
     Map<Integer, Integer> validMapping2 = Stream.of(new Integer[][] {
@@ -74,7 +73,7 @@ class DownloadServiceConfigValidatorTest {
         {0, 4},
         {-1, 5},
         {-3, 6},
-        {-14, 7},
+        { MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS, 7 },
         {-2, 8}
     }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 
@@ -88,8 +87,8 @@ class DownloadServiceConfigValidatorTest {
     return Stream.of(
         Arguments.of(Map.of(4001, 1)),
         Arguments.of(Map.of(14, 9)),
-        Arguments.of(Map.of(14, DiagnosisKey.MIN_TRANSMISSION_RISK_LEVEL - 1)),
-        Arguments.of(Map.of(-15, 1))
+        Arguments.of(Map.of(14, MIN_TRANSMISSION_RISK_LEVEL - 1)),
+        Arguments.of(Map.of(MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS - 1, 1))
     );
   }
 }
