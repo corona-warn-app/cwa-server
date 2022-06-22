@@ -1,12 +1,14 @@
-
-
 package app.coronawarn.server.services.submission.config;
 
+import static app.coronawarn.server.common.persistence.domain.DiagnosisKey.MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.Payload;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -18,10 +20,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.util.unit.DataSize;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext
@@ -154,7 +152,7 @@ class SubmissionServiceConfigValidatorTest {
         {0, 8},
         {-1, 6},
         {-3, 3},
-        {-14, 1}
+        { MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS, 1 }
     }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 
     Map<Integer, Integer> validMapping2 = Stream.of(new Integer[][]{
@@ -164,7 +162,7 @@ class SubmissionServiceConfigValidatorTest {
         {0, 4},
         {-1, 5},
         {-3, 6},
-        {-14, 7},
+        { MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS, 7 },
         {-2, 8}
     }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 
@@ -179,7 +177,7 @@ class SubmissionServiceConfigValidatorTest {
         Arguments.of(Map.of(4001, 1)),
         Arguments.of(Map.of(14, 9)),
         Arguments.of(Map.of(14, DiagnosisKey.MIN_TRANSMISSION_RISK_LEVEL - 1)),
-        Arguments.of(Map.of(-15, 1))
+        Arguments.of(Map.of(MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS - 1, 1))
     );
   }
 
@@ -193,7 +191,7 @@ class SubmissionServiceConfigValidatorTest {
     }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 
     Map<Integer, Integer> map2 = Stream.of(new Integer[][]{
-        {1, -14},
+        { 1, MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS },
         {2, -3},
         {3, -2},
         {4, 0},
@@ -209,8 +207,7 @@ class SubmissionServiceConfigValidatorTest {
   private static Stream<Arguments> invalidDsosFromTrlDatasets() {
     return Stream.of(
         Arguments.of(Map.of(DiagnosisKey.MIN_TRANSMISSION_RISK_LEVEL - 1, -4)),
-        Arguments.of(Map.of(1, -15))
+        Arguments.of(Map.of(1, MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS - 1))
     );
   }
 }
-

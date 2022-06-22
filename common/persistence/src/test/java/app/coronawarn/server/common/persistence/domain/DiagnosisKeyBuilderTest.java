@@ -1,5 +1,10 @@
 package app.coronawarn.server.common.persistence.domain;
 
+import static app.coronawarn.server.common.persistence.domain.DiagnosisKey.MAX_ROLLING_PERIOD;
+import static app.coronawarn.server.common.persistence.domain.DiagnosisKey.MAX_TRANSMISSION_RISK_LEVEL;
+import static app.coronawarn.server.common.persistence.domain.DiagnosisKey.MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS;
+import static app.coronawarn.server.common.persistence.domain.DiagnosisKey.MIN_ROLLING_PERIOD;
+import static app.coronawarn.server.common.persistence.domain.DiagnosisKey.MIN_TRANSMISSION_RISK_LEVEL;
 import static app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionTimestampValidator.SECONDS_PER_HOUR;
 import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServiceTestHelper.buildDiagnosisKeyForSubmissionTimestamp;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,7 +53,7 @@ class DiagnosisKeyBuilderTest {
         .newBuilder()
         .setKeyData(ByteString.copyFrom(expKeyData))
         .setRollingStartIntervalNumber(expRollingStartIntervalNumber)
-        .setRollingPeriod(DiagnosisKey.MAX_ROLLING_PERIOD)
+        .setRollingPeriod(MAX_ROLLING_PERIOD)
         .setTransmissionRiskLevel(expTransmissionRiskLevel)
         .setReportType(reportType)
         .setDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms)
@@ -73,7 +78,7 @@ class DiagnosisKeyBuilderTest {
         .newBuilder()
         .setKeyData(ByteString.copyFrom(expKeyData))
         .setRollingStartIntervalNumber(expRollingStartIntervalNumber)
-        .setRollingPeriod(DiagnosisKey.MAX_ROLLING_PERIOD)
+        .setRollingPeriod(MAX_ROLLING_PERIOD)
         .setTransmissionRiskLevel(expTransmissionRiskLevel)
         .setReportType(reportType)
         .setDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms)
@@ -131,7 +136,7 @@ class DiagnosisKeyBuilderTest {
         .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
         .withTransmissionRiskLevel(expTransmissionRiskLevel)
         .withSubmissionTimestamp(expSubmissionTimestamp)
-        .withRollingPeriod(DiagnosisKey.MAX_ROLLING_PERIOD)
+        .withRollingPeriod(MAX_ROLLING_PERIOD)
         .withReportType(reportType)
         .withDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms)
         .withConsentToFederation(expConsentToFederation)
@@ -258,32 +263,33 @@ class DiagnosisKeyBuilderTest {
   }
 
   @ParameterizedTest
-  @ValueSource(ints = { DiagnosisKey.MIN_TRANSMISSION_RISK_LEVEL - 1, DiagnosisKey.MAX_TRANSMISSION_RISK_LEVEL + 1 })
+  @ValueSource(ints = { MIN_TRANSMISSION_RISK_LEVEL - 1, MAX_TRANSMISSION_RISK_LEVEL + 1 })
   void transmissionRiskLevelMustBeInRange(int invalidRiskLevel) {
     assertThat(catchThrowable(() -> keyWithRiskLevel(invalidRiskLevel)))
         .isInstanceOf(InvalidDiagnosisKeyException.class)
         .hasMessage(
-            "[Risk level must be between " + DiagnosisKey.MIN_TRANSMISSION_RISK_LEVEL + " and "
-                + DiagnosisKey.MAX_TRANSMISSION_RISK_LEVEL + ". Invalid Value: " + invalidRiskLevel + "]");
+            "[Risk level must be between " + MIN_TRANSMISSION_RISK_LEVEL + " and "
+                + MAX_TRANSMISSION_RISK_LEVEL + ". Invalid Value: " + invalidRiskLevel + "]");
   }
 
   @ParameterizedTest
-  @ValueSource(ints = { DiagnosisKey.MIN_TRANSMISSION_RISK_LEVEL, DiagnosisKey.MAX_TRANSMISSION_RISK_LEVEL })
+  @ValueSource(ints = { MIN_TRANSMISSION_RISK_LEVEL, MAX_TRANSMISSION_RISK_LEVEL })
   void transmissionRiskLevelDoesNotThrowForValid(int validRiskLevel) {
     assertThatCode(() -> keyWithRiskLevel(validRiskLevel)).doesNotThrowAnyException();
   }
 
   @ParameterizedTest
-  @ValueSource(ints = { -16, -17, 4001 })
+  @ValueSource(ints = { MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS - 1, -17, 4001 })
   void daysSinceOnsetSymptomsMustBeInRange(int invalidDsos) {
     assertThat(catchThrowable(() -> keyWithDsos(invalidDsos)))
         .isInstanceOf(InvalidDiagnosisKeyException.class)
         .hasMessage(
-            "[Days since onset of symptoms value must be between -15 and 4000. Invalid Value: " + invalidDsos + "]");
+            "[Days since onset of symptoms value must be between " + MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS
+                + " and 4000. Invalid Value: " + invalidDsos + "]");
   }
 
   @ParameterizedTest
-  @ValueSource(ints = { 0, 8, -14, 3986 })
+  @ValueSource(ints = { 0, 8, MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS, 3986 })
   void daysSinceOnsetSymptomsValidationDoesNotThrowForValid(int validDsos) {
     assertThatCode(() -> keyWithDsos(validDsos)).doesNotThrowAnyException();
   }
@@ -293,13 +299,13 @@ class DiagnosisKeyBuilderTest {
   void rollingPeriodMustBeExpectedValue(int invalidRollingPeriod) {
     assertThat(catchThrowable(() -> keyWithRollingPeriod(invalidRollingPeriod)))
         .isInstanceOf(InvalidDiagnosisKeyException.class)
-        .hasMessage("[Rolling period must be between " + DiagnosisKey.MIN_ROLLING_PERIOD + " and "
-            + DiagnosisKey.MAX_ROLLING_PERIOD
+        .hasMessage("[Rolling period must be between " + MIN_ROLLING_PERIOD + " and "
+            + MAX_ROLLING_PERIOD
             + ". Invalid Value: " + invalidRollingPeriod + "]");
   }
 
   @ParameterizedTest
-  @ValueSource(ints = { DiagnosisKey.MIN_ROLLING_PERIOD, 100, DiagnosisKey.MAX_ROLLING_PERIOD })
+  @ValueSource(ints = { MIN_ROLLING_PERIOD, 100, MAX_ROLLING_PERIOD })
   void rollingPeriodDoesNotThrowForValid(int validRollingPeriod) {
     assertThatCode(() -> keyWithRollingPeriod(validRollingPeriod)).doesNotThrowAnyException();
   }
@@ -353,14 +359,12 @@ class DiagnosisKeyBuilderTest {
         .newBuilder()
         .setKeyData(ByteString.copyFrom(expKeyData))
         .setRollingStartIntervalNumber(expRollingStartIntervalNumber)
-        .setRollingPeriod(DiagnosisKey.MAX_ROLLING_PERIOD)
+        .setRollingPeriod(MAX_ROLLING_PERIOD)
         .setTransmissionRiskLevel(expTransmissionRiskLevel)
         .build();
 
     DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
-        .fromTemporaryExposureKeyAndMetadata(protoBufObj, expSubmissionType, List.of("DE"), "DE",
-            true
-        )
+        .fromTemporaryExposureKeyAndMetadata(protoBufObj, expSubmissionType, List.of("DE"), "DE", true)
         .build();
 
     assertThat(actDiagnosisKey.getReportType()).isEqualTo(reportType);
@@ -374,7 +378,7 @@ class DiagnosisKeyBuilderTest {
         .addAllVisitedCountries(visitedCountries)
         .setRollingStartIntervalNumber(expRollingStartIntervalNumber)
         .setTransmissionRiskLevel(expTransmissionRiskLevel)
-        .setRollingPeriod(DiagnosisKey.MAX_ROLLING_PERIOD)
+        .setRollingPeriod(MAX_ROLLING_PERIOD)
         .setDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms)
         .setReportType(reportType)
         .setOrigin(originCountry)

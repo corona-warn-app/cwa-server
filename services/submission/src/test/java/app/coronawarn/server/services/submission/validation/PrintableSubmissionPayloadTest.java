@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 
 public class PrintableSubmissionPayloadTest {
 
-
   @Test
   void keyDataIsHidden() {
     SubmissionPayload submissionPayload = SubmissionPayloadMockData.buildPayloadWithOriginCountry("DE");
@@ -50,9 +49,9 @@ public class PrintableSubmissionPayloadTest {
     TemporaryExposureKey key = submissionPayload.getKeys(0);
     String payloadString = printableSubmissionPayload.toString();
 
-    assertThat(payloadString).contains(" " + key.getTransmissionRiskLevel() + " ")
-        .contains(" " + key.getRollingStartIntervalNumber() + " ")
-        .contains(" " + key.getReportType() +  " ")
-        .contains(" " + key.getDaysSinceOnsetOfSymptoms() + " ");
+    assertThat(payloadString).contains(" " + key.getTransmissionRiskLevel() + ",")
+        .contains(" " + key.getRollingStartIntervalNumber() + ",")
+        .contains(" " + key.getReportType() + ",")
+        .contains(" " + key.getDaysSinceOnsetOfSymptoms());
   }
 }
