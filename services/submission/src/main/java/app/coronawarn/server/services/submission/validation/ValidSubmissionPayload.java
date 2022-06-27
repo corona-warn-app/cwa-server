@@ -64,11 +64,11 @@ public @interface ValidSubmissionPayload {
     private final int maxRollingPeriod;
     private final Collection<String> supportedCountries;
     private final String defaultOriginCountry;
-    
+
     /**
      * EventCheckinDataValidator.
      *
-     * @deprecated in favor of {@link #eventCheckInProtectedReportsValidator}. 
+     * @deprecated in favor of {@link #eventCheckInProtectedReportsValidator}.
      */
     @Deprecated(since = "2.8", forRemoval = true)
     private final EventCheckinDataValidator eventCheckinValidator;
@@ -114,13 +114,13 @@ public @interface ValidSubmissionPayload {
       boolean isValidPayload = checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
           && checkKeyCollectionSize(exposureKeys, validatorContext)
           && checkOriginCountryIsValid(submissionPayload, validatorContext)
-          && checkVisitedCountriesAreValid(submissionPayload, validatorContext)
+          //&& checkVisitedCountriesAreValid(submissionPayload, validatorContext) //aici
           && checkRequiredFieldsNotMissing(exposureKeys, validatorContext)
           && checkTransmissionRiskLevelIsAcceptable(exposureKeys, validatorContext)
           && checkDaysSinceOnsetOfSymptomsIsInRange(exposureKeys, validatorContext)
           && eventCheckinValidator.verify(submissionPayload, validatorContext)
           && eventCheckInProtectedReportsValidator.verify(submissionPayload, validatorContext)
-          && checkRollingPeriodIsInRange(exposureKeys, validatorContext);
+          //&& checkRollingPeriodIsInRange(exposureKeys, validatorContext); //aici
 
       if (!isValidPayload) {
         PrintableSubmissionPayload printableSubmissionPayload = new PrintableSubmissionPayload(submissionPayload);

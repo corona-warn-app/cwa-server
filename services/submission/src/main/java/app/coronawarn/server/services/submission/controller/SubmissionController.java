@@ -19,6 +19,7 @@ import feign.FeignException;
 import feign.RetryableException;
 import io.micrometer.core.annotation.Timed;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -35,6 +36,11 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
+
+import javax.validation.ConstraintValidatorContext;
+
+import static java.util.function.Predicate.not;
+import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping("/version/v1")
@@ -60,7 +66,9 @@ public class SubmissionController {
   private final SubmissionServiceConfig submissionServiceConfig;
   private EventCheckinFacade eventCheckinFacade;
   private final TrlDerivations trlDerivations;
-
+  private final Collection<String> supportedCountries;
+  private final int minRollingPeriod;
+  private final int maxRollingPeriod;
   SubmissionController(DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier,
       EventTanVerifier eventTanVerifier, FakeDelayManager fakeDelayManager,
       SubmissionServiceConfig submissionServiceConfig, SubmissionMonitor submissionMonitor,
@@ -75,6 +83,9 @@ public class SubmissionController {
     this.randomKeyPaddingMultiplier = submissionServiceConfig.getRandomKeyPaddingMultiplier();
     this.eventCheckinFacade = eventCheckinFacade;
     this.trlDerivations = submissionServiceConfig.getTrlDerivations();
+    this.supportedCountries = List.of(submissionServiceConfig.getSupportedCountries());
+    this.maxRollingPeriod = submissionServiceConfig.getMaxRollingPeriod();
+    this.minRollingPeriod = submissionServiceConfig.getMinRollingPeriod();
   }
 
   /**
@@ -168,8 +179,10 @@ public class SubmissionController {
     diagnosisKey.setTransmissionRiskLevel(
         trlDerivations.mapFromTrlSubmittedToTrlToStore(diagnosisKey.getTransmissionRiskLevel()));
   }
-
-  private List<DiagnosisKey> extractValidDiagnosisKeysFromPayload(SubmissionPayload submissionPayload) {
+  private void addViolation(ConstraintValidatorContext validatorContext, String message) {
+    validatorContext.buildConstraintViolationWithTemplate(message).addConstraintViolation();
+  }
+  private List<DiagnosisKey> extractValidDiagnosisKeysFromPayload(SubmissionPayload submissionPayload, ConstraintValidatorContext validatorContext) {
     List<TemporaryExposureKey> protoBufferKeys = submissionPayload.getKeysList();
 
     List<DiagnosisKey> diagnosisKeys = protoBufferKeys.stream()
@@ -190,6 +203,23 @@ public class SubmissionController {
       logger.warn("Not persisting {} diagnosis key(s), as it is outdated beyond retention threshold.",
           protoBufferKeys.size() - diagnosisKeys.size());
     }
+    //aici codul pentru lista de tari si rolling period
+
+    for (DiagnosisKey diagnosisKey: diagnosisKeys)
+    {
+      Collection<String> invalidVisitedCountries = diagnosisKey.getVisitedCountries().stream()
+          .filter(not(supportedCountries::contains)).collect(toList());
+      if (!invalidVisitedCountries.isEmpty()) {
+        invalidVisitedCountries.forEach(country -> addViolation(validatorContext,
+            "[" + country + "]: Visited country is not part of the supported countries list"));
+      }
+      if (diagnosisKey.getRollingPeriod() < minRollingPeriod
+          || diagnosisKey.getRollingPeriod() > maxRollingPeriod) {
+        addViolation(validatorContext,
+            "The rolling period is not in range (" + minRollingPeriod + " - " + maxRollingPeriod + ").");
+      }
+    }
+
     return diagnosisKeys;
   }
 
