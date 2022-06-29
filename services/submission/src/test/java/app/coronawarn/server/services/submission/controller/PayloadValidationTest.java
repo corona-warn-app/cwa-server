@@ -1,7 +1,6 @@
-
-
 package app.coronawarn.server.services.submission.controller;
 
+import static app.coronawarn.server.common.persistence.domain.DiagnosisKey.MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.VALID_KEY_DATA_1;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildTemporaryExposureKey;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildTemporaryExposureKeyWithFlexibleRollingPeriod;
@@ -66,14 +65,14 @@ class PayloadValidationTest {
   }
 
   @ParameterizedTest
-  @ValueSource(ints = {-15, -100, 4001})
+  @ValueSource(ints = { MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS - 1, -100, 4001 })
   void check400ResponseStatusForDaysSinceSymptomsFieldNotInRange(int invalidDsosValue) {
     ResponseEntity<Void> actResponse = executor.executePost(buildKeysWithDaysSinceSymptoms(invalidDsosValue));
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
   @ParameterizedTest
-  @ValueSource(ints = {-14, -9, 0, 3986})
+  @ValueSource(ints = { MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS, -9, 0, 3986 })
   void check200ResponseStatusForDaysSinceSymptomsFieldInRange(int validDsosValue) {
     ResponseEntity<Void> actResponse = executor.executePost(buildKeysWithDaysSinceSymptoms(validDsosValue));
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
@@ -175,7 +174,6 @@ class PayloadValidationTest {
 
     return flexibleRollingPeriodKeys;
   }
-
 
   @Test
   void check200ResponseStatusWithTwoKeyFromToday() {
