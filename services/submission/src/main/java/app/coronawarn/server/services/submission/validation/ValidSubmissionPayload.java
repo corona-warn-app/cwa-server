@@ -114,13 +114,13 @@ public @interface ValidSubmissionPayload {
       boolean isValidPayload = checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
           && checkKeyCollectionSize(exposureKeys, validatorContext)
           && checkOriginCountryIsValid(submissionPayload, validatorContext)
-          //&& checkVisitedCountriesAreValid(submissionPayload, validatorContext) //aici
+          && checkVisitedCountriesAreValid(submissionPayload, validatorContext)
           && checkRequiredFieldsNotMissing(exposureKeys, validatorContext)
           && checkTransmissionRiskLevelIsAcceptable(exposureKeys, validatorContext)
           && checkDaysSinceOnsetOfSymptomsIsInRange(exposureKeys, validatorContext)
           && eventCheckinValidator.verify(submissionPayload, validatorContext)
           && eventCheckInProtectedReportsValidator.verify(submissionPayload, validatorContext)
-          //&& checkRollingPeriodIsInRange(exposureKeys, validatorContext); //aici
+          && checkRollingPeriodIsInRange(exposureKeys, validatorContext);
 
       if (!isValidPayload) {
         PrintableSubmissionPayload printableSubmissionPayload = new PrintableSubmissionPayload(submissionPayload);

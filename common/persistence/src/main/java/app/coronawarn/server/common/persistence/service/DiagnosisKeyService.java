@@ -54,6 +54,10 @@ public class DiagnosisKeyService {
         continue;
       }
 
+      if (diagnosisKey.isYoungerThanRetentionThreshold(diagnosisKey.getRollingStartIntervalNumber())) {
+        continue;
+      }
+
       boolean keyInsertedSuccessfully = keyRepository.saveDoNothingOnConflict(
           diagnosisKey.getKeyData(), diagnosisKey.getRollingStartIntervalNumber(), diagnosisKey.getRollingPeriod(),
           diagnosisKey.getSubmissionTimestamp(), diagnosisKey.getTransmissionRiskLevel(),
@@ -88,7 +92,7 @@ public class DiagnosisKeyService {
 
   /**
    * Fetches {@link DiagnosisKey}s from DB with TRL greater or equal than the given value.
-   * 
+   *
    * @param minTrl      Minimum Transmission-Risk-Level to fetch.
    * @param daysToFetch time in days, that should be published
    * @return List of {@link DiagnosisKey}s filtered by {@link #validationFilter}.
@@ -117,7 +121,7 @@ public class DiagnosisKeyService {
 
   /**
    * Calculates epoch seconds in UTC based upon current time and given days.
-   * 
+   *
    * @param daysToRetain offset in days to use for epoch second
    * @return epoch seconds
    */
