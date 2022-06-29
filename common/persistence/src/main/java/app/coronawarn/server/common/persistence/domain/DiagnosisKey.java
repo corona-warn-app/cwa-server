@@ -39,7 +39,7 @@ public class DiagnosisKey {
   public static final int KEY_DATA_LENGTH = 16;
   public static final int MIN_ROLLING_PERIOD = 1;
   public static final int MAX_ROLLING_PERIOD = 144; //(144*10 = 24*60)
-  public static final int MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS = -14;
+  public static final int MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS = -15;
   public static final int MAX_DAYS_SINCE_ONSET_OF_SYMPTOMS = 4000;
   public static final int MIN_TRANSMISSION_RISK_LEVEL = 1;
   public static final int MAX_TRANSMISSION_RISK_LEVEL = 8;
