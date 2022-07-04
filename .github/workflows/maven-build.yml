@@ -10,6 +10,11 @@ on:
         - main
         - release/**
 
+permissions:
+    statuses: write
+    checks: write
+    pull-requests: write
+
 jobs:
     mvn-verify:
         name: run mvn verify and do SonarCloud scan
@@ -29,7 +34,17 @@ jobs:
             run: mvn -B sonar:sonar --fail-never
             env:
                 SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        -   name: Report JUnit results
+        -   name: Report JUnit results at checks
+            uses: dorny/test-reporter@v1
+            if: always()
+            with:
+                name: Maven Tests
+                path: '**/surefire-reports/*.xml'
+                reporter: java-junit
+                fail-on-error: true
+                list-suites: 'failed'
+                list-tests: 'failed'
+        -   name: Report JUnit results at checks as comment
             uses: EnricoMi/publish-unit-test-result-action/composite@v1
             if: always()
             with:
