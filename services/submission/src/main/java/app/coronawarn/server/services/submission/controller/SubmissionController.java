@@ -2,6 +2,7 @@ package app.coronawarn.server.services.submission.controller;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.config.TrlDerivations;
+import app.coronawarn.server.common.persistence.domain.validation.ValidRollingStartIntervalNumberValidator;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
@@ -10,6 +11,7 @@ import app.coronawarn.server.services.submission.checkins.EventCheckinFacade;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
 import app.coronawarn.server.services.submission.normalization.SubmissionKeyNormalizer;
+import app.coronawarn.server.services.submission.validation.PrintableSubmissionPayload;
 import app.coronawarn.server.services.submission.validation.ValidSubmissionOnBehalfPayload;
 import app.coronawarn.server.services.submission.validation.ValidSubmissionPayload;
 import app.coronawarn.server.services.submission.verification.EventTanVerifier;
@@ -60,6 +62,7 @@ public class SubmissionController {
   private final SubmissionServiceConfig submissionServiceConfig;
   private EventCheckinFacade eventCheckinFacade;
   private final TrlDerivations trlDerivations;
+  private final ValidRollingStartIntervalNumberValidator rollingStartIntervalNumberValidator;
 
   SubmissionController(DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier,
       EventTanVerifier eventTanVerifier, FakeDelayManager fakeDelayManager,
@@ -75,6 +78,7 @@ public class SubmissionController {
     this.randomKeyPaddingMultiplier = submissionServiceConfig.getRandomKeyPaddingMultiplier();
     this.eventCheckinFacade = eventCheckinFacade;
     this.trlDerivations = submissionServiceConfig.getTrlDerivations();
+    rollingStartIntervalNumberValidator = new ValidRollingStartIntervalNumberValidator();
   }
 
   /**
@@ -184,11 +188,14 @@ public class SubmissionController {
             .build()
         )
         .filter(diagnosisKey -> diagnosisKey.isYoungerThanRetentionThreshold(retentionDays))
+        .filter(protoBufferKey -> rollingStartIntervalNumberValidator
+            .isValid(protoBufferKey.getRollingStartIntervalNumber(), null))
         .collect(Collectors.toList());
 
     if (protoBufferKeys.size() > diagnosisKeys.size()) {
-      logger.warn("Not persisting {} diagnosis key(s), as it is outdated beyond retention threshold.",
-          protoBufferKeys.size() - diagnosisKeys.size());
+      logger.warn("Not persisting {} diagnosis key(s), as it is outdated beyond retention threshold or the "
+          + "RollingStartIntervalNumber is in the future. Payload: {}", protoBufferKeys.size() - diagnosisKeys.size(),
+          new PrintableSubmissionPayload(submissionPayload));
     }
     return diagnosisKeys;
   }
