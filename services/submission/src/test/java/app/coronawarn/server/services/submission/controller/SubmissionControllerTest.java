@@ -4,6 +4,7 @@ import static app.coronawarn.server.common.persistence.service.utils.checkins.Ch
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.VALID_KEY_DATA_1;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.VALID_KEY_DATA_2;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeys;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildKeyWithFutureInterval;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeysWithoutDSOS;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeysWithoutDSOSAndTRL;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeysWithoutTRL;
@@ -403,6 +404,25 @@ class SubmissionControllerTest {
 
     verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
     assertSubmissionPayloadKeysCorrespondToEachOther(submittedKeys, argument.getValue(), submissionPayload);
+  }
+
+  @Test
+  void submmissionPayloadWithInvalidIntervalItemsIsFilteredCorrectly() {
+    int daysIntoTheFuture = 5;
+    final Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeys(config);
+    TemporaryExposureKey futureKey = buildKeyWithFutureInterval(5);
+    submittedKeys.add(futureKey);
+    final ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
+
+    final boolean consentToFederation = true;
+    final SubmissionPayload submissionPayload = buildPayload(submittedKeys, consentToFederation);
+    executor.executePost(submissionPayload);
+
+    verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
+    Collection<DiagnosisKey> savedDiagnosisKeys = argument.getValue();
+    int expectedNumberofSavedKeys = (submittedKeys.size()-1) * config.getRandomKeyPaddingMultiplier();
+    assertThat(savedDiagnosisKeys).hasSize(expectedNumberofSavedKeys);
+    assertThat(savedDiagnosisKeys.stream().anyMatch(diagnosisKey -> diagnosisKey.getRollingStartIntervalNumber() == futureKey.getRollingStartIntervalNumber()) == false);
   }
 
   @Test

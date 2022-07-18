@@ -25,6 +25,7 @@ public final class SubmissionPayloadMockData {
   public static final String VALID_KEY_DATA_1 = "testKey111111111";
   public static final String VALID_KEY_DATA_2 = "testKey222222222";
   public static final String VALID_KEY_DATA_3 = "testKey333333333";
+  public static final String VALID_KEY_DATA_4 = "testKey444444444";
 
   public static SubmissionPayload buildPayload(TemporaryExposureKey key) {
     Collection<TemporaryExposureKey> keys = Stream.of(key).collect(Collectors.toCollection(ArrayList::new));
@@ -137,6 +138,11 @@ public final class SubmissionPayloadMockData {
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
+  public static TemporaryExposureKey buildKeyWithFutureInterval(int daysIntoTheFuture) {
+    int rollingStartIntervalNumber = createRollingStartIntervalNumberFromTheFuture(daysIntoTheFuture);
+    return buildTemporaryExposureKey(VALID_KEY_DATA_4, rollingStartIntervalNumber, 3, CONFIRMED_TEST, 1);
+  }
+
   public static SubmissionPayload buildPayloadWithOriginCountry(String originCountry) {
     TemporaryExposureKey key =
         buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3,
@@ -232,6 +238,13 @@ public final class SubmissionPayloadMockData {
     return Math.toIntExact(LocalDate
         .ofInstant(Instant.now(), UTC)
         .minusDays(daysAgo).atStartOfDay()
+        .toEpochSecond(UTC) / (60 * 10));
+  }
+
+  public static int createRollingStartIntervalNumberFromTheFuture(Integer daysIntoTheFuture) {
+    return Math.toIntExact(LocalDate
+        .ofInstant(Instant.now(), UTC)
+        .plusDays(daysIntoTheFuture).atStartOfDay()
         .toEpochSecond(UTC) / (60 * 10));
   }
 }
