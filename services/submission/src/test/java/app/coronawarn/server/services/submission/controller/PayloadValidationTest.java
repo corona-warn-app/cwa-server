@@ -194,10 +194,10 @@ class PayloadValidationTest {
   }
 
   @Test
-  void check400ResponseStatusWithKeysInFuture() {
+  void check200ResponseStatusWithKeysInFuture() {
     ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithTwoKeysInFuture());
 
-    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
   private Collection<TemporaryExposureKey> buildPayloadWithTwoKeysInFuture() {
@@ -248,10 +248,10 @@ class PayloadValidationTest {
   }
 
   @Test
-  void check400ResponseStatusFor99KeysPayloadWithDifferentDays() {
+  void check200ResponseStatusFor99KeysPayloadWithDifferentDays() {
     ResponseEntity<Void> actResponse = executor.executePost(build99KeysPayload());
 
-    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
   private Collection<TemporaryExposureKey> build99KeysPayload() {

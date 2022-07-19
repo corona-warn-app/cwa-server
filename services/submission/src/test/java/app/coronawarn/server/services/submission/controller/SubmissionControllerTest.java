@@ -410,7 +410,7 @@ class SubmissionControllerTest {
   void submmissionPayloadWithInvalidIntervalItemsIsFilteredCorrectly() {
     int daysIntoTheFuture = 5;
     final Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeys(config);
-    TemporaryExposureKey futureKey = buildKeyWithFutureInterval(5);
+    TemporaryExposureKey futureKey = buildKeyWithFutureInterval(daysIntoTheFuture);
     submittedKeys.add(futureKey);
     final ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
 
