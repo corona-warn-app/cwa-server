@@ -194,7 +194,8 @@ public class SubmissionController {
 
     if (protoBufferKeys.size() > diagnosisKeys.size()) {
       logger.warn("Not persisting {} one or more diagnosis key(s), as it is outdated beyond retention threshold or the "
-              + "RollingStartIntervalNumber is in the future. Payload: {}", protoBufferKeys.size() - diagnosisKeys.size(),
+              + "RollingStartIntervalNumber is in the future. Payload: {}",
+          protoBufferKeys.size() - diagnosisKeys.size(),
           new PrintableSubmissionPayload(submissionPayload));
     }
     return diagnosisKeys;
