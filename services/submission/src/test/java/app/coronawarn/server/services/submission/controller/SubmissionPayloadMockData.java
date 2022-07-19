@@ -139,7 +139,7 @@ public final class SubmissionPayloadMockData {
   }
 
   public static TemporaryExposureKey buildKeyWithFutureInterval(int daysIntoTheFuture) {
-    int rollingStartIntervalNumber = createRollingStartIntervalNumberFromTheFuture(daysIntoTheFuture);
+    int rollingStartIntervalNumber = createRollingStartIntervalNumber(-daysIntoTheFuture);
     return buildTemporaryExposureKey(VALID_KEY_DATA_4, rollingStartIntervalNumber, 3, CONFIRMED_TEST, 1);
   }
 
@@ -241,10 +241,4 @@ public final class SubmissionPayloadMockData {
         .toEpochSecond(UTC) / (60 * 10));
   }
 
-  public static int createRollingStartIntervalNumberFromTheFuture(Integer daysIntoTheFuture) {
-    return Math.toIntExact(LocalDate
-        .ofInstant(Instant.now(), UTC)
-        .plusDays(daysIntoTheFuture).atStartOfDay()
-        .toEpochSecond(UTC) / (60 * 10));
-  }
 }
