@@ -47,7 +47,7 @@
     <sonar.projectKey>${sonar.organization}_cwa-${project.artifactId}</sonar.projectKey>
 
     <!-- https://spring.io/projects/spring-boot -->
-    <spring-boot.version>2.7.1</spring-boot.version>
+    <spring-boot.version>2.7.2</spring-boot.version>
     <!-- https://spring.io/projects/spring-cloud#release-trains -->
     <spring-cloud.version>2021.0.3</spring-cloud.version>
     <!-- If you update spring-cloud, see if it references the correct spring-vault-core version again, then remove the following: -->
@@ -72,7 +72,7 @@
     <wiremock.version>2.33.2</wiremock.version>
     <httpclient.version>4.5.13</httpclient.version>
     <junit.version>4.13.2</junit.version>
-    <tomcat.version>9.0.64</tomcat.version>
+    <tomcat.version>9.0.65</tomcat.version>
     <findify-s3mock.version>0.2.6</findify-s3mock.version>
     <checkstyle.version>10.3.1</checkstyle.version>
     <semver4j.version>3.1.0</semver4j.version>
