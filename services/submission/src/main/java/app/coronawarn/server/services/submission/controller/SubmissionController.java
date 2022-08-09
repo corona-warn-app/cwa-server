@@ -177,6 +177,8 @@ public class SubmissionController {
     List<TemporaryExposureKey> protoBufferKeys = submissionPayload.getKeysList();
 
     List<DiagnosisKey> diagnosisKeys = protoBufferKeys.stream()
+        .filter(protoBufferKey -> rollingStartIntervalNumberValidator
+            .isValid(protoBufferKey.getRollingStartIntervalNumber(), null))
         .map(protoBufferKey -> DiagnosisKey.builder()
             .fromTemporaryExposureKeyAndMetadata(
                 protoBufferKey,
@@ -188,13 +190,12 @@ public class SubmissionController {
             .build()
         )
         .filter(diagnosisKey -> diagnosisKey.isYoungerThanRetentionThreshold(retentionDays))
-        .filter(protoBufferKey -> rollingStartIntervalNumberValidator
-            .isValid(protoBufferKey.getRollingStartIntervalNumber(), null))
         .collect(Collectors.toList());
 
     if (protoBufferKeys.size() > diagnosisKeys.size()) {
-      logger.warn("Not persisting {} diagnosis key(s), as it is outdated beyond retention threshold or the "
-          + "RollingStartIntervalNumber is in the future. Payload: {}", protoBufferKeys.size() - diagnosisKeys.size(),
+      logger.warn("Not persisting {} one or more diagnosis key(s), as it is outdated beyond retention threshold or the "
+              + "RollingStartIntervalNumber is in the future. Payload: {}",
+          protoBufferKeys.size() - diagnosisKeys.size(),
           new PrintableSubmissionPayload(submissionPayload));
     }
     return diagnosisKeys;
