@@ -68,13 +68,13 @@
     <guava.version>31.1-jre</guava.version>
     <jackson.version>2.13.3</jackson.version>
     <test-containers.version>1.17.3</test-containers.version>
-    <postgresql.version>42.4.0</postgresql.version>
+    <postgresql.version>42.4.1</postgresql.version>
     <wiremock.version>2.33.2</wiremock.version>
     <httpclient.version>4.5.13</httpclient.version>
     <junit.version>4.13.2</junit.version>
     <tomcat.version>9.0.65</tomcat.version>
     <findify-s3mock.version>0.2.6</findify-s3mock.version>
-    <checkstyle.version>10.3.1</checkstyle.version>
+    <checkstyle.version>10.3.2</checkstyle.version>
     <semver4j.version>3.1.0</semver4j.version>
     <upokecenter-cbor.version>4.5.2</upokecenter-cbor.version>
   </properties>
@@ -531,7 +531,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.12.0</version>
+          <version>3.12.1</version>
         </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
