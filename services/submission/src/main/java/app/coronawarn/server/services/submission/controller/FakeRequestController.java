@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.submission.controller;
 
 import static app.coronawarn.server.services.submission.controller.SubmissionController.CWA_FILTERED_CHECKINS_HEADER;
@@ -42,7 +40,6 @@ public class FakeRequestController {
    */
   @PostMapping(value = SUBMISSION_ROUTE, headers = {"cwa-fake!=0"})
   @Timed(description = "Time spent handling fake submission.")
-  @SuppressWarnings("unchecked")
   public DeferredResult<ResponseEntity<Void>> fakeRequest(@RequestHeader("cwa-fake") Integer fake) {
     submissionMonitor.incrementRequestCounter();
     submissionMonitor.incrementFakeRequestCounter();

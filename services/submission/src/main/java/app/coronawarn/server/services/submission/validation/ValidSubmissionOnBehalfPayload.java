@@ -8,7 +8,6 @@ import app.coronawarn.server.common.protocols.internal.SubmissionPayload.Submiss
 import app.coronawarn.server.services.submission.checkins.EventCheckInProtectedReportsValidator;
 import app.coronawarn.server.services.submission.checkins.EventCheckinDataValidator;
 import app.coronawarn.server.services.submission.validation.ValidSubmissionOnBehalfPayload.ValidSubmissionOnBehalfPayloadValidator;
-import app.coronawarn.server.services.submission.validation.ValidSubmissionPayload.SubmissionPayloadValidator;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.util.stream.Stream;
@@ -21,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
+@SuppressWarnings("deprecation")
 @Target(PARAMETER)
 @Retention(RUNTIME)
 @Constraint(validatedBy = ValidSubmissionOnBehalfPayloadValidator.class)
@@ -61,6 +61,7 @@ public @interface ValidSubmissionOnBehalfPayload {
     private static final Logger logger = LoggerFactory.getLogger(ValidSubmissionOnBehalfPayload.class);
     private static final Marker SECURITY = MarkerFactory.getMarker("SECURITY");
 
+    @SuppressWarnings("deprecation")
     public ValidSubmissionOnBehalfPayloadValidator(EventCheckinDataValidator eventCheckinValidator,
         EventCheckInProtectedReportsValidator eventCheckInProtectedReportsValidator) {
       this.eventCheckInValidator = eventCheckinValidator;
@@ -82,6 +83,7 @@ public @interface ValidSubmissionOnBehalfPayload {
      * @param context           constraint validator context for enabling violation messages.
      * @return whether the payload is valid or not.
      */
+    @SuppressWarnings("deprecation")
     @Override
     public boolean isValid(SubmissionPayload submissionPayload, ConstraintValidatorContext context) {
       return Stream.of(diagnosisKeysAreEmpty(submissionPayload, context),
