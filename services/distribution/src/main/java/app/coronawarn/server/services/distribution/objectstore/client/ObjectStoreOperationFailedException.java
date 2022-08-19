@@ -1,11 +1,10 @@
-
-
 package app.coronawarn.server.services.distribution.objectstore.client;
 
 /**
  * {@link ObjectStoreOperationFailedException} indicates that a object store operation could not be performed.
  */
 public class ObjectStoreOperationFailedException extends RuntimeException {
+  private static final long serialVersionUID = -7588036602833284123L;
 
   /**
    * Constructs a new {@link ObjectStoreOperationFailedException} with the specified message.

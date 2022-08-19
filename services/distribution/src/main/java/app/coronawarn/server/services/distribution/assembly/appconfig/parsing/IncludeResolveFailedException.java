@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.assembly.appconfig.parsing;
 
 import app.coronawarn.server.common.shared.exception.UnableToLoadFileException;
@@ -9,6 +7,7 @@ import org.yaml.snakeyaml.nodes.ScalarNode;
  * This exception is raised in case SnakeYaml was not able to map the content of the include to the target data type.
  */
 public class IncludeResolveFailedException extends RuntimeException {
+  private static final long serialVersionUID = -6510293265253711125L;
 
   /**
    * Creates a new Include Resolve Failed Exception.

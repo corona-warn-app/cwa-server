@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
 /**
@@ -7,6 +5,7 @@ package app.coronawarn.server.services.distribution.assembly.appconfig.validatio
  * message property.
  */
 public class ValidationExecutionException extends RuntimeException {
+  private static final long serialVersionUID = -3970814945560559417L;
 
   public ValidationExecutionException(String message, Throwable cause) {
     super(message, cause);
