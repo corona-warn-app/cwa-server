@@ -24,6 +24,7 @@ import org.junit.rules.TemporaryFolder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+@SuppressWarnings("deprecation")
 @ExtendWith(MockitoExtension.class)
 class TraceTimeIntervalWarningExportFileTest {
 

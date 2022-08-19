@@ -8,7 +8,6 @@ import static app.coronawarn.server.services.distribution.common.Helpers.loadApp
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
 import app.coronawarn.server.common.shared.exception.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.assembly.appconfig.ApplicationConfigurationPublicationConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
@@ -80,16 +79,6 @@ class ApplicationConfigurationValidatorTest {
   private static TestWithExpectedResult minRiskThresholdOutOfBoundsPositive() {
     return TEST_BUILDER.build("app-config_mrs_oob.yaml")
         .with(buildError("min-risk-score", RISK_SCORE_MAX + 1, VALUE_OUT_OF_BOUNDS));
-  }
-
-  private ConfigurationValidator buildApplicationConfigurationValidator(
-      DistributionServiceConfig distributionServiceConfig)
-      throws UnableToLoadFileException {
-    ApplicationConfigurationPublicationConfig applicationConfigurationPublicationConfig = new ApplicationConfigurationPublicationConfig();
-    ApplicationConfiguration appConfig = applicationConfigurationPublicationConfig
-        .createMainConfiguration(distributionServiceConfig);
-
-    return new ApplicationConfigurationValidator(appConfig);
   }
 
   public static ValidationResult buildExpectedResult(ValidationError... errors) {

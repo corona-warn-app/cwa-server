@@ -76,6 +76,7 @@ class TraceTimeIntervalWarningsDistributionIT {
     when(outputDirectoryProvider.getDirectory()).thenReturn(testDirectory);
   }
 
+  @SuppressWarnings("deprecation")
   @Test
   void testIndicesAreOldestAndLatestForMultipleSubmissions() throws Exception {
     // given

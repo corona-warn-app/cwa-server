@@ -98,7 +98,6 @@ class DccValidationAllowListSignatureTest {
     assertThat(optionalProtobuf.get().getServiceProvidersList()).isEmpty();
   }
 
-  @SuppressWarnings("CatchMayIgnoreException")
   @Test
   void testValidateSchemaInexistent() {
     try {
@@ -150,7 +149,6 @@ class DccValidationAllowListSignatureTest {
   @Mock
   private CloseableHttpClient httpClient;
 
-  @SuppressWarnings("ResultOfMethodCallIgnored")
   @Test
   void testWithMockedHttpClientReturningNull() throws IOException {
     try (MockedStatic<HttpClients> httpClientsMockedStatic = Mockito.mockStatic(HttpClients.class)) {
@@ -162,7 +160,6 @@ class DccValidationAllowListSignatureTest {
     }
   }
 
-  @SuppressWarnings("ResultOfMethodCallIgnored")
   @Test
   void testWithMockedHttpClientReturningResponse() throws IOException {
     try (MockedStatic<HttpClients> httpClientsMockedStatic = Mockito.mockStatic(HttpClients.class)) {

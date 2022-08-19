@@ -54,7 +54,6 @@ class DownloadDateBaseSwitchToCallbackIT {
   private static final String ERROR_BATCH_TAG = "error_batch";
   private static final String SWITCH_DAY_UNPROCESSED_BATCH_TAG = "switch_day_unprocessed_batch";
   private static final String SWITCH_DAY_NEW_UNPROCESSED_BATCH_TAG = "switch_day_new_unprocessed_batch";
-  private static final String SWITCH_DAY_NEW_UNPROCESSED_1_BATCH_TAG = "switch_day_new_unprocessed_batch_1";
 
   private static final String SWITCH_DAY_ERROR_BATCH_TAG = "switch_day_error";
 

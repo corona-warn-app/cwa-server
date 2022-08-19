@@ -84,7 +84,7 @@ class S3ClientWrapperTest {
   @Autowired
   private ObjectStoreClient s3ClientWrapper;
 
-  final Map emptyMap = Collections.emptyMap();
+  final Map<HeaderKey, String> emptyMap = Collections.emptyMap();
 
   @Configuration
   @EnableRetry

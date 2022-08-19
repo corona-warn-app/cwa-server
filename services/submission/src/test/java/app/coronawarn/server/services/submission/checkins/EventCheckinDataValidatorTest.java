@@ -25,6 +25,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@SuppressWarnings("deprecation")
 public class EventCheckinDataValidatorTest {
 
   private static final int CORRECT_TRL = 1;

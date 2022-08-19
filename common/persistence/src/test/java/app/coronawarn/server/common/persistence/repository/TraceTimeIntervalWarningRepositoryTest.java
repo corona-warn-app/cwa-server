@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 @DataJdbcTest
 class TraceTimeIntervalWarningRepositoryTest {
 
+  @SuppressWarnings("deprecation")
   @Autowired
   private TraceTimeIntervalWarningRepository underTest;
 

@@ -1,6 +1,5 @@
 package app.coronawarn.server.services.submission.validation;
 
-
 import static app.coronawarn.server.services.submission.validation.ValidSubmissionOnBehalfPayload.ValidSubmissionOnBehalfPayloadValidator;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -27,6 +26,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+@SuppressWarnings("deprecation")
 @ExtendWith(MockitoExtension.class)
 public class ValidSubmissionOnBehalfTest {
 
@@ -45,7 +45,6 @@ public class ValidSubmissionOnBehalfTest {
 
   @Mock
   ConstraintValidatorContext constraintValidatorContext;
-
 
   @Test
   void shouldReturnTrueIfSubmissionOnBehalfPayloadIsValid() {
