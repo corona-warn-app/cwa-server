@@ -28,16 +28,17 @@ import org.springframework.data.util.StreamUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+@SuppressWarnings("deprecation")
 @Component
 public class TraceTimeIntervalWarningService {
 
   private static final Logger logger =
       LoggerFactory.getLogger(TraceTimeIntervalWarningService.class);
 
-  @Deprecated(since = "2.8", forRemoval = true)
+  @Deprecated(since = "2.8", forRemoval = false)
   private final TraceTimeIntervalWarningRepository traceTimeIntervalWarningRepo;
   private final CheckInProtectedReportsRepository checkInProtectedReportsRepository;
-  @Deprecated(since = "2.8", forRemoval = true)
+  @Deprecated(since = "2.8", forRemoval = false)
   private final MessageDigest hashAlgorithm;
 
   /**
@@ -61,13 +62,13 @@ public class TraceTimeIntervalWarningService {
    *
    * @deprecated in favor of encrypted checkins.
    */
-  @Deprecated(since = "2.8", forRemoval = true)
+  @Deprecated(since = "2.8", forRemoval = false)
   @Transactional
   public int saveCheckins(List<CheckIn> checkins, int submissionTimestamp, SubmissionType submissionType) {
     return saveCheckins(checkins, this::hashLocationId, submissionTimestamp, submissionType);
   }
 
-  @Deprecated(since = "2.8", forRemoval = true)
+  @Deprecated(since = "2.8", forRemoval = false)
   private int saveCheckins(List<CheckIn> checkins, Function<ByteString, byte[]> idHashGenerator,
       int submissionTimestamp, SubmissionType submissionType) {
     int numberOfInsertedTraceWarnings = 0;
@@ -129,7 +130,7 @@ public class TraceTimeIntervalWarningService {
    *
    * @deprecated because trace time warnings are not longer supported and replaced by encrypted checkins.
    */
-  @Deprecated(since = "2.8", forRemoval = true)
+  @Deprecated(since = "2.8", forRemoval = false)
   public Collection<TraceTimeIntervalWarning> getTraceTimeIntervalWarnings() {
     return StreamUtils
         .createStreamFromIterator(traceTimeIntervalWarningRepo
@@ -147,7 +148,7 @@ public class TraceTimeIntervalWarningService {
         .collect(Collectors.toList());
   }
 
-  @Deprecated(since = "2.8", forRemoval = true)
+  @Deprecated(since = "2.8", forRemoval = false)
   private byte[] hashLocationId(ByteString locationId) {
     return hashAlgorithm.digest(locationId.toByteArray());
   }

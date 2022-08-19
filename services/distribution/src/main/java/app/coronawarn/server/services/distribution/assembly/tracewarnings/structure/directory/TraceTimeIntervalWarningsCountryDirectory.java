@@ -15,6 +15,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@SuppressWarnings("deprecation")
 public class TraceTimeIntervalWarningsCountryDirectory extends IndexDirectoryOnDisk<String> {
 
   private static final String VERSION_V2 = "v2";

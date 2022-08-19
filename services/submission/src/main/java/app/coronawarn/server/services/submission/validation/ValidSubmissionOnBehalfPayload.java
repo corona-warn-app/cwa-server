@@ -55,13 +55,11 @@ public @interface ValidSubmissionOnBehalfPayload {
      *
      * @deprecated in favor of {@link #eventCheckInProtectedReportsValidator}.
      */
-    @Deprecated(since = "2.8", forRemoval = true)
     private final EventCheckinDataValidator eventCheckInValidator;
     private final EventCheckInProtectedReportsValidator eventCheckInProtectedReportsValidator;
     private static final Logger logger = LoggerFactory.getLogger(ValidSubmissionOnBehalfPayload.class);
     private static final Marker SECURITY = MarkerFactory.getMarker("SECURITY");
 
-    @SuppressWarnings("deprecation")
     public ValidSubmissionOnBehalfPayloadValidator(EventCheckinDataValidator eventCheckinValidator,
         EventCheckInProtectedReportsValidator eventCheckInProtectedReportsValidator) {
       this.eventCheckInValidator = eventCheckinValidator;
@@ -83,7 +81,6 @@ public @interface ValidSubmissionOnBehalfPayload {
      * @param context           constraint validator context for enabling violation messages.
      * @return whether the payload is valid or not.
      */
-    @SuppressWarnings("deprecation")
     @Override
     public boolean isValid(SubmissionPayload submissionPayload, ConstraintValidatorContext context) {
       return Stream.of(diagnosisKeysAreEmpty(submissionPayload, context),

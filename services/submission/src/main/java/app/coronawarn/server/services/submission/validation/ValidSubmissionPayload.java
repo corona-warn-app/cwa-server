@@ -70,7 +70,7 @@ public @interface ValidSubmissionPayload {
      *
      * @deprecated in favor of {@link #eventCheckInProtectedReportsValidator}. 
      */
-    @Deprecated(since = "2.8", forRemoval = true)
+    @Deprecated(since = "2.8", forRemoval = false)
     private final EventCheckinDataValidator eventCheckinValidator;
     private final EventCheckInProtectedReportsValidator eventCheckInProtectedReportsValidator;
     private static final Logger logger = LoggerFactory.getLogger(SubmissionPayloadValidator.class);

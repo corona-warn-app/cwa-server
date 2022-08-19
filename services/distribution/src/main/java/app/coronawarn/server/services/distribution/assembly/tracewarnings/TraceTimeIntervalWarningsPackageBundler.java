@@ -46,7 +46,7 @@ public abstract class TraceTimeIntervalWarningsPackageBundler {
    * @see CheckinsDateSpecification#HOUR_SINCE_EPOCH_DERIVATION
    * @deprecated in favor of {@link #distributableCheckInProtectedReports}.
    */
-  @Deprecated(since = "2.8", forRemoval = true)
+  @Deprecated(since = "2.8", forRemoval = false)
   protected final Map<Integer, List<TraceTimeIntervalWarning>> distributableTraceTimeIntervalWarnings =
       new HashMap<>();
 
