@@ -13,7 +13,6 @@ import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import app.coronawarn.server.common.protocols.internal.pt.CheckInProtectedReport;
-import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.controller.FakeDelayManager;
 import app.coronawarn.server.services.submission.controller.RequestExecutor;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
@@ -24,9 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -38,16 +35,6 @@ class SubmissionDisabledUnencryptedCheckInsIT {
 
   @Autowired
   private RequestExecutor executor;
-
-  @Autowired
-  private SubmissionServiceConfig config;
-
-  @Autowired
-  private JdbcTemplate jdbcTemplate;
-
-  @Autowired
-  private TestRestTemplate testRestTemplate;
-
 
   @MockBean
   private TanVerifier tanVerifier;
@@ -61,7 +48,7 @@ class SubmissionDisabledUnencryptedCheckInsIT {
     when(fakeDelayManager.getJitteredFakeDelay()).thenReturn(1000L);
   }
 
-
+  @Deprecated
   @Test
   void unencryptedCheckInsDisabledShouldResultInSavingLessNumberOfCheckIns() {
     // GIVEN:

@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.common.persistence.exception;
 
 /**
@@ -10,6 +8,7 @@ package app.coronawarn.server.common.persistence.exception;
  * is semantically erroneous.
  */
 public class InvalidDiagnosisKeyException extends RuntimeException {
+  private static final long serialVersionUID = -6124348897420468935L;
 
   public InvalidDiagnosisKeyException(String message) {
     super(message);

@@ -228,7 +228,6 @@ class DistributionServiceConfigTest {
 
   @Nested
   class CclAllowListTest {
-
     @Test
     void failsOnInvalidSupportedCountries() {
       String[] cclAllowList = distributionServiceConfig.getDigitalGreenCertificate().getCclAllowList();
@@ -236,35 +235,50 @@ class DistributionServiceConfigTest {
     }
   }
 
-  private static Stream<Arguments> iosDetectionParametersMaxExposureDetectionsPerIntervalArguments() {
+  /**
+   * @MethodSource
+   */
+  static Stream<Arguments> iosDetectionParametersMaxExposureDetectionsPerIntervalArguments() {
     return Stream.of(
         Arguments.of(-1, IosExposureDetectionParameters.MIN_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS),
         Arguments.of(7, IosExposureDetectionParameters.MAX_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS)
     );
   }
 
-  private static Stream<Arguments> androidKeyDownloadParametersDownloadTimeoutArguments() {
+  /**
+   * @MethodSource
+   */
+  static Stream<Arguments> androidKeyDownloadParametersDownloadTimeoutArguments() {
     return Stream.of(
         Arguments.of(-1, AndroidKeyDownloadParameters.MIN_VALUE_ERROR_MESSAGE_DOWNLOAD_TIMEOUT),
         Arguments.of(1801, AndroidKeyDownloadParameters.MAX_VALUE_ERROR_MESSAGE_DOWNLOAD_TIMEOUT)
     );
   }
 
-  private static Stream<Arguments> androidKeyDownloadParametersOverallTimeoutArguments() {
+  /**
+   * @MethodSource
+   */
+  static Stream<Arguments> androidKeyDownloadParametersOverallTimeoutArguments() {
     return Stream.of(
         Arguments.of(-1, AndroidKeyDownloadParameters.MIN_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT),
         Arguments.of(1801, AndroidKeyDownloadParameters.MAX_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT)
     );
   }
 
-  private static Stream<Arguments> androidDetectionParametersMaxExposureDetectionsPerIntervalArguments() {
+  /**
+   * @MethodSource
+   */
+  static Stream<Arguments> androidDetectionParametersMaxExposureDetectionsPerIntervalArguments() {
     return Stream.of(
         Arguments.of(-1, AndroidExposureDetectionParameters.MIN_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS),
         Arguments.of(7, AndroidExposureDetectionParameters.MAX_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS)
     );
   }
 
-  private static Stream<Arguments> androidDetectionParametersOverAllTimeoutBoundariesArguments() {
+  /**
+   * @MethodSource
+   */
+  static Stream<Arguments> androidDetectionParametersOverAllTimeoutBoundariesArguments() {
     return Stream.of(
         Arguments.of(-1, AndroidExposureDetectionParameters.MIN_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT),
         Arguments.of(3601, AndroidExposureDetectionParameters.MAX_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT)

@@ -167,6 +167,7 @@ public final class SubmissionPayloadMockData {
         .build();
   }
 
+  @Deprecated
   public static SubmissionPayload buildPayloadWithCheckinData(List<CheckIn> checkinData) {
     TemporaryExposureKey key =
         buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3,

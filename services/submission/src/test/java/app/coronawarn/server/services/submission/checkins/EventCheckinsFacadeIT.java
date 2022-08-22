@@ -25,6 +25,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
+@SuppressWarnings("deprecation")
 @SpringBootTest
 @DirtiesContext
 @ActiveProfiles("integration-test")

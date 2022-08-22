@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.decorator;
 
 import static org.mockito.ArgumentMatchers.anyString;
@@ -28,7 +26,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-
+@SuppressWarnings("deprecation")
 @ExtendWith(SpringExtension.class)
 class HourIntervalIndexingDecoratorTest {
 
@@ -54,7 +52,6 @@ class HourIntervalIndexingDecoratorTest {
 
     underTest = makeDecoratedHourDirectory();
   }
-
 
   @AfterEach
   void tearDown() {
@@ -88,6 +85,7 @@ class HourIntervalIndexingDecoratorTest {
     );
   }
 
+  @Deprecated
   private AbstractHourIntervalIndexingDecorator makeDecoratedHourDirectory() {
     return new HourIntervalIndexingV1Decorator(
         new TraceTimeIntervalWarningsHourV1Directory(traceTimeIntervalWarningsPackageBundler, cryptoProvider,

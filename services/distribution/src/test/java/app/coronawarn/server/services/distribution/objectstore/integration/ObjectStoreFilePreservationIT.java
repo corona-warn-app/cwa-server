@@ -140,8 +140,9 @@ class ObjectStoreFilePreservationIT extends BaseS3IntegrationTest {
 
           if (filesAreDifferent(previouslyPublished, secondVersion)) {
             throw new AssertionError("Files have been changed on object store "
-                + "due to retention policy. Before: " + previouslyPublished.getObjectName()
-                + "-" + previouslyPublished.getCwaHash()
+                + "due to retention policy. Before: " + (previouslyPublished != null
+                    ? previouslyPublished.getObjectName() + "-" + previouslyPublished.getCwaHash()
+                    : null)
                 + "| After:" + secondVersion.getObjectName()
                 + "-" + secondVersion.getCwaHash());
           }

@@ -98,7 +98,7 @@ public class DataHelpers {
         ByteString.copyFrom(locationId));
   }
 
-
+  @Deprecated
   public static SubmissionPayload buildSubmissionPayloadWithCheckins(List<String> visitedCountries,
       String originCountry,
       Boolean consentToFederation, List<TemporaryExposureKey> temporaryExposureKeys,

@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.assembly.appconfig.parsing;
 
 import org.yaml.snakeyaml.nodes.Node;
@@ -9,6 +7,7 @@ import org.yaml.snakeyaml.nodes.Node;
  * should contain a Message Builder. This Message.Builder is required for the processing.
  */
 public class NoMessageBuilderOnClassException extends RuntimeException {
+  private static final long serialVersionUID = 4867340635126780197L;
 
   /**
    * Creates a new exception instance based on the given {@link Node}.

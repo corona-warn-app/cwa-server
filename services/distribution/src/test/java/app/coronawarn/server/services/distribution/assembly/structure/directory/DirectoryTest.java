@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.assembly.structure.directory;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -67,6 +65,7 @@ class DirectoryTest {
   @Test
   void checkWriteWritesOwnDirectory() {
     class MockFile extends java.io.File {
+      private static final long serialVersionUID = 2416208157399566292L;
 
       public MockFile() {
         super(outputDir.getPath());

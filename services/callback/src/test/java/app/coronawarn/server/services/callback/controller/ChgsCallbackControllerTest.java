@@ -1,7 +1,6 @@
 package app.coronawarn.server.services.callback.controller;
 
 import static app.coronawarn.server.common.persistence.domain.FederationBatchSourceSystem.CHGS;
-import static app.coronawarn.server.common.persistence.domain.FederationBatchSourceSystem.EFGS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;

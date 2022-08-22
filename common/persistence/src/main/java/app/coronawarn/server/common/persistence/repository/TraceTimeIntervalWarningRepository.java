@@ -1,6 +1,5 @@
 package app.coronawarn.server.common.persistence.repository;
 
-
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
@@ -12,7 +11,7 @@ import org.springframework.stereotype.Repository;
  * Event check-in repository.
  * @deprecated in favor of encrypted check-ins.
  */
-@Deprecated(since = "2.8", forRemoval = true)
+@Deprecated(since = "2.8", forRemoval = false)
 @Repository
 public interface TraceTimeIntervalWarningRepository
     extends PagingAndSortingRepository<TraceTimeIntervalWarning, Long> {

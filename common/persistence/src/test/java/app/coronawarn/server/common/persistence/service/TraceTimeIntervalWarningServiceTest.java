@@ -37,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.testcontainers.shaded.org.bouncycastle.util.encoders.Hex;
 
+@SuppressWarnings("deprecation")
 @DataJdbcTest
 class TraceTimeIntervalWarningServiceTest {
 

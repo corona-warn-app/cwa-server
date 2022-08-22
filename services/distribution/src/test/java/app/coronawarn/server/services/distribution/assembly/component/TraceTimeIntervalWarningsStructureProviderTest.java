@@ -92,6 +92,7 @@ class TraceTimeIntervalWarningsStructureProviderTest {
     when(outputDirectoryProvider.getDirectory()).thenReturn(testDirectory);
   }
 
+  @SuppressWarnings("deprecation")
   @Test
   void should_create_correct_top_parent_folder_for_warnings_file_structure() {
     when(traceTimeWarningService.getTraceTimeIntervalWarnings()).thenReturn(Collections.emptyList());
@@ -333,6 +334,7 @@ class TraceTimeIntervalWarningsStructureProviderTest {
     return !it.endsWith(DS_STORE);
   }
 
+  @SuppressWarnings("deprecation")
   private void writeDirectories(List<TraceTimeIntervalWarning> traceWarnings) throws IOException {
     when(traceTimeWarningService.getTraceTimeIntervalWarnings()).thenReturn(traceWarnings);
     Directory<WritableOnDisk> outputDirectory = this.outputDirectoryProvider.getDirectory();

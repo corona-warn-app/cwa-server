@@ -114,6 +114,7 @@ public class EventCheckinFacade {
    * @param submissionPayload the payload where to extract the checkins from.
    * @return an instance of {@link CheckinsStorageResult} that represents how many check ins were saved and filtered.
    */
+  @SuppressWarnings("deprecation")
   public CheckinsStorageResult extractAndStoreCheckins(SubmissionPayload submissionPayload) {
     CheckinsStorageResult checkinsStorageResult = new CheckinsStorageResult(0, 0);
 

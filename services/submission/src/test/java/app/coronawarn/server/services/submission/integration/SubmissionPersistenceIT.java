@@ -366,6 +366,7 @@ class SubmissionPersistenceIT {
     );
   }
 
+  @Deprecated
   @Test
   void unencryptedCheckInsEnabledShouldResultInSavingCorrectNumberOfCheckIns() {
     // GIVEN:

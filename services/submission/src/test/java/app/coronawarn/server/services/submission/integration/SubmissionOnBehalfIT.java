@@ -58,6 +58,7 @@ public class SubmissionOnBehalfIT {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
+  @Deprecated
   @Test
   @DisplayName("Should return 200 OK if payload is valid but contains empty checkins and tan verification is successful and response header == EVENT")
   public void shouldReturn200WhenEvenWhenCheckInsAreEmpty() {
@@ -126,6 +127,7 @@ public class SubmissionOnBehalfIT {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
   }
 
+  @Deprecated
   static Stream<Arguments> generateInvalidPayloads() {
     return Stream.of(
         Arguments.of(validSubmissionBuilder().addAllKeys(createValidTemporaryExposureKeys()).build()),
@@ -194,7 +196,7 @@ public class SubmissionOnBehalfIT {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
   }
 
-
+  @Deprecated
   private static SubmissionPayload.Builder validSubmissionBuilder() {
     byte[] locationIdHash = new byte[32];
     new Random().nextBytes(locationIdHash);

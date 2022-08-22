@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.assembly.component;
 
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
@@ -62,6 +60,7 @@ public class CwaApiStructureProvider {
    *
    * @return new instance of IndexingDecoratorOnDisk base directory
    */
+  @SuppressWarnings("deprecation")
   public Directory<WritableOnDisk> getDirectory() {
     IndexDirectoryOnDisk<String> versionDirectory = new IndexDirectoryOnDisk<>(
         distributionServiceConfig.getApi().getVersionPath(),

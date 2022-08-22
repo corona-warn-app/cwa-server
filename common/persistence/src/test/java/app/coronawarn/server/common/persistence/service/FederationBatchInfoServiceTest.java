@@ -1,15 +1,12 @@
-
-
 package app.coronawarn.server.common.persistence.service;
 
-import static app.coronawarn.server.common.persistence.domain.FederationBatchSourceSystem.*;
+import static app.coronawarn.server.common.persistence.domain.FederationBatchSourceSystem.EFGS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
 import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
-import app.coronawarn.server.common.persistence.domain.FederationBatchSourceSystem;
 import app.coronawarn.server.common.persistence.repository.FederationBatchInfoRepository;
 import java.time.LocalDate;
 import java.time.Period;
@@ -21,7 +18,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
-import org.springframework.test.context.ActiveProfiles;
 
 @DataJdbcTest
 class FederationBatchInfoServiceTest {

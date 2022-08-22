@@ -45,6 +45,7 @@ class DemoTraceTimeIntervalWarningsPackageBundlerTest {
     bundler = new DemoTraceTimeIntervalWarningsPackageBundler(distributionServiceConfig);
   }
 
+  @SuppressWarnings("deprecation")
   @Test
   void testGetsTraceLocationWarningsForHour() {
     List<TraceTimeIntervalWarning> warnings = Stream
@@ -69,6 +70,7 @@ class DemoTraceTimeIntervalWarningsPackageBundlerTest {
     assertThat(bundler.getCheckInProtectedReportsForHour(5)).hasSize(15);
   }
 
+  @SuppressWarnings("deprecation")
   @Test
   void testGetHoursTraceLocationWarningsForCountry() {
     List<TraceTimeIntervalWarning> warnings = Stream
@@ -81,6 +83,7 @@ class DemoTraceTimeIntervalWarningsPackageBundlerTest {
     assertThat(bundler.getHoursForDistributableWarnings("DE")).hasSize(3);
   }
 
+  @SuppressWarnings("deprecation")
   @Test
   void testGetHoursTraceLocationWarningsForUnknownCountryReturnsEmptySet() {
     List<TraceTimeIntervalWarning> warnings = Stream
@@ -117,6 +120,7 @@ class DemoTraceTimeIntervalWarningsPackageBundlerTest {
     assertThat(bundler.getHoursForDistributableCheckInProtectedReports("UNKNOWN")).isEmpty();
   }
 
+  @SuppressWarnings("deprecation")
   @Test
   void should_include_current_hour() throws IOException {
     LocalDateTime utcHour = TimeUtils.getCurrentUtcHour();

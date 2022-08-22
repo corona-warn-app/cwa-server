@@ -8,7 +8,6 @@ import app.coronawarn.server.common.protocols.internal.SubmissionPayload.Submiss
 import app.coronawarn.server.services.submission.checkins.EventCheckInProtectedReportsValidator;
 import app.coronawarn.server.services.submission.checkins.EventCheckinDataValidator;
 import app.coronawarn.server.services.submission.validation.ValidSubmissionOnBehalfPayload.ValidSubmissionOnBehalfPayloadValidator;
-import app.coronawarn.server.services.submission.validation.ValidSubmissionPayload.SubmissionPayloadValidator;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.util.stream.Stream;
@@ -21,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
+@SuppressWarnings("deprecation")
 @Target(PARAMETER)
 @Retention(RUNTIME)
 @Constraint(validatedBy = ValidSubmissionOnBehalfPayloadValidator.class)
@@ -55,7 +55,6 @@ public @interface ValidSubmissionOnBehalfPayload {
      *
      * @deprecated in favor of {@link #eventCheckInProtectedReportsValidator}.
      */
-    @Deprecated(since = "2.8", forRemoval = true)
     private final EventCheckinDataValidator eventCheckInValidator;
     private final EventCheckInProtectedReportsValidator eventCheckInProtectedReportsValidator;
     private static final Logger logger = LoggerFactory.getLogger(ValidSubmissionOnBehalfPayload.class);

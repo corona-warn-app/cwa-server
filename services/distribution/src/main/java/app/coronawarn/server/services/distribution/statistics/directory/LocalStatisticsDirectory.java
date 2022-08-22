@@ -1,7 +1,6 @@
 package app.coronawarn.server.services.distribution.statistics.directory;
 
 import app.coronawarn.server.common.protocols.internal.stats.LocalStatistics;
-import app.coronawarn.server.common.protocols.internal.stats.Statistics;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;

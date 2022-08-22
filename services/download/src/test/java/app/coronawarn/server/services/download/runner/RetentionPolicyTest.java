@@ -4,7 +4,6 @@ import static app.coronawarn.server.common.persistence.domain.FederationBatchSou
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import app.coronawarn.server.common.persistence.domain.FederationBatchSourceSystem;
 import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import app.coronawarn.server.services.download.config.DownloadServiceConfig;

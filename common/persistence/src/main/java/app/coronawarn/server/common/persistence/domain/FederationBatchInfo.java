@@ -1,11 +1,9 @@
-
-
 package app.coronawarn.server.common.persistence.domain;
 
 import java.time.LocalDate;
 import java.util.Objects;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.PersistenceConstructor;
+import org.springframework.data.annotation.PersistenceCreator;
 
 /**
  * Information about federation batches with their status.
@@ -36,7 +34,7 @@ public class FederationBatchInfo {
    * @param date     date the batch was created
    * @param status   status stored as {@link FederationBatchStatus}
    */
-  @PersistenceConstructor
+  @PersistenceCreator
   public FederationBatchInfo(String batchTag, LocalDate date, FederationBatchStatus status,
       FederationBatchSourceSystem sourceSystem) {
     this.batchTag = batchTag;
