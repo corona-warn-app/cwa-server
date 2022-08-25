@@ -59,7 +59,7 @@
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
     <commons-io.version>2.11.0</commons-io.version>
     <log4j.version>2.18.0</log4j.version>
-    <slf4j.version>1.7.36</slf4j.version>
+    <slf4j.version>2.0.0</slf4j.version>
     <feign.version>11.9.1</feign.version>
     <commons-math3.version>3.6.1</commons-math3.version>
     <bouncycastle.version>1.70</bouncycastle.version>
@@ -68,7 +68,7 @@
     <guava.version>31.1-jre</guava.version>
     <jackson.version>2.13.3</jackson.version>
     <test-containers.version>1.17.3</test-containers.version>
-    <postgresql.version>42.4.2</postgresql.version>
+    <postgresql.version>42.5.0</postgresql.version>
     <wiremock.version>2.33.2</wiremock.version>
     <httpclient.version>4.5.13</httpclient.version>
     <junit.version>4.13.2</junit.version>
@@ -404,7 +404,7 @@
       <plugins>
         <plugin>
           <artifactId>maven-checkstyle-plugin</artifactId>
-          <version>3.1.2</version>
+          <version>3.2.0</version>
           <executions>
             <execution>
               <id>validate</id>
