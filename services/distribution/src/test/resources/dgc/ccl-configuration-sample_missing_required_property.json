@@ -1,0 +1,46 @@
+{
+  "Identifier": "CCL-DE-0001",
+  "Type": "CCLConfiguration",
+  "Country": "DE",
+  "Version": "1.0.0",
+  "SchemaVersion": "1.0.0",
+  "Engine": "JsonFunctions",
+  "EngineVersion": "1.0.0",
+  "ValidFrom": "2021-10-07T00:00:00Z",
+  "ValidTo": "2030-06-01T00:00:00Z",
+  "Logic": {
+    "JfnDescriptors_FAIL_HERE": [
+      {
+        "name": "greet",
+        "definition": {
+          "parameters": [
+            {
+              "name": "greeting",
+              "default": "Hello"
+            },
+            {
+              "name": "name"
+            }
+          ],
+          "logic": [
+            {
+              "return": [
+                {
+                  "concatenate": [
+                    {
+                      "var": "greeting"
+                    },
+                    " ",
+                    {
+                      "var": "name"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

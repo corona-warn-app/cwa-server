@@ -5,12 +5,19 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import feign.Client;
 import feign.Retryer;
 import java.util.concurrent.TimeUnit;
+import feign.codec.Decoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.cloud.openfeign.support.HttpMessageConverterCustomizer;
+import org.springframework.cloud.openfeign.support.ResponseEntityDecoder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.io.ResourceLoader;
 
 @Configuration
 @EnableFeignClients
@@ -53,5 +60,25 @@ public class CloudDccFeignClientConfiguration {
 
     return new Retryer.Default(retryPeriod, maxRetryPeriod, maxAttempts);
   }
+
+  @Bean
+  public Decoder jsonSchemaDecoder(ObjectFactory<HttpMessageConverters> messageConverters,
+      ObjectProvider<HttpMessageConverterCustomizer> customizers, ResourceLoader resourceLoader) {
+    Decoder jsonSchemaDecoder = new JsonSchemaDecoder(messageConverters, customizers, resourceLoader);
+    return new ResponseEntityDecoder(jsonSchemaDecoder);
+  }
+
+//  @Bean
+//  public ResponseInterceptor responseInterceptor() {
+//    return new ResponseInterceptor() {
+//      @Override
+//      public Object aroundDecode(InvocationContext invocationContext) throws IOException {
+//        Response response = invocationContext.response();
+//        Body body = response.body();
+//        logger.info("Response: " + body.toString());
+//        return null;
+//      }
+//    };
+//  }
 
 }
