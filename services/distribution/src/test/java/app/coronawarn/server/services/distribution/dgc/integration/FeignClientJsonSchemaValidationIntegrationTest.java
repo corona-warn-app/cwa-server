@@ -68,6 +68,10 @@ public class FeignClientJsonSchemaValidationIntegrationTest {
     stubRules();
 
     try {
+      //TODO: make sure our json decoder is actually called
+      //This is quite hard to do, since the client that wraps this is built via Spring
+      //So we can't easily mock it and check for method invocations
+      //all we can do is to provoke an exception that only the json decoder will throw
       digitalCovidCertificateClient.getRules();
     } catch (FetchBusinessRulesException e) {
       fail("Failed to validate rules", e);

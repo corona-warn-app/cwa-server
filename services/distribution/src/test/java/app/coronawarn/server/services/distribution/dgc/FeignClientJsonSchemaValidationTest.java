@@ -7,7 +7,9 @@ import app.coronawarn.server.services.distribution.dgc.client.JsonSchemaDecoder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
+import app.coronawarn.server.services.distribution.dgc.client.JsonSchemaMappingLookup;
 import org.everit.json.schema.ValidationException;
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,5 +48,13 @@ public class FeignClientJsonSchemaValidationTest {
     JsonSchemaDecoder decoder = new JsonSchemaDecoder(null, null, resourceLoader);
     assertThatExceptionOfType(ValidationException.class).isThrownBy(
         () -> decoder.validateJsonAgainstSchema(businessRuleJsonAsStream, schemaAsStream));
+  }
+
+  @Test
+  public void testJsonToSchemaMapping() {
+    JsonSchemaMappingLookup lookup = new JsonSchemaMappingLookup();
+    lookup.getSchemaPath(BUSINESS_RULE_OBJECT_TYPE);
+    Assert.assertEquals(lookup.getSchemaPath(BUSINESS_RULE_OBJECT_TYPE),"dgc/ccl-configuration.json");
+    //TODO: test all other mappings as well
   }
 }
