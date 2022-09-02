@@ -77,6 +77,7 @@
     <checkstyle.version>10.3.3</checkstyle.version>
     <semver4j.version>3.1.0</semver4j.version>
     <upokecenter-cbor.version>4.5.2</upokecenter-cbor.version>
+    <snakeyaml.version>1.31</snakeyaml.version>
   </properties>
 
   <dependencyManagement>
@@ -267,6 +268,11 @@
         <groupId>com.vdurmont</groupId>
         <artifactId>semver4j</artifactId>
         <version>${semver4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.yaml</groupId>
+        <artifactId>snakeyaml</artifactId>
+        <version>${snakeyaml.version}</version>
       </dependency>
       <dependency>
         <groupId>org.postgresql</groupId>
