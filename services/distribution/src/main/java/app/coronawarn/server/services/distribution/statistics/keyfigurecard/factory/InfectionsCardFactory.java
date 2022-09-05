@@ -12,8 +12,12 @@ import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStri
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.ValueTrendCalculator;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class InfectionsCardFactory extends HeaderCardFactory {
+
+  private static final Logger logger = LoggerFactory.getLogger(InfectionsCardFactory.class);
 
   @Override
   protected int getCardId() {
@@ -74,6 +78,13 @@ public class InfectionsCardFactory extends HeaderCardFactory {
         || stats.getInfectionsReportedCumulated() <= 0
         || stats.getInfectionsReported7daysAvg() <= 0
         || stats.getInfectionsReportedDaily() <= 0) {
+      return List.of(Optional.empty());
+    }
+
+    if (stats.getInfectionsReportedDaily() < stats.getInfectionsReported7daysAvg() * 0.01) {
+      logger.warn(
+          "skipping '{}' for '{}', because the reported infections are less than {}% of the last 7 days average",
+          stats.getEffectiveDate(), INFECTIONS_CARD, 0.01 * 100);
       return List.of(Optional.empty());
     }
 
