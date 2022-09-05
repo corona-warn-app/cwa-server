@@ -87,7 +87,6 @@ public class InfectionsCardFactory extends HeaderCardFactory {
           INFECTIONS_CARD, 0.01);
       return List.of(Optional.empty());
     }
-  //todo add if statement here: log warning (for the infection card, the value is beyond the threshold) + return optional empty
     return requiredFields;
   }
 }
