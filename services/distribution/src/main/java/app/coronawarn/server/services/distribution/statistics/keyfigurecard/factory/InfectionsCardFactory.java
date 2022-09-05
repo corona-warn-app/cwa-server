@@ -83,8 +83,8 @@ public class InfectionsCardFactory extends HeaderCardFactory {
     }
 
     if (stats.getInfectionsReportedDaily() < stats.getInfectionsReported7daysAvg() * 0.01) {
-      logger.warn("skipping '{}' for '{}', because the reported infections is less than {}% of the last 7 days average", stats.getEffectiveDate(),
-          INFECTIONS_CARD, 0.01);
+      logger.warn("skipping '{}' for '{}', because the reported infections are less than {}% of the last 7 days average", stats.getEffectiveDate(),
+          INFECTIONS_CARD, 0.01 * 100);
       return List.of(Optional.empty());
     }
     return requiredFields;
