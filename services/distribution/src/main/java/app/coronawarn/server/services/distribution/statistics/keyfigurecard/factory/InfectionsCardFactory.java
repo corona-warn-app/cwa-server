@@ -18,7 +18,7 @@ import java.util.Optional;
 
 public class InfectionsCardFactory extends HeaderCardFactory {
 
-  private static final Logger logger = LoggerFactory.getLogger(StatisticsJsonValidator.class);
+  private static final Logger logger = LoggerFactory.getLogger(InfectionsCardFactory.class);
 
   @Override
   protected int getCardId() {
