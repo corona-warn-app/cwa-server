@@ -141,7 +141,7 @@ class KeyFigureCardFactoryTest {
     }
     @Test
     void shouldFailIfInfectionReported7daysAvgIsBelowThreshold() {
-      statisticsJsonStringObject.setInfectionsReportedDaily(10);
+      statisticsJsonStringObject.setInfectionsReportedDaily(10); // this is less than 1% of the given 7dayAvg, see 'setInfectionsReported7daysAvg(1234.0)' in setup()
       final int cardOrdinal = INFECTIONS_CARD.ordinal();
       assertThatThrownBy(
           () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, cardOrdinal))
