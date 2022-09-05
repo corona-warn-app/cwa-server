@@ -10,10 +10,10 @@ import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard.Builder;
 import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStringObject;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.ValueTrendCalculator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class InfectionsCardFactory extends HeaderCardFactory {
 
