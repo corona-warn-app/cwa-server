@@ -10,7 +10,6 @@ import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard.Builder;
 import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStringObject;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.ValueTrendCalculator;
-import app.coronawarn.server.services.distribution.statistics.validation.StatisticsJsonValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.List;
