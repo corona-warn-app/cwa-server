@@ -139,6 +139,14 @@ class KeyFigureCardFactoryTest {
           () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, cardOrdinal))
           .isInstanceOf(MissingPropertyException.class);
     }
+    @Test
+    void shouldFailIfInfectionReported7daysAvgIsBelowThreshold() {
+      statisticsJsonStringObject.setInfectionsReportedDaily(10);
+      final int cardOrdinal = INFECTIONS_CARD.ordinal();
+      assertThatThrownBy(
+          () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, cardOrdinal))
+          .isInstanceOf(MissingPropertyException.class);
+    }
   }
 
   @Nested

@@ -10,10 +10,15 @@ import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard.Builder;
 import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStringObject;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.ValueTrendCalculator;
+import app.coronawarn.server.services.distribution.statistics.validation.StatisticsJsonValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Optional;
 
 public class InfectionsCardFactory extends HeaderCardFactory {
+
+  private static final Logger logger = LoggerFactory.getLogger(StatisticsJsonValidator.class);
 
   @Override
   protected int getCardId() {
@@ -77,6 +82,12 @@ public class InfectionsCardFactory extends HeaderCardFactory {
       return List.of(Optional.empty());
     }
 
+    if (stats.getInfectionsReportedDaily() < stats.getInfectionsReported7daysAvg() * 0.01) {
+      logger.warn("skipping '{}' for '{}', because the reported infections is less than {}% of the last 7 days average", stats.getEffectiveDate(),
+          INFECTIONS_CARD, 0.01);
+      return List.of(Optional.empty());
+    }
+  //todo add if statement here: log warning (for the infection card, the value is beyond the threshold) + return optional empty
     return requiredFields;
   }
 }
