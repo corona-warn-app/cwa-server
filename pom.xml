@@ -66,7 +66,7 @@
     <awssdk-s3.version>2.17.182</awssdk-s3.version>
     <io-netty.version>4.1.80.Final</io-netty.version>
     <guava.version>31.1-jre</guava.version>
-    <jackson.version>2.13.3</jackson.version>
+    <jackson.version>2.13.4</jackson.version>
     <test-containers.version>1.17.3</test-containers.version>
     <postgresql.version>42.5.0</postgresql.version>
     <wiremock.version>2.33.2</wiremock.version>
@@ -78,6 +78,7 @@
     <semver4j.version>3.1.0</semver4j.version>
     <upokecenter-cbor.version>4.5.2</upokecenter-cbor.version>
     <snakeyaml.version>1.31</snakeyaml.version>
+    <json.version>20180130</json.version>
   </properties>
 
   <dependencyManagement>
@@ -242,6 +243,11 @@
         <groupId>org.everit.json</groupId>
         <artifactId>org.everit.json.schema</artifactId>
         <version>${everit-json.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.json</groupId>
+        <artifactId>json</artifactId>
+        <version>${json.version}</version>
       </dependency>
       <dependency>
         <groupId>commons-beanutils</groupId>
