@@ -7,6 +7,7 @@ import feign.Response;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
+import feign.codec.DecodeException;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaClient;
@@ -44,28 +45,28 @@ public class JsonSchemaDecoder extends SpringDecoder {
 
   @Override
   public Object decode(Response response, Type type) throws IOException, FeignException {
-    InputStream businessRuleJsonInputStream = response.body().asInputStream();
-    String schemaPathToUse = getSchemaPathForReturnType(type);
-    InputStream schemaAsStream = resourceLoader.getResource(schemaPathToUse).getInputStream();
-    validateJsonAgainstSchema(businessRuleJsonInputStream, schemaAsStream);
+    InputStream payloadJsonInputStream = response.body().asInputStream();
+    //String schemaPathToUse = getSchemaPathForReturnType(type);
+    String schemaPathToUse = getSchemaPathForRequestEndpoint(response.request().url());
+    if(schemaPathToUse == null) {
+      throw new DecodeException(-1, "Could not find json schema for response payload", response.request());
+    }
+    InputStream schemaInputStream = resourceLoader.getResource(schemaPathToUse).getInputStream();
+    validateJsonAgainstSchema(payloadJsonInputStream, schemaInputStream);
     return super.decode(response, type);
   }
 
   /**
    * Resolve the schema that maps to the given feign client return type
    *
-   * @param type The return type of the call to the feign endpoint
+   * @param requestUrl The endpoint of the request.
    * @return
    */
-  //TODO: write test case to test that we get the right schema for a given type
-  public String getSchemaPathForReturnType(Type type) {
-    return jsonSchemaMappingLookup.getSchemaPath(type);
+  public String getSchemaPathForRequestEndpoint(String requestUrl) {
+    return jsonSchemaMappingLookup.getSchemaPath(requestUrl);
   }
 
-  //TODO: write test cases that asserts that:
-  //1. valid json is verified as correct by the fitting schema
-  //2. invalid json is rejected by the validation
-  public void validateJsonAgainstSchema(InputStream businessRuleJsonInputStream, InputStream schemaAsStream)
+  public void validateJsonAgainstSchema(InputStream jsonPayloadInputStream, InputStream schemaAsStream)
       throws IOException {
     try {
       JSONObject jsonSchema = new JSONObject(new JSONTokener(schemaAsStream));
@@ -73,11 +74,11 @@ public class JsonSchemaDecoder extends SpringDecoder {
       Schema schema = SchemaLoader.load(jsonSchema, schemaClient);
       //have to check manually if json is an array or an object. Limitation of the org.json library.
       try {
-        JSONObject parsedObject = new JSONObject(new JSONTokener(businessRuleJsonInputStream));
+        JSONObject parsedObject = new JSONObject(new JSONTokener(jsonPayloadInputStream));
         schema.validate(parsedObject);
       } catch (JSONException e) {
         try {
-          JSONArray parsedArray = new JSONArray(new JSONTokener(businessRuleJsonInputStream));
+          JSONArray parsedArray = new JSONArray(new JSONTokener(jsonPayloadInputStream));
           parsedArray.forEach(object -> schema.validate(object));
         } catch (JSONException ne) {
           throw new RuntimeException("json is neither an object nor an array");
@@ -86,7 +87,7 @@ public class JsonSchemaDecoder extends SpringDecoder {
     } catch (ValidationException e) {
       //validation exception loggen (tiefer gehen)
       //feign exception ggf schmeissen
-      logger.error("Rule json is not valid", e);
+      logger.error("Json schema validation failed", e);
       throw e;
     }
   }

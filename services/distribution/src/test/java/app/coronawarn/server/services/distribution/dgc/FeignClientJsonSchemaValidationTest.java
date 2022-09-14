@@ -3,6 +3,7 @@ package app.coronawarn.server.services.distribution.dgc;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.fail;
 
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AllowList;
 import app.coronawarn.server.services.distribution.dgc.client.JsonSchemaDecoder;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,6 +14,7 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties.Io;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.shaded.com.google.common.reflect.TypeToken;
@@ -23,14 +25,30 @@ public class FeignClientJsonSchemaValidationTest {
   @Autowired
   ResourceLoader resourceLoader;
 
-  //TOOD: Remove
-  private static final Type BUSINESS_RULE_OBJECT_TYPE = new TypeToken<BusinessRule>() {
+  private static final Type ALLOWLIST_OBJECT_TYPE = new TypeToken<AllowList>() {
   }.getType();
 
+  private static final String BUSINESS_RULE_REQUEST_ENDPOINT = "/rules";
+
   @Test
-  public void testBusinessRuleValidForSchema() throws IOException {
-    InputStream schemaAsStream = resourceLoader.getResource("dgc/ccl-configuration.json").getInputStream();
-    InputStream businessRuleJsonAsStream = resourceLoader.getResource("dgc/ccl-configuration-sample.json")
+  public void testBusinessRuleValidForSchema1() throws IOException {
+    testJsonValidForSchema("dgc/ccl-configuration.json", "dgc/ccl-configuration-sample.json");
+  }
+
+  @Test
+  public void testBusinessRuleListValidForSchema1() throws IOException {
+    testJsonValidForSchema("dgc/ccl-configuration.json", "/dgc/cclrules.json");
+  }
+
+  @Test
+  public void testValueSetsValidForSchema1() throws IOException {
+    testJsonValidForSchema("dgc/ccl-configuration.json", "/dgc/valuesets.json");
+  }
+
+  @Test
+  public void testJsonValidForSchema(String schemaLocation, String jsonPayloadLocation) throws IOException {
+    InputStream schemaAsStream = resourceLoader.getResource(schemaLocation).getInputStream();
+    InputStream businessRuleJsonAsStream = resourceLoader.getResource(jsonPayloadLocation)
         .getInputStream();
     JsonSchemaDecoder decoder = new JsonSchemaDecoder(null, null, resourceLoader);
     try {
@@ -51,10 +69,14 @@ public class FeignClientJsonSchemaValidationTest {
   }
 
   @Test
-  public void testJsonToSchemaMapping() {
+  public void testBusinessRuleJsonToSchemaMapping() {
     JsonSchemaMappingLookup lookup = new JsonSchemaMappingLookup();
-    lookup.getSchemaPath(BUSINESS_RULE_OBJECT_TYPE);
-    Assert.assertEquals(lookup.getSchemaPath(BUSINESS_RULE_OBJECT_TYPE),"dgc/ccl-configuration.json");
-    //TODO: test all other mappings as well
+    Assert.assertEquals("dgc/ccl-configuration.json", lookup.getSchemaPath(BUSINESS_RULE_REQUEST_ENDPOINT));
   }
+
+//  @Test
+//  public void testAllowListJsonToSchemaMapping() {
+//    JsonSchemaMappingLookup lookup = new JsonSchemaMappingLookup();
+//    Assert.assertEquals("dgc/dcc-validation-service-allowlist-rule.json", lookup.getSchemaPath(ALLOWLIST_OBJECT_TYPE));
+//  }
 }
