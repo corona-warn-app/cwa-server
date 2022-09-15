@@ -117,6 +117,8 @@ public class CommonCovidLogicArchiveBuilder {
     for (BusinessRuleItem businessRuleItem : businessRulesItems) {
       BusinessRule businessRule = null;
       try {
+        //TODO: Remove -- all this is not necessary after we have the json schema interceptor flow.
+        // in that flow, the individual calls to the business rules endpoint each verify the payloads themselves
         businessRule = businessRuleSupplier.get(businessRuleItem.getCountry(), businessRuleItem.getHash());
       } catch (FetchBusinessRulesException e) {
         logger.error("Config archive was not overwritten because business rule could not been fetched:", e);

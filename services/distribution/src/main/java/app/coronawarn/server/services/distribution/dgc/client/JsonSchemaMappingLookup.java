@@ -5,6 +5,8 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 public class JsonSchemaMappingLookup {
 
@@ -22,8 +24,6 @@ public class JsonSchemaMappingLookup {
     //TODO: use the fully qualified names instead of objects as map keys,
     //since we can also have lists of items etc, which makes things really complicated to construct
     //TODO: switch from types to the requesst URL, since that is uniquely specific to a schema
-    businessObjectToJsonSchema.put("/countrylist", CCL_JSON_SCHEMA);
-    businessObjectToJsonSchema.put("/valuesets", CCL_JSON_SCHEMA);
     businessObjectToJsonSchema.put("/rules", CCL_JSON_SCHEMA);
     businessObjectToJsonSchema.put("/bnrules", CCL_JSON_SCHEMA);
     businessObjectToJsonSchema.put("/cclrules", CCL_JSON_SCHEMA);
@@ -38,8 +38,22 @@ public class JsonSchemaMappingLookup {
    * @return
    */
   public String getSchemaPath(String requestUrl) {
-    String route = requestUrl.substring(requestUrl.lastIndexOf("/"), requestUrl.length());
-    return businessObjectToJsonSchema.get(route);
+    //find out if we have a known route, e.g. /rules, /bnrules, etc.
+    Optional<String> match = businessObjectToJsonSchema.keySet().stream().filter(s -> requestUrl.contains(s)).findAny();
+    try {
+      match.get();
+    } catch (NoSuchElementException ex) {
+      return null; // the request has not mapping, meaning there is no schema for this request URL's payload
+    }
+    // find out if there are trailing elements after the base mapping (e.g. rules/<hash>). If so, we validate.
+    if(requestUrl.lastIndexOf(match.get()) >= requestUrl.lastIndexOf("/")) {
+      //this means we have no hash or any other trailing path components after the route. We are not validating this
+      //the payloads we are interested in are always qualified with a hash, a country, etc.
+      return null;
+    }
+    //since there is currently only one schema per route, we can take the route as a key for the schema
+    //e.g. if we have /rules/<something>, we use the same schema, no matter what <something> is.
+    return businessObjectToJsonSchema.get(match.get());
   }
 
   //Only needed if we actually need to consider the rule type in addition to the business class to find the schema

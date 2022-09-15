@@ -1,0 +1,155 @@
+{
+  "Identifier": "BNR-DE-0100",
+  "Type": "BoosterNotification",
+  "Country": "DE",
+  "Version": "1.0.2",
+  "SchemaVersion": "1.0.0",
+  "Engine": "CERTLOGIC",
+  "EngineVersion": "1.0.0",
+  "CertificateType": "General",
+  "Description": [
+    {
+      "lang": "en",
+      "desc": "The German Standing Committee on Vaccinations (STIKO) recommends a booster vaccination for everyone age 12 and older who has not been diagnosed with a SARS-CoV-2 coronavirus infection and who completed their basic immunization more than three months ago.\n\nThe certificates you have saved indicate that these criteria will soon apply to you and that you have not had a booster vaccination. We therefore wish to point out this recommendation. (Rule DE-BNR-0100)\n\nThis note is based solely on the certificates saved on your smartphone. The data was processed on your smartphone. No information was sent to the RKI or to any third parties in this process."
+    },
+    {
+      "desc": "Die Ständige Impfkommission (STIKO) empfiehlt allen Personen eine Auffrischimpfung, die mindestens 12 Jahre alt sind, bei denen keine Infektion mit dem Coronavirus SARS-CoV-2 nachgewiesen wurde und wenn ihre Grundimmunisierung über 3 Monate her ist.\n\nDa Sie laut Ihrer gespeicherten Zertifikate bald dieser Personengruppe angehören und noch keine Auffrischimpfung erhalten haben, möchten wir Sie auf diese Empfehlung hinweisen. (Regel DE-BNR-0100)\n\nDieser Hinweis basiert ausschließlich auf den auf Ihrem Smartphone gespeicherten Zertifikaten. Die Verarbeitung der Daten erfolgte auf Ihrem Smartphone. Es wurden hierbei keine Daten an das RKI oder Dritte übermittelt.",
+      "lang": "de"
+    },
+    {
+      "desc": "Almanya Daimi Aşı Komisyonu (STIKO), SARS-CoV-2 koronavirüs enfeksiyonu tanısı almamış ve temel bağışıklığını tamamlamasının üzerinden en az üç ay geçmiş olan 12 yaş ve üzerindeki herkesin hatırlatma aşısı yaptırmasını önermektedir.\n\nKaydettiğiniz sertifikalar bu kriterlerin yakın zamanda sizin için geçerli olacağını ve bir hatırlatma aşısı yaptırmadığınızı gösteriyor. Dolayısıyla bu öneriyi vurgulamak isteriz. (Kural DE-BNR-0100)\n\nBu not yalnızca akıllı telefonunuza kaydedilen sertifikalara dayalıdır. Veriler akıllı telefonunuzda işlenmiştir. Bu süreçte RKI veya herhangi bir üçüncü tarafa hiçbir bilgi gönderilmemiştir.",
+      "lang": "tr"
+    },
+    {
+      "desc": "Комитетът по ваксините на Германия (STIKO) препоръчва ваксинация с бустерна доза за всички на възраст 12 г. и повече, които не са били диагностицирани с коронавирусна инфекция от SARS-CoV-2 и които са завършили основната си имунизация преди повече от три месеца.\n\nЗапазените от Вас сертификати показват, че тези критерии скоро ще важат за Вас и че не сте получили бустерна доза. Затова бихме искали да Ви обърнем внимание върху тази препоръка. (Наредба DE-BNR-0100)\n\nТази забележка се основава единствено на сертификатите, които са запазени във Вашия смартфон. Данните са обработени в него и в процеса не е изпращана информация към института „Роберт Кох“ или други трети лица.",
+      "lang": "bg"
+    },
+    {
+      "desc": "Niemiecka Stała Komisja ds. Szczepień (STIKO) (STIKO) zaleca szczepienie przypominające dla wszystkich osób powyżej 12 roku życia, u których nie zdiagnozowano zakażenia koronawirusem SARS-CoV-2 i którzy otrzymali szczepienie podstawowe ponad trzy miesiące temu.\n\nZ zapisanych przez Ciebie certyfikatów wynika, że te kryteria będą wkrótce dotyczyć Ciebie i że nie przyjąłeś(-aś) szczepienia przypominającego. Z tego względu chcemy zwrócić Twoją uwagę na to zalecenie. (Reguła DE-BNR-0100)\n\nInformacje te opierają się wyłącznie na certyfikatach zapisanych w Twoim smartfonie. Dane zostały przetworzone na Twoim smartfonie. Nie przesłano żadnych danych do RKI ani do osób trzecich.",
+      "lang": "pl"
+    },
+    {
+      "desc": "Comisia permanentă de vaccinare din Germania (STIKO) recomandă vaccinarea cu doza booster pentru toate persoanele începând cu vârsta de 12 ani care nu au fost diagnosticate cu infecția cu SARS-CoV-2 și care și-au finalizat schema de imunizare standard cu peste trei luni în urmă.\n\nCertificatele pe care le-ați salvat arată că aceste criterii vi se vor aplica și dvs. în curând și că nu aveți efectuată doza booster. Din acest motiv, dorim să vă informăm despre această recomandare. (Regula DE-BNR-0100)\n\nAceastă notificare se bazează doar pe certificatele salvate pe smartphone-ul dvs. Datele au fost prelucrate pe smartphone-ul dvs. Nu au fost transmise niciun fel de date la RKI sau terți în acest proces.",
+      "lang": "ro"
+    },
+    {
+      "desc": "Німецький чинний комітет з вакцинації (STIKO) рекомендує проводити ревакцинацію всім людям віком від 12 років і старше, у яких не було діагностовано коронавірусну інфекцію SARS-CoV-2 і які завершили основну імунізацію більше трьох місяців тому.\n\nЗбережені вами сертифікати вказують на те, що ці критерії незабаром почнуть діяти і для вас, і що ви не зробили ревакцинацію. Тому ми хочемо звернути увагу на цю рекомендацію. (Правило DE-BNR-0100)\n\nЦя нотатка заснована виключно на сертифікатах, збережених на вашому смартфоні. Дані були оброблені на вашому смартфоні. Жодної інформації не було надіслано до RKI або будь-яким третім особам у цьому процесі.",
+      "lang": "uk"
+    }
+  ],
+  "ValidFrom": "2022-05-04T16:00:00Z",
+  "ValidTo": "2030-06-01T00:00:00Z",
+  "AffectedFields": [
+    "dob",
+    "r.0",
+    "v.0",
+    "v.0.dn",
+    "v.0.dt",
+    "v.0.sd"
+  ],
+  "Logic": {
+    "if": [
+      {
+        "var": "payload.v.0"
+      },
+      {
+        "and": [
+          {
+            "not-before": [
+              {
+                "plusTime": [
+                  {
+                    "var": "external.validationClock"
+                  },
+                  0,
+                  "day"
+                ]
+              },
+              {
+                "plusTime": [
+                  {
+                    "var": "payload.dob"
+                  },
+                  12,
+                  "year"
+                ]
+              }
+            ]
+          },
+          {
+            "not-before": [
+              {
+                "plusTime": [
+                  {
+                    "var": "external.validationClock"
+                  },
+                  0,
+                  "day"
+                ]
+              },
+              {
+                "plusTime": [
+                  {
+                    "var": "payload.v.0.dt"
+                  },
+                  2,
+                  "month"
+                ]
+              }
+            ]
+          },
+          {
+            "before": [
+              {
+                "plusTime": [
+                  {
+                    "var": "external.validationClock"
+                  },
+                  0,
+                  "day"
+                ]
+              },
+              {
+                "plusTime": [
+                  {
+                    "var": "payload.v.0.dt"
+                  },
+                  3,
+                  "month"
+                ]
+              }
+            ]
+          },
+          {
+            "===": [
+              {
+                "var": "payload.v.0.dn"
+              },
+              {
+                "var": "payload.v.0.sd"
+              }
+            ]
+          },
+          {
+            "===": [
+              {
+                "var": "payload.v.0.dn"
+              },
+              2
+            ]
+          },
+          {
+            "if": [
+              {
+                "var": "payload.r.0"
+              },
+              false,
+              true
+            ]
+          }
+        ]
+      },
+      false
+    ]
+  }
+}

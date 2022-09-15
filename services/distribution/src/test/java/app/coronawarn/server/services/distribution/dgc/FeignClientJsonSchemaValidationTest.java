@@ -28,11 +28,16 @@ public class FeignClientJsonSchemaValidationTest {
   private static final Type ALLOWLIST_OBJECT_TYPE = new TypeToken<AllowList>() {
   }.getType();
 
-  private static final String BUSINESS_RULE_REQUEST_ENDPOINT = "/rules";
+  private static final String RULE_LIST_REQUEST_ENDPOINT = "http://mydomain/rules";
+  private static final String RULE_HASH_REQUEST_ENDPOINT = "http://mydomain/rules/DE/abcabc";
+  private static final String BUSINESS_RULE_REQUEST_ENDPOINT = "http://mydomain/bnrules";
+  private static final String BUSINESS_RULE_HASH_REQUEST_ENDPOINT = "http://mydomain/bnrules/abcabc";
+  private static final String CCL_RULE_REQUEST_ENDPOINT = "http://mydomain/cclrules";
+  private static final String CCL_RULE_HASH_REQUEST_ENDPOINT = "http://mydomain/cclrules/abcabc";
 
   @Test
   public void testBusinessRuleValidForSchema1() throws IOException {
-    testJsonValidForSchema("dgc/ccl-configuration.json", "dgc/ccl-configuration-sample.json");
+    testJsonValidForSchema("dgc/ccl-configuration.json", "json-validation/rule.json");
   }
 
   @Test
@@ -69,9 +74,15 @@ public class FeignClientJsonSchemaValidationTest {
   }
 
   @Test
-  public void testBusinessRuleJsonToSchemaMapping() {
+  public void testBusinessRuleListEndpointToSchemaMapping() {
     JsonSchemaMappingLookup lookup = new JsonSchemaMappingLookup();
-    Assert.assertEquals("dgc/ccl-configuration.json", lookup.getSchemaPath(BUSINESS_RULE_REQUEST_ENDPOINT));
+    Assert.assertEquals(null, lookup.getSchemaPath(BUSINESS_RULE_REQUEST_ENDPOINT));
+  }
+
+  @Test
+  public void testBusinessRuleEndpointToSchemaMapping() {
+    JsonSchemaMappingLookup lookup = new JsonSchemaMappingLookup();
+    Assert.assertEquals("dgc/ccl-configuration.json", lookup.getSchemaPath(BUSINESS_RULE_HASH_REQUEST_ENDPOINT));
   }
 
 //  @Test

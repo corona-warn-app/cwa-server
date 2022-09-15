@@ -53,7 +53,8 @@ public class JsonSchemaDecoder extends SpringDecoder {
     //String schemaPathToUse = getSchemaPathForReturnType(type);
     String schemaPathToUse = getSchemaPathForRequestEndpoint(response.request().url());
     if (schemaPathToUse == null) {
-      throw new DecodeException(-1, "Could not find json schema for response payload", response.request());
+      // no matching schema for this URL, so we don't need to validate
+      return super.decode(response, type);
     }
     InputStream schemaInputStream = resourceLoader.getResource(schemaPathToUse).getInputStream();
     validateJsonAgainstSchema(payloadJsonInputStream, schemaInputStream);
