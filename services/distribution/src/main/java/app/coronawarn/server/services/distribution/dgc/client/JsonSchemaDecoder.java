@@ -4,6 +4,7 @@ package app.coronawarn.server.services.distribution.dgc.client;
 import app.coronawarn.server.common.shared.util.ResourceSchemaClient;
 import feign.FeignException;
 import feign.Response;
+import feign.codec.DecodeException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,7 +12,6 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
-import feign.codec.DecodeException;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaClient;
@@ -52,7 +52,7 @@ public class JsonSchemaDecoder extends SpringDecoder {
     InputStream payloadJsonInputStream = response.body().asInputStream();
     //String schemaPathToUse = getSchemaPathForReturnType(type);
     String schemaPathToUse = getSchemaPathForRequestEndpoint(response.request().url());
-    if(schemaPathToUse == null) {
+    if (schemaPathToUse == null) {
       throw new DecodeException(-1, "Could not find json schema for response payload", response.request());
     }
     InputStream schemaInputStream = resourceLoader.getResource(schemaPathToUse).getInputStream();
@@ -78,30 +78,25 @@ public class JsonSchemaDecoder extends SpringDecoder {
       Schema schema = SchemaLoader.load(jsonSchema, schemaClient);
       //have to check manually if json is an array or an object. Limitation of the org.json library.
 
-
-      //test for the actual json in the stream -- since below, it is saying that we don't have valid json (it days it should start with { or with [, which id DOES!)
-//      String text = new BufferedReader(
-//          new InputStreamReader(jsonPayloadInputStream, StandardCharsets.UTF_8))
-//          .lines()
-//          .collect(Collectors.joining("\n"));
-
-
-
+      //workaround for the actual json in the stream -- if we give the InputStream to the JSONTokener directly below,
+      // it is saying that we don't have valid json (it days it should start with { or with [, which id DOES!)
+      String jsonPayloadString = new BufferedReader(
+          new InputStreamReader(jsonPayloadInputStream, StandardCharsets.UTF_8))
+          .lines()
+          .collect(Collectors.joining("\n"));
 
       try {
-        JSONObject parsedObject = new JSONObject(new JSONTokener(jsonPayloadInputStream));
+        JSONObject parsedObject = new JSONObject(new JSONTokener(jsonPayloadString));
         schema.validate(parsedObject);
       } catch (JSONException e) {
         try {
-          JSONArray parsedArray = new JSONArray(new JSONTokener(jsonPayloadInputStream));
+          JSONArray parsedArray = new JSONArray(new JSONTokener(jsonPayloadString));
           parsedArray.forEach(object -> schema.validate(object));
         } catch (JSONException ne) {
           throw new RuntimeException("json is neither an object nor an array");
         }
       }
     } catch (ValidationException e) {
-      //validation exception loggen (tiefer gehen)
-      //feign exception ggf schmeissen
       logger.error("Json schema validation failed", e);
       throw e;
     }

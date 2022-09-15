@@ -5,13 +5,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.fail;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dgc.ApacheHttpTestConfiguration;
-import app.coronawarn.server.services.distribution.dgc.BusinessRuleItem;
+import app.coronawarn.server.services.distribution.dgc.BusinessRule;
 import app.coronawarn.server.services.distribution.dgc.client.CloudDccFeignClientConfiguration;
 import app.coronawarn.server.services.distribution.dgc.client.CloudDccFeignHttpClientProvider;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
@@ -20,10 +19,9 @@ import app.coronawarn.server.services.distribution.dgc.client.signature.DccSigna
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import org.everit.json.schema.ValidationException;
+import org.junit.Assert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,7 +36,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import javax.validation.Validation;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {DistributionServiceConfig.class, ProdDigitalCovidCertificateClient.class,
@@ -49,27 +46,31 @@ import javax.validation.Validation;
 @ActiveProfiles("dcc-client-factory")
 public class FeignClientJsonSchemaValidationIntegrationTest {
 
-  private static final WireMockServer wireMockServer = new WireMockServer(options().port(1234));
   public static final String X_SIGNATURE = "X-SIGNATURE";
   //TODO: create a valid rule signature, with connection to the json in the payload
   public static final String RULES_SIGNATURE
       = "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEMMvW0zun8fNCELK1tsqXsGJPu4p7850ZPCBCoxQ5gs2z5G0in3izL7eTFa5lI7Gkhnz0tN5whVQJObCaqbP55A==";
-
+  private static final WireMockServer wireMockServer = new WireMockServer(options().port(1234));
+  private static final String VALID_RULE_JSON_FILE = "dgc/ccl-configuration-sample.json";
+  private static final String INVALILD_RULE_JSON_FILE = "dgc/ccl-configuration-sample_missing_required_property.json";
   @Autowired
   DigitalCovidCertificateClient digitalCovidCertificateClient;
-
   @Autowired
   ResourceLoader resourceLoader;
-
   @Autowired
   private DistributionServiceConfig distributionServiceConfig;
-
-  private static final String VALID_RULE_JSON_FILE = "dgc/rules.json";
-  private static final String INVALILD_RULE_JSON_FILE = "dgc/ccl-configuration-sample_missing_required_property.json";
 
   @BeforeAll
   public static void setup() {
     wireMockServer.start();
+  }
+
+  public static String asJsonString(final Object obj) {
+    try {
+      return new ObjectMapper().writeValueAsString(obj);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
   }
 
   @Test
@@ -89,31 +90,21 @@ public class FeignClientJsonSchemaValidationIntegrationTest {
   @Test
   void provokeValidationErrorInInterceptor() {
     stubRules(INVALILD_RULE_JSON_FILE);
-    assertThatExceptionOfType(ValidationException.class).isThrownBy(
-        () -> digitalCovidCertificateClient.getRules());
-
-//    try {
-//      digitalCovidCertificateClient.getRules();
-//    } catch (FetchBusinessRulesException e) {
-//      fail("Failed to validate rules", e);
-//    } catch (ValidationException ex) {
-//
-//    }
+    try {
+      digitalCovidCertificateClient.getRules();
+    } catch (FetchBusinessRulesException e) {
+      // the decode exception
+      Throwable cause = e.getCause();
+      // the actual validation exception
+      Throwable cause1 = cause.getCause();
+      Assert.assertEquals(ValidationException.class, cause1.getClass());
+    }
   }
 
   public void stubRules(String jsonFilePath) {
-    Optional<BusinessRuleItem[]> businessRuleList =
-        readConfiguredJsonOrDefault(resourceLoader, null, jsonFilePath, BusinessRuleItem[].class);
-    List<BusinessRuleItem> businessRuleItemList = Arrays.asList(businessRuleList.get());
-
-
-//    String jsonFileAsString = null;
-//    try {
-//      InputStream jsonStream = resourceLoader.getResource("dgc/rules.json").getInputStream();
-//      jsonFileAsString = new String(jsonStream.readAllBytes(), StandardCharsets.UTF_8);
-//    } catch (IOException e) {
-//      throw new RuntimeException("Could not read json from file", e);
-//    }
+    Optional<BusinessRule> businessRuleOptional =
+        readConfiguredJsonOrDefault(resourceLoader, jsonFilePath, jsonFilePath, BusinessRule.class);
+    BusinessRule businessRule = businessRuleOptional.get();
 
     wireMockServer.stubFor(
         get(urlPathEqualTo("/rules"))
@@ -123,20 +114,11 @@ public class FeignClientJsonSchemaValidationIntegrationTest {
                     .withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
                     .withHeader(X_SIGNATURE, "abc")
                     //.withHeader(X_SIGNATURE, createSignature(asJsonString(businessRuleItemList)))
-                    .withBody(asJsonString(businessRuleItemList))));
-  }
-
-  public static String asJsonString(final Object obj) {
-    try {
-      return new ObjectMapper().writeValueAsString(obj);
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
+                    .withBody(asJsonString(businessRule))));
   }
 
   private String createSignature(String body) {
     String publicKey = distributionServiceConfig.getDigitalGreenCertificate().getClient().getPublicKey();
-
 
     return null;
   }
