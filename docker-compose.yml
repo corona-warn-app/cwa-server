@@ -7,6 +7,7 @@ services:
     depends_on:
       - postgres
       - efgs-fake
+    restart: unless-stopped
     ports:
       - "8010:8080"
     environment:
@@ -166,6 +167,7 @@ services:
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
   objectstore:
     image: "zenko/cloudserver"
+    restart: always
     volumes:
       - objectstore_volume:/data
     ports:
@@ -188,12 +190,12 @@ services:
       - objectstore
   verification-fake:
     image: roesslerj/cwa-verification-fake:0.0.5
-    restart: always
+    restart: unless-stopped
     ports:
       - "8004:8004"
   efgs-fake:
     image: roesslerj/cwa-efgs-fake:0.0.5
-    restart: always
+    restart: unless-stopped
     ports:
       - "8014:8014"
 volumes:
