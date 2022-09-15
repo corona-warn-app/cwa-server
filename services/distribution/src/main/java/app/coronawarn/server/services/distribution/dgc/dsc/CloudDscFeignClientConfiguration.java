@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Profile;
 
 @Configuration
 @EnableFeignClients
-@Profile("!fake-dsc-client")
+@Profile({ "!fake-dsc-client", "!revocation" })
 public class CloudDscFeignClientConfiguration {
 
   private static final Logger logger = LoggerFactory.getLogger(CloudDscFeignClientConfiguration.class);

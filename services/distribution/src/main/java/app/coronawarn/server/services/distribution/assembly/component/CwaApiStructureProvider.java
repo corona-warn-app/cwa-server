@@ -7,12 +7,14 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.util.Optional;
 import java.util.Set;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
  * Assembles the content underneath the {@code /version} path of the CWA API.
  */
 @Component
+@Profile("!revocation")
 public class CwaApiStructureProvider {
 
   private final AppConfigurationStructureProvider appConfigurationStructureProvider;

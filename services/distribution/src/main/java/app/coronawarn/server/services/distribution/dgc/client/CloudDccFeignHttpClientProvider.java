@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
  * Creates a dedicated http client used by Feign when performing http calls to the Federation Gateway Service.
  */
 @Component
-@Profile("!fake-dcc-client")
+@Profile({ "!fake-dcc-client", "!revocation" })
 public class CloudDccFeignHttpClientProvider implements DccFeignHttpClientProvider {
 
   private static final Logger logger = LoggerFactory.getLogger(CloudDccFeignHttpClientProvider.class);

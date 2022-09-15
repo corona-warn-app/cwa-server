@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
  * Service.
  */
 @Component
-@Profile("!fake-dsc-client")
+@Profile({ "!fake-dsc-client", "!revocation" })
 public class CloudDscFeignHttpClientProvider implements DscFeignHttpClientProvider {
 
   private static final Logger logger = LoggerFactory.getLogger(CloudDscFeignHttpClientProvider.class);

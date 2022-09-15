@@ -5,6 +5,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.statistics.directory.StatisticsDirectory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
  * StatisticsStructureProvider} with them.
  */
 @Component
+@Profile("!revocation")
 public class StatisticsStructureProvider {
 
   private final CryptoProvider cryptoProvider;

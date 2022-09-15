@@ -1,4 +1,3 @@
-
 package app.coronawarn.server.services.distribution.dgc.client;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
@@ -14,7 +13,7 @@ import org.springframework.context.annotation.Profile;
 
 @Configuration
 @EnableFeignClients
-@Profile("!fake-dcc-client")
+@Profile({ "!fake-dcc-client", "!revocation" })
 public class CloudDccFeignClientConfiguration {
 
   private static final Logger logger = LoggerFactory.getLogger(CloudDccFeignClientConfiguration.class);
