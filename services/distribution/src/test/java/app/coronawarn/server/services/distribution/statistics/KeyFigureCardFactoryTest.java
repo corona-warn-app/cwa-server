@@ -19,6 +19,7 @@ import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.Trend;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.TrendSemantic;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
+import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.InfectionsCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.MissingPropertyException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -26,7 +27,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.test.context.ContextConfiguration;
@@ -88,6 +92,10 @@ class KeyFigureCardFactoryTest {
   @Nested
   class InfectionCardsTest {
 
+    @Value("${services.distribution.infection-threshold}")
+    private int infectionThreshold;
+
+
     @Test
     void testCardHasCorrectKeyFigures() {
       var result = figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, 1);
@@ -141,6 +149,13 @@ class KeyFigureCardFactoryTest {
     }
     @Test
     void shouldFailIfInfectionReported7daysAvgIsBelowThreshold() {
+
+      if( infectionThreshold > 0 ) {
+        Logger logger = LoggerFactory.getLogger(KeyFigureCardFactoryTest.class);
+        logger.info("Infection Threshold is ok");
+      }
+
+
       statisticsJsonStringObject.setInfectionsReportedDaily(10); // this is less than 1% of the given 7dayAvg, see 'setInfectionsReported7daysAvg(1234.0)' in setup()
       final int cardOrdinal = INFECTIONS_CARD.ordinal();
       assertThatThrownBy(

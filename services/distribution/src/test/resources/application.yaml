@@ -7,6 +7,7 @@ logging:
 
 services:
   distribution:
+    infection-threshold: ${INFECTION_THRESHOLD:15}
     output-file-name: index
     output-file-name-v2: index-v2
     retention-days: 14

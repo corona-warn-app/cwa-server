@@ -14,10 +14,21 @@ import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
+
+@Configuration
+@ConfigurationProperties
+@EnableConfigurationProperties
 public class InfectionsCardFactory extends HeaderCardFactory {
 
   private static final Logger logger = LoggerFactory.getLogger(InfectionsCardFactory.class);
+
+  @Value("${services.distribution.infection-threshold}")
+  private int infectionThreshold;
 
   @Override
   protected int getCardId() {
@@ -81,10 +92,15 @@ public class InfectionsCardFactory extends HeaderCardFactory {
       return List.of(Optional.empty());
     }
 
-    if (stats.getInfectionsReportedDaily() < stats.getInfectionsReported7daysAvg() * 0.01) {
+    if( infectionThreshold > 0 ) {
+      logger.info("Infection Threshold is ok");
+    }
+
+
+    if (stats.getInfectionsReportedDaily() < stats.getInfectionsReported7daysAvg() * infectionThreshold / 100) {
       logger.warn(
           "skipping '{}' for '{}', because the reported infections are less than {}% of the last 7 days average",
-          stats.getEffectiveDate(), INFECTIONS_CARD, 0.01 * 100);
+          stats.getEffectiveDate(), INFECTIONS_CARD, 1);
       return List.of(Optional.empty());
     }
 
