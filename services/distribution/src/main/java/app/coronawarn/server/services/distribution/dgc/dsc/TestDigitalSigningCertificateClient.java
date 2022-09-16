@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
  * mock sample data from classpath.
  */
 @Component
-@Profile("fake-dsc-client")
+@Profile({ "fake-dsc-client", "!revocation" })
 public class TestDigitalSigningCertificateClient implements DigitalSigningCertificatesClient {
 
   private final ResourceLoader resourceLoader;

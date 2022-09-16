@@ -2,7 +2,6 @@ package app.coronawarn.server.services.distribution.runner;
 
 import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import app.coronawarn.server.services.distribution.Application;
-import app.coronawarn.server.services.distribution.assembly.component.CwaApiStructureProvider;
 import app.coronawarn.server.services.distribution.assembly.component.DccRevocationListStructureProvider;
 import app.coronawarn.server.services.distribution.assembly.component.OutputDirectoryProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
@@ -33,7 +32,7 @@ public class RevAssembly implements ApplicationRunner {
   private final DccRevocationListStructureProvider dccRevocationListStructureProvider;
 
   /**
-   * Creates an Assembly, using {@link OutputDirectoryProvider}, {@link CwaApiStructureProvider} and
+   * Creates a RevAssembly, using {@link OutputDirectoryProvider}, {@link DccRevocationListStructureProvider}
    * {@link ApplicationContext}.
    */
   RevAssembly(final OutputDirectoryProvider outputDirectoryProvider, final ApplicationContext applicationContext,

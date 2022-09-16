@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  * request to Digital Signing Certificates server.
  */
 @Component
-@Profile("!fake-dsc-client")
+@Profile({ "!fake-dsc-client", "!revocation" })
 public class ProdDigitalSigningCertificatesClient implements DigitalSigningCertificatesClient {
 
   private static final Logger logger = LoggerFactory.getLogger(ProdDigitalSigningCertificatesClient.class);

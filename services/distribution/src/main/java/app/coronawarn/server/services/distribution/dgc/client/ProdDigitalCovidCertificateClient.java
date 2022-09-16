@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
  * request to Digital Covid Certificate server.
  */
 @Component
-@Profile("!fake-dcc-client")
+@Profile({ "!fake-dcc-client", "!revocation" })
 public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificateClient {
 
   private static final Logger logger = LoggerFactory.getLogger(ProdDigitalCovidCertificateClient.class);

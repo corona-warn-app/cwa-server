@@ -13,7 +13,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile({ "fake-dcc-revocation", "!revocation" })
+@Profile({ "fake-dcc-revocation", "revocation" })
 public class TestDccRevocationClient implements DccRevocationClient {
 
   private static final Logger logger = LoggerFactory.getLogger(TestDccRevocationClient.class);
