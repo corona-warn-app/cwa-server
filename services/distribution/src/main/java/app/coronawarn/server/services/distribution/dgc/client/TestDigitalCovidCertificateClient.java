@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
  * mock sample data from classpath.
  */
 @Component
-@Profile({ "fake-dcc-client", "!revocation" })
+@Profile("fake-dcc-client & !revocation")
 public class TestDigitalCovidCertificateClient implements DigitalCovidCertificateClient {
 
   public static final String DISEASE_AGENT_TARGETED_HASH =

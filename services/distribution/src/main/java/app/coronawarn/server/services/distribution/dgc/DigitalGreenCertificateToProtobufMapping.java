@@ -10,10 +10,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 @Component
+@Profile("!revocation")
 public class DigitalGreenCertificateToProtobufMapping {
 
   static final String TEST_RESULT_ID = "covid-19-lab-result";

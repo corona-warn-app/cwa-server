@@ -20,8 +20,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
- * Creates a dedicated http client used by Feign when performing http calls to the Digital Signing Certificates
- * Service.
+ * Creates a dedicated http client used by Feign when performing http calls to the Digital Signing Certificates Service.
  */
 @Component
 @Profile({ "!fake-dsc-client", "!revocation" })
@@ -37,7 +36,7 @@ public class CloudDscFeignHttpClientProvider implements DscFeignHttpClientProvid
    * Creates an {@link ApacheHttpClientFactory} that with no SSL certificates and no host names.
    */
   @Bean
-  @Profile("dsc-client-factory")
+  @Profile({ "dsc-client-factory", "!revocation" })
   private ApacheHttpClientFactory dscFederationHttpClientFactory() {
     return new DefaultApacheHttpClientFactory(HttpClientBuilder.create()
         .setMaxConnPerRoute(connectionPoolSize)
@@ -63,6 +62,7 @@ public class CloudDscFeignHttpClientProvider implements DscFeignHttpClientProvid
    */
   @Override
   @Bean
+  @Profile("!revocation")
   public Client createDscFeignClient() {
     return new ApacheHttpClient(
         dscFederationHttpClientFactory().createBuilder().build());

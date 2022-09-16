@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
  * request to Digital Covid Certificate server.
  */
 @Component
-@Profile({ "!fake-dcc-client", "!revocation" })
+@Profile("!fake-dcc-client & !revocation")
 public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificateClient {
 
   private static final Logger logger = LoggerFactory.getLogger(ProdDigitalCovidCertificateClient.class);
@@ -48,7 +48,7 @@ public class ProdDigitalCovidCertificateClient implements DigitalCovidCertificat
       final List<String> countryListResponse;
       if (countryList != null) {
         countryListResponse = countryList.stream().filter(not("EU"::equals)).collect(Collectors.toList());
-        //countryList.removeIf("EU"::equals); //remove might not be supported
+        // countryList.removeIf("EU"::equals); //remove might not be supported
       } else {
         countryListResponse = null;
       }

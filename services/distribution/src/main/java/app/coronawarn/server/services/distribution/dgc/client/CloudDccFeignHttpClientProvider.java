@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
  * Creates a dedicated http client used by Feign when performing http calls to the Federation Gateway Service.
  */
 @Component
-@Profile({ "!fake-dcc-client", "!revocation" })
+@Profile("!revocation")
 public class CloudDccFeignHttpClientProvider implements DccFeignHttpClientProvider {
 
   private static final Logger logger = LoggerFactory.getLogger(CloudDccFeignHttpClientProvider.class);
@@ -51,12 +51,12 @@ public class CloudDccFeignHttpClientProvider implements DccFeignHttpClientProvid
   }
 
   /**
-   * Creates a FeignClient.
-   * {@link DccFeignDelegator} is used to intercept the response before
+   * Creates a FeignClient. {@link DccFeignDelegator} is used to intercept the response before
    * {@link ApacheHttpClient#execute(Request, Options)} in order to validate the signature.
    */
   @Override
   @Bean
+  @Profile("!revocation")
   public Client createFeignClient() {
     ApacheHttpClient apacheHttpClient = new ApacheHttpClient(dccHttpClientFactory().createBuilder().build());
     return new DccFeignDelegator(apacheHttpClient, this.dccSignatureValidator);
@@ -66,7 +66,7 @@ public class CloudDccFeignHttpClientProvider implements DccFeignHttpClientProvid
    * Creates an {@link ApacheHttpClientFactory} that with no SSL certificates and no host names.
    */
   @Bean
-  @Profile("dcc-client-factory")
+  @Profile("dcc-client-factory & !revocation")
   private ApacheHttpClientFactory dccHttpClientFactory() {
     return new DefaultApacheHttpClientFactory(HttpClientBuilder.create()
         .setMaxConnPerRoute(connectionPoolSize)
@@ -78,7 +78,7 @@ public class CloudDccFeignHttpClientProvider implements DccFeignHttpClientProvid
     logger.info("Instantiating DCC client - SSL context with truststore: {}", trustStorePath.getName());
     try {
       return SSLContextBuilder.create().loadTrustMaterial(trustStorePath,
-              emptyCharrArrayIfNull(trustStorePass))
+          emptyCharrArrayIfNull(trustStorePass))
           .build();
     } catch (Exception e) {
       logger.error("Problem on creating SSL context with truststore: " + trustStorePath.getName(), e);

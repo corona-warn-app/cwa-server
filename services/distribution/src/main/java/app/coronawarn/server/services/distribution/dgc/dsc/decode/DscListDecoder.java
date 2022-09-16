@@ -26,7 +26,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile({ "!fake-dsc-client", "!revocation" })
+@Profile("!revocation")
 public class DscListDecoder {
 
   private static final Logger logger = LoggerFactory.getLogger(DscListDecoder.class);

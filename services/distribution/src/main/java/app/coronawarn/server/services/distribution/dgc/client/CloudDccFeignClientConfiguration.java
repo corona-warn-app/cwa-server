@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Profile;
 
 @Configuration
 @EnableFeignClients
-@Profile({ "!fake-dcc-client", "!revocation" })
+@Profile("!revocation")
 public class CloudDccFeignClientConfiguration {
 
   private static final Logger logger = LoggerFactory.getLogger(CloudDccFeignClientConfiguration.class);
@@ -33,6 +33,7 @@ public class CloudDccFeignClientConfiguration {
   }
 
   @Bean
+  @Profile("!revocation")
   public Client feignClient() {
     return feignClientProvider.createFeignClient();
   }
@@ -41,6 +42,7 @@ public class CloudDccFeignClientConfiguration {
    * Retrier configuration for Feign DCC client.
    */
   @Bean
+  @Profile("!revocation")
   public Retryer retryer() {
     long retryPeriod = TimeUnit.SECONDS.toMillis(
         distributionServiceConfig.getDigitalGreenCertificate().getClient().getRetryPeriod());
@@ -52,5 +54,4 @@ public class CloudDccFeignClientConfiguration {
 
     return new Retryer.Default(retryPeriod, maxRetryPeriod, maxAttempts);
   }
-
 }
