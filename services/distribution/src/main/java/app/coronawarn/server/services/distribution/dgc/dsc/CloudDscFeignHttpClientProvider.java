@@ -20,7 +20,8 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
- * Creates a dedicated http client used by Feign when performing http calls to the Digital Signing Certificates Service.
+ * Creates a dedicated http client used by Feign when performing http calls to the Digital Signing Certificates
+ * Service.
  */
 @Component
 @Profile({ "!fake-dsc-client", "!revocation" })

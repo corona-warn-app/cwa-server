@@ -87,12 +87,12 @@ public class DccRevocationListStructureProvider {
 
     DirectoryOnDisk dccRlDirectory = new DirectoryOnDisk(
         distributionServiceConfig.getDccRevocation().getDccRevocationDirectory());
-    Map<Integer, List<RevocationEntry>> revocationEntriesByKidAndHash = dccRevocationListService
-        .getRevocationListEntries()
-        .stream().collect(Collectors.groupingBy(RevocationEntry::getKidTypeHashCode));
+    Map<Integer, List<RevocationEntry>> revocationEntriesByKidAndHash =
+        dccRevocationListService.getRevocationListEntries()
+            .stream().collect(Collectors.groupingBy(RevocationEntry::getKidTypeHashCode));
     getDccRevocationKidListArchive().ifPresent(dccRlDirectory::addWritable);
-    getDccRevocationKidTypeDirectories(revocationEntriesByKidAndHash)
-        .forEach(kidTypeDirectory -> dccRlDirectory.addWritable(kidTypeDirectory));
+    getDccRevocationKidTypeDirectories(revocationEntriesByKidAndHash).forEach(kidTypeDirectory ->
+        dccRlDirectory.addWritable(kidTypeDirectory));
     versionDirectory.addWritableToAll(ignoredValue -> Optional.of(dccRlDirectory));
     return versionDirectory;
   }
@@ -101,8 +101,8 @@ public class DccRevocationListStructureProvider {
       Map<Integer, List<RevocationEntry>> revocationEntriesByKidAndHash) {
     List<DirectoryOnDisk> kidTypeDirectories = new ArrayList<>();
     revocationEntriesByKidAndHash.keySet().forEach(kidType -> {
-      DirectoryOnDisk kidTypeDirectory = new DirectoryOnDisk(
-          revocationEntriesByKidAndHash.get(kidType).get(0).toString());
+      DirectoryOnDisk kidTypeDirectory =
+          new DirectoryOnDisk(revocationEntriesByKidAndHash.get(kidType).get(0).toString());
       getDccRevocationKidTypeArchive(revocationEntriesByKidAndHash.get(kidType))
           .ifPresent(kidTypeDirectory::addWritable);
       getKidTypeXandYDirectories(revocationEntriesByKidAndHash.get(kidType))
@@ -167,9 +167,9 @@ public class DccRevocationListStructureProvider {
 
   Optional<Writable<WritableOnDisk>> getDccRevocationKidListArchive() {
     ArchiveOnDisk kidArchive = new ArchiveOnDisk(KID_ARCHIVE);
-    Map<Integer, List<RevocationEntry>> revocationEntriesByKidAndHash = dccRevocationListService
-        .getRevocationListEntries()
-        .stream().collect(Collectors.groupingBy(RevocationEntry::getKidHashCode));
+    Map<Integer, List<RevocationEntry>> revocationEntriesByKidAndHash =
+        dccRevocationListService.getRevocationListEntries()
+            .stream().collect(Collectors.groupingBy(RevocationEntry::getKidHashCode));
     try {
       kidArchive
           .addWritable(new FileOnDisk(EXPORT_BIN,

@@ -51,7 +51,8 @@ public class CloudDccFeignHttpClientProvider implements DccFeignHttpClientProvid
   }
 
   /**
-   * Creates a FeignClient. {@link DccFeignDelegator} is used to intercept the response before
+   * Creates a FeignClient.
+   * {@link DccFeignDelegator} is used to intercept the response before
    * {@link ApacheHttpClient#execute(Request, Options)} in order to validate the signature.
    */
   @Override
@@ -78,7 +79,7 @@ public class CloudDccFeignHttpClientProvider implements DccFeignHttpClientProvid
     logger.info("Instantiating DCC client - SSL context with truststore: {}", trustStorePath.getName());
     try {
       return SSLContextBuilder.create().loadTrustMaterial(trustStorePath,
-          emptyCharrArrayIfNull(trustStorePass))
+              emptyCharrArrayIfNull(trustStorePass))
           .build();
     } catch (Exception e) {
       logger.error("Problem on creating SSL context with truststore: " + trustStorePath.getName(), e);
