@@ -1,25 +1,18 @@
 package app.coronawarn.server.services.distribution.dgc.integration;
 
-import static app.coronawarn.server.common.shared.util.SerializationUtils.readConfiguredJsonOrDefault;
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
-import static org.assertj.core.api.Assertions.fail;
-import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
-
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dgc.ApacheHttpTestConfiguration;
 import app.coronawarn.server.services.distribution.dgc.BusinessRule;
+import app.coronawarn.server.services.distribution.dgc.ValueSet;
 import app.coronawarn.server.services.distribution.dgc.client.CloudDccFeignClientConfiguration;
 import app.coronawarn.server.services.distribution.dgc.client.CloudDccFeignHttpClientProvider;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.client.ProdDigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.client.signature.DccSignatureValidator;
 import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRulesException;
+import app.coronawarn.server.services.distribution.dgc.exception.FetchValueSetsException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
-import java.util.Optional;
 import org.everit.json.schema.ValidationException;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeAll;
@@ -36,6 +29,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import java.util.Optional;
+
+import static app.coronawarn.server.common.shared.util.SerializationUtils.readConfiguredJsonOrDefault;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
+import static org.assertj.core.api.Assertions.fail;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {DistributionServiceConfig.class, ProdDigitalCovidCertificateClient.class,
@@ -51,8 +51,9 @@ public class FeignClientJsonSchemaValidationIntegrationTest {
   public static final String RULES_SIGNATURE
       = "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEMMvW0zun8fNCELK1tsqXsGJPu4p7850ZPCBCoxQ5gs2z5G0in3izL7eTFa5lI7Gkhnz0tN5whVQJObCaqbP55A==";
   private static final WireMockServer wireMockServer = new WireMockServer(options().port(1234));
-  private static final String VALID_RULE_JSON_FILE = "dgc/ccl-configuration-sample.json";
-  private static final String INVALILD_RULE_JSON_FILE = "dgc/ccl-configuration-sample_missing_required_property.json";
+  private static final String VALID_RULE_JSON_FILE = "dgc/json-validation/ccl-configuration.json";
+  private static final String INVALILD_RULE_JSON_FILE = "dgc/json-validation/rule_invalid.json";
+  private static final String UNMAPPED_URL_JSON_FILE = "dgc/json-validation/valueset.json";
   @Autowired
   DigitalCovidCertificateClient digitalCovidCertificateClient;
   @Autowired
@@ -75,12 +76,8 @@ public class FeignClientJsonSchemaValidationIntegrationTest {
 
   @Test
   void shouldPassValidation() {
-    stubRules(VALID_RULE_JSON_FILE, "/rules/DE/abcabc");
+    stubRules(VALID_RULE_JSON_FILE, "/rules/DE/abcabc", BusinessRule.class);
     try {
-      //make sure our json decoder is actually called
-      //This is quite hard to do, since the client that wraps this is built via Spring
-      //So we can't easily mock it and check for method invocations
-      //all we can do is to provoke an exception that only the json decoder will throw
       digitalCovidCertificateClient.getCountryRuleByHash("DE", "abcabc");
     } catch (FetchBusinessRulesException e) {
       fail("Failed to validate rules", e);
@@ -88,8 +85,25 @@ public class FeignClientJsonSchemaValidationIntegrationTest {
   }
 
   @Test
+  void shouldPassValidationDueToUnmappedURL() {
+    stubRules(UNMAPPED_URL_JSON_FILE, "/valuesets/abcabc", ValueSet.class);
+    try {
+      digitalCovidCertificateClient.getValueSet("abcabc");
+    } catch (FetchValueSetsException e) {
+      fail("Failed to validate rules", e);
+      e.printStackTrace();
+    } catch (ValidationException ex) {
+      fail("Schema evaluation should not take place for value sets", ex);
+    }
+  }
+
+  @Test
   void provokeValidationErrorInInterceptor() {
-    stubRules(INVALILD_RULE_JSON_FILE, "/rules/DE/abcabc");
+    //make sure our json decoder is actually called
+    //This is quite hard to do, since the client that wraps this is built via Spring
+    //So we can't easily mock it and check for method invocations
+    //all we can do is to provoke an exception that only the json decoder will throw
+    stubRules(INVALILD_RULE_JSON_FILE, "/rules/DE/abcabc", BusinessRule.class);
     try {
       digitalCovidCertificateClient.getCountryRuleByHash("DE", "abcabc");
     } catch (FetchBusinessRulesException e) {
@@ -101,10 +115,10 @@ public class FeignClientJsonSchemaValidationIntegrationTest {
     }
   }
 
-  public void stubRules(String jsonFilePath, String path) {
-    Optional<BusinessRule> businessRuleOptional =
-        readConfiguredJsonOrDefault(resourceLoader, jsonFilePath, jsonFilePath, BusinessRule.class);
-    BusinessRule businessRule = businessRuleOptional.get();
+  public <T, U extends Class> void stubRules(String jsonFilePath, String path, U returnObject) {
+    Optional<T> returnObjectOptional =
+        readConfiguredJsonOrDefault(resourceLoader, jsonFilePath, jsonFilePath, returnObject);
+    T businessRule = returnObjectOptional.get();
 
     wireMockServer.stubFor(
         get(urlPathEqualTo(path))
@@ -113,6 +127,7 @@ public class FeignClientJsonSchemaValidationIntegrationTest {
                     .withStatus(HttpStatus.OK.value())
                     .withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
                     .withHeader(X_SIGNATURE, "abc")
+                    //FIXME: we need a valid signature, but for that, we need a private key
                     //.withHeader(X_SIGNATURE, createSignature(asJsonString(businessRuleItemList)))
                     .withBody(asJsonString(businessRule))));
   }
