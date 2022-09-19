@@ -58,7 +58,7 @@
     <everit-json.version>1.5.1</everit-json.version>
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
     <commons-io.version>2.11.0</commons-io.version>
-    <log4j.version>2.18.0</log4j.version>
+    <log4j.version>2.19.0</log4j.version>
     <slf4j.version>2.0.1</slf4j.version>
     <feign.version>11.9.1</feign.version>
     <commons-math3.version>3.6.1</commons-math3.version>
@@ -69,7 +69,7 @@
     <jackson.version>2.13.4</jackson.version>
     <test-containers.version>1.17.3</test-containers.version>
     <postgresql.version>42.5.0</postgresql.version>
-    <wiremock.version>2.33.2</wiremock.version>
+    <wiremock.version>2.34.0</wiremock.version>
     <httpclient.version>4.5.13</httpclient.version>
     <junit.version>4.13.2</junit.version>
     <tomcat.version>9.0.65</tomcat.version>
@@ -466,7 +466,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>3.2.2</version>
+          <version>3.3.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
