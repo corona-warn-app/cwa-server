@@ -67,20 +67,6 @@ public class DigitalGreenCertificateToCborMapping {
     for (BusinessRuleItem businessRuleItem : businessRulesItems) {
       BusinessRule businessRule =
           businessRuleSupplier.get(businessRuleItem.getCountry(), businessRuleItem.getHash());
-
-      if (businessRule.getType().equalsIgnoreCase(ruleType.getType())) {
-        try (final InputStream in = resourceLoader.getResource(DCC_VALIDATION_RULE_JSON_CLASSPATH).getInputStream()) {
-          validateJsonSchema(businessRule, in);
-          businessRules.add(businessRule);
-        } catch (JsonProcessingException | ValidationException e) {
-          throw new DigitalCovidCertificateException(
-              "Rule for country '" + businessRuleItem.getCountry() + "' having hash '" + businessRuleItem.getHash()
-                  + "' is not valid", e);
-        } catch (IOException e) {
-          throw new DigitalCovidCertificateException(
-              "Validation rules schema found at: " + DCC_VALIDATION_RULE_JSON_CLASSPATH + "could not be found", e);
-        }
-      }
     }
     return businessRules;
   }

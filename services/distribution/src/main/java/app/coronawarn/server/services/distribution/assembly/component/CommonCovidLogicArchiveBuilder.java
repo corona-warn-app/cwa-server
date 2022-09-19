@@ -117,24 +117,10 @@ public class CommonCovidLogicArchiveBuilder {
     for (BusinessRuleItem businessRuleItem : businessRulesItems) {
       BusinessRule businessRule = null;
       try {
-        //TODO: Remove -- all this is not necessary after we have the json schema interceptor flow.
-        // in that flow, the individual calls to the business rules endpoint each verify the payloads themselves
         businessRule = businessRuleSupplier.get(businessRuleItem.getCountry(), businessRuleItem.getHash());
+        businessRules.add(businessRule);
       } catch (FetchBusinessRulesException e) {
         logger.error("Config archive was not overwritten because business rule could not been fetched:", e);
-      }
-
-      if (businessRule != null && businessRule.getType().equalsIgnoreCase(ruleType.getType())) {
-        try (final InputStream in = resourceLoader.getResource(CCL_JSON_SCHEMA).getInputStream()) {
-          validateJsonSchema(businessRule, in, new ResourceSchemaClient(resourceLoader, JSON_SCHEMA_PATH));
-          businessRules.add(businessRule);
-        } catch (JsonProcessingException | ValidationException e) {
-          logger.error(String.format("Rule for country %s having hash %s is not valid.",
-              businessRuleItem.getCountry(), businessRuleItem.getHash()), e);
-        } catch (IOException e) {
-          logger.error(String.format("Validation rules schema found at: %s could not be found.",
-              CCL_JSON_SCHEMA), e);
-        }
       }
     }
     return businessRules;
