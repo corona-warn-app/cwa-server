@@ -20,7 +20,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("revocation")
 public class CloudDccRevocationFeignHttpClientProvider implements DccRevocationFeignHttpClientProvider {
 
   private static final Logger logger = LoggerFactory.getLogger(CloudDccRevocationFeignHttpClientProvider.class);

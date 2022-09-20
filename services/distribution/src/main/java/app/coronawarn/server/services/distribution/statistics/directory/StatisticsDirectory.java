@@ -8,7 +8,9 @@ import app.coronawarn.server.services.distribution.assembly.structure.archive.Ar
 import app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.signing.DistributionArchiveSigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import org.springframework.context.annotation.Profile;
 
+@Profile("!revocation")
 public class StatisticsDirectory {
 
   private final Statistics statistics;

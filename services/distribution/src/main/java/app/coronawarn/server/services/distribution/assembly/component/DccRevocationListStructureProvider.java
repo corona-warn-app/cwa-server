@@ -26,9 +26,11 @@ import java.util.stream.Collectors;
 import org.bouncycastle.util.encoders.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
+@Profile("revocation")
 public class DccRevocationListStructureProvider {
 
   private static final Logger logger = LoggerFactory.getLogger(DccRevocationListStructureProvider.class);

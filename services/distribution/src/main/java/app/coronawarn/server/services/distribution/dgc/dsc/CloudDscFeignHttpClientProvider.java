@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
  * Service.
  */
 @Component
-@Profile("!fake-dsc-client")
+@Profile({ "!fake-dsc-client", "!revocation" })
 public class CloudDscFeignHttpClientProvider implements DscFeignHttpClientProvider {
 
   private static final Logger logger = LoggerFactory.getLogger(CloudDscFeignHttpClientProvider.class);
@@ -37,7 +37,7 @@ public class CloudDscFeignHttpClientProvider implements DscFeignHttpClientProvid
    * Creates an {@link ApacheHttpClientFactory} that with no SSL certificates and no host names.
    */
   @Bean
-  @Profile("dsc-client-factory")
+  @Profile({ "dsc-client-factory", "!revocation" })
   private ApacheHttpClientFactory dscFederationHttpClientFactory() {
     return new DefaultApacheHttpClientFactory(HttpClientBuilder.create()
         .setMaxConnPerRoute(connectionPoolSize)
@@ -63,6 +63,7 @@ public class CloudDscFeignHttpClientProvider implements DscFeignHttpClientProvid
    */
   @Override
   @Bean
+  @Profile("!revocation")
   public Client createDscFeignClient() {
     return new ApacheHttpClient(
         dscFederationHttpClientFactory().createBuilder().build());
