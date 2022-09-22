@@ -25,7 +25,7 @@ public class ObjectStorePublishingConfig {
   @Bean(name = "publish-s3")
   public ObjectStoreClient createObjectStoreClient(DistributionServiceConfig distributionServiceConfig) {
     return createClient(distributionServiceConfig.getObjectStore(),
-        distributionServiceConfig.getDccRevocation().getDccListPath());
+        distributionServiceConfig.getDccRevocation().getDccRevocationDirectory());
   }
 
   private ObjectStoreClient createClient(final ObjectStore objectStore, final String dccListPath) {

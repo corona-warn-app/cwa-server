@@ -7,6 +7,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
  * AppConfigurationDirectory} with them.
  */
 @Component
+@Profile("!revocation")
 public class AppConfigurationV2StructureProvider {
 
   private final CryptoProvider cryptoProvider;

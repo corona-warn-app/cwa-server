@@ -36,7 +36,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.test.context.ActiveProfiles;
 
-@ActiveProfiles({ "no-hour-retention", "local-json-stats" })
+@ActiveProfiles({ "no-hour-retention", "local-json-stats", "fake-dcc-revocation" })
 class ObjectStoreFilePreservationIT extends BaseS3IntegrationTest {
 
   @Autowired

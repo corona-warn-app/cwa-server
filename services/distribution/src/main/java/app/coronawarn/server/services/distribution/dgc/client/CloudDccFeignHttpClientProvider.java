@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
  * Creates a dedicated http client used by Feign when performing http calls to the Federation Gateway Service.
  */
 @Component
-@Profile("!fake-dcc-client")
+@Profile("!revocation")
 public class CloudDccFeignHttpClientProvider implements DccFeignHttpClientProvider {
 
   private static final Logger logger = LoggerFactory.getLogger(CloudDccFeignHttpClientProvider.class);
@@ -57,6 +57,7 @@ public class CloudDccFeignHttpClientProvider implements DccFeignHttpClientProvid
    */
   @Override
   @Bean
+  @Profile("!revocation")
   public Client createFeignClient() {
     ApacheHttpClient apacheHttpClient = new ApacheHttpClient(dccHttpClientFactory().createBuilder().build());
     return new DccFeignDelegator(apacheHttpClient, this.dccSignatureValidator);
@@ -66,7 +67,7 @@ public class CloudDccFeignHttpClientProvider implements DccFeignHttpClientProvid
    * Creates an {@link ApacheHttpClientFactory} that with no SSL certificates and no host names.
    */
   @Bean
-  @Profile("dcc-client-factory")
+  @Profile("dcc-client-factory & !revocation")
   private ApacheHttpClientFactory dccHttpClientFactory() {
     return new DefaultApacheHttpClientFactory(HttpClientBuilder.create()
         .setMaxConnPerRoute(connectionPoolSize)

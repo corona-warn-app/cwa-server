@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Profile;
 
 @Configuration
 @EnableFeignClients
-@Profile("!fake-dsc-client")
+@Profile("!revocation")
 public class CloudDscFeignClientConfiguration {
 
   private static final Logger logger = LoggerFactory.getLogger(CloudDscFeignClientConfiguration.class);
@@ -33,6 +33,7 @@ public class CloudDscFeignClientConfiguration {
   }
 
   @Bean
+  @Profile("!revocation")
   public Client dscFeignClient() {
     return feignClientProvider.createDscFeignClient();
   }
@@ -41,6 +42,7 @@ public class CloudDscFeignClientConfiguration {
    * Retrier configuration for Feign DSC client.
    */
   @Bean
+  @Profile("!revocation")
   public Retryer dscRetryer() {
     long retryPeriod = TimeUnit.SECONDS.toMillis(clientConfig.getRetryPeriod());
     long maxRetryPeriod = TimeUnit.SECONDS.toMillis(clientConfig.getMaxRetryPeriod());

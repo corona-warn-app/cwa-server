@@ -29,7 +29,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {Assembly.class}, initializers = ConfigDataApplicationContextInitializer.class)
+@ContextConfiguration(classes = {RevAssembly.class}, initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles("revocation")
 class AssemblyDccRunnerTest {
 
@@ -43,7 +43,7 @@ class AssemblyDccRunnerTest {
   CwaApiStructureProvider cwaApiStructureProvider;
 
   @Autowired
-  Assembly assembly;
+  RevAssembly assembly;
 
   private Directory<WritableOnDisk> parentDirectory;
   private Directory<WritableOnDisk> childDirectory;

@@ -1,5 +1,9 @@
 package app.coronawarn.server.services.distribution.assembly.component;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
@@ -17,6 +21,13 @@ import app.coronawarn.server.services.distribution.dgc.dsc.DigitalSigningCertifi
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalSigningCertificatesToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.dsc.errors.InvalidContentResponseException;
 import app.coronawarn.server.services.distribution.dgc.dsc.errors.InvalidFingerprintException;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,29 +41,17 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
-
-@EnableConfigurationProperties(value = {DistributionServiceConfig.class})
+@EnableConfigurationProperties(
+    value = { DistributionServiceConfig.class })
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(
-    classes = {DigitalCertificatesStructureProvider.class, DigitalGreenCertificateToProtobufMapping.class,
+    classes = { DigitalCertificatesStructureProvider.class, DigitalGreenCertificateToProtobufMapping.class,
         DigitalGreenCertificateToCborMapping.class, DigitalCovidValidationCertificateToProtobufMapping.class,
         CryptoProvider.class, DistributionServiceConfig.class, TestDigitalCovidCertificateClient.class,
         DigitalSigningCertificatesToProtobufMapping.class, DigitalSigningCertificatesClient.class,
-        BusinessRulesArchiveBuilder.class},
+        BusinessRulesArchiveBuilder.class },
     initializers = ConfigDataApplicationContextInitializer.class)
-@ActiveProfiles({"fake-dcc-client", "fake-dsc-client"})
+@ActiveProfiles({ "fake-dcc-client", "fake-dsc-client" })
 class DigitalCertificatesStructureProviderTest {
 
   private static final String PARENT_TEST_FOLDER = "parent";
@@ -138,30 +137,36 @@ class DigitalCertificatesStructureProviderTest {
 
     assertThat(businessRulesArchives).hasSize(5);
 
-    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("onboarded-countries"))).hasSize(1);
-    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("acceptance-rules"))).hasSize(1);
-    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("invalidation-rules"))).hasSize(1);
-    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("dscs"))).hasSize(1);
-    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("validation-services"))).hasSize(1);
+    assertThat(businessRulesArchives.stream()
+        .filter(filterByArchiveName(DigitalCertificatesStructureProvider.ONBOARDED_COUNTRIES))).hasSize(1);
+    assertThat(businessRulesArchives.stream()
+        .filter(filterByArchiveName(DigitalCertificatesStructureProvider.ACCEPTANCE_RULES))).hasSize(1);
+    assertThat(businessRulesArchives.stream()
+        .filter(filterByArchiveName(DigitalCertificatesStructureProvider.INVALIDATION_RULES))).hasSize(1);
+    assertThat(businessRulesArchives.stream()
+        .filter(filterByArchiveName(DigitalCertificatesStructureProvider.DIGITAL_CERTIFICATES_STRUCTURE_PROVIDER)))
+            .hasSize(1);
+    assertThat(businessRulesArchives.stream()
+        .filter(filterByArchiveName(DigitalCertificatesStructureProvider.VALIDATION_SERVICES))).hasSize(1);
   }
 
   @Test
   void testExceptionResults() {
     try {
       throw new InvalidFingerprintException();
-    } catch(InvalidFingerprintException e) {
+    } catch (InvalidFingerprintException e) {
       assertEquals("Obtaining service provider allow list failed", e.getMessage());
     }
 
     try {
       throw new InvalidFingerprintException(new IllegalStateException());
-    } catch(InvalidFingerprintException e) {
+    } catch (InvalidFingerprintException e) {
       assertEquals("Obtaining service provider allow list failed", e.getMessage());
     }
 
     try {
       throw new InvalidContentResponseException();
-    } catch(InvalidContentResponseException e) {
+    } catch (InvalidContentResponseException e) {
       assertEquals("Obtaining providers from content response failed", e.getMessage());
     }
   }

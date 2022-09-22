@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.objectstore.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,7 +14,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.test.context.ActiveProfiles;
 
+@ActiveProfiles("fake-dcc-revocation")
 class S3PublisherTestIT extends BaseS3IntegrationTest {
 
   private final String rootTestFolder = "objectstore/publisher/";
@@ -42,13 +42,10 @@ class S3PublisherTestIT extends BaseS3IntegrationTest {
   void publishTestFolderOk() throws IOException {
     s3Publisher.publish(getFolderAsPath(rootTestFolder));
     List<S3Object> s3Objects = objectStoreAccess.getObjectsWithPrefix("version");
-
     assertThat(s3Objects).hasSize(6);
   }
 
   private Path getFolderAsPath(String path) throws IOException {
     return resourceLoader.getResource(path).getFile().toPath();
   }
-
-
 }

@@ -9,14 +9,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
-
 
 /**
  * Reads configuration parameters from the respective files in the class path and build a {@link
  * LocalStatisticsStructureProvider} with them.
  */
 @Component
+@Profile("!revocation")
 public class LocalStatisticsStructureProvider {
 
   private final CryptoProvider cryptoProvider;

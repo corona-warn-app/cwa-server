@@ -1,11 +1,10 @@
-
 package app.coronawarn.server.services.distribution.dgc.client;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import feign.Client;
 import feign.Retryer;
-import java.util.concurrent.TimeUnit;
 import feign.codec.Decoder;
+import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectFactory;
@@ -21,7 +20,7 @@ import org.springframework.core.io.ResourceLoader;
 
 @Configuration
 @EnableFeignClients
-@Profile("!fake-dcc-client")
+@Profile("!revocation")
 public class CloudDccFeignClientConfiguration {
 
   private static final Logger logger = LoggerFactory.getLogger(CloudDccFeignClientConfiguration.class);
@@ -41,6 +40,7 @@ public class CloudDccFeignClientConfiguration {
   }
 
   @Bean
+  @Profile("!revocation")
   public Client feignClient() {
     return feignClientProvider.createFeignClient();
   }
@@ -49,6 +49,7 @@ public class CloudDccFeignClientConfiguration {
    * Retrier configuration for Feign DCC client.
    */
   @Bean
+  @Profile("!revocation")
   public Retryer retryer() {
     long retryPeriod = TimeUnit.SECONDS.toMillis(
         distributionServiceConfig.getDigitalGreenCertificate().getClient().getRetryPeriod());
@@ -67,18 +68,4 @@ public class CloudDccFeignClientConfiguration {
     Decoder jsonSchemaDecoder = new JsonSchemaDecoder(messageConverters, customizers, resourceLoader);
     return new ResponseEntityDecoder(jsonSchemaDecoder);
   }
-
-//  @Bean
-//  public ResponseInterceptor responseInterceptor() {
-//    return new ResponseInterceptor() {
-//      @Override
-//      public Object aroundDecode(InvocationContext invocationContext) throws IOException {
-//        Response response = invocationContext.response();
-//        Body body = response.body();
-//        logger.info("Response: " + body.toString());
-//        return null;
-//      }
-//    };
-//  }
-
 }

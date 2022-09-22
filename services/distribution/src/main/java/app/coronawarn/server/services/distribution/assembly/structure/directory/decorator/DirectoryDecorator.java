@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.assembly.structure.directory.decorator;
 
 import app.coronawarn.server.common.shared.collection.ImmutableStack;
@@ -67,5 +65,10 @@ public abstract class DirectoryDecorator<W extends Writable<W>> implements Direc
   @Override
   public boolean isArchive() {
     return this.directory.isArchive();
+  }
+
+  @Override
+  public String toString() {
+    return getName();
   }
 }
