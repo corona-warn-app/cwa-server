@@ -1,11 +1,7 @@
 package app.coronawarn.server.services.distribution.dgc.client;
 
-import app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleType;
-
-import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -17,10 +13,11 @@ public class JsonSchemaMappingLookup {
   public static final String ALLOW_LIST_JSON_CLASSPATH =
       JSON_SCHEMA_PATH + "/dcc-validation-service-allowlist-rule.json";
 
-  final static Map<String, String> businessObjectToJsonSchema = new HashMap<>();
-  //use in case schema location depends on business object class AND rule type
-  final static Map<Entry<Class, RuleType>, String> classAndRuletypeToSchemaClientPath = new HashMap<>();
+  static final Map<String, String> businessObjectToJsonSchema = new HashMap<>();
 
+  /**
+   * Constructor to initialize the schema mappings.
+   */
   public JsonSchemaMappingLookup() {
     //initialize all mappings from business objects to the respective schema
     //TODO: use the fully qualified names instead of objects as map keys,
@@ -33,9 +30,9 @@ public class JsonSchemaMappingLookup {
   }
 
   /**
-   * Returns the path to the json schema corresponding to the given business class
+   * Returns the path to the json schema corresponding to the given business class.
    *
-   * @return
+   * @return The path to the schema matching the request URL.
    */
   public String getSchemaPath(String requestUrl) {
     //find out if we have a known route, e.g. /rules, /bnrules, etc.
@@ -56,8 +53,4 @@ public class JsonSchemaMappingLookup {
     return businessObjectToJsonSchema.get(match.get());
   }
 
-  //Only needed if we actually need to consider the rule type in addition to the business class to find the schema
-  public String getSchemaClientPath(Class clazz, RuleType ruleType) {
-    return classAndRuletypeToSchemaClientPath.get(new SimpleEntry<>(clazz, ruleType));
-  }
 }

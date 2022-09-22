@@ -4,7 +4,6 @@ package app.coronawarn.server.services.distribution.dgc.client;
 import app.coronawarn.server.common.shared.util.ResourceSchemaClient;
 import feign.FeignException;
 import feign.Response;
-import feign.codec.DecodeException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,6 +34,13 @@ public class JsonSchemaDecoder extends SpringDecoder {
   private ResourceLoader resourceLoader;
   private JsonSchemaMappingLookup jsonSchemaMappingLookup;
 
+  /**
+   * Constructor to load the resource loader and lookup helper class.
+   *
+   * @param messageConverters The message converters.
+   * @param customizers The customizers.
+   * @param resourceLoader The resource loader used to load the json schema.
+   */
   public JsonSchemaDecoder(ObjectFactory<HttpMessageConverters> messageConverters,
       ObjectProvider<HttpMessageConverterCustomizer> customizers, ResourceLoader resourceLoader) {
     this(messageConverters, customizers);
@@ -62,15 +68,22 @@ public class JsonSchemaDecoder extends SpringDecoder {
   }
 
   /**
-   * Resolve the schema that maps to the given feign client return type
+   * Resolve the schema that maps to the given feign client return type.
    *
    * @param requestUrl The endpoint of the request.
-   * @return
+   * @return The schema path for the given URL.
    */
   public String getSchemaPathForRequestEndpoint(String requestUrl) {
     return jsonSchemaMappingLookup.getSchemaPath(requestUrl);
   }
 
+  /**
+   * Validation logic to compare a json file to a schema.
+   *
+   * @param jsonPayloadInputStream The json payload.
+   * @param schemaAsStream The json schema.
+   * @throws IOException Thrown when json could not be loaded from file.
+   */
   public void validateJsonAgainstSchema(InputStream jsonPayloadInputStream, InputStream schemaAsStream)
       throws IOException {
     try {
