@@ -1,7 +1,14 @@
 package app.coronawarn.server.services.distribution.dgc;
 
+import static app.coronawarn.server.services.distribution.assembly.component.CommonCovidLogicArchiveBuilder.CCL_JSON_SCHEMA;
+import static app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToCborMapping.DCC_VALIDATION_RULE_JSON_CLASSPATH;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.fail;
+
 import app.coronawarn.server.services.distribution.dgc.client.JsonSchemaDecoder;
 import app.coronawarn.server.services.distribution.dgc.client.JsonSchemaMappingLookup;
+import java.io.IOException;
+import java.io.InputStream;
 import org.everit.json.schema.ValidationException;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -9,12 +16,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import java.io.IOException;
-import java.io.InputStream;
-
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.fail;
 
 @ExtendWith(SpringExtension.class)
 public class FeignClientJsonSchemaValidationTest {
@@ -30,33 +31,33 @@ public class FeignClientJsonSchemaValidationTest {
 
   @Test
   public void testBusinessRuleValidForSchema() throws IOException {
-    testJsonValidForSchema("dgc/dcc-validation-rule.json", "dgc/json-validation/rule.json");
+    testJsonValidForSchema(DCC_VALIDATION_RULE_JSON_CLASSPATH, "dgc/json-validation/rule.json");
   }
 
   @Test
   public void testBusinessRuleInvalidForSchema() throws IOException {
-    testJsonInvalidForSchema("dgc/dcc-validation-rule.json",
+    testJsonInvalidForSchema(DCC_VALIDATION_RULE_JSON_CLASSPATH,
         "dgc/json-validation/rule_invalid.json");
   }
 
   @Test
   public void testBoosterNotificationValidForSchema() throws IOException {
-    testJsonValidForSchema("dgc/dcc-validation-rule.json", "dgc/json-validation/bnrule.json");
+    testJsonValidForSchema(DCC_VALIDATION_RULE_JSON_CLASSPATH, "dgc/json-validation/bnrule.json");
   }
 
   @Test
   public void testBoosterNotificationInvalidForSchema() throws IOException {
-    testJsonInvalidForSchema("dgc/dcc-validation-rule.json", "dgc/json-validation/bnrule_invalid.json");
+    testJsonInvalidForSchema(DCC_VALIDATION_RULE_JSON_CLASSPATH, "dgc/json-validation/bnrule_invalid.json");
   }
 
   @Test
   public void testCclRuleValidForSchema() throws IOException {
-    testJsonValidForSchema("dgc/ccl-configuration.json", "dgc/json-validation/ccl-configuration.json");
+    testJsonValidForSchema(CCL_JSON_SCHEMA, "dgc/json-validation/ccl-configuration.json");
   }
 
   @Test
   public void testCclRuleInvalidForSchema() throws IOException {
-    testJsonInvalidForSchema("dgc/ccl-configuration.json", "dgc/json-validation/ccl-configuration_invalid.json");
+    testJsonInvalidForSchema(CCL_JSON_SCHEMA, "dgc/json-validation/ccl-configuration_invalid.json");
   }
 
   public void testJsonValidForSchema(String schemaLocation, String jsonPayloadLocation) throws IOException {
@@ -89,7 +90,7 @@ public class FeignClientJsonSchemaValidationTest {
   @Test
   public void testRuleEndpointToSchemaMapping() {
     JsonSchemaMappingLookup lookup = new JsonSchemaMappingLookup();
-    Assert.assertEquals("dgc/ccl-configuration.json", lookup.getSchemaPath(RULE_HASH_REQUEST_ENDPOINT));
+    Assert.assertEquals(CCL_JSON_SCHEMA, lookup.getSchemaPath(RULE_HASH_REQUEST_ENDPOINT));
   }
 
   @Test
@@ -101,7 +102,7 @@ public class FeignClientJsonSchemaValidationTest {
   @Test
   public void testBoosterNotificationEndpointToSchemaMapping() {
     JsonSchemaMappingLookup lookup = new JsonSchemaMappingLookup();
-    Assert.assertEquals("dgc/dcc-validation-rule.json",
+    Assert.assertEquals(DCC_VALIDATION_RULE_JSON_CLASSPATH,
         lookup.getSchemaPath(BOOSTER_NOTIFICATION_HASH_REQUEST_ENDPOINT));
   }
 
@@ -114,7 +115,7 @@ public class FeignClientJsonSchemaValidationTest {
   @Test
   public void testCclRuleEndpointToSchemaMapping() {
     JsonSchemaMappingLookup lookup = new JsonSchemaMappingLookup();
-    Assert.assertEquals("dgc/ccl-configuration.json", lookup.getSchemaPath(CCL_RULE_HASH_REQUEST_ENDPOINT));
+    Assert.assertEquals(CCL_JSON_SCHEMA, lookup.getSchemaPath(CCL_RULE_HASH_REQUEST_ENDPOINT));
   }
 
 //  @Test

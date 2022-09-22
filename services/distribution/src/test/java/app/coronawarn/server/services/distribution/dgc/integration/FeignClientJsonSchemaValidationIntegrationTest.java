@@ -16,19 +16,29 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import org.everit.json.schema.ValidationException;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.openfeign.FeignAutoConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import java.io.IOException;
 import java.util.Optional;
 
 import static app.coronawarn.server.common.shared.util.SerializationUtils.readConfiguredJsonOrDefault;
@@ -40,42 +50,32 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {DistributionServiceConfig.class, ProdDigitalCovidCertificateClient.class,
     CloudDccFeignClientConfiguration.class, CloudDccFeignHttpClientProvider.class, ApacheHttpTestConfiguration.class,
-    DccSignatureValidator.class},
+    DccSignatureValidator.class, SignatureValidationMockConfiguration.class},
     initializers = ConfigDataApplicationContextInitializer.class)
 @ImportAutoConfiguration({FeignAutoConfiguration.class, HttpMessageConvertersAutoConfiguration.class})
-@ActiveProfiles("dcc-client-factory")
+@ActiveProfiles({"integration-test", "dcc-client-factory"})
 public class FeignClientJsonSchemaValidationIntegrationTest {
 
   public static final String X_SIGNATURE = "X-SIGNATURE";
-  //TODO: create a valid rule signature, with connection to the json in the payload
-  public static final String RULES_SIGNATURE
-      = "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEMMvW0zun8fNCELK1tsqXsGJPu4p7850ZPCBCoxQ5gs2z5G0in3izL7eTFa5lI7Gkhnz0tN5whVQJObCaqbP55A==";
   private static final WireMockServer wireMockServer = new WireMockServer(options().port(1234));
   private static final String VALID_RULE_JSON_FILE = "dgc/json-validation/ccl-configuration.json";
   private static final String INVALILD_RULE_JSON_FILE = "dgc/json-validation/rule_invalid.json";
   private static final String UNMAPPED_URL_JSON_FILE = "dgc/json-validation/valueset.json";
+
   @Autowired
   DigitalCovidCertificateClient digitalCovidCertificateClient;
+
   @Autowired
   ResourceLoader resourceLoader;
-  @Autowired
-  private DistributionServiceConfig distributionServiceConfig;
 
   @BeforeAll
   public static void setup() {
     wireMockServer.start();
   }
 
-  public static String asJsonString(final Object obj) {
-    try {
-      return new ObjectMapper().writeValueAsString(obj);
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
-  }
-
   @Test
-  void shouldPassValidation() {
+  void shouldPassValidation() throws IOException {
+
     stubRules(VALID_RULE_JSON_FILE, "/rules/DE/abcabc", BusinessRule.class);
     try {
       digitalCovidCertificateClient.getCountryRuleByHash("DE", "abcabc");
@@ -126,15 +126,16 @@ public class FeignClientJsonSchemaValidationIntegrationTest {
                 aResponse()
                     .withStatus(HttpStatus.OK.value())
                     .withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
-                    .withHeader(X_SIGNATURE, "abc")
-                    //FIXME: we need a valid signature, but for that, we need a private key
-                    //.withHeader(X_SIGNATURE, createSignature(asJsonString(businessRuleItemList)))
+                    //signature validation is mocked
+                    .withHeader(X_SIGNATURE, "mock-signature")
                     .withBody(asJsonString(businessRule))));
   }
 
-  private String createSignature(String body) {
-    String publicKey = distributionServiceConfig.getDigitalGreenCertificate().getClient().getPublicKey();
-
-    return null;
+  public static String asJsonString(final Object obj) {
+    try {
+      return new ObjectMapper().writeValueAsString(obj);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
   }
 }
