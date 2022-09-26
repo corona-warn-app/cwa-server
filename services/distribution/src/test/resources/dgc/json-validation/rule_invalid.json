@@ -1,46 +1,64 @@
 {
-  "Identifier": "CCL-DE-0001",
-  "Type": "CCLConfiguration",
-  "Country": "DE",
-  "Version": "1.0.0",
+  "Identifier": "GR-AT-0000",
+  "Type": "INVALID",
+  "Country": "AT",
+  "Version": "1.0.7",
   "SchemaVersion": "1.0.0",
-  "Engine": "JsonFunctions",
-  "EngineVersion": "1.0.0",
-  "ValidFrom": "2021-10-07T00:00:00Z",
+  "Engine": "CERTLOGIC",
+  "EngineVersion": "0.7.5",
+  "CertificateType": "General",
+  "Description": [
+    {
+      "lang": "en",
+      "desc": "Exactly one type of event."
+    },
+    {
+      "lang": "de",
+      "desc": "Genau ein Event-Typ vorhanden."
+    }
+  ],
+  "ValidFrom": "2022-09-01T00:00:00Z",
   "ValidTo": "2030-06-01T00:00:00Z",
+  "AffectedFields": [
+    "r",
+    "t",
+    "v"
+  ],
   "Logic": {
-    "JfnDescriptors_FAIL_HERE": [
+    "===": [
       {
-        "name": "greet",
-        "definition": {
-          "parameters": [
+        "reduce": [
+          [
             {
-              "name": "greeting",
-              "default": "Hello"
+              "var": "payload.r"
             },
             {
-              "name": "name"
+              "var": "payload.t"
+            },
+            {
+              "var": "payload.v"
             }
           ],
-          "logic": [
-            {
-              "return": [
-                {
-                  "concatenate": [
-                    {
-                      "var": "greeting"
-                    },
-                    " ",
-                    {
-                      "var": "name"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      }
+          {
+            "+": [
+              {
+                "var": "accumulator"
+              },
+              {
+                "if": [
+                  {
+                    "var": "current.0"
+                  },
+                  1,
+                  0
+                ]
+              }
+            ]
+          },
+          0
+        ]
+      },
+      1
     ]
   }
 }

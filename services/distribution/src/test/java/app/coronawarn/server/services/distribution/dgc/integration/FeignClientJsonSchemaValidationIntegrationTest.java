@@ -17,22 +17,13 @@ import org.everit.json.schema.ValidationException;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.openfeign.FeignAutoConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -59,8 +50,8 @@ public class FeignClientJsonSchemaValidationIntegrationTest {
 
   public static final String X_SIGNATURE = "X-SIGNATURE";
   private static final WireMockServer wireMockServer = new WireMockServer(options().port(1234));
-  private static final String VALID_RULE_JSON_FILE = "dgc/json-validation/ccl-configuration.json";
-  private static final String INVALILD_RULE_JSON_FILE = "dgc/json-validation/rule_invalid.json";
+  private static final String VALID_COUNTRY_HASH_RULE_JSON_FILE = "dgc/json-validation/rule.json";
+  private static final String INVALID_COUNTRY_HASH_RULE_JSON_FILE = "dgc/json-validation/rule_invalid.json";
   private static final String UNMAPPED_URL_JSON_FILE = "dgc/json-validation/valueset.json";
 
   @Autowired
@@ -80,9 +71,9 @@ public class FeignClientJsonSchemaValidationIntegrationTest {
   }
 
   @Test
-  void shouldPassValidation() throws IOException {
+  void validCountryHashRequestShouldPassValidation() throws IOException {
 
-    stubRules(VALID_RULE_JSON_FILE, "/rules/DE/abcabc", BusinessRule.class);
+    stubRules(VALID_COUNTRY_HASH_RULE_JSON_FILE, "/rules/DE/abcabc", BusinessRule.class);
     try {
       digitalCovidCertificateClient.getCountryRuleByHash("DE", "abcabc");
     } catch (FetchBusinessRulesException e) {
@@ -109,7 +100,7 @@ public class FeignClientJsonSchemaValidationIntegrationTest {
     //This is quite hard to do, since the client that wraps this is built via Spring
     //So we can't easily mock it and check for method invocations
     //all we can do is to provoke an exception that only the json decoder will throw
-    stubRules(INVALILD_RULE_JSON_FILE, "/rules/DE/abcabc", BusinessRule.class);
+    stubRules(INVALID_COUNTRY_HASH_RULE_JSON_FILE, "/rules/DE/abcabc", BusinessRule.class);
     try {
       digitalCovidCertificateClient.getCountryRuleByHash("DE", "abcabc");
     } catch (FetchBusinessRulesException e) {

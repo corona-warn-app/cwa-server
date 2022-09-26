@@ -23,7 +23,7 @@ public class JsonSchemaMappingLookup {
     //TODO: use the fully qualified names instead of objects as map keys,
     //since we can also have lists of items etc, which makes things really complicated to construct
     //TODO: switch from types to the requesst URL, since that is uniquely specific to a schema
-    businessObjectToJsonSchema.put("/rules", CCL_JSON_SCHEMA);
+    businessObjectToJsonSchema.put("/rules", DCC_VALIDATION_RULE_JSON_CLASSPATH);
     businessObjectToJsonSchema.put("/bnrules", DCC_VALIDATION_RULE_JSON_CLASSPATH);
     businessObjectToJsonSchema.put("/cclrules", CCL_JSON_SCHEMA);
     //businessObjectToJsonSchema.put(/allowlist, DCC_VALIDATION_RULE_JSON_CLASSPATH);

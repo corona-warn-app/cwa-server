@@ -20,8 +20,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 public class FeignClientJsonSchemaValidationTest {
 
-  private static final String RULE_LIST_REQUEST_ENDPOINT = "http://mydomain/rules";
-  private static final String RULE_HASH_REQUEST_ENDPOINT = "http://mydomain/rules/DE/abcabc";
+  private static final String COUNTRY_RULE_LIST_REQUEST_ENDPOINT = "http://mydomain/rules";
+  private static final String COUNTRY_RULE_HASH_REQUEST_ENDPOINT = "http://mydomain/rules/DE/abcabc";
   private static final String BOOSTER_NOTIFICATION_RULE_LIST_REQUEST_ENDPOINT = "http://mydomain/bnrules";
   private static final String BOOSTER_NOTIFICATION_HASH_REQUEST_ENDPOINT = "http://mydomain/bnrules/abcabc";
   private static final String CCL_RULE_LIST_REQUEST_ENDPOINT = "http://mydomain/cclrules";
@@ -30,12 +30,12 @@ public class FeignClientJsonSchemaValidationTest {
   ResourceLoader resourceLoader;
 
   @Test
-  public void testBusinessRuleValidForSchema() throws IOException {
+  public void testCountryBusinessRuleValidForSchema() throws IOException {
     testJsonValidForSchema(DCC_VALIDATION_RULE_JSON_CLASSPATH, "dgc/json-validation/rule.json");
   }
 
   @Test
-  public void testBusinessRuleInvalidForSchema() throws IOException {
+  public void testCountryBusinessRuleInvalidForSchema() throws IOException {
     testJsonInvalidForSchema(DCC_VALIDATION_RULE_JSON_CLASSPATH,
         "dgc/json-validation/rule_invalid.json");
   }
@@ -84,13 +84,13 @@ public class FeignClientJsonSchemaValidationTest {
   @Test
   public void testRuleListEndpointToSchemaMapping() {
     JsonSchemaMappingLookup lookup = new JsonSchemaMappingLookup();
-    Assert.assertEquals(null, lookup.getSchemaPath(RULE_LIST_REQUEST_ENDPOINT));
+    Assert.assertEquals(null, lookup.getSchemaPath(COUNTRY_RULE_LIST_REQUEST_ENDPOINT));
   }
 
   @Test
   public void testRuleEndpointToSchemaMapping() {
     JsonSchemaMappingLookup lookup = new JsonSchemaMappingLookup();
-    Assert.assertEquals(CCL_JSON_SCHEMA, lookup.getSchemaPath(RULE_HASH_REQUEST_ENDPOINT));
+    Assert.assertEquals(DCC_VALIDATION_RULE_JSON_CLASSPATH, lookup.getSchemaPath(COUNTRY_RULE_HASH_REQUEST_ENDPOINT));
   }
 
   @Test
