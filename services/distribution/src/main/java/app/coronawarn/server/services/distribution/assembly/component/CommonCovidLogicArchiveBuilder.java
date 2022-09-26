@@ -120,7 +120,9 @@ public class CommonCovidLogicArchiveBuilder {
       BusinessRule businessRule = null;
       try {
         businessRule = businessRuleSupplier.get(businessRuleItem.getCountry(), businessRuleItem.getHash());
-        businessRules.add(businessRule);
+        if (businessRule != null && businessRule.getType().equalsIgnoreCase(ruleType.getType())) {
+          businessRules.add(businessRule);
+        }
       } catch (FetchBusinessRulesException e) {
         logger.error("Config archive was not overwritten because business rule could not been fetched:", e);
       }

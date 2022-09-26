@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import org.everit.json.schema.ValidationException;
 import org.junit.Assert;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -73,6 +74,11 @@ public class FeignClientJsonSchemaValidationIntegrationTest {
     wireMockServer.start();
   }
 
+  @AfterAll
+  public static void stop() {
+    wireMockServer.stop();
+  }
+
   @Test
   void shouldPassValidation() throws IOException {
 
@@ -126,7 +132,7 @@ public class FeignClientJsonSchemaValidationIntegrationTest {
                 aResponse()
                     .withStatus(HttpStatus.OK.value())
                     .withHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
-                    //signature validation is mocked
+                    //signature validation is mocked later on
                     .withHeader(X_SIGNATURE, "mock-signature")
                     .withBody(asJsonString(businessRule))));
   }

@@ -18,7 +18,7 @@ public class SignatureValidationMockConfiguration {
     return new DccSignatureValidator(null) {
       @Override
       public void checkSignature(String signature, String body) throws IOException {
-
+        //do nothing, as we are using this in unit tests where we don't have a valid signature.
       }
     };
   }

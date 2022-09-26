@@ -1,7 +1,6 @@
 package app.coronawarn.server.services.distribution.dgc;
 
 import static app.coronawarn.server.common.shared.util.SerializationUtils.cborEncode;
-import static app.coronawarn.server.common.shared.util.SerializationUtils.validateJsonSchema;
 import static java.util.function.Predicate.not;
 
 import app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleType;
@@ -11,12 +10,9 @@ import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRu
 import app.coronawarn.server.services.distribution.dgc.functions.BusinessRuleItemSupplier;
 import app.coronawarn.server.services.distribution.dgc.functions.BusinessRuleSupplier;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.everit.json.schema.ValidationException;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
@@ -69,6 +65,9 @@ public class DigitalGreenCertificateToCborMapping {
     for (BusinessRuleItem businessRuleItem : businessRulesItems) {
       BusinessRule businessRule =
           businessRuleSupplier.get(businessRuleItem.getCountry(), businessRuleItem.getHash());
+      if (businessRule.getType().equalsIgnoreCase(ruleType.getType())) {
+        businessRules.add(businessRule);
+      }
     }
     return businessRules;
   }
