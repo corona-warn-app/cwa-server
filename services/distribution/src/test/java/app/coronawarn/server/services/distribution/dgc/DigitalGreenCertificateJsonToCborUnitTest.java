@@ -53,36 +53,6 @@ class DigitalGreenCertificateJsonToCborUnitTest {
                 digitalCovidCertificateClient::getCountryRuleByHash));
   }
 
-  @Test
-  void shouldThrowWhenRuleObjectFailsValidation() throws FetchBusinessRulesException {
-    Resource validationSchema = new ClassPathResource(DCC_VALIDATION_RULE_JSON_CLASSPATH);
-
-    when(resourceLoader.getResource(any())).thenReturn(validationSchema);
-    when(digitalCovidCertificateClient.getRules()).thenReturn(Collections.singletonList(mockBusinessRuleItem()));
-    when(digitalCovidCertificateClient.getCountryRuleByHash(any(), any())).thenReturn(mockBusinessRule());
-
-    DigitalCovidCertificateException exception = assertThrows(DigitalCovidCertificateException.class,
-        () -> digitalGreenCertificateToCborMapping
-            .constructRules(RuleType.ACCEPTANCE, digitalCovidCertificateClient::getRules,
-                digitalCovidCertificateClient::getCountryRuleByHash));
-    assertThat(exception.getMessage()).contains("is not valid");
-  }
-
-  @Test
-  void shouldThrowWhenValidationSchemaIsNotFound() throws FetchBusinessRulesException {
-    Resource validationSchema = new ClassPathResource(RANDOM_STRING);
-
-    when(resourceLoader.getResource(any())).thenReturn(validationSchema);
-    when(digitalCovidCertificateClient.getRules()).thenReturn(Collections.singletonList(mockBusinessRuleItem()));
-    when(digitalCovidCertificateClient.getCountryRuleByHash(any(), any())).thenReturn(mockBusinessRule());
-
-    DigitalCovidCertificateException exception = assertThrows(DigitalCovidCertificateException.class,
-        () -> digitalGreenCertificateToCborMapping
-            .constructRules(RuleType.ACCEPTANCE, digitalCovidCertificateClient::getRules,
-                digitalCovidCertificateClient::getCountryRuleByHash));
-    assertThat(exception.getMessage()).contains("could not be found");
-  }
-
   private BusinessRuleItem mockBusinessRuleItem() {
     BusinessRuleItem ruleItem = new BusinessRuleItem();
     ruleItem.setCountry(DE);

@@ -166,11 +166,11 @@ class DccRulesNotFetchedStructureProviderTest {
     assertEquals("ehn-dgc", digitalGreenCertificates.getName());
 
     List<Writable<WritableOnDisk>> businessRulesArchives = getBusinessRulesArchives(digitalGreenCertificates);
-    assertThat(businessRulesArchives).hasSize(4);
+    // json validation is only happening with an actual feign client, so we get all elements here, even
+    // elements that don't fit the json schema
+    assertThat(businessRulesArchives).hasSize(5);
 
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("onboarded-countries"))).hasSize(1);
-    // acceptance rules are invalid, they do not pass validation schema, thus archive won't be overwritten.
-    assertThat(businessRulesArchives.stream().filter(filterByArchiveName("acceptance-rules"))).isEmpty();
     // there are no invalid rules, thus they will be overwritten.
     assertThat(businessRulesArchives.stream().filter(filterByArchiveName("invalidation-rules"))).hasSize(1);
     // there are no invalid allowlist, thus they will be overwritten.
