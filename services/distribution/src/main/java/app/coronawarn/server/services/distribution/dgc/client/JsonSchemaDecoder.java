@@ -92,7 +92,7 @@ public class JsonSchemaDecoder extends SpringDecoder {
       //have to check manually if json is an array or an object. Limitation of the org.json library.
 
       //workaround for the actual json in the stream -- if we give the InputStream to the JSONTokener directly below,
-      // it is saying that we don't have valid json (it days it should start with { or with [, which id DOES!)
+      // it is saying that we don't have valid json (it says it should start with { or with [, which id DOES!)
       String jsonPayloadString = new BufferedReader(
           new InputStreamReader(jsonPayloadInputStream, StandardCharsets.UTF_8))
           .lines()
