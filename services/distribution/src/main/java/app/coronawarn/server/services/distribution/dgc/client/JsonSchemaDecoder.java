@@ -103,14 +103,10 @@ public class JsonSchemaDecoder extends SpringDecoder {
         schema.validate(parsedObject);
       } catch (JSONException e) {
         logger.debug(e.getMessage(), e);
-        try {
-          JSONArray parsedArray = new JSONArray(new JSONTokener(jsonPayloadString));
-          parsedArray.forEach(schema::validate);
-        } catch (JSONException ne) {
-          throw new RuntimeException("json is neither an object nor an array", ne);
-        }
+        JSONArray parsedArray = new JSONArray(new JSONTokener(jsonPayloadString));
+        parsedArray.forEach(schema::validate);
       }
-    } catch (ValidationException e) {
+    } catch (ValidationException | JSONException e) {
       logger.error("Json schema validation failed", e);
       throw e;
     }
