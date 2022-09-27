@@ -24,12 +24,8 @@ public class DigitalGreenCertificateToCborMapping {
   public static final String DCC_VALIDATION_RULE_JSON_CLASSPATH = "dgc/dcc-validation-rule.json";
   private final DigitalCovidCertificateClient digitalCovidCertificateClient;
 
-  private final ResourceLoader resourceLoader;
-
-  public DigitalGreenCertificateToCborMapping(DigitalCovidCertificateClient digitalCovidCertificateClient,
-      ResourceLoader resourceLoader) {
+  public DigitalGreenCertificateToCborMapping(DigitalCovidCertificateClient digitalCovidCertificateClient) {
     this.digitalCovidCertificateClient = digitalCovidCertificateClient;
-    this.resourceLoader = resourceLoader;
   }
 
   /**

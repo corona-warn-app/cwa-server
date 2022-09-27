@@ -33,13 +33,10 @@ class DigitalGreenCertificateJsonToCborUnitTest {
   @Mock
   DigitalCovidCertificateClient digitalCovidCertificateClient;
 
-  @Mock
-  ResourceLoader resourceLoader;
-
   @BeforeEach
   void setup() {
     digitalGreenCertificateToCborMapping = new DigitalGreenCertificateToCborMapping(
-        digitalCovidCertificateClient, resourceLoader);
+        digitalCovidCertificateClient);
   }
 
   @Test

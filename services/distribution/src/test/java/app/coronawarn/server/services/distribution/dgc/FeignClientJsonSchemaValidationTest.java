@@ -18,7 +18,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-public class FeignClientJsonSchemaValidationTest {
+class FeignClientJsonSchemaValidationTest {
 
   private static final String COUNTRY_RULE_LIST_REQUEST_ENDPOINT = "http://mydomain/rules";
   private static final String COUNTRY_RULE_HASH_REQUEST_ENDPOINT = "http://mydomain/rules/DE/abcabc";
@@ -30,33 +30,33 @@ public class FeignClientJsonSchemaValidationTest {
   ResourceLoader resourceLoader;
 
   @Test
-  public void testCountryBusinessRuleValidForSchema() throws IOException {
+  void testCountryBusinessRuleValidForSchema() throws IOException {
     testJsonValidForSchema(DCC_VALIDATION_RULE_JSON_CLASSPATH, "dgc/json-validation/rule.json");
   }
 
   @Test
-  public void testCountryBusinessRuleInvalidForSchema() throws IOException {
+  void testCountryBusinessRuleInvalidForSchema() throws IOException {
     testJsonInvalidForSchema(DCC_VALIDATION_RULE_JSON_CLASSPATH,
         "dgc/json-validation/rule_invalid.json");
   }
 
   @Test
-  public void testBoosterNotificationValidForSchema() throws IOException {
+  void testBoosterNotificationValidForSchema() throws IOException {
     testJsonValidForSchema(DCC_VALIDATION_RULE_JSON_CLASSPATH, "dgc/json-validation/bnrule.json");
   }
 
   @Test
-  public void testBoosterNotificationInvalidForSchema() throws IOException {
+  void testBoosterNotificationInvalidForSchema() throws IOException {
     testJsonInvalidForSchema(DCC_VALIDATION_RULE_JSON_CLASSPATH, "dgc/json-validation/bnrule_invalid.json");
   }
 
   @Test
-  public void testCclRuleValidForSchema() throws IOException {
+  void testCclRuleValidForSchema() throws IOException {
     testJsonValidForSchema(CCL_JSON_SCHEMA, "dgc/json-validation/ccl-configuration.json");
   }
 
   @Test
-  public void testCclRuleInvalidForSchema() throws IOException {
+  void testCclRuleInvalidForSchema() throws IOException {
     testJsonInvalidForSchema(CCL_JSON_SCHEMA, "dgc/json-validation/ccl-configuration_invalid.json");
   }
 
@@ -82,45 +82,39 @@ public class FeignClientJsonSchemaValidationTest {
   }
 
   @Test
-  public void testRuleListEndpointToSchemaMapping() {
+  void testRuleListEndpointToSchemaMapping() {
     JsonSchemaMappingLookup lookup = new JsonSchemaMappingLookup();
     Assert.assertEquals(null, lookup.getSchemaPath(COUNTRY_RULE_LIST_REQUEST_ENDPOINT));
   }
 
   @Test
-  public void testRuleEndpointToSchemaMapping() {
+  void testRuleEndpointToSchemaMapping() {
     JsonSchemaMappingLookup lookup = new JsonSchemaMappingLookup();
     Assert.assertEquals(DCC_VALIDATION_RULE_JSON_CLASSPATH, lookup.getSchemaPath(COUNTRY_RULE_HASH_REQUEST_ENDPOINT));
   }
 
   @Test
-  public void testBoosterNotificationListEndpointToSchemaMapping() {
+  void testBoosterNotificationListEndpointToSchemaMapping() {
     JsonSchemaMappingLookup lookup = new JsonSchemaMappingLookup();
     Assert.assertEquals(null, lookup.getSchemaPath(BOOSTER_NOTIFICATION_RULE_LIST_REQUEST_ENDPOINT));
   }
 
   @Test
-  public void testBoosterNotificationEndpointToSchemaMapping() {
+  void testBoosterNotificationEndpointToSchemaMapping() {
     JsonSchemaMappingLookup lookup = new JsonSchemaMappingLookup();
     Assert.assertEquals(DCC_VALIDATION_RULE_JSON_CLASSPATH,
         lookup.getSchemaPath(BOOSTER_NOTIFICATION_HASH_REQUEST_ENDPOINT));
   }
 
   @Test
-  public void testCclRuleListEndpointToSchemaMapping() {
+  void testCclRuleListEndpointToSchemaMapping() {
     JsonSchemaMappingLookup lookup = new JsonSchemaMappingLookup();
     Assert.assertEquals(null, lookup.getSchemaPath(CCL_RULE_LIST_REQUEST_ENDPOINT));
   }
 
   @Test
-  public void testCclRuleEndpointToSchemaMapping() {
+  void testCclRuleEndpointToSchemaMapping() {
     JsonSchemaMappingLookup lookup = new JsonSchemaMappingLookup();
     Assert.assertEquals(CCL_JSON_SCHEMA, lookup.getSchemaPath(CCL_RULE_HASH_REQUEST_ENDPOINT));
   }
-
-//  @Test
-//  public void testAllowListJsonToSchemaMapping() {
-//    JsonSchemaMappingLookup lookup = new JsonSchemaMappingLookup();
-//    Assert.assertEquals("dgc/dcc-validation-service-allowlist-rule.json", lookup.getSchemaPath(ALLOWLIST_OBJECT_TYPE));
-//  }
 }

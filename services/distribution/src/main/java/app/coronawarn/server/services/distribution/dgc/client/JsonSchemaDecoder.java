@@ -56,7 +56,6 @@ public class JsonSchemaDecoder extends SpringDecoder {
   @Override
   public Object decode(Response response, Type type) throws IOException, FeignException {
     InputStream payloadJsonInputStream = response.body().asInputStream();
-    //String schemaPathToUse = getSchemaPathForReturnType(type);
     String schemaPathToUse = getSchemaPathForRequestEndpoint(response.request().url());
     if (schemaPathToUse == null) {
       // no matching schema for this URL, so we don't need to validate
@@ -105,7 +104,7 @@ public class JsonSchemaDecoder extends SpringDecoder {
       } catch (JSONException e) {
         try {
           JSONArray parsedArray = new JSONArray(new JSONTokener(jsonPayloadString));
-          parsedArray.forEach(object -> schema.validate(object));
+          parsedArray.forEach(schema::validate);
         } catch (JSONException ne) {
           throw new RuntimeException("json is neither an object nor an array");
         }

@@ -49,7 +49,6 @@ public class CommonCovidLogicArchiveBuilder {
   public static final String CONFIG_V = "config-v";
 
   private final DistributionServiceConfig distributionServiceConfig;
-  private final ResourceLoader resourceLoader;
 
   private String directoryName;
   private RuleType ruleType;
@@ -62,14 +61,12 @@ public class CommonCovidLogicArchiveBuilder {
    * Builds the Structure of the config files for different versions.
    *
    * @param distributionServiceConfig distributionServiceConfig
-   * @param resourceLoader            resourceLoader
    * @param cryptoProvider            cryptoProvider
    */
   public CommonCovidLogicArchiveBuilder(
-      DistributionServiceConfig distributionServiceConfig, ResourceLoader resourceLoader,
+      DistributionServiceConfig distributionServiceConfig,
       CryptoProvider cryptoProvider) {
     this.distributionServiceConfig = distributionServiceConfig;
-    this.resourceLoader = resourceLoader;
     this.cryptoProvider = cryptoProvider;
   }
 
