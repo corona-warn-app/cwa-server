@@ -59,16 +59,10 @@ public class DigitalGreenCertificateToCborMapping {
 
     List<BusinessRule> businessRules = new ArrayList<>();
     for (BusinessRuleItem businessRuleItem : businessRulesItems) {
-      try {
-        BusinessRule businessRule =
-            businessRuleSupplier.get(businessRuleItem.getCountry(), businessRuleItem.getHash());
-        if (businessRule.getType().equalsIgnoreCase(ruleType.getType())) {
-          businessRules.add(businessRule);
-        }
-      } catch (FetchBusinessRulesException ex) {
-        throw new DigitalCovidCertificateException(
-            "Rule for country '" + businessRuleItem.getCountry() + "' having hash '" + businessRuleItem.getHash()
-                + "' is not valid", ex);
+      BusinessRule businessRule =
+          businessRuleSupplier.get(businessRuleItem.getCountry(), businessRuleItem.getHash());
+      if (businessRule.getType().equalsIgnoreCase(ruleType.getType())) {
+        businessRules.add(businessRule);
       }
     }
     return businessRules;
