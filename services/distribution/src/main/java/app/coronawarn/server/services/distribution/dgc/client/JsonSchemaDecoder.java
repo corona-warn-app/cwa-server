@@ -96,7 +96,7 @@ public class JsonSchemaDecoder extends SpringDecoder {
       String jsonPayloadString = new BufferedReader(
           new InputStreamReader(jsonPayloadInputStream, StandardCharsets.UTF_8))
           .lines()
-          .collect(Collectors.joining("\n"));
+          .collect(Collectors.joining());
 
       try {
         JSONObject parsedObject = new JSONObject(new JSONTokener(jsonPayloadString));
