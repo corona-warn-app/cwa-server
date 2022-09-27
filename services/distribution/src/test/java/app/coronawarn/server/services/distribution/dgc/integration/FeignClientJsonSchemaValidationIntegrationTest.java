@@ -88,7 +88,6 @@ public class FeignClientJsonSchemaValidationIntegrationTest {
       digitalCovidCertificateClient.getValueSet("abcabc");
     } catch (FetchValueSetsException e) {
       fail("Failed to validate rules", e);
-      e.printStackTrace();
     } catch (ValidationException ex) {
       fail("Schema evaluation should not take place for value sets", ex);
     }
