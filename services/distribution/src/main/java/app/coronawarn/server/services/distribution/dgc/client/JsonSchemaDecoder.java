@@ -102,6 +102,7 @@ public class JsonSchemaDecoder extends SpringDecoder {
         JSONObject parsedObject = new JSONObject(new JSONTokener(jsonPayloadString));
         schema.validate(parsedObject);
       } catch (JSONException e) {
+        logger.debug(e.getMessage(), e);
         try {
           JSONArray parsedArray = new JSONArray(new JSONTokener(jsonPayloadString));
           parsedArray.forEach(schema::validate);
