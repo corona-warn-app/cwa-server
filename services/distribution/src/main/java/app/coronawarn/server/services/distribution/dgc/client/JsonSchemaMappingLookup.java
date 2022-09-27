@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JsonSchemaMappingLookup {
 
@@ -14,6 +16,8 @@ public class JsonSchemaMappingLookup {
       JSON_SCHEMA_PATH + "/dcc-validation-service-allowlist-rule.json";
 
   static final Map<String, String> businessObjectToJsonSchema = new HashMap<>();
+
+  private static final Logger logger = LoggerFactory.getLogger(JsonSchemaMappingLookup.class);
 
   /**
    * Constructor to initialize the schema mappings.
@@ -40,12 +44,13 @@ public class JsonSchemaMappingLookup {
     try {
       match.get();
     } catch (NoSuchElementException ex) {
+      logger.debug("Schema validation not configured for: {}", requestUrl);
       return null; // the request has not mapping, meaning there is no schema for this request URL's payload
     }
     // find out if there are trailing elements after the base mapping (e.g. rules/<hash>). If so, we validate.
     if (requestUrl.lastIndexOf(match.get()) >= requestUrl.lastIndexOf("/")) {
-      //this means we have no hash or any other trailing path components after the route. We are not validating this
-      //the payloads we are interested in are always qualified with a hash, a country, etc.
+      // this means we have no hash or any other trailing path components after the route. We are not validating this.
+      // The payloads we are interested in are always qualified with a hash, a country, etc.
       return null;
     }
     //since there is currently only one schema per route, we can take the route as a key for the schema
