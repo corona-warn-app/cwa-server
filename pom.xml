@@ -77,7 +77,7 @@
     <checkstyle.version>10.3.4</checkstyle.version>
     <semver4j.version>3.1.0</semver4j.version>
     <upokecenter-cbor.version>4.5.2</upokecenter-cbor.version>
-    <snakeyaml.version>1.32</snakeyaml.version>
+    <snakeyaml.version>1.33</snakeyaml.version>
     <json.version>20220924</json.version>
   </properties>
 
