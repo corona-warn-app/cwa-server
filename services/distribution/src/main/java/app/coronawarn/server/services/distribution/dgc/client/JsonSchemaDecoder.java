@@ -107,7 +107,7 @@ public class JsonSchemaDecoder extends SpringDecoder {
           JSONArray parsedArray = new JSONArray(new JSONTokener(jsonPayloadString));
           parsedArray.forEach(schema::validate);
         } catch (JSONException ne) {
-          throw new RuntimeException("json is neither an object nor an array");
+          throw new RuntimeException("json is neither an object nor an array", ne);
         }
       }
     } catch (ValidationException e) {
