@@ -19,7 +19,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.test.context.ActiveProfiles;
 
+@ActiveProfiles("fake-dcc-revocation")
 class ObjectStoreAccessIT extends BaseS3IntegrationTest {
 
   public static final String testCwaPrefix = "testing/cwa/";
@@ -39,7 +41,6 @@ class ObjectStoreAccessIT extends BaseS3IntegrationTest {
     objectStoreAccess.deleteObjectsWithPrefix(testCwaPrefix);
   }
 
-
   @Test
   void contextLoads() {
     assertThat(objectStoreAccess).isNotNull();
@@ -48,14 +49,12 @@ class ObjectStoreAccessIT extends BaseS3IntegrationTest {
   @Test
   void defaultIsEmptyTrue() {
     var files = objectStoreAccess.getObjectsWithPrefix(testRunId);
-
     assertThat(files).withFailMessage("Content should be empty").isEmpty();
   }
 
   @Test
   void fetchFilesNothingFound() {
     var files = objectStoreAccess.getObjectsWithPrefix("THIS_PREFIX_DOES_NOT_EXIST");
-
     assertThat(files).withFailMessage("Found files, but should be empty!").isEmpty();
   }
 
@@ -100,7 +99,6 @@ class ObjectStoreAccessIT extends BaseS3IntegrationTest {
     objectStoreAccess.deleteObjectsWithPrefix(testRunBatchesPrefix);
     List<S3Object> filesAfterDeletion = objectStoreAccess.getObjectsWithPrefix(testRunBatchesPrefix);
     assertThat(filesAfterDeletion).isEmpty();
-
   }
 
   private Path getExampleFile() {

@@ -1,6 +1,5 @@
 package app.coronawarn.server.services.distribution.assembly.component;
 
-
 import static app.coronawarn.server.services.distribution.dgc.BusinessRule.RuleType.BOOSTER_NOTIFICATION;
 
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
@@ -9,6 +8,7 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateFeignClient;
 import java.util.Optional;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
+@Profile("!revocation")
 public class BoosterNotificationStructureProvider {
 
   private final DistributionServiceConfig distributionServiceConfig;

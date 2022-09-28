@@ -25,6 +25,7 @@ import app.coronawarn.server.services.distribution.dgc.structure.DigitalCertific
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
@@ -32,6 +33,7 @@ import org.springframework.stereotype.Component;
  * DigitalCertificatesStructureProvider} with them.
  */
 @Component
+@Profile("!revocation")
 public class DigitalCertificatesStructureProvider {
 
   private static final Logger logger = LoggerFactory.getLogger(DigitalCertificatesStructureProvider.class);

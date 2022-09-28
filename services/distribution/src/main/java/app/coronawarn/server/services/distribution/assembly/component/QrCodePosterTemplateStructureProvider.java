@@ -14,6 +14,7 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.QrCodePosterTemplate;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.QrCodePosterTemplate.DescriptionTextBox;
 import java.util.function.Function;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Component;
  * registration.
  */
 @Component
+@Profile("!revocation")
 public class QrCodePosterTemplateStructureProvider {
 
   private final DistributionServiceConfig distributionServiceConfig;

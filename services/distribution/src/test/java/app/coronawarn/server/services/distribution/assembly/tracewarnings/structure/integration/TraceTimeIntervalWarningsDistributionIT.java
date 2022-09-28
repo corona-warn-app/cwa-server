@@ -47,7 +47,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(classes = {Application.class}, initializers = ConfigDataApplicationContextInitializer.class)
 @ExtendWith(SpringExtension.class)
 @EnableAutoConfiguration(exclude = VaultAutoConfiguration.class)
-@ActiveProfiles("fake-dcc-client")
+@ActiveProfiles({ "fake-dcc-client", "fake-dcc-revocation" })
 class TraceTimeIntervalWarningsDistributionIT {
 
   @Autowired
