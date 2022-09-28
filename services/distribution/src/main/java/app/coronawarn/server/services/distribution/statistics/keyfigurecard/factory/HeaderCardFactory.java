@@ -5,6 +5,7 @@ import static java.time.ZoneOffset.UTC;
 
 import app.coronawarn.server.common.protocols.internal.stats.CardHeader;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStringObject;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -25,7 +26,7 @@ public abstract class HeaderCardFactory {
   public KeyFigureCard makeKeyFigureCard(StatisticsJsonStringObject stats) {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     LocalDate dateTime = LocalDate.parse(stats.getEffectiveDate(), formatter);
-    if (this.getCardId() == HOSPITALIZATION_INCIDENCE_CARD.ordinal() 
+    if (this.getCardId() == HOSPITALIZATION_INCIDENCE_CARD.ordinal()
         && !ObjectUtils.isEmpty(stats.getHospitalizationEffectiveDate())) {
       dateTime = LocalDate.parse(stats.getHospitalizationEffectiveDate(), formatter);
     }
@@ -66,4 +67,8 @@ public abstract class HeaderCardFactory {
    * @return List of objects to be checked if are null.
    */
   protected abstract List<Optional<Object>> getRequiredFieldValues(StatisticsJsonStringObject stats);
+
+  public void setInfectionThreshold(int infectionThreshold) {
+
+  }
 }

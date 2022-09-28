@@ -8,6 +8,7 @@ import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.Trend;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.TrendSemantic;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard.Builder;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStringObject;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.ValueTrendCalculator;
 import java.util.List;
@@ -26,8 +27,6 @@ import org.springframework.context.annotation.Configuration;
 public class InfectionsCardFactory extends HeaderCardFactory {
 
   private static final Logger logger = LoggerFactory.getLogger(InfectionsCardFactory.class);
-
-  @Value("${services.distribution.infection-threshold}")
   private int infectionThreshold;
 
   @Override
@@ -92,7 +91,7 @@ public class InfectionsCardFactory extends HeaderCardFactory {
       return List.of(Optional.empty());
     }
 
-    if( infectionThreshold > 0 ) {
+    if (infectionThreshold > 0) {
       logger.info("Infection Threshold is ok");
     }
 
@@ -105,5 +104,9 @@ public class InfectionsCardFactory extends HeaderCardFactory {
     }
 
     return requiredFields;
+  }
+
+  public void setInfectionThreshold(int infectionThreshold) {
+    this.infectionThreshold = infectionThreshold;
   }
 }

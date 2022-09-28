@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.distribution.statistics.keyfigurecard;
 
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.BoosterVaccinatedCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.EmptyCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.FirstVaccinationCardFactory;
@@ -69,10 +70,13 @@ public enum Cards {
    * Get card factory by ID.
    *
    * @param id {@link #ordinal()}
+   * @param config The distribution configuration used to get the infection threshold parameter.
    * @return {@link #getFactory()}
    */
-  public static HeaderCardFactory getFactoryFor(final int id) {
+  public static HeaderCardFactory getFactoryFor(final int id,
+      DistributionServiceConfig config) {
     try {
+      values()[id].getFactory().setInfectionThreshold(config.getInfectionThreshold());
       return values()[id].getFactory();
     } catch (final ArrayIndexOutOfBoundsException e) {
       return EMPTY_CARD.getFactory();
