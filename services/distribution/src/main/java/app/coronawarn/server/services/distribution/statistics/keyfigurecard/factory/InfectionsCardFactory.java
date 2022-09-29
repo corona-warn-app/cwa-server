@@ -83,7 +83,8 @@ public class InfectionsCardFactory extends HeaderCardFactory {
 
     if (stats.getInfectionsReportedDaily() < stats.getInfectionsReported7daysAvg() * thresholdPercent()) {
       logger.warn(
-          "skipping '{}' for '{}', because the reported infections ({}) are less than {}% of the last 7 days average ({})",
+          "skipping '{}' for '{}', because the reported infections ({}) are less than "
+              + "{}% of the last 7 days average ({})",
           stats.getEffectiveDate(), INFECTIONS_CARD, stats.getInfectionsReportedDaily(), config.getInfectionThreshold(),
           stats.getInfectionsReported7daysAvg());
       return List.of(Optional.empty());
