@@ -1,6 +1,5 @@
 package app.coronawarn.server.services.distribution.dgc.client;
 
-
 import app.coronawarn.server.common.shared.util.ResourceSchemaClient;
 import feign.FeignException;
 import feign.Response;
@@ -31,37 +30,33 @@ import org.springframework.core.io.ResourceLoader;
 public class JsonSchemaDecoder extends SpringDecoder {
 
   private static final Logger logger = LoggerFactory.getLogger(JsonSchemaDecoder.class);
-  private ResourceLoader resourceLoader;
-  private JsonSchemaMappingLookup jsonSchemaMappingLookup;
+  private final ResourceLoader resourceLoader;
+  private final JsonSchemaMappingLookup jsonSchemaMappingLookup;
 
   /**
    * Constructor to load the resource loader and lookup helper class.
    *
    * @param messageConverters The message converters.
-   * @param customizers The customizers.
-   * @param resourceLoader The resource loader used to load the json schema.
+   * @param customizers       The customizers.
+   * @param resourceLoader    The resource loader used to load the json schema.
    */
-  public JsonSchemaDecoder(ObjectFactory<HttpMessageConverters> messageConverters,
-      ObjectProvider<HttpMessageConverterCustomizer> customizers, ResourceLoader resourceLoader) {
-    this(messageConverters, customizers);
+  public JsonSchemaDecoder(final ObjectFactory<HttpMessageConverters> messageConverters,
+      final ObjectProvider<HttpMessageConverterCustomizer> customizers, final ResourceLoader resourceLoader) {
+    super(messageConverters, customizers);
     this.resourceLoader = resourceLoader;
     jsonSchemaMappingLookup = new JsonSchemaMappingLookup();
   }
 
-  public JsonSchemaDecoder(ObjectFactory<HttpMessageConverters> messageConverters,
-      ObjectProvider<HttpMessageConverterCustomizer> customizers) {
-    super(messageConverters, customizers);
-  }
-
   @Override
-  public Object decode(Response response, Type type) throws IOException, FeignException {
-    InputStream payloadJsonInputStream = response.body().asInputStream();
-    String schemaPathToUse = getSchemaPathForRequestEndpoint(response.request().url());
+  public Object decode(final Response response, final Type type) throws IOException, FeignException {
+    final InputStream payloadJsonInputStream = response.body().asInputStream();
+    final String schemaPathToUse = getSchemaPathForRequestEndpoint(response.request().url());
     if (schemaPathToUse == null) {
       // no matching schema for this URL, so we don't need to validate
+      logger.debug("No validation JSON schema defined for: {}", response.request().url());
       return super.decode(response, type);
     }
-    InputStream schemaInputStream = resourceLoader.getResource(schemaPathToUse).getInputStream();
+    final InputStream schemaInputStream = resourceLoader.getResource(schemaPathToUse).getInputStream();
     validateJsonAgainstSchema(payloadJsonInputStream, schemaInputStream);
     return super.decode(response, type);
   }
@@ -72,7 +67,7 @@ public class JsonSchemaDecoder extends SpringDecoder {
    * @param requestUrl The endpoint of the request.
    * @return The schema path for the given URL.
    */
-  public String getSchemaPathForRequestEndpoint(String requestUrl) {
+  public String getSchemaPathForRequestEndpoint(final String requestUrl) {
     return jsonSchemaMappingLookup.getSchemaPath(requestUrl);
   }
 
@@ -80,30 +75,30 @@ public class JsonSchemaDecoder extends SpringDecoder {
    * Validation logic to compare a json file to a schema.
    *
    * @param jsonPayloadInputStream The json payload.
-   * @param schemaAsStream The json schema.
+   * @param schemaAsStream         The json schema.
    * @throws IOException Thrown when json could not be loaded from file.
    */
-  public void validateJsonAgainstSchema(InputStream jsonPayloadInputStream, InputStream schemaAsStream)
+  public void validateJsonAgainstSchema(final InputStream jsonPayloadInputStream, final InputStream schemaAsStream)
       throws IOException {
     try {
-      JSONObject jsonSchema = new JSONObject(new JSONTokener(schemaAsStream));
-      SchemaClient schemaClient = new ResourceSchemaClient(resourceLoader, JsonSchemaMappingLookup.JSON_SCHEMA_PATH);
-      Schema schema = SchemaLoader.load(jsonSchema, schemaClient);
-      //have to check manually if json is an array or an object. Limitation of the org.json library.
+      final JSONObject jsonSchema = new JSONObject(new JSONTokener(schemaAsStream));
+      final SchemaClient schemaClient = new ResourceSchemaClient(resourceLoader,
+          JsonSchemaMappingLookup.JSON_SCHEMA_PATH);
+      final Schema schema = SchemaLoader.load(jsonSchema, schemaClient);
+      // have to check manually if json is an array or an object. Limitation of the org.json library.
 
-      //workaround for the actual json in the stream -- if we give the InputStream to the JSONTokener directly below,
+      // workaround for the actual json in the stream -- if we give the InputStream to the JSONTokener directly below,
       // it is saying that we don't have valid json (it says it should start with { or with [, which id DOES!)
-      String jsonPayloadString = new BufferedReader(
+      final String jsonPayloadString = new BufferedReader(
           new InputStreamReader(jsonPayloadInputStream, StandardCharsets.UTF_8))
-          .lines()
-          .collect(Collectors.joining());
-
+              .lines()
+              .collect(Collectors.joining());
       try {
-        JSONObject parsedObject = new JSONObject(new JSONTokener(jsonPayloadString));
+        final JSONObject parsedObject = new JSONObject(new JSONTokener(jsonPayloadString));
         schema.validate(parsedObject);
-      } catch (JSONException e) {
+      } catch (final JSONException e) {
         logger.debug(e.getMessage(), e);
-        JSONArray parsedArray = new JSONArray(new JSONTokener(jsonPayloadString));
+        final JSONArray parsedArray = new JSONArray(new JSONTokener(jsonPayloadString));
         parsedArray.forEach(schema::validate);
       }
     } catch (ValidationException | JSONException e) {
