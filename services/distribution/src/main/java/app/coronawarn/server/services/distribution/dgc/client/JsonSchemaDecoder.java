@@ -31,8 +31,8 @@ import org.springframework.core.io.ResourceLoader;
 public class JsonSchemaDecoder extends SpringDecoder {
 
   private static final Logger logger = LoggerFactory.getLogger(JsonSchemaDecoder.class);
-  private ResourceLoader resourceLoader;
-  private JsonSchemaMappingLookup jsonSchemaMappingLookup;
+  private final ResourceLoader resourceLoader;
+  private final JsonSchemaMappingLookup jsonSchemaMappingLookup;
 
   /**
    * Constructor to load the resource loader and lookup helper class.
