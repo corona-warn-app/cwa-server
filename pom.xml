@@ -555,6 +555,12 @@
               <exclude>**/*IntegrationTest.java</exclude>
               <exclude>**/*IT.java</exclude>
             </excludes>
+            <systemProperties>
+              <property> 
+                <name>org.slf4j.simpleLogger.defaultLogLevel</name>
+                <value>off</value>
+              </property>
+            </systemProperties>
           </configuration>
         </plugin>
         <plugin>
