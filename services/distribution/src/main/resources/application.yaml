@@ -15,7 +15,7 @@ logging:
 services:
   distribution:
     # Infection threshold in percentage.
-    infection-threshold: ${INFECTION_THRESHOLD:15}
+    infection-threshold: ${INFECTION_THRESHOLD:1}
     # The name of the distribution output file.
     output-file-name: index
     # The name of the distribution output file v2.

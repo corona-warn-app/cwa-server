@@ -12,6 +12,7 @@ import static app.coronawarn.server.services.distribution.statistics.keyfigureca
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.VACCINATION_DOSES_CARD;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.Rank;
@@ -19,7 +20,6 @@ import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.Trend;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.TrendSemantic;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
-import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.InfectionsCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.MissingPropertyException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -27,8 +27,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -95,7 +93,6 @@ class KeyFigureCardFactoryTest {
     @Value("${services.distribution.infection-threshold}")
     private int infectionThreshold;
 
-
     @Test
     void testCardHasCorrectKeyFigures() {
       var result = figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, 1);
@@ -149,14 +146,9 @@ class KeyFigureCardFactoryTest {
     }
     @Test
     void shouldFailIfInfectionReported7daysAvgIsBelowThreshold() {
-
-      if( infectionThreshold > 0 ) {
-        Logger logger = LoggerFactory.getLogger(KeyFigureCardFactoryTest.class);
-        logger.info("Infection Threshold is ok");
-      }
-
-
-      statisticsJsonStringObject.setInfectionsReportedDaily(10); // this is less than 1% of the given 7dayAvg, see 'setInfectionsReported7daysAvg(1234.0)' in setup()
+      statisticsJsonStringObject.setInfectionsReportedDaily(10);
+      assertEquals(1, infectionThreshold, "Testing threshold is not 1%!?!");
+      // this is less than 1% of the given 7dayAvg, see 'setInfectionsReported7daysAvg(1234.0)' in setup()
       final int cardOrdinal = INFECTIONS_CARD.ordinal();
       assertThatThrownBy(
           () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, cardOrdinal))
