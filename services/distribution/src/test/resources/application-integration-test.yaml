@@ -5,5 +5,5 @@ services:
 logging:
   level:
     org:
-      springframework: info
-    root: info
+      springframework: off
+    root: off

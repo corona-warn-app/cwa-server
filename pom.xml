@@ -512,6 +512,14 @@
                   <additionalClasspathElement>${basedir}/target/classes</additionalClasspathElement>
                 </additionalClasspathElements>
                 <parallel>none</parallel>
+	            <systemPropertyVariables>
+	              <org.slf4j.simpleLogger.defaultLogLevel>off</org.slf4j.simpleLogger.defaultLogLevel>
+	              <logging.level.>OFF</logging.level.>
+	              <log4j2.level>OFF</log4j2.level>
+	              <log4j.rootLogger>OFF</log4j.rootLogger>
+	              <LOG4J_LEVEL>OFF</LOG4J_LEVEL>
+	              <SPRING_MAIN_BANNER-MODE>off</SPRING_MAIN_BANNER-MODE>
+	            </systemPropertyVariables>
               </configuration>
               <goals>
                 <goal>integration-test</goal>
@@ -555,12 +563,14 @@
               <exclude>**/*IntegrationTest.java</exclude>
               <exclude>**/*IT.java</exclude>
             </excludes>
-            <systemProperties>
-              <property> 
-                <name>org.slf4j.simpleLogger.defaultLogLevel</name>
-                <value>off</value>
-              </property>
-            </systemProperties>
+            <systemPropertyVariables>
+              <org.slf4j.simpleLogger.defaultLogLevel>off</org.slf4j.simpleLogger.defaultLogLevel>
+              <logging.level.>OFF</logging.level.>
+              <log4j2.level>OFF</log4j2.level>
+              <log4j.rootLogger>OFF</log4j.rootLogger>
+              <LOG4J_LEVEL>OFF</LOG4J_LEVEL>
+              <SPRING_MAIN_BANNER-MODE>off</SPRING_MAIN_BANNER-MODE>
+            </systemPropertyVariables>
           </configuration>
         </plugin>
         <plugin>

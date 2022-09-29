@@ -9,7 +9,7 @@ logging:
         server:
           services:
             submission:
-              integration: info
+              integration: off
 spring:
   main:
     banner-mode: off
