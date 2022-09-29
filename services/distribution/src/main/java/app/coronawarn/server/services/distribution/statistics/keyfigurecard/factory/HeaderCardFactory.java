@@ -16,6 +16,8 @@ import org.springframework.util.ObjectUtils;
 
 public abstract class HeaderCardFactory {
 
+  protected DistributionServiceConfig config;
+
   /**
    * Create KeyFigureCard object. Calls the children method `buildKeyFigureCard` for card specific properties. This
    * method adds the generic CardHeader that all KeyFigureCards must have.
@@ -68,7 +70,7 @@ public abstract class HeaderCardFactory {
    */
   protected abstract List<Optional<Object>> getRequiredFieldValues(StatisticsJsonStringObject stats);
 
-  public void setInfectionThreshold(int infectionThreshold) {
-
+  public void setConfig(final DistributionServiceConfig config) {
+    this.config = config;
   }
 }

@@ -73,10 +73,9 @@ public enum Cards {
    * @param config The distribution configuration used to get the infection threshold parameter.
    * @return {@link #getFactory()}
    */
-  public static HeaderCardFactory getFactoryFor(final int id,
-      DistributionServiceConfig config) {
+  public static HeaderCardFactory getFactoryFor(final int id, final DistributionServiceConfig config) {
     try {
-      values()[id].getFactory().setInfectionThreshold(config.getInfectionThreshold());
+      values()[id].getFactory().setConfig(config);
       return values()[id].getFactory();
     } catch (final ArrayIndexOutOfBoundsException e) {
       return EMPTY_CARD.getFactory();
