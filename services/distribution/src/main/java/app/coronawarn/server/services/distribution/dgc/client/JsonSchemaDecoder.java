@@ -1,5 +1,8 @@
 package app.coronawarn.server.services.distribution.dgc.client;
 
+import static app.coronawarn.server.services.distribution.dgc.client.JsonSchemaMappingLookup.JSON_SCHEMA_PATH;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import app.coronawarn.server.common.shared.util.ResourceSchemaClient;
 import feign.FeignException;
 import feign.Response;
@@ -8,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
@@ -82,17 +84,14 @@ public class JsonSchemaDecoder extends SpringDecoder {
       throws IOException {
     try {
       final JSONObject jsonSchema = new JSONObject(new JSONTokener(schemaAsStream));
-      final SchemaClient schemaClient = new ResourceSchemaClient(resourceLoader,
-          JsonSchemaMappingLookup.JSON_SCHEMA_PATH);
+      final SchemaClient schemaClient = new ResourceSchemaClient(resourceLoader, JSON_SCHEMA_PATH);
       final Schema schema = SchemaLoader.load(jsonSchema, schemaClient);
       // have to check manually if json is an array or an object. Limitation of the org.json library.
 
       // workaround for the actual json in the stream -- if we give the InputStream to the JSONTokener directly below,
       // it is saying that we don't have valid json (it says it should start with { or with [, which id DOES!)
       final String jsonPayloadString = new BufferedReader(
-          new InputStreamReader(jsonPayloadInputStream, StandardCharsets.UTF_8))
-              .lines()
-              .collect(Collectors.joining());
+          new InputStreamReader(jsonPayloadInputStream, UTF_8)).lines().collect(Collectors.joining());
       try {
         final JSONObject parsedObject = new JSONObject(new JSONTokener(jsonPayloadString));
         schema.validate(parsedObject);
