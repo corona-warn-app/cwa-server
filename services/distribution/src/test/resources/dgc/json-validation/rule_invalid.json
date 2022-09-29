@@ -1,0 +1,64 @@
+{
+  "Identifier": "GR-AT-0000",
+  "Type": "INVALID",
+  "Country": "AT",
+  "Version": "1.0.7",
+  "SchemaVersion": "1.0.0",
+  "Engine": "CERTLOGIC",
+  "EngineVersion": "0.7.5",
+  "CertificateType": "General",
+  "Description": [
+    {
+      "lang": "en",
+      "desc": "Exactly one type of event."
+    },
+    {
+      "lang": "de",
+      "desc": "Genau ein Event-Typ vorhanden."
+    }
+  ],
+  "ValidFrom": "2022-09-01T00:00:00Z",
+  "ValidTo": "2030-06-01T00:00:00Z",
+  "AffectedFields": [
+    "r",
+    "t",
+    "v"
+  ],
+  "Logic": {
+    "===": [
+      {
+        "reduce": [
+          [
+            {
+              "var": "payload.r"
+            },
+            {
+              "var": "payload.t"
+            },
+            {
+              "var": "payload.v"
+            }
+          ],
+          {
+            "+": [
+              {
+                "var": "accumulator"
+              },
+              {
+                "if": [
+                  {
+                    "var": "current.0"
+                  },
+                  1,
+                  0
+                ]
+              }
+            ]
+          },
+          0
+        ]
+      },
+      1
+    ]
+  }
+}
