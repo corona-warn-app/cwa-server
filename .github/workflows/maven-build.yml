@@ -29,9 +29,9 @@ jobs:
                 distribution: temurin
                 cache: maven
         -   name: mvn verify
-            run: mvn -B -P integration-test verify --fail-fast --file pom.xml
+            run: mvn -B -P integration-test verify --fail-fast --file pom.xml -Dorg.slf4j.simpleLogger.defaultLogLevel=warn
         -   name: SonarCloud scan
-            run: mvn -B sonar:sonar --fail-never
+            run: mvn -B sonar:sonar --fail-never -Dorg.slf4j.simpleLogger.defaultLogLevel=warn
             env:
                 SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         -   name: Report JUnit results at checks

@@ -3,7 +3,7 @@ logging:
   level:
     org:
       springframework: off
-    root: INFO
+    root: off
 spring:
   main:
     banner-mode: off

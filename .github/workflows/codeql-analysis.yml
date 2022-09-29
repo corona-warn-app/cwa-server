@@ -31,6 +31,6 @@ jobs:
                 distribution: temurin
                 cache: maven
         -   name: Build
-            run: mvn -B clean compile
+            run: mvn -B clean compile -Dorg.slf4j.simpleLogger.defaultLogLevel=warn
         -   name: Perform CodeQL Analysis
             uses: github/codeql-action/analyze@v1

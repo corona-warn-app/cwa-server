@@ -2,11 +2,12 @@
 logging:
   level:
     org:
-      springframework: info
-    root: info
+      springframework: off
+    root: off
 
 services:
   distribution:
+    infection-threshold: ${INFECTION_THRESHOLD:1}
     output-file-name: index
     output-file-name-v2: index-v2
     retention-days: 14

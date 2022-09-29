@@ -12,6 +12,7 @@ import static app.coronawarn.server.services.distribution.statistics.keyfigureca
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.VACCINATION_DOSES_CARD;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.Rank;
@@ -27,6 +28,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.test.context.ContextConfiguration;
@@ -88,6 +90,9 @@ class KeyFigureCardFactoryTest {
   @Nested
   class InfectionCardsTest {
 
+    @Value("${services.distribution.infection-threshold}")
+    private int infectionThreshold;
+
     @Test
     void testCardHasCorrectKeyFigures() {
       var result = figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, 1);
@@ -141,7 +146,9 @@ class KeyFigureCardFactoryTest {
     }
     @Test
     void shouldFailIfInfectionReported7daysAvgIsBelowThreshold() {
-      statisticsJsonStringObject.setInfectionsReportedDaily(10); // this is less than 1% of the given 7dayAvg, see 'setInfectionsReported7daysAvg(1234.0)' in setup()
+      statisticsJsonStringObject.setInfectionsReportedDaily(10);
+      assertEquals(1, infectionThreshold, "Testing threshold is not 1%!?!");
+      // this is less than 1% of the given 7dayAvg, see 'setInfectionsReported7daysAvg(1234.0)' in setup()
       final int cardOrdinal = INFECTIONS_CARD.ordinal();
       assertThatThrownBy(
           () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, cardOrdinal))

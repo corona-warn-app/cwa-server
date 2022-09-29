@@ -82,6 +82,9 @@ public class DistributionServiceConfig {
   private Integer minimumTrlValueAllowed;
   private Integer daysToPublish;
   private DccRevocation dccRevocation;
+  @Min(0)
+  @Max(100)
+  private int infectionThreshold;
 
   public Paths getPaths() {
     return paths;
@@ -311,6 +314,14 @@ public class DistributionServiceConfig {
 
   public void setDccRevocation(DccRevocation dccRevocation) {
     this.dccRevocation = dccRevocation;
+  }
+
+  public int getInfectionThreshold() {
+    return infectionThreshold;
+  }
+
+  public void setInfectionThreshold(int infectionThreshold) {
+    this.infectionThreshold = infectionThreshold;
   }
 
   public static class StatisticsConfig {
