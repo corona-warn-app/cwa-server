@@ -58,8 +58,9 @@ public class JsonSchemaDecoder extends SpringDecoder {
       logger.debug("No validation JSON schema defined for: {}", response.request().url());
       return super.decode(response, type);
     }
-    final InputStream schemaInputStream = resourceLoader.getResource(schemaPathToUse).getInputStream();
-    validateJsonAgainstSchema(payloadJsonInputStream, schemaInputStream);
+    try (final InputStream schemaInputStream = resourceLoader.getResource(schemaPathToUse).getInputStream()) {
+      validateJsonAgainstSchema(payloadJsonInputStream, schemaInputStream);
+    }
     return super.decode(response, type);
   }
 
