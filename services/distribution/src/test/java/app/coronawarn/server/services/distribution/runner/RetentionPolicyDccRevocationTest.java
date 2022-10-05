@@ -67,21 +67,27 @@ class RetentionPolicyDccRevocationTest {
         .applyRetentionPolicy(distributionServiceConfig.getRetentionDays());
     verify(traceTimeIntervalWarningService, times(0))
         .applyRetentionPolicy(distributionServiceConfig.getRetentionDays());
-
     verify(s3RetentionPolicy, times(1)).deleteDccRevocationDir();
   }
 
   @Test
   void shouldCheckForEtag() throws FetchDccListException {
-    retentionPolicy.run(null);
     when(dccRevocationListService.etagExists(dccRevocationClient.getETag())).thenReturn(true);
     Assertions.assertThat(SpringApplication.exit(applicationContext));
+    retentionPolicy.run(null);
     verify(s3RetentionPolicy, times(1)).deleteDccRevocationDir();
   }
 
   @Test
   void shouldThrowExceptionForEtag() throws FetchDccListException {
     when(dccRevocationClient.getETag()).thenThrow(FetchDccListException.class);
+    retentionPolicy.run(null);
+    verify(s3RetentionPolicy, times(0)).deleteDccRevocationDir();
+  }
+
+  @Test
+  void shouldThrowAnyException() throws FetchDccListException {
+    when(dccRevocationClient.getETag()).thenThrow(RuntimeException.class);
     retentionPolicy.run(null);
     verify(s3RetentionPolicy, times(0)).deleteDccRevocationDir();
   }
