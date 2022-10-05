@@ -45,6 +45,7 @@
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <sonar.organization>corona-warn-app</sonar.organization>
     <sonar.projectKey>${sonar.organization}_cwa-${project.artifactId}</sonar.projectKey>
+    <sonar.coverage.exclusions>**/distribution/runner/RevRetentionPolicy*</sonar.coverage.exclusions>
 
     <!-- https://spring.io/projects/spring-boot -->
     <spring-boot.version>2.7.4</spring-boot.version>
