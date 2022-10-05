@@ -2,7 +2,6 @@ package app.coronawarn.server.services.distribution.objectstore.integration;
 
 import static org.mockito.Mockito.when;
 
-import app.coronawarn.server.common.persistence.service.DccRevocationListService;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.StatisticsDownloadService;
 import app.coronawarn.server.common.persistence.service.TraceTimeIntervalWarningService;
@@ -10,7 +9,6 @@ import app.coronawarn.server.services.distribution.assembly.component.OutputDire
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.common.DiagnosisTestData;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import app.coronawarn.server.services.distribution.dcc.DccRevocationClient;
 import app.coronawarn.server.services.distribution.objectstore.FailedObjectStoreOperationsCounter;
 import app.coronawarn.server.services.distribution.objectstore.ObjectStoreAccess;
 import app.coronawarn.server.services.distribution.objectstore.S3Publisher;
@@ -32,7 +30,6 @@ import org.junit.rules.TemporaryFolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.env.Environment;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -55,12 +52,6 @@ class ObjectStoreFilePreservationIT extends BaseS3IntegrationTest {
   private DistributionServiceConfig distributionServiceConfig;
   @Autowired
   private StatisticsDownloadService statisticsDownloadService;
-  @Autowired
-  private DccRevocationListService dccRevocationListService;
-  @Autowired
-  private Environment environment;
-  @Autowired
-  private DccRevocationClient dccRevocationClient;
 
   @MockBean
   private OutputDirectoryProvider distributionDirectoryProvider;
@@ -155,14 +146,14 @@ class ObjectStoreFilePreservationIT extends BaseS3IntegrationTest {
   }
 
   /**
-   * Remove test data inserted for the given date
+   * Remove test data inserted for the given date.
    */
   private void triggerRetentionPolicy(LocalDate fromDate) {
     DistributionServiceConfig mockDistributionConfig = new DistributionServiceConfig();
     mockDistributionConfig.setRetentionDays(numberOfDaysSince(fromDate));
     mockDistributionConfig.setObjectStore(distributionServiceConfig.getObjectStore());
     new RetentionPolicy(diagnosisKeyService, traceTimeIntervalWarningService, applicationContext,
-        mockDistributionConfig, s3RetentionPolicy, dccRevocationListService, environment, dccRevocationClient,
+        mockDistributionConfig, s3RetentionPolicy,
         statisticsDownloadService).run(null);
   }
 

@@ -27,7 +27,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = { RetentionPolicy.class }, initializers = ConfigDataApplicationContextInitializer.class)
+@ContextConfiguration(classes = { RevRetentionPolicy.class }, initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles("revocation")
 class RetentionPolicyDccRevocationTest {
 
@@ -47,7 +47,7 @@ class RetentionPolicyDccRevocationTest {
   DistributionServiceConfig distributionServiceConfig;
 
   @Autowired
-  RetentionPolicy retentionPolicy;
+  RevRetentionPolicy retentionPolicy;
 
   @MockBean
   DccRevocationListService dccRevocationListService;
@@ -74,9 +74,7 @@ class RetentionPolicyDccRevocationTest {
   @Test
   void shouldCheckForEtag() throws FetchDccListException {
     retentionPolicy.run(null);
-
     when(dccRevocationListService.etagExists(dccRevocationClient.getETag())).thenReturn(true);
-    Assertions.assertThat(retentionPolicy.isDccRevocation()).isTrue();
     Assertions.assertThat(SpringApplication.exit(applicationContext));
     verify(s3RetentionPolicy, times(1)).deleteDccRevocationDir();
   }
@@ -85,8 +83,6 @@ class RetentionPolicyDccRevocationTest {
   void shouldThrowExceptionForEtag() throws FetchDccListException {
     when(dccRevocationClient.getETag()).thenThrow(FetchDccListException.class);
     retentionPolicy.run(null);
-
-    Assertions.assertThat(retentionPolicy.isDccRevocation()).isTrue();
     verify(s3RetentionPolicy, times(0)).deleteDccRevocationDir();
   }
 }
