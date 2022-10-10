@@ -129,7 +129,7 @@ public class StatisticsToProtobufMapping {
 
   private Iterable<? extends LinkCard> buildAllLinkCards() {
     return Collections.singleton(
-        LinkCard.newBuilder().setHeader(CardHeader.newBuilder().setCardId(12).build())
+        LinkCard.newBuilder().setHeader(CardHeader.newBuilder().setCardId(Cards.PANDEMIC_RADAR_CARD.ordinal()).build())
             .setUrl(distributionServiceConfig.getStatistics().getPandemicRadarUrl()).build());
   }
 
