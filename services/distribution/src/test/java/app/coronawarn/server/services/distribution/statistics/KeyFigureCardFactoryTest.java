@@ -8,19 +8,25 @@ import static app.coronawarn.server.services.distribution.statistics.keyfigureca
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.INFECTIONS_CARD;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.INTENSIVE_CARE_CARD;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.KEY_SUBMISSION_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.PANDEMIC_RADAR_CARD;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.REPRODUCTION_NUMBER_CARD;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.VACCINATION_DOSES_CARD;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import app.coronawarn.server.common.protocols.internal.stats.CardHeader;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.Rank;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.Trend;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.TrendSemantic;
+import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
+import app.coronawarn.server.common.protocols.internal.stats.LinkCard;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.MissingPropertyException;
+import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -483,6 +489,33 @@ class KeyFigureCardFactoryTest {
           TrendSemantic.UNSPECIFIED_TREND_SEMANTIC, 1);
       assertKeyFigure(result.getKeyFigures(1), 56033026, Rank.TERTIARY, Trend.UNSPECIFIED_TREND,
           TrendSemantic.UNSPECIFIED_TREND_SEMANTIC, 0);
+    }
+  }
+
+  @Nested
+  @EnableConfigurationProperties(value = DistributionServiceConfig.class)
+  @ContextConfiguration(classes = {
+      KeyFigureCardFactory.class}, initializers = ConfigDataApplicationContextInitializer.class)
+  class PandemicRadarCardTest {
+
+    @Autowired
+    DistributionServiceConfig distributionServiceConfig;
+
+    @Test
+    void pandemicRadarCardCreeationShouldReturnNull() {
+      KeyFigureCard keyFigureCard = figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, PANDEMIC_RADAR_CARD.ordinal());
+      Assert.assertNull(keyFigureCard);
+    }
+
+    @Test
+    void pandemicRadarCardAttributeTest() {
+      LinkCard card = LinkCard.newBuilder()
+          .setHeader(CardHeader.newBuilder().setCardId(PANDEMIC_RADAR_CARD.ordinal()).build())
+          .setUrl(distributionServiceConfig.getStatistics().getPandemicRadarUrl()).build();
+      CardHeader header = card.getHeader();
+      Assert.assertEquals(0L, header.getUpdatedAt());
+      Assert.assertEquals(12, header.getCardId());
+      Assert.assertEquals("https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Situationsberichte/COVID-19-Trends/COVID-19-Trends.html?__blob=publicationFile#/home", card.getUrl());
     }
   }
 

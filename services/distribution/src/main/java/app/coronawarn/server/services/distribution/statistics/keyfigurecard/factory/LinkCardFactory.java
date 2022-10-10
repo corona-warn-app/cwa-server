@@ -5,6 +5,7 @@ import static app.coronawarn.server.services.distribution.statistics.keyfigureca
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard.Builder;
 import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStringObject;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +23,6 @@ public class LinkCardFactory extends HeaderCardFactory {
 
   @Override
   protected List<Optional<Object>> getRequiredFieldValues(StatisticsJsonStringObject stats) {
-    return List.of(Optional.empty());
+    return Collections.emptyList();
   }
 }
