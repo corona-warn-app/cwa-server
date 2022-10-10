@@ -12,6 +12,7 @@ import app.coronawarn.server.services.distribution.statistics.keyfigurecard.fact
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.IntensiveCareCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.JoinedIncidenceCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.KeySubmissionCardFactory;
+import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.LinkCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.ReproductionNumberCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.VaccinationDosesCardFactory;
 
@@ -64,7 +65,9 @@ public enum Cards {
   /**
    * Third Dose Card.
    */
-  BOOSTER_VACCINATED_CARD(new BoosterVaccinatedCardFactory(), "Booster Vaccinated Card");
+  BOOSTER_VACCINATED_CARD(new BoosterVaccinatedCardFactory(), "Booster Vaccinated Card"),
+
+  PANDEMIC_RADAR_CARD(new LinkCardFactory(), "Link Card");
 
   /**
    * Get card factory by ID.

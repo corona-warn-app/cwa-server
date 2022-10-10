@@ -15,7 +15,9 @@ import static app.coronawarn.server.services.distribution.statistics.keyfigureca
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.getNameFor;
 
 import app.coronawarn.server.common.persistence.service.StatisticsDownloadService;
+import app.coronawarn.server.common.protocols.internal.stats.CardHeader;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
+import app.coronawarn.server.common.protocols.internal.stats.LinkCard;
 import app.coronawarn.server.common.protocols.internal.stats.Statistics;
 import app.coronawarn.server.common.shared.util.SerializationUtils;
 import app.coronawarn.server.common.shared.util.TimeUtils;
@@ -116,12 +118,19 @@ public class StatisticsToProtobufMapping {
         return Statistics.newBuilder()
             .addAllCardIdSequence(getAllCardIdSequence())
             .addAllKeyFigureCards(buildAllKeyFigureCards(jsonStringObjects))
+            .addAllLinkCards(buildAllLinkCards())
             .build();
       }
     } catch (BucketNotFoundException | ConnectionException | FilePathNotFoundException | IOException ex) {
       logger.error("Statistics file not generated!", ex);
       return Statistics.newBuilder().build();
     }
+  }
+
+  private Iterable<? extends LinkCard> buildAllLinkCards() {
+    return Collections.singleton(
+        LinkCard.newBuilder().setHeader(CardHeader.newBuilder().setCardId(Cards.PANDEMIC_RADAR_CARD.ordinal()).build())
+            .setUrl(distributionServiceConfig.getStatistics().getPandemicRadarUrl()).build());
   }
 
   private List<Integer> getAllCardIdSequence() {
