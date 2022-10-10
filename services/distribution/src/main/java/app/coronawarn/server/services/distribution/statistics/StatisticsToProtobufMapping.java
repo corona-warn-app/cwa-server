@@ -15,6 +15,7 @@ import static app.coronawarn.server.services.distribution.statistics.keyfigureca
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.getNameFor;
 
 import app.coronawarn.server.common.persistence.service.StatisticsDownloadService;
+import app.coronawarn.server.common.protocols.internal.stats.CardHeader;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.common.protocols.internal.stats.LinkCard;
 import app.coronawarn.server.common.protocols.internal.stats.Statistics;
@@ -128,7 +129,8 @@ public class StatisticsToProtobufMapping {
 
   private Iterable<? extends LinkCard> buildAllLinkCards() {
     return Collections.singleton(
-        LinkCard.newBuilder().setUrl(distributionServiceConfig.getStatistics().getPandemicRadarUrl()).build());
+        LinkCard.newBuilder().setHeader(CardHeader.newBuilder().setCardId(12).build())
+            .setUrl(distributionServiceConfig.getStatistics().getPandemicRadarUrl()).build());
   }
 
   private List<Integer> getAllCardIdSequence() {
