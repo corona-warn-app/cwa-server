@@ -5,10 +5,12 @@ import static java.time.ZoneOffset.UTC;
 
 import app.coronawarn.server.common.protocols.internal.stats.CardHeader;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
+import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard.Builder;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStringObject;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -57,8 +59,9 @@ public abstract class HeaderCardFactory {
 
   protected abstract int getCardId();
 
-  protected abstract KeyFigureCard buildKeyFigureCard(StatisticsJsonStringObject stats,
-      KeyFigureCard.Builder keyFigureBuilder);
+  protected KeyFigureCard buildKeyFigureCard(StatisticsJsonStringObject stats, Builder keyFigureBuilder) {
+    return keyFigureBuilder.build();
+  }
 
   /**
    * Return the list of required fields to create this card. Implemented by factories. If any of the fields returned by
@@ -68,7 +71,9 @@ public abstract class HeaderCardFactory {
    * @param stats JSON string object.
    * @return List of objects to be checked if are null.
    */
-  protected abstract List<Optional<Object>> getRequiredFieldValues(StatisticsJsonStringObject stats);
+  protected List<Optional<Object>> getRequiredFieldValues(StatisticsJsonStringObject stats) {
+    return Collections.emptyList();
+  }
 
   public void setConfig(final DistributionServiceConfig config) {
     this.config = config;

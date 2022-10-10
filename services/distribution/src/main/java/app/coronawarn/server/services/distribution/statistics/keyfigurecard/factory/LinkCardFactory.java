@@ -16,13 +16,4 @@ public class LinkCardFactory extends HeaderCardFactory {
     return PANDEMIC_RADAR_CARD.ordinal();
   }
 
-  @Override
-  protected KeyFigureCard buildKeyFigureCard(StatisticsJsonStringObject stats, Builder keyFigureBuilder) {
-    return null;
-  }
-
-  @Override
-  protected List<Optional<Object>> getRequiredFieldValues(StatisticsJsonStringObject stats) {
-    return Collections.emptyList();
-  }
 }

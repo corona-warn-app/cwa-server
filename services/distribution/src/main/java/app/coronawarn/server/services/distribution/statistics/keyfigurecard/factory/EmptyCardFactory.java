@@ -16,13 +16,4 @@ public class EmptyCardFactory extends HeaderCardFactory {
     return EMPTY_CARD.ordinal();
   }
 
-  @Override
-  protected KeyFigureCard buildKeyFigureCard(StatisticsJsonStringObject stats, Builder keyFigureBuilder) {
-    return keyFigureBuilder.build();
-  }
-
-  @Override
-  protected List<Optional<Object>> getRequiredFieldValues(StatisticsJsonStringObject stats) {
-    return Collections.emptyList();
-  }
 }
