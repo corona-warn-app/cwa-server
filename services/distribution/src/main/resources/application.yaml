@@ -117,7 +117,7 @@ services:
       secret-key: ${STATISTICS_FILE_SECRET_ACCESS_KEY:}
       endpoint: ${STATISTICS_FILE_S3_ENDPOINT:}
       bucket: ${STATISTICS_FILE_S3_BUCKET:obs-cwa-public-dev}
-      pandemicRadarUrl: ${STATISTICS_PANDEMIC_RADAR_URL:https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Situationsberichte/COVID-19-Trends/COVID-19-Trends.html?__blob=publicationFile#/home}
+      pandemic-radar-url: ${STATISTICS_PANDEMIC_RADAR_URL:https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Situationsberichte/COVID-19-Trends/COVID-19-Trends.html?__blob=publicationFile#/home}
 
     app-features:
       - label: unencrypted-checkins-enabled
