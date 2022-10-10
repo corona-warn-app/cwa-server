@@ -504,7 +504,8 @@ class KeyFigureCardFactoryTest {
     @Test
     void pandemicRadarCardCreeationShouldReturnNull() {
       KeyFigureCard keyFigureCard = figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, PANDEMIC_RADAR_CARD.ordinal());
-      Assert.assertNull(keyFigureCard);
+      Assert.assertNotNull(keyFigureCard);
+      Assert.assertEquals(0, keyFigureCard.getKeyFiguresCount());
     }
 
     @Test
