@@ -338,6 +338,16 @@ public class DistributionServiceConfig {
 
     private String bucket;
 
+    private String pandemicRadarUrl;
+
+    public String getPandemicRadarUrl() {
+      return pandemicRadarUrl;
+    }
+
+    public void setPandemicRadarUrl(String pandemicRadarUrl) {
+      this.pandemicRadarUrl = pandemicRadarUrl;
+    }
+
     public String getLocalStatisticPath() {
       return localStatisticPath;
     }
