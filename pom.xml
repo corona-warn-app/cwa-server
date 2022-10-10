@@ -45,6 +45,7 @@
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <sonar.organization>corona-warn-app</sonar.organization>
     <sonar.projectKey>${sonar.organization}_cwa-${project.artifactId}</sonar.projectKey>
+    <sonar.coverage.exclusions>**/distribution/runner/RevRetentionPolicy*</sonar.coverage.exclusions>
 
     <!-- https://spring.io/projects/spring-boot -->
     <spring-boot.version>2.7.4</spring-boot.version>
@@ -72,7 +73,7 @@
     <wiremock.version>2.34.0</wiremock.version>
     <httpclient.version>4.5.13</httpclient.version>
     <junit.version>4.13.2</junit.version>
-    <tomcat.version>9.0.67</tomcat.version>
+    <tomcat.version>9.0.68</tomcat.version>
     <findify-s3mock.version>0.2.6</findify-s3mock.version>
     <checkstyle.version>10.3.4</checkstyle.version>
     <semver4j.version>3.1.0</semver4j.version>
