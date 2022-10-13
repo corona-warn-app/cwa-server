@@ -20,7 +20,12 @@ public class YamlConstructorForProtoBuf extends Constructor {
 
   private static final Logger logger = LoggerFactory.getLogger(YamlConstructorForProtoBuf.class);
 
+  /**
+   * Constructor that sets the path to use for the yaml file.
+   * @param path The path to the parent yaml.
+   */
   public YamlConstructorForProtoBuf(String path) {
+    super(Object.class);
     setPropertyUtils(new ProtoBufPropertyUtils());
     this.yamlConstructors.put(new Tag("!include"), new IncludeConstruct(path));
   }

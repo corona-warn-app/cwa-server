@@ -9,7 +9,12 @@ import org.yaml.snakeyaml.nodes.Tag;
 
 public class DashToCamelCaseConstructor extends Constructor {
 
+  /**
+   * Constructor to incllude the parent yaml file path.
+   * @param path The path to the parent yaml.
+   */
   public DashToCamelCaseConstructor(String path) {
+    super(Object.class);
     setPropertyUtils(new CamelCasePropertyUtils());
     this.yamlConstructors.put(new Tag("!include"), new IncludeConstruct(path));
   }

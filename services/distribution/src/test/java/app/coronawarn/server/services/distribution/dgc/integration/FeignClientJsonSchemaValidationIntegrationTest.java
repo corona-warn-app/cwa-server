@@ -16,6 +16,7 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import org.everit.json.schema.ValidationException;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -107,14 +108,20 @@ public class FeignClientJsonSchemaValidationIntegrationTest {
       Throwable cause = e.getCause();
       // the actual validation exception
       Throwable cause1 = cause.getCause();
-      Assert.assertEquals(ValidationException.class, cause1.getClass());
+      Assertions.assertEquals(ValidationException.class, cause1.getClass());
     }
   }
 
+  @SuppressWarnings("unchecked")
   public <T, U extends Class> void stubRules(String jsonFilePath, String path, U returnObject) {
     Optional<T> returnObjectOptional =
         readConfiguredJsonOrDefault(resourceLoader, jsonFilePath, jsonFilePath, returnObject);
-    T businessRule = returnObjectOptional.get();
+    T businessRule = null;
+    if(returnObjectOptional.isPresent()) {
+      businessRule = returnObjectOptional.get();
+    } else {
+      throw new RuntimeException("Could not read json for mock server from path: " + jsonFilePath);
+    }
 
     wireMockServer.stubFor(
         get(urlPathEqualTo(path))
