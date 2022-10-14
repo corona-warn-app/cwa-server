@@ -10,7 +10,7 @@ import org.yaml.snakeyaml.nodes.Tag;
 public class DashToCamelCaseConstructor extends Constructor {
 
   /**
-   * Constructor to incllude the parent yaml file path.
+   * Constructor to include the parent yaml file path.
    * @param path The path to the parent yaml.
    */
   public DashToCamelCaseConstructor(String path) {
