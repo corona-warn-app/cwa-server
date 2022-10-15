@@ -1,5 +1,14 @@
 package app.coronawarn.server.services.distribution.dgc.integration;
 
+import static app.coronawarn.server.common.shared.util.SerializationUtils.readConfiguredJsonOrDefault;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
+import static org.assertj.core.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dgc.ApacheHttpTestConfiguration;
 import app.coronawarn.server.services.distribution.dgc.BusinessRule;
@@ -13,8 +22,9 @@ import app.coronawarn.server.services.distribution.dgc.exception.FetchBusinessRu
 import app.coronawarn.server.services.distribution.dgc.exception.FetchValueSetsException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
+import java.io.IOException;
+import java.util.Optional;
 import org.everit.json.schema.ValidationException;
-import org.junit.Assert;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -30,14 +40,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import java.io.IOException;
-import java.util.Optional;
-
-import static app.coronawarn.server.common.shared.util.SerializationUtils.readConfiguredJsonOrDefault;
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
-import static org.assertj.core.api.Assertions.fail;
-import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {DistributionServiceConfig.class, ProdDigitalCovidCertificateClient.class,
@@ -107,14 +109,20 @@ public class FeignClientJsonSchemaValidationIntegrationTest {
       Throwable cause = e.getCause();
       // the actual validation exception
       Throwable cause1 = cause.getCause();
-      Assert.assertEquals(ValidationException.class, cause1.getClass());
+      assertEquals(ValidationException.class, cause1.getClass());
     }
   }
 
+  @SuppressWarnings("unchecked")
   public <T, U extends Class> void stubRules(String jsonFilePath, String path, U returnObject) {
     Optional<T> returnObjectOptional =
         readConfiguredJsonOrDefault(resourceLoader, jsonFilePath, jsonFilePath, returnObject);
-    T businessRule = returnObjectOptional.get();
+    T businessRule = null;
+    if(returnObjectOptional.isPresent()) {
+      businessRule = returnObjectOptional.get();
+    } else {
+      throw new RuntimeException("Could not read json for mock server from path: " + jsonFilePath);
+    }
 
     wireMockServer.stubFor(
         get(urlPathEqualTo(path))
