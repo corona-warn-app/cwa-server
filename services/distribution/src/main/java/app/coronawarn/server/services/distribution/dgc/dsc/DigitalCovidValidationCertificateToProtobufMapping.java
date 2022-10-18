@@ -2,17 +2,18 @@ package app.coronawarn.server.services.distribution.dgc.dsc;
 
 import static app.coronawarn.server.common.shared.util.SecurityUtils.ecdsaSignatureVerification;
 import static app.coronawarn.server.common.shared.util.SecurityUtils.getPublicKeyFromString;
-import static app.coronawarn.server.common.shared.util.SerializationUtils.validateJsonSchema;
 
 import app.coronawarn.server.common.protocols.internal.dgc.ServiceProviderAllowlistItem;
 import app.coronawarn.server.common.protocols.internal.dgc.ValidationServiceAllowlist;
 import app.coronawarn.server.common.protocols.internal.dgc.ValidationServiceAllowlistItem;
 import app.coronawarn.server.common.shared.util.HashUtils;
 import app.coronawarn.server.common.shared.util.HashUtils.Algorithms;
+import app.coronawarn.server.common.shared.util.SerializationUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AllowList;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AllowList.CertificateAllowList;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AllowList.ServiceProvider;
+import app.coronawarn.server.services.distribution.dgc.client.JsonValidationService;
 import app.coronawarn.server.services.distribution.dgc.dsc.errors.InvalidContentResponseException;
 import app.coronawarn.server.services.distribution.dgc.dsc.errors.InvalidFingerprintException;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -20,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.ByteString;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
@@ -39,6 +41,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.bouncycastle.util.encoders.Hex;
 import org.everit.json.schema.ValidationException;
+import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
@@ -71,6 +74,7 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
 
   private final DistributionServiceConfig distributionServiceConfig;
   private final ResourceLoader resourceLoader;
+  private JsonValidationService jsonValidationService;
 
   /**
    * I'm responsible for mapping certificate allow lists to their corresponding protobuf definition.
@@ -79,9 +83,11 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
    * @param resourceLoader            resource loader.
    */
   public DigitalCovidValidationCertificateToProtobufMapping(
-      DistributionServiceConfig distributionServiceConfig, ResourceLoader resourceLoader) {
+      DistributionServiceConfig distributionServiceConfig, ResourceLoader resourceLoader,
+      JsonValidationService jsonValidationService) {
     this.distributionServiceConfig = distributionServiceConfig;
     this.resourceLoader = resourceLoader;
+    this.jsonValidationService = jsonValidationService;
   }
 
   /**
@@ -91,11 +97,13 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
    * @throws JsonProcessingException - if object to be validated fails on JSON processing
    * @throws ValidationException     - if the validation of the object based on validation schema fails.
    */
-  public boolean validateSchema(AllowList allowList) {
-    try (final InputStream in = resourceLoader.getResource(DCC_VALIDATION_RULE_JSON_CLASSPATH).getInputStream()) {
-      validateJsonSchema(allowList, in);
+  public boolean validateSchema(String allowList) {
+    try (final InputStream allowListSchemaAsStream = resourceLoader.getResource(DCC_VALIDATION_RULE_JSON_CLASSPATH)
+        .getInputStream()) {
+      InputStream allowListAsStream = new ByteArrayInputStream(allowList.getBytes());
+      jsonValidationService.validateJsonAgainstSchema(allowListAsStream, allowListSchemaAsStream);
       return true;
-    } catch (ValidationException e) {
+    } catch (ValidationException | JSONException e) {
       LOGGER.error("Json schema validation failed", e);
       return false;
     } catch (Exception e) {
@@ -131,10 +139,14 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
    * @return the protobuf filled with values from JSON.
    */
   public Optional<ValidationServiceAllowlist> constructProtobufMapping() {
-    AllowList allowList = distributionServiceConfig.getDigitalGreenCertificate().getAllowList();
-    if (!validateSchema(allowList) || !validateCertificate()) {
+    String allowListJson = distributionServiceConfig.getDigitalGreenCertificate().getAllowListAsString();
+
+    if (!validateSchema(allowListJson) || !validateCertificate()) {
       return Optional.empty();
     }
+
+    AllowList allowList = mapAllowListJsonToObject(allowListJson);
+
     List<ServiceProviderAllowlistItem> serviceProviderAllowlistItems = new ArrayList<>();
     List<ValidationServiceAllowlistItem> validationServiceAllowlistItemList = new ArrayList<>();
     final ObjectMapper objectMapper = new ObjectMapper();
@@ -176,6 +188,17 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
         .addAllCertificates(validationServiceAllowlistItemList)
         .addAllServiceProviders(serviceProviderAllowlistItems)
         .build());
+  }
+
+  /**
+   * Map json string to AllowList Object.
+   * @param allowListJson The json from which to construct the return object.
+   * @return The AllowList object.
+   */
+  public static AllowList mapAllowListJsonToObject(String allowListJson) {
+    return  SerializationUtils.deserializeJson(allowListJson,
+        typeFactory -> typeFactory
+            .constructType(AllowList.class));
   }
 
   private ServiceProviderDto validateFingerprint(String serviceProviderAllowlistEndpoint,

@@ -62,10 +62,30 @@ public class CloudDccFeignClientConfiguration {
     return new Retryer.Default(retryPeriod, maxRetryPeriod, maxAttempts);
   }
 
+  /**
+   * Feign decoder for validation of json files against a given schema.
+   * @param messageConverters Message converters to use.
+   * @param customizers Customizers to use.
+   * @param resourceLoader A resource loader.
+   * @param jsonValidationService A validation service that checks for json schema violations.
+   * @return The decoder.
+   */
   @Bean
   public Decoder jsonSchemaDecoder(ObjectFactory<HttpMessageConverters> messageConverters,
-      ObjectProvider<HttpMessageConverterCustomizer> customizers, ResourceLoader resourceLoader) {
-    Decoder jsonSchemaDecoder = new JsonSchemaDecoder(messageConverters, customizers, resourceLoader);
+      ObjectProvider<HttpMessageConverterCustomizer> customizers, ResourceLoader resourceLoader,
+      JsonValidationService jsonValidationService) {
+    Decoder jsonSchemaDecoder = new JsonSchemaDecoder(messageConverters, customizers, resourceLoader,
+        jsonValidationService);
     return new ResponseEntityDecoder(jsonSchemaDecoder);
+  }
+
+  /**
+   * A service to validate json against a schema.
+   * @param resourceLoader A resource loader.
+   * @return The validation service.
+   */
+  @Bean
+  public JsonValidationService jsonValidationService(ResourceLoader resourceLoader) {
+    return new JsonValidationService(resourceLoader);
   }
 }

@@ -15,6 +15,7 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToCborMapping;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.client.DigitalCovidCertificateClient;
+import app.coronawarn.server.services.distribution.dgc.client.JsonValidationService;
 import app.coronawarn.server.services.distribution.dgc.client.TestDigitalCovidCertificateClient;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalCovidValidationCertificateToProtobufMapping;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalSigningCertificatesClient;
@@ -52,7 +53,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
         DigitalSigningCertificatesToProtobufMapping.class,
         DigitalCovidValidationCertificateToProtobufMapping.class,
         DigitalSigningCertificatesClient.class,
-        BusinessRulesArchiveBuilder.class
+        BusinessRulesArchiveBuilder.class,
+        JsonValidationService.class
     },
     initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles({"fake-dcc-client", "fake-dsc-client"})

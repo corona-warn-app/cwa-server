@@ -13,6 +13,7 @@ import app.coronawarn.server.common.shared.util.SecurityUtils;
 import app.coronawarn.server.common.shared.util.SerializationUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AllowList;
+import app.coronawarn.server.services.distribution.dgc.client.JsonValidationService;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalCovidValidationCertificateToProtobufMapping;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -31,6 +32,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.everit.json.schema.ValidationException;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -46,7 +48,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
     DistributionServiceConfig.class,
-    DigitalCovidValidationCertificateToProtobufMapping.class
+    DigitalCovidValidationCertificateToProtobufMapping.class,
+    JsonValidationService.class
 },
     initializers = ConfigDataApplicationContextInitializer.class)
 class DccValidationAllowListSignatureTest {
@@ -89,8 +92,8 @@ class DccValidationAllowListSignatureTest {
 
   @Test
   void testValidateSchema() {
-    AllowList allowList = distributionServiceConfig.getDigitalGreenCertificate().getAllowList();
-    assertThat(digitalCovidValidationCertificateToProtobufMapping.validateSchema(allowList))
+    String allowListJson = distributionServiceConfig.getDigitalGreenCertificate().getAllowListAsString();
+    assertThat(digitalCovidValidationCertificateToProtobufMapping.validateSchema(allowListJson))
         .isTrue();
     Optional<ValidationServiceAllowlist> optionalProtobuf =
         digitalCovidValidationCertificateToProtobufMapping.constructProtobufMapping();
@@ -112,7 +115,9 @@ class DccValidationAllowListSignatureTest {
     AllowList allowList = distributionServiceConfig.getDigitalGreenCertificate().getAllowList();
     allowList.getCertificates()
         .forEach(certificateAllowList -> certificateAllowList.setFingerprint256("notAcceptedChar$"));
-    assertThat(digitalCovidValidationCertificateToProtobufMapping.validateSchema(allowList))
+    JSONObject jsonObject = new JSONObject(allowList);
+    String stringifiedModifiedAllowList = jsonObject.toString();
+    assertThat(digitalCovidValidationCertificateToProtobufMapping.validateSchema(stringifiedModifiedAllowList))
         .isFalse();
   }
 
@@ -127,17 +132,6 @@ class DccValidationAllowListSignatureTest {
   void testConstructProtobufMappingEmpty() {
     try (MockedStatic<SecurityUtils> utilities = Mockito.mockStatic(SecurityUtils.class)) {
       utilities.when(() -> getPublicKeyFromString(any())).thenThrow(new NoSuchAlgorithmException());
-      Optional<ValidationServiceAllowlist> validationServiceAllowlist =
-          digitalCovidValidationCertificateToProtobufMapping.constructProtobufMapping();
-      assertThat(validationServiceAllowlist).isEmpty();
-    }
-  }
-
-  @Test
-  void testConstructProtobufMappingEmpty2() {
-    try (MockedStatic<SerializationUtils> utilities = Mockito.mockStatic(SerializationUtils.class)) {
-      utilities.when(() -> SerializationUtils.validateJsonSchema(any(), any()))
-          .thenThrow(new ValidationException(null, String.class, null));
       Optional<ValidationServiceAllowlist> validationServiceAllowlist =
           digitalCovidValidationCertificateToProtobufMapping.constructProtobufMapping();
       assertThat(validationServiceAllowlist).isEmpty();

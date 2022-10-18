@@ -161,31 +161,6 @@ public final class SerializationUtils {
     return cborMapper.writeValueAsBytes(object);
   }
 
-  /**
-   * Validates an object (JSON) based on a provided schema containing validation rules.
-   *
-   * @param validateObject       - object to be validated
-   * @param schemaValidationJson - validation schema
-   * @throws JsonProcessingException - if object to be validated fails on JSON processing
-   * @throws ValidationException     - if the validation of the object based on validation schema fails.
-   */
-  public static void validateJsonSchema(Object validateObject, InputStream schemaValidationJson,
-      final SchemaClient schemaClient)
-      throws JsonProcessingException, ValidationException {
-    ObjectMapper objectMapper = new ObjectMapper();
-    JSONObject jsonSchema = new JSONObject(new JSONTokener(schemaValidationJson));
-    String businessRuleJson = objectMapper.writeValueAsString(validateObject);
-
-    JSONObject jsonSubject = new JSONObject(businessRuleJson);
-    Schema schema = schemaClient == null ? SchemaLoader.load(jsonSchema) : SchemaLoader.load(jsonSchema, schemaClient);
-    schema.validate(jsonSubject);
-  }
-
-  public static void validateJsonSchema(Object validateObject, InputStream schemaValidationJson)
-      throws JsonProcessingException, ValidationException {
-    validateJsonSchema(validateObject, schemaValidationJson, null);
-  }
-
   private SerializationUtils() {
   }
 
