@@ -16,6 +16,7 @@ import com.github.tomakehurst.wiremock.http.HttpHeaders;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -52,6 +53,11 @@ public class DownloadForChgsIntegrationTest extends GatewayServiceIntegrationSui
             .willReturn(
                 aResponse()
                     .withStatus(HttpStatus.NOT_FOUND.value())));
+  }
+
+  @AfterAll
+  public static void stop() {
+    wiremock.stop();
   }
 
   @ParameterizedTest
