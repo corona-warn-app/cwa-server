@@ -31,6 +31,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -78,6 +79,11 @@ public class DigitalCovidCertificateIT {
   @BeforeAll
   public static void setup() {
     wireMockServer.start();
+  }
+
+  @AfterAll
+  public static void teardown() {
+    wireMockServer.stop();
   }
 
   @Test
