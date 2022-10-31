@@ -18,12 +18,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.everit.json.schema.Schema;
-import org.everit.json.schema.ValidationException;
-import org.everit.json.schema.loader.SchemaClient;
-import org.everit.json.schema.loader.SchemaLoader;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -159,31 +153,6 @@ public final class SerializationUtils {
   public static byte[] cborEncode(Object object) throws JsonProcessingException {
     ObjectMapper cborMapper = new CBORMapper();
     return cborMapper.writeValueAsBytes(object);
-  }
-
-  /**
-   * Validates an object (JSON) based on a provided schema containing validation rules.
-   *
-   * @param validateObject       - object to be validated
-   * @param schemaValidationJson - validation schema
-   * @throws JsonProcessingException - if object to be validated fails on JSON processing
-   * @throws ValidationException     - if the validation of the object based on validation schema fails.
-   */
-  public static void validateJsonSchema(Object validateObject, InputStream schemaValidationJson,
-      final SchemaClient schemaClient)
-      throws JsonProcessingException, ValidationException {
-    ObjectMapper objectMapper = new ObjectMapper();
-    JSONObject jsonSchema = new JSONObject(new JSONTokener(schemaValidationJson));
-    String businessRuleJson = objectMapper.writeValueAsString(validateObject);
-
-    JSONObject jsonSubject = new JSONObject(businessRuleJson);
-    Schema schema = schemaClient == null ? SchemaLoader.load(jsonSchema) : SchemaLoader.load(jsonSchema, schemaClient);
-    schema.validate(jsonSubject);
-  }
-
-  public static void validateJsonSchema(Object validateObject, InputStream schemaValidationJson)
-      throws JsonProcessingException, ValidationException {
-    validateJsonSchema(validateObject, schemaValidationJson, null);
   }
 
   private SerializationUtils() {

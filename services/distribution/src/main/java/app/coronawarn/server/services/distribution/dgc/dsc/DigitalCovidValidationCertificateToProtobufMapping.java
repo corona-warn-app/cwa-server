@@ -2,7 +2,7 @@ package app.coronawarn.server.services.distribution.dgc.dsc;
 
 import static app.coronawarn.server.common.shared.util.SecurityUtils.ecdsaSignatureVerification;
 import static app.coronawarn.server.common.shared.util.SecurityUtils.getPublicKeyFromString;
-import static app.coronawarn.server.common.shared.util.SerializationUtils.validateJsonSchema;
+import static app.coronawarn.server.common.shared.util.SerializationUtils.deserializeJson;
 
 import app.coronawarn.server.common.protocols.internal.dgc.ServiceProviderAllowlistItem;
 import app.coronawarn.server.common.protocols.internal.dgc.ValidationServiceAllowlist;
@@ -13,6 +13,7 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AllowList;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AllowList.CertificateAllowList;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AllowList.ServiceProvider;
+import app.coronawarn.server.services.distribution.dgc.client.JsonValidationService;
 import app.coronawarn.server.services.distribution.dgc.dsc.errors.InvalidContentResponseException;
 import app.coronawarn.server.services.distribution.dgc.dsc.errors.InvalidFingerprintException;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -20,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.ByteString;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
@@ -39,6 +41,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.bouncycastle.util.encoders.Hex;
 import org.everit.json.schema.ValidationException;
+import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
@@ -59,7 +62,7 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
       return providers;
     }
 
-    public void setProviders(List<String> providers) {
+    public void setProviders(final List<String> providers) {
       this.providers = providers;
     }
   }
@@ -72,6 +75,8 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
   private final DistributionServiceConfig distributionServiceConfig;
   private final ResourceLoader resourceLoader;
 
+  private final JsonValidationService jsonValidationService;
+
   /**
    * I'm responsible for mapping certificate allow lists to their corresponding protobuf definition.
    *
@@ -79,49 +84,36 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
    * @param resourceLoader            resource loader.
    */
   public DigitalCovidValidationCertificateToProtobufMapping(
-      DistributionServiceConfig distributionServiceConfig, ResourceLoader resourceLoader) {
+      final DistributionServiceConfig distributionServiceConfig, final ResourceLoader resourceLoader,
+      final JsonValidationService jsonValidationService) {
     this.distributionServiceConfig = distributionServiceConfig;
     this.resourceLoader = resourceLoader;
+    this.jsonValidationService = jsonValidationService;
   }
 
-  /**
-   * Validates an object (JSON) based on a provided schema containing validation rules.
-   *
-   * @param allowList - object to be validated
-   * @throws JsonProcessingException - if object to be validated fails on JSON processing
-   * @throws ValidationException     - if the validation of the object based on validation schema fails.
-   */
-  public boolean validateSchema(AllowList allowList) {
-    try (final InputStream in = resourceLoader.getResource(DCC_VALIDATION_RULE_JSON_CLASSPATH).getInputStream()) {
-      validateJsonSchema(allowList, in);
-      return true;
-    } catch (ValidationException e) {
-      LOGGER.error("Json schema validation failed", e);
-      return false;
-    } catch (Exception e) {
-      LOGGER.error("Could not read resource " + DCC_VALIDATION_RULE_JSON_CLASSPATH, e);
-      return false;
+  private ServiceProviderDto buildServiceProviderDto(final CloseableHttpClient httpClient, final HttpGet getMethod,
+      final ObjectMapper objectMapper) throws InvalidFingerprintException {
+    try (CloseableHttpResponse response = httpClient.execute(getMethod)) {
+      return buildServiceProviderDto(objectMapper, response.getEntity());
+    } catch (final Exception e) {
+      LOGGER.warn("Request to obtain the service providers failed: ", e);
+      throw new InvalidFingerprintException();
     }
   }
 
-  /**
-   * Validates an object (JSON) based on a provided schema containing validation rules.
-   */
-  public boolean validateCertificate() {
-    String content = distributionServiceConfig.getDigitalGreenCertificate().getAllowListAsString();
-    byte[] signature = distributionServiceConfig.getDigitalGreenCertificate().getAllowListSignature();
-
+  private ServiceProviderDto buildServiceProviderDto(final ObjectMapper objectMapper, final HttpEntity response)
+      throws InvalidFingerprintException {
     try {
-      PublicKey publicKey = getPublicKeyFromString(
-          distributionServiceConfig.getDigitalGreenCertificate().getAllowListCertificate());
-      ecdsaSignatureVerification(
-          signature,
-          publicKey,
-          content.getBytes(StandardCharsets.UTF_8));
-      return true;
-    } catch (Exception e) {
-      LOGGER.error("Failed to validate certificate", e);
-      return false;
+      final ServiceProviderDto serviceProviderDto = objectMapper.readValue(
+          response.getContent(),
+          ServiceProviderDto.class);
+      if (serviceProviderDto.getProviders() == null) {
+        throw new InvalidContentResponseException();
+      }
+      return serviceProviderDto;
+    } catch (final Exception e) {
+      LOGGER.error("Failed to build Service Provider: Could not extract providers from response");
+      throw new InvalidFingerprintException();
     }
   }
 
@@ -131,15 +123,20 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
    * @return the protobuf filled with values from JSON.
    */
   public Optional<ValidationServiceAllowlist> constructProtobufMapping() {
-    AllowList allowList = distributionServiceConfig.getDigitalGreenCertificate().getAllowList();
-    if (!validateSchema(allowList) || !validateCertificate()) {
+    final String allowListJson = distributionServiceConfig.getDigitalGreenCertificate().getAllowListAsString();
+
+    if (!validateSchema(allowListJson) || !validateCertificate()) {
       return Optional.empty();
     }
-    List<ServiceProviderAllowlistItem> serviceProviderAllowlistItems = new ArrayList<>();
-    List<ValidationServiceAllowlistItem> validationServiceAllowlistItemList = new ArrayList<>();
+
+    final AllowList allowList = deserializeJson(allowListJson,
+        typeFactory -> typeFactory.constructType(AllowList.class));
+
+    final List<ServiceProviderAllowlistItem> serviceProviderAllowlistItems = new ArrayList<>();
+    final List<ValidationServiceAllowlistItem> validationServiceAllowlistItemList = new ArrayList<>();
     final ObjectMapper objectMapper = new ObjectMapper();
 
-    for (ServiceProvider serviceProvider : allowList.getServiceProviders()) {
+    for (final ServiceProvider serviceProvider : allowList.getServiceProviders()) {
       // 1. Fetch corresponding endpoint for retrieving providers
       final String serviceProviderAllowlistEndpoint = serviceProvider
           .getServiceProviderAllowlistEndpoint();
@@ -157,11 +154,12 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
               .newBuilder()
               .setServiceIdentityHash(
                   ByteString.copyFrom(Hex.decode(provider)))
-              .build()).collect(Collectors.toList());
+              .build())
+          .collect(Collectors.toList());
       serviceProviderAllowlistItems.addAll(serviceProviderItems);
     }
 
-    for (CertificateAllowList certificateAllowList : allowList.getCertificates()) {
+    for (final CertificateAllowList certificateAllowList : allowList.getCertificates()) {
       // 3. Map certificates to ValidationServiceAllowlistItem
       validationServiceAllowlistItemList.add(
           ValidationServiceAllowlistItem.newBuilder()
@@ -178,46 +176,51 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
         .build());
   }
 
-  private ServiceProviderDto validateFingerprint(String serviceProviderAllowlistEndpoint,
-      String fingerPrintToCompare, final ObjectMapper objectMapper) {
+  private boolean matches(final Certificate cert, final String fingerPrintToCompare) {
+    Optional<String> fingerprint = Optional.empty();
+    try {
+      fingerprint = Optional.of(Hex.toHexString(HashUtils.byteStringDigest(cert.getEncoded(), Algorithms.SHA_256)));
+    } catch (final CertificateEncodingException e) {
+      LOGGER.error("Certificate Pinning failed: certificate could not be encoded.");
+    }
+    return fingerprint.map(it -> it.equalsIgnoreCase(fingerPrintToCompare)).orElse(false);
+  }
+
+  /**
+   * Validates an object (JSON) based on a provided schema containing validation rules.
+   */
+  public boolean validateCertificate() {
+    final String content = distributionServiceConfig.getDigitalGreenCertificate().getAllowListAsString();
+    final byte[] signature = distributionServiceConfig.getDigitalGreenCertificate().getAllowListSignature();
+
+    try {
+      final PublicKey publicKey = getPublicKeyFromString(
+          distributionServiceConfig.getDigitalGreenCertificate().getAllowListCertificate());
+      ecdsaSignatureVerification(
+          signature,
+          publicKey,
+          content.getBytes(StandardCharsets.UTF_8));
+      return true;
+    } catch (final Exception e) {
+      LOGGER.error("Failed to validate certificate", e);
+      return false;
+    }
+  }
+
+  private ServiceProviderDto validateFingerprint(final String serviceProviderAllowlistEndpoint,
+      final String fingerPrintToCompare, final ObjectMapper objectMapper) {
     try (CloseableHttpClient httpClient = HttpClients.custom()
         .setSSLHostnameVerifier((hostname, session) -> validateHostname(
             session,
             fingerPrintToCompare))
         .build()) {
-      HttpGet getMethod = new HttpGet(serviceProviderAllowlistEndpoint);
+      final HttpGet getMethod = new HttpGet(serviceProviderAllowlistEndpoint);
       return buildServiceProviderDto(httpClient, getMethod, objectMapper);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       LOGGER.warn(e.getMessage(), e);
-      ServiceProviderDto dto = new ServiceProviderDto();
+      final ServiceProviderDto dto = new ServiceProviderDto();
       dto.setProviders(Collections.emptyList());
       return dto;
-    }
-  }
-
-  private ServiceProviderDto buildServiceProviderDto(CloseableHttpClient httpClient, HttpGet getMethod,
-      final ObjectMapper objectMapper) throws InvalidFingerprintException {
-    try (CloseableHttpResponse response = httpClient.execute(getMethod)) {
-      return buildServiceProviderDto(objectMapper, response.getEntity());
-    } catch (Exception e) {
-      LOGGER.warn("Request to obtain the service providers failed: ", e);
-      throw new InvalidFingerprintException();
-    }
-  }
-
-  private ServiceProviderDto buildServiceProviderDto(ObjectMapper objectMapper, HttpEntity response)
-      throws InvalidFingerprintException {
-    try {
-      ServiceProviderDto serviceProviderDto = objectMapper.readValue(
-          response.getContent(),
-          ServiceProviderDto.class);
-      if (serviceProviderDto.getProviders() == null) {
-        throw new InvalidContentResponseException();
-      }
-      return serviceProviderDto;
-    } catch (Exception e) {
-      LOGGER.error("Failed to build Service Provider: Could not extract providers from response");
-      throw new InvalidFingerprintException();
     }
   }
 
@@ -229,7 +232,7 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
         return false;
       }
       peerCertificate = Optional.ofNullable(peerCertificates[0]);
-    } catch (SSLPeerUnverifiedException e) {
+    } catch (final SSLPeerUnverifiedException e) {
       LOGGER.error(
           "Constructing ValidationServiceAllowlistItem failed: "
               + "certificate fingerprint {} does not match fingerprint of leaf certificate of validation server",
@@ -238,13 +241,25 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
     return peerCertificate.map(it -> matches(it, fingerPrintToCompare)).orElse(false);
   }
 
-  private boolean matches(final Certificate cert, final String fingerPrintToCompare) {
-    Optional<String> fingerprint = Optional.empty();
-    try {
-      fingerprint = Optional.of(Hex.toHexString(HashUtils.byteStringDigest(cert.getEncoded(), Algorithms.SHA_256)));
-    } catch (CertificateEncodingException e) {
-      LOGGER.error("Certificate Pinning failed: certificate could not be encoded.");
+  /**
+   * Validates an object (JSON) based on a provided schema containing validation rules.
+   *
+   * @param allowList - object to be validated
+   * @throws JsonProcessingException - if object to be validated fails on JSON processing
+   * @throws ValidationException     - if the validation of the object based on validation schema fails.
+   */
+  public boolean validateSchema(final String allowList) {
+    try (final InputStream allowListSchemaAsStream = resourceLoader.getResource(DCC_VALIDATION_RULE_JSON_CLASSPATH)
+        .getInputStream()) {
+      final InputStream allowListAsStream = new ByteArrayInputStream(allowList.getBytes());
+      jsonValidationService.validateJsonAgainstSchema(allowListAsStream, allowListSchemaAsStream);
+      return true;
+    } catch (ValidationException | JSONException e) {
+      LOGGER.error("Json schema validation failed", e);
+      return false;
+    } catch (final Exception e) {
+      LOGGER.error("Could not read resource " + DCC_VALIDATION_RULE_JSON_CLASSPATH, e);
+      return false;
     }
-    return fingerprint.map(it -> it.equalsIgnoreCase(fingerPrintToCompare)).orElse(false);
   }
 }

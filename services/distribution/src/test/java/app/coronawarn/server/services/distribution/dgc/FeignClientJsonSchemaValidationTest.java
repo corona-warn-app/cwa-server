@@ -5,19 +5,27 @@ import static app.coronawarn.server.services.distribution.dgc.DigitalGreenCertif
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.fail;
 
-import app.coronawarn.server.services.distribution.dgc.client.JsonSchemaDecoder;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dgc.client.JsonSchemaMappingLookup;
 import java.io.IOException;
 import java.io.InputStream;
+import app.coronawarn.server.services.distribution.dgc.client.JsonValidationService;
+import app.coronawarn.server.services.distribution.dgc.dsc.DigitalCovidValidationCertificateToProtobufMapping;
 import org.everit.json.schema.ValidationException;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {
+    JsonValidationService.class
+},
+    initializers = ConfigDataApplicationContextInitializer.class)
 class FeignClientJsonSchemaValidationTest {
 
   private static final String COUNTRY_RULE_LIST_REQUEST_ENDPOINT = "http://mydomain/rules";
@@ -26,8 +34,12 @@ class FeignClientJsonSchemaValidationTest {
   private static final String BOOSTER_NOTIFICATION_HASH_REQUEST_ENDPOINT = "http://mydomain/bnrules/abcabc";
   private static final String CCL_RULE_LIST_REQUEST_ENDPOINT = "http://mydomain/cclrules";
   private static final String CCL_RULE_HASH_REQUEST_ENDPOINT = "http://mydomain/cclrules/abcabc";
+
   @Autowired
   ResourceLoader resourceLoader;
+
+  @Autowired
+  JsonValidationService jsonValidationService;
 
   @Test
   void testCountryBusinessRuleValidForSchema() throws IOException {
@@ -64,9 +76,8 @@ class FeignClientJsonSchemaValidationTest {
     InputStream schemaAsStream = resourceLoader.getResource(schemaLocation).getInputStream();
     InputStream businessRuleJsonAsStream = resourceLoader.getResource(jsonPayloadLocation)
         .getInputStream();
-    JsonSchemaDecoder decoder = new JsonSchemaDecoder(null, null, resourceLoader);
     try {
-      decoder.validateJsonAgainstSchema(businessRuleJsonAsStream, schemaAsStream);
+      jsonValidationService.validateJsonAgainstSchema(businessRuleJsonAsStream, schemaAsStream);
     } catch (ValidationException ex) {
       fail("Json should have been correctly verified by given schema", ex);
     }
@@ -76,9 +87,8 @@ class FeignClientJsonSchemaValidationTest {
     InputStream schemaAsStream = resourceLoader.getResource(schemaLocation).getInputStream();
     InputStream businessRuleJsonAsStream = resourceLoader.getResource(jsonPayloadLocation)
         .getInputStream();
-    JsonSchemaDecoder decoder = new JsonSchemaDecoder(null, null, resourceLoader);
     assertThatExceptionOfType(ValidationException.class).isThrownBy(
-        () -> decoder.validateJsonAgainstSchema(businessRuleJsonAsStream, schemaAsStream));
+        () -> jsonValidationService.validateJsonAgainstSchema(businessRuleJsonAsStream, schemaAsStream));
   }
 
   @Test

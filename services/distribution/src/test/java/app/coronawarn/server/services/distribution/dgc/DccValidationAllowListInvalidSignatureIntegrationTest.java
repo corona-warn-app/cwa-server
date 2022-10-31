@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.common.protocols.internal.dgc.ValidationServiceAllowlist;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.dgc.client.JsonValidationService;
 import app.coronawarn.server.services.distribution.dgc.dsc.DigitalCovidValidationCertificateToProtobufMapping;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {DistributionServiceConfig.class,
-    DigitalCovidValidationCertificateToProtobufMapping.class},
+    DigitalCovidValidationCertificateToProtobufMapping.class, JsonValidationService.class},
     initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles("allow-list-invalid")
 class DccValidationAllowListInvalidSignatureIntegrationTest {

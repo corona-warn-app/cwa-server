@@ -4,22 +4,17 @@ import static app.coronawarn.server.common.shared.util.SerializationUtils.cborEn
 import static app.coronawarn.server.common.shared.util.SerializationUtils.deserializeJson;
 import static app.coronawarn.server.common.shared.util.SerializationUtils.jsonExtractCosePayload;
 import static app.coronawarn.server.common.shared.util.SerializationUtils.stringifyObject;
-import static app.coronawarn.server.common.shared.util.SerializationUtils.validateJsonSchema;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import org.everit.json.schema.ValidationException;
-import org.json.JSONException;
 import org.junit.jupiter.api.Test;
-
 
 class SerializationUtilsTest {
 
@@ -73,25 +68,6 @@ class SerializationUtilsTest {
 
     assertThatExceptionOfType(IllegalStateException.class)
         .isThrownBy(() -> stringifyObject(testObject));
-  }
-
-  @Test
-  void shouldPassValidationSchema() throws JSONException, JsonProcessingException {
-    TestObject subject = new TestObject();
-    subject.setTestAttribute(VALIDATION_SCHEMA_OK);
-
-    InputStream validationSchema = getClass().getClassLoader().getResourceAsStream(VALIDATION_SCHEMA_JSON);
-    validateJsonSchema(subject, validationSchema);
-  }
-
-  @Test
-  void shouldNotPassValidationSchema() {
-    TestObject subject = new TestObject();
-    subject.setTestAttribute(VALIDATION_SCHEMA_NOT_OKAY);
-
-    InputStream validationSchema = getClass().getClassLoader().getResourceAsStream("validation_schema.json");
-    assertThatExceptionOfType(ValidationException.class)
-        .isThrownBy(() -> validateJsonSchema(subject, validationSchema));
   }
 
   @Test
