@@ -16,7 +16,6 @@ import java.io.InputStream;
 import java.io.Serializable;
 import org.junit.jupiter.api.Test;
 
-
 class SerializationUtilsTest {
 
   public static final String TEST_ATTRIBUTE = "testAttribute";
