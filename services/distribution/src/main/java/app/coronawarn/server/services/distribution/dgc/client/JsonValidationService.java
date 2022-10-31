@@ -23,12 +23,10 @@ import org.springframework.core.io.ResourceLoader;
 public class JsonValidationService {
 
   private static final Logger logger = LoggerFactory.getLogger(JsonValidationService.class);
-  ResourceLoader resourceLoader;
-  JsonSchemaMappingLookup jsonSchemaMappingLookup;
+  private final ResourceLoader resourceLoader;
 
-  public JsonValidationService(ResourceLoader resourceLoader) {
+  public JsonValidationService(final ResourceLoader resourceLoader) {
     this.resourceLoader = resourceLoader;
-    jsonSchemaMappingLookup = new JsonSchemaMappingLookup();
   }
 
   /**
