@@ -37,7 +37,7 @@ public class JsonValidationService {
    * @throws IOException Thrown when json could not be loaded from file.
    */
   public void validateJsonAgainstSchema(final InputStream jsonPayloadInputStream, final InputStream schemaAsStream)
-      throws IOException {
+      throws IOException, ValidationException, JSONException {
     try {
       final JSONObject jsonSchema = new JSONObject(new JSONTokener(schemaAsStream));
       final SchemaClient schemaClient = new ResourceSchemaClient(resourceLoader, JSON_SCHEMA_PATH);
@@ -52,10 +52,9 @@ public class JsonValidationService {
             new InputStreamReader(jsonPayloadInputStream, UTF_8))));
         parsedArray.forEach(schema::validate);
       }
-    } catch (ValidationException | JSONException e) {
-      logger.error("Json schema validation failed", e);
+    } catch (final ValidationException e) {
+      logger.error("JSON schema violations: {}", e.getAllMessages());
       throw e;
     }
   }
-
 }
