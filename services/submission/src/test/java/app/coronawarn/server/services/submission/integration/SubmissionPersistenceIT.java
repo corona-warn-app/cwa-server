@@ -1,6 +1,11 @@
 package app.coronawarn.server.services.submission.integration;
 
+import static app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType.SUBMISSION_TYPE_HOST_WARNING;
+import static app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType.SUBMISSION_TYPE_PCR_TEST;
+import static app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType.SUBMISSION_TYPE_SRS_RAPID_PCR;
 import static app.coronawarn.server.services.submission.assertions.SubmissionAssertions.assertElementsCorrespondToEachOther;
+import static app.coronawarn.server.services.submission.controller.SubmissionController.SUBMISSION_ON_BEHALF_ROUTE;
+import static app.coronawarn.server.services.submission.controller.SubmissionController.SUBMISSION_ROUTE;
 import static app.coronawarn.server.services.submission.integration.DataHelpers.buildDefaultCheckIn;
 import static app.coronawarn.server.services.submission.integration.DataHelpers.buildDefaultEncryptedCheckIn;
 import static app.coronawarn.server.services.submission.integration.DataHelpers.buildSubmissionPayload;
@@ -23,6 +28,8 @@ import app.coronawarn.server.common.protocols.internal.pt.CheckInProtectedReport
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.controller.FakeDelayManager;
 import app.coronawarn.server.services.submission.controller.RequestExecutor;
+import app.coronawarn.server.services.submission.verification.EventTanVerifier;
+import app.coronawarn.server.services.submission.verification.SrsOtpVerifier;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import com.google.common.io.BaseEncoding;
 import com.google.protobuf.util.JsonFormat;
@@ -37,6 +44,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
@@ -54,6 +62,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -65,8 +74,7 @@ import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext
 @ActiveProfiles("integration-test")
-@Sql(scripts = {"classpath:db/clean_db_state.sql"},
-    executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(scripts = { "classpath:db/clean_db_state.sql" }, executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
 class SubmissionPersistenceIT {
 
   private static final Logger logger = LoggerFactory.getLogger(SubmissionPersistenceIT.class);
@@ -94,11 +102,19 @@ class SubmissionPersistenceIT {
   private TanVerifier tanVerifier;
 
   @MockBean
+  private SrsOtpVerifier srsOtpVerifier;
+
+  @MockBean
+  private EventTanVerifier eventTanVerifier;
+
+  @MockBean
   private FakeDelayManager fakeDelayManager;
 
   @BeforeEach
   public void setUpMocks() {
     when(tanVerifier.verifyTan(anyString())).thenReturn(true);
+    when(srsOtpVerifier.verifyTan(anyString())).thenReturn(true);
+    when(eventTanVerifier.verifyTan(anyString())).thenReturn(true);
     when(fakeDelayManager.getJitteredFakeDelay()).thenReturn(1000L);
   }
 
@@ -111,31 +127,125 @@ class SubmissionPersistenceIT {
     List<TemporaryExposureKey> validKeys = createValidTemporaryExposureKeys(1);
 
     SubmissionPayload invalidSubmissionPayload = buildSubmissionPayload(List.of("DE"), "DE", true,
-        invalidKeys, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
+        invalidKeys, SUBMISSION_TYPE_PCR_TEST);
     String tan = "tan";
-    HttpHeaders headers = new HttpHeaders();
-    headers.add("cwa-fake", "0");
+    final HttpHeaders headers = headers();
     headers.add("cwa-authorization", tan);
-    headers.setContentType(MediaType.valueOf("Application/x-protobuf"));
 
     SubmissionPayload validSubmissionPayload = buildSubmissionPayload(List.of("DE"), "DE", true,
-        validKeys, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
+        validKeys, SUBMISSION_TYPE_PCR_TEST);
 
     testRestTemplate
-        .postForEntity("/version/v1/diagnosis-keys", new HttpEntity<>(invalidSubmissionPayload, headers), Void.class);
+        .postForEntity("/version/v1" + SUBMISSION_ROUTE, new HttpEntity<>(invalidSubmissionPayload, headers),
+            Void.class);
     assertEquals(0, diagnosisKeyRepository.count());
 
     testRestTemplate
-        .postForEntity("/version/v1/diagnosis-keys", new HttpEntity<>(validSubmissionPayload, headers), Void.class);
+        .postForEntity("/version/v1" + SUBMISSION_ROUTE, new HttpEntity<>(validSubmissionPayload, headers), Void.class);
 
     final int expectedNumberOfKeys =
         validSubmissionPayload.getKeysList().size() * config.getRandomKeyPaddingMultiplier();
     assertEquals(expectedNumberOfKeys, diagnosisKeyRepository.count());
   }
 
+  /**
+   * Test when (cwa-authorization && cwa-otp) are missing.
+   */
+  @Test
+  void testBadRequest0() {
+    final List<TemporaryExposureKey> validKeys = createValidTemporaryExposureKeys(1);
+    final SubmissionPayload validSubmissionPayload = buildSubmissionPayload(List.of("DE"), "DE", true,
+        validKeys, SUBMISSION_TYPE_SRS_RAPID_PCR);
+
+    final ResponseEntity<Void> response = testRestTemplate
+        .postForEntity("/version/v1" + SUBMISSION_ROUTE, new HttpEntity<>(validSubmissionPayload, headers()),
+            Void.class);
+
+    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+  }
+
+  /**
+   * Test when (cwa-authorization && cwa-otp) are both provided.
+   */
+  @Test
+  void testBadRequest2() {
+    final List<TemporaryExposureKey> validKeys = createValidTemporaryExposureKeys(1);
+    final HttpHeaders headers = headers();
+
+    headers.add("cwa-authorization", "foo");
+    headers.add("cwa-otp", "bar");
+
+    final SubmissionPayload validSubmissionPayload = buildSubmissionPayload(List.of("DE"), "DE", true,
+        validKeys, SUBMISSION_TYPE_SRS_RAPID_PCR);
+
+    final ResponseEntity<Void> response = testRestTemplate
+        .postForEntity("/version/v1" + SUBMISSION_ROUTE, new HttpEntity<>(validSubmissionPayload, headers), Void.class);
+
+    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+  }
+
+  private HttpHeaders headers() {
+    final HttpHeaders headers = new HttpHeaders();
+    headers.add("cwa-fake", "0");
+    headers.setContentType(MediaType.valueOf("Application/x-protobuf"));
+    return headers;
+  }
+
+  /**
+   * Test Self-Report Submission (SRS).
+   * 
+   * @param submissionTypeNumber - {@link SubmissionType}
+   */
+  @ParameterizedTest
+  @ValueSource(ints = { 3, 4, 5, 6, 7, 8 }) // SUBMISSION_TYPE_SRS_*
+  void testSrsOtpAuth(int submissionTypeNumber) {
+    final List<TemporaryExposureKey> validKeys = createValidTemporaryExposureKeys(1);
+    final HttpHeaders headers = headers();
+    headers.add("cwa-otp", "bar");
+
+    final SubmissionPayload validSubmissionPayload = buildSubmissionPayload(List.of("DE"), "DE", true,
+        validKeys, SubmissionType.forNumber(submissionTypeNumber));
+
+    final int before = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM self_report_submissions", Integer.class);
+
+    final ResponseEntity<Void> response = testRestTemplate
+        .postForEntity("/version/v1" + SUBMISSION_ROUTE, new HttpEntity<>(validSubmissionPayload, headers),
+            Void.class);
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+
+    final int result = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM self_report_submissions", Integer.class);
+    assertEquals(before + 1, result);
+  }
+
+  @Test
+  @SuppressWarnings("deprecation")
+  void testSubmissionOnBehalf() {
+    byte[] locationIdHash = new byte[32];
+    new Random().nextBytes(locationIdHash);
+    List<CheckInProtectedReport> protectedReports = List.of(DataHelpers.buildDefaultEncryptedCheckIn(locationIdHash),
+        DataHelpers.buildDefaultEncryptedCheckIn(locationIdHash));
+    List<CheckIn> checkIns = List.of(DataHelpers.buildDefaultCheckIn(), DataHelpers.buildDefaultCheckIn());
+    SubmissionPayload validSubmissionPayload = SubmissionPayload.newBuilder().addAllKeys(Collections.emptyList())
+        .addAllVisitedCountries(Collections.emptyList()).setConsentToFederation(false)
+        .setSubmissionType(SUBMISSION_TYPE_HOST_WARNING).addAllCheckInProtectedReports(protectedReports)
+        .addAllCheckIns(checkIns).build();
+    final HttpHeaders headers = headers();
+    headers.add("cwa-authorization", "is mocked and returns true :-)");
+
+    final int before = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM check_in_protected_reports", Integer.class);
+    final int none = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM diagnosis_key", Integer.class);
+
+    final ResponseEntity<Void> response = testRestTemplate.postForEntity("/version/v1" + SUBMISSION_ON_BEHALF_ROUTE,
+        new HttpEntity<>(validSubmissionPayload, headers), Void.class);
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+
+    final int result = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM check_in_protected_reports", Integer.class);
+    assertEquals(before + 2, result);
+    assertEquals(none, jdbcTemplate.queryForObject("SELECT COUNT(*) FROM diagnosis_key", Integer.class));
+  }
 
   @ParameterizedTest
-  @ValueSource(strings = {PATH_MOBILE_CLIENT_PAYLOAD_PB + "/" + FILENAME_MOBILE_CLIENT_PAYLOAD_PB})
+  @ValueSource(strings = { PATH_MOBILE_CLIENT_PAYLOAD_PB + "/" + FILENAME_MOBILE_CLIENT_PAYLOAD_PB })
   void testKeyInsertionWithMobileClientProtoBuf(String testFile) throws IOException {
     List<TemporaryExposureKey> temporaryExposureKeys = createValidTemporaryExposureKeys();
     SubmissionPayload submissionPayload = buildSubmissionPayload(List.of("DE"), "DE", true,
@@ -390,7 +500,6 @@ class SubmissionPersistenceIT {
     assertThat(result.getHeaders().get("cwa-filtered-checkins").get(0)).isEqualTo("0");
     assertThat(result.getHeaders().get("cwa-saved-checkins").get(0)).isEqualTo("3");
   }
-
 
   private String generateDebugSqlStatement(SubmissionPayload payload) {
     List<String> base64Keys = payload.getKeysList()

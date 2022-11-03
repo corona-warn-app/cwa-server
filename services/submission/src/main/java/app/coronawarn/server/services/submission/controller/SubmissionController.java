@@ -1,11 +1,17 @@
 package app.coronawarn.server.services.submission.controller;
 
+import static app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType.SUBMISSION_TYPE_HOST_WARNING_VALUE;
+import static app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType.SUBMISSION_TYPE_SRS_OTHER_VALUE;
+import static app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType.SUBMISSION_TYPE_SRS_SELF_TEST_VALUE;
+import static org.springframework.util.ObjectUtils.isEmpty;
+
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.config.TrlDerivations;
 import app.coronawarn.server.common.persistence.domain.validation.ValidRollingStartIntervalNumberValidator;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.common.shared.util.HashUtils;
 import app.coronawarn.server.services.submission.checkins.EventCheckinFacade;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
@@ -15,6 +21,7 @@ import app.coronawarn.server.services.submission.validation.PrintableSubmissionP
 import app.coronawarn.server.services.submission.validation.ValidSubmissionOnBehalfPayload;
 import app.coronawarn.server.services.submission.validation.ValidSubmissionPayload;
 import app.coronawarn.server.services.submission.verification.EventTanVerifier;
+import app.coronawarn.server.services.submission.verification.SrsOtpVerifier;
 import app.coronawarn.server.services.submission.verification.TanVerificationService;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import feign.FeignException;
@@ -56,6 +63,7 @@ public class SubmissionController {
   private final DiagnosisKeyService diagnosisKeyService;
   private final TanVerifier tanVerifier;
   private final EventTanVerifier eventTanVerifier;
+  private final SrsOtpVerifier srsOtpVerifier;
   private final Integer retentionDays;
   private final Integer randomKeyPaddingMultiplier;
   private final FakeDelayManager fakeDelayManager;
@@ -65,12 +73,13 @@ public class SubmissionController {
   private final ValidRollingStartIntervalNumberValidator rollingStartIntervalNumberValidator;
 
   SubmissionController(DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier,
-      EventTanVerifier eventTanVerifier, FakeDelayManager fakeDelayManager,
+      EventTanVerifier eventTanVerifier, final SrsOtpVerifier srsOtpVerifier, FakeDelayManager fakeDelayManager,
       SubmissionServiceConfig submissionServiceConfig, SubmissionMonitor submissionMonitor,
       EventCheckinFacade eventCheckinFacade) {
     this.diagnosisKeyService = diagnosisKeyService;
     this.tanVerifier = tanVerifier;
     this.eventTanVerifier = eventTanVerifier;
+    this.srsOtpVerifier = srsOtpVerifier;
     this.submissionMonitor = submissionMonitor;
     this.fakeDelayManager = fakeDelayManager;
     this.submissionServiceConfig = submissionServiceConfig;
@@ -88,14 +97,73 @@ public class SubmissionController {
    * @param tan          A tan for diagnosis verification.
    * @return An empty response body.
    */
-  @PostMapping(value = SUBMISSION_ROUTE, headers = {"cwa-fake=0"})
+  @PostMapping(value = SUBMISSION_ROUTE, headers = { "cwa-fake=0" })
   @Timed(description = "Time spent handling submission.")
   public DeferredResult<ResponseEntity<Void>> submitDiagnosisKey(
       @ValidSubmissionPayload @RequestBody SubmissionPayload exposureKeys,
-      @RequestHeader("cwa-authorization") String tan) {
+      @RequestHeader(name = "cwa-authorization", required = false) String tan,
+      @RequestHeader(name = "cwa-otp", required = false) String otp) {
+
+    if (isEmpty(tan) && isEmpty(otp)) {
+      logger.warn("'cwa-authorization' and 'cwa-otp' header missing!");
+      return badRequest();
+    }
+    if (!isEmpty(tan) && !isEmpty(otp)) {
+      logger.warn("'cwa-authorization' and 'cwa-otp' header provided!");
+      return badRequest();
+    }
+
+    if (!isEmpty(otp)) {
+      if (!validSrsType(exposureKeys.getSubmissionType().getNumber())) {
+        return badRequest();
+      }
+      logger.debug("SRS: {} - {}", otp, exposureKeys);
+      return buildRealDeferredResult(exposureKeys, otp, srsOtpVerifier);
+    }
+
+    if (!validSubmissionType(exposureKeys.getSubmissionType().getNumber())) {
+      return badRequest();
+    }
+
     submissionMonitor.incrementRequestCounter();
     submissionMonitor.incrementRealRequestCounter();
     return buildRealDeferredResult(exposureKeys, tan, tanVerifier);
+  }
+
+  /**
+   * Valid regular submission types: SUBMISSION_TYPE_PCR_TEST_VALUE, SUBMISSION_TYPE_RAPID_TEST_VALUE,
+   * SUBMISSION_TYPE_HOST_WARNING_VALUE.
+   * 
+   * @param submissionTypeValue int value of the enum
+   * @return <code>true</code> if it's ok.
+   * 
+   * @see SubmissionType
+   */
+  private boolean validSubmissionType(int submissionTypeValue) {
+    return 0 <= submissionTypeValue && submissionTypeValue <= SUBMISSION_TYPE_HOST_WARNING_VALUE;
+  }
+
+  /**
+   * Valid SRS types: SUBMISSION_TYPE_SRS_SELF_TEST, SUBMISSION_TYPE_SRS_RAT, SUBMISSION_TYPE_SRS_REGISTERED_PCR,
+   * SUBMISSION_TYPE_SRS_UNREGISTERED_PCR, SUBMISSION_TYPE_SRS_RAPID_PCR, SUBMISSION_TYPE_SRS_OTHER.
+   * 
+   * @param submissionTypeValue int value of the enum
+   * @return <code>true</code> if it's ok.
+   * 
+   * @see SubmissionType
+   */
+  private boolean validSrsType(int submissionTypeValue) {
+    return SUBMISSION_TYPE_SRS_SELF_TEST_VALUE <= submissionTypeValue
+        && submissionTypeValue <= SUBMISSION_TYPE_SRS_OTHER_VALUE;
+  }
+
+  /**
+   * {@link ResponseEntity#badRequest()} wrapped into {@link DeferredResult}.
+   * 
+   * @return {@link HttpStatus#BAD_REQUEST}
+   */
+  private DeferredResult<ResponseEntity<Void>> badRequest() {
+    return new DeferredResult<>(null, () -> ResponseEntity.badRequest().build());
   }
 
   /**
@@ -107,7 +175,7 @@ public class SubmissionController {
    * @param tan               A tan for diagnosis verification.
    * @return An empty response body.
    */
-  @PostMapping(value = SUBMISSION_ON_BEHALF_ROUTE, headers = {"cwa-fake=0"})
+  @PostMapping(value = SUBMISSION_ON_BEHALF_ROUTE, headers = { "cwa-fake=0" })
   @Timed(description = "Time spent handling submission.")
   public DeferredResult<ResponseEntity<Void>> submissionOnBehalf(
       @ValidSubmissionOnBehalfPayload @RequestBody SubmissionPayload submissionPayload,
@@ -138,6 +206,10 @@ public class SubmissionController {
       } else {
         extractAndStoreDiagnosisKeys(submissionPayload);
         CheckinsStorageResult checkinsStorageResult = eventCheckinFacade.extractAndStoreCheckins(submissionPayload);
+
+        if (validSrsType(submissionPayload.getSubmissionType().getNumber())) {
+          diagnosisKeyService.recordSrs(submissionPayload.getSubmissionType());
+        }
 
         deferredResult.setResult(ResponseEntity.ok()
             .header(CWA_FILTERED_CHECKINS_HEADER, String.valueOf(checkinsStorageResult.getNumberOfFilteredCheckins()))
@@ -194,7 +266,7 @@ public class SubmissionController {
 
     if (protoBufferKeys.size() > diagnosisKeys.size()) {
       logger.warn("Not persisting {} one or more diagnosis key(s), as it is outdated beyond retention threshold or the "
-              + "RollingStartIntervalNumber is in the future. Payload: {}",
+          + "RollingStartIntervalNumber is in the future. Payload: {}",
           protoBufferKeys.size() - diagnosisKeys.size(),
           new PrintableSubmissionPayload(submissionPayload));
     }
