@@ -70,7 +70,7 @@
     <jackson.version>2.13.4</jackson.version>
     <test-containers.version>1.17.5</test-containers.version>
     <postgresql.version>42.5.0</postgresql.version>
-    <wiremock.version>2.34.0</wiremock.version>
+    <wiremock.version>2.35.0</wiremock.version>
     <httpclient.version>4.5.13</httpclient.version>
     <junit.version>4.13.2</junit.version>
     <tomcat.version>9.0.68</tomcat.version>
