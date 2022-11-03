@@ -90,4 +90,16 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
       + " ORDER BY submission_timestamp")
   List<DiagnosisKey> findAllWithTrlGreaterThanOrEqual(final @Param("minTrl") int minTrl,
       @Param("threshold") long submissionTimestamp);
+
+  /**
+   * For each Self-Reported-Submission, we'll create one record to get a glimpse on what's going on.
+   * 
+   * @param submissionType - depending on what the client has chosen
+   * @return <code>true</code>, when insert into self_report_submissions was successful
+   */
+  @Modifying
+  @Query("INSERT INTO self_report_submissions "
+      + "(submission_type) "
+      + "VALUES (:submission_type) ")
+  boolean recordSrs(final @Param("submission_type") String submissionType);
 }

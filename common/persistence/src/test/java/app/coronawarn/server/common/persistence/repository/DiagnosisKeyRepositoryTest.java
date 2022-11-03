@@ -52,4 +52,9 @@ class DiagnosisKeyRepositoryTest {
 
     assertTrue(repository.exists(id, type.name()));
   }
+
+  @Test
+  void recordSRSTest() {
+    assertTrue(repository.recordSrs(SubmissionType.SUBMISSION_TYPE_SRS_RAPID_PCR.name()));
+  }
 }

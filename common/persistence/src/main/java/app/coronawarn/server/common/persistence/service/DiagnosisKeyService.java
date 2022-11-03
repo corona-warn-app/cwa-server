@@ -33,6 +33,12 @@ public class DiagnosisKeyService {
     this.validationFilter = filter;
   }
 
+  @Timed
+  @Transactional
+  public boolean recordSrs(final SubmissionType submissionType) {
+    return keyRepository.recordSrs(submissionType.name());
+  }
+
   /**
    * Persists the specified collection of {@link DiagnosisKey} instances and returns the number of inserted diagnosis
    * keys. If the key data of a particular diagnosis key already exists in the database and is of a submission type that
