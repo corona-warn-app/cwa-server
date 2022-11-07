@@ -202,7 +202,7 @@ class TraceTimeIntervalWarningsDistributionIT {
         .filter(path -> hasSuffix(path, latestHour, oldestHour))
         .map(this::extractSubmissionHour).collect(Collectors.toList());
     final List<Integer> actualHourlyFilesBetweenOldestAndLatest = actualFiles.stream()
-        .filter(path -> Pattern.matches("^[a-zA-Z\\/]+\\d+$", path))
+        .filter(path -> Pattern.matches("^[a-zA-Z\\" + separator + "]+\\d+$", path))
         .map(this::extractSubmissionHour)
         .filter(submissionTimestamp -> oldestHour <= submissionTimestamp && latestHour >= submissionTimestamp)
         .collect(Collectors.toList());
