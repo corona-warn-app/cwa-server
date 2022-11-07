@@ -27,6 +27,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
@@ -258,5 +259,11 @@ class DiagnosisKeyServiceTest {
     assertEquals(1, storedKeys.size());
     assertTrue(storedKeys.contains(pcrKey));
     assertFalse(storedKeys.contains(rapidKey));
+  }
+
+  @ParameterizedTest
+  @EnumSource(value = SubmissionType.class)
+  void recordSrsTest(final SubmissionType type) {
+    diagnosisKeyService.recordSrs(type);
   }
 }
