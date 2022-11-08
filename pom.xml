@@ -50,7 +50,7 @@
     <!-- https://spring.io/projects/spring-boot -->
     <spring-boot.version>2.7.5</spring-boot.version>
     <!-- https://spring.io/projects/spring-cloud#release-trains -->
-    <spring-cloud.version>2021.0.4</spring-cloud.version>
+    <spring-cloud.version>2021.0.5</spring-cloud.version>
     <!-- If you update spring-cloud, see if it references the correct spring-vault-core version again, then remove the following: -->
     <spring-vault-core.version>2.3.2</spring-vault-core.version>
     <spring-retry.version>1.3.4</spring-retry.version>
@@ -67,7 +67,7 @@
     <awssdk-s3.version>2.18.6</awssdk-s3.version>
     <io-netty.version>4.1.84.Final</io-netty.version>
     <guava.version>31.1-jre</guava.version>
-    <jackson.version>2.13.4</jackson.version>
+    <jackson.version>2.14.0</jackson.version>
     <test-containers.version>1.17.5</test-containers.version>
     <postgresql.version>42.5.0</postgresql.version>
     <wiremock.version>2.35.0</wiremock.version>
@@ -409,7 +409,7 @@
       <extension>
         <groupId>kr.motd.maven</groupId>
         <artifactId>os-maven-plugin</artifactId>
-        <version>1.7.0</version>
+        <version>1.7.1</version>
       </extension>
     </extensions>
 
