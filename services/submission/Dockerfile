@@ -1,4 +1,4 @@
-FROM openjdk:11 as build
+FROM openjdk:17 as build
 
 ARG WORK_DIR=/build
 ARG SERVICE=submission
@@ -34,7 +34,7 @@ RUN ${WORK_DIR}/mvnw --batch-mode -P docker-image --file ${WORK_DIR}/pom.xml ${M
 RUN cp ${WORK_DIR}/services/${SERVICE}/target/*.jar /usr/sap/${SERVICE}-service/service.jar
 RUN cp ${WORK_DIR}/scripts/DpkgHelper.java /DpkgHelper.java
 
-FROM gcr.io/distroless/java-debian11:11
+FROM gcr.io/distroless/java17-debian11
 
 ARG SERVICE=submission
 
