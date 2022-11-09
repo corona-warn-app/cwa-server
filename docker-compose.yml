@@ -138,7 +138,7 @@ services:
     volumes:
       - ./docker-compose-test-secrets:/secrets
   postgres:
-    image: postgres:11.8
+    image: postgres:11.5
     restart: always
     ports:
       - "8001:5432"
