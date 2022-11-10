@@ -65,7 +65,7 @@
     <commons-math3.version>3.6.1</commons-math3.version>
     <bouncycastle.version>1.70</bouncycastle.version>
     <awssdk-s3.version>2.18.6</awssdk-s3.version>
-    <io-netty.version>4.1.84.Final</io-netty.version>
+    <io-netty.version>4.1.85.Final</io-netty.version>
     <guava.version>31.1-jre</guava.version>
     <jackson.version>2.14.0</jackson.version>
     <test-containers.version>1.17.5</test-containers.version>
