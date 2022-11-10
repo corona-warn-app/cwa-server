@@ -52,6 +52,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.EnumSource.Mode;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
@@ -184,6 +186,36 @@ class SubmissionPersistenceIT {
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
   }
 
+  @ParameterizedTest
+  @EnumSource(value = SubmissionType.class, names = { "(?!SUBMISSION_TYPE_SRS_).*" }, mode = Mode.MATCH_ANY)
+  void testBadRequest3(final SubmissionType type) {
+    final List<TemporaryExposureKey> keys = createValidTemporaryExposureKeys(1);
+    final HttpHeaders headers = headers();
+    headers.add("cwa-otp", "bar");
+
+    final SubmissionPayload payload = buildSubmissionPayload(List.of("DE"), "DE", true, keys, type);
+
+    final ResponseEntity<Void> response = testRestTemplate
+        .postForEntity("/version/v1" + SUBMISSION_ROUTE, new HttpEntity<>(payload, headers), Void.class);
+
+    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+  }
+
+  @ParameterizedTest
+  @EnumSource(value = SubmissionType.class, names = { "SUBMISSION_TYPE_SRS_.*" }, mode = Mode.MATCH_ANY)
+  void testBadRequest4(final SubmissionType type) {
+    final List<TemporaryExposureKey> keys = createValidTemporaryExposureKeys(1);
+    final HttpHeaders headers = headers();
+    headers.add("cwa-authorization", "foo");
+
+    final SubmissionPayload payload = buildSubmissionPayload(List.of("DE"), "DE", true, keys, type);
+
+    final ResponseEntity<Void> response = testRestTemplate
+        .postForEntity("/version/v1" + SUBMISSION_ROUTE, new HttpEntity<>(payload, headers), Void.class);
+
+    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+  }
+
   private HttpHeaders headers() {
     final HttpHeaders headers = new HttpHeaders();
     headers.add("cwa-fake", "0");
@@ -193,18 +225,16 @@ class SubmissionPersistenceIT {
 
   /**
    * Test Self-Report Submission (SRS).
-   * 
-   * @param submissionTypeNumber - {@link SubmissionType}
    */
   @ParameterizedTest
-  @ValueSource(ints = { 3, 4, 5, 6, 7, 8 }) // SUBMISSION_TYPE_SRS_*
-  void testSrsOtpAuth(int submissionTypeNumber) {
+  @EnumSource(value = SubmissionType.class, names = { "SUBMISSION_TYPE_SRS_.*" }, mode = Mode.MATCH_ANY)
+  void testSrsOtpAuth(final SubmissionType type) {
     final List<TemporaryExposureKey> validKeys = createValidTemporaryExposureKeys(1);
     final HttpHeaders headers = headers();
     headers.add("cwa-otp", "bar");
 
     final SubmissionPayload validSubmissionPayload = buildSubmissionPayload(List.of("DE"), "DE", true,
-        validKeys, SubmissionType.forNumber(submissionTypeNumber));
+        validKeys, type);
 
     final int before = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM self_report_submissions", Integer.class);
 

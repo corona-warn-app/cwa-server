@@ -117,7 +117,6 @@ public class SubmissionController {
       if (!validSrsType(exposureKeys.getSubmissionType().getNumber())) {
         return badRequest();
       }
-      logger.debug("SRS: {} - {}", otp, exposureKeys);
       return buildRealDeferredResult(exposureKeys, otp, srsOtpVerifier);
     }
 
