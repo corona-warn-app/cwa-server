@@ -68,7 +68,7 @@
     <io-netty.version>4.1.85.Final</io-netty.version>
     <guava.version>31.1-jre</guava.version>
     <jackson.version>2.14.0</jackson.version>
-    <test-containers.version>1.17.5</test-containers.version>
+    <test-containers.version>1.17.6</test-containers.version>
     <postgresql.version>42.5.0</postgresql.version>
     <wiremock.version>2.35.0</wiremock.version>
     <httpclient.version>4.5.13</httpclient.version>
