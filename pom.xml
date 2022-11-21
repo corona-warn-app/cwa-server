@@ -61,7 +61,7 @@
     <commons-io.version>2.11.0</commons-io.version>
     <log4j.version>2.19.0</log4j.version>
     <slf4j.version>1.7.36</slf4j.version>
-    <feign.version>12.0</feign.version>
+    <feign.version>12.1</feign.version>
     <commons-math3.version>3.6.1</commons-math3.version>
     <bouncycastle.version>1.70</bouncycastle.version>
     <awssdk-s3.version>2.18.6</awssdk-s3.version>
