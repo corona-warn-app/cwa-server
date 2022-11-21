@@ -1,15 +1,20 @@
 package app.coronawarn.server.common.persistence.repository;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
+import java.time.LocalDate;
 import java.util.Random;
 import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.EnumSource.Mode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 
@@ -53,8 +58,15 @@ class DiagnosisKeyRepositoryTest {
     assertTrue(repository.exists(id, type.name()));
   }
 
-  @Test
-  void recordSRSTest() {
-    assertTrue(repository.recordSrs(SubmissionType.SUBMISSION_TYPE_SRS_RAPID_PCR.name()));
+  @ParameterizedTest
+  @EnumSource(value = SubmissionType.class, names = { "SUBMISSION_TYPE_SRS_.*" }, mode = Mode.MATCH_ANY)
+  void recordSrsTest(final SubmissionType type) {
+    assertTrue(repository.recordSrs(type.name()));
+    assertEquals(1, repository.countTodaysSrs());
+    LocalDate tomorrow = LocalDate.now().plusDays(1);
+    assertEquals(1, repository.countSrsOlderThan(tomorrow));
+    repository.deleteSrsOlderThan(tomorrow);
+    assertEquals(0, repository.countTodaysSrs());
+    assertEquals(0, repository.countSrsOlderThan(tomorrow));
   }
 }

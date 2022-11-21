@@ -1,6 +1,7 @@
 package app.coronawarn.server.common.persistence.repository;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import java.time.LocalDate;
 import java.util.List;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
@@ -102,4 +103,30 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
       + "(submission_type) "
       + "VALUES (:submission_type) ")
   boolean recordSrs(final @Param("submission_type") String submissionType);
+
+  /**
+   * Counts all entries of 'self_report_submissions' for today.
+   *
+   * @return The number of submitted self reports for today.
+   */
+  @Query("SELECT COUNT(*) FROM self_report_submissions WHERE submission_date = CURRENT_DATE")
+  int countTodaysSrs();
+
+  /**
+   * Counts all entries of 'self_report_submissions' that have a submission date older than the specified one.
+   *
+   * @param submissionDate The submission date up to which entries will be expired.
+   * @return The number of expired keys.
+   */
+  @Query("SELECT COUNT(*) FROM self_report_submissions WHERE submission_date<:threshold")
+  int countSrsOlderThan(final @Param("threshold") LocalDate submissionDate);
+
+  /**
+   * Deletes all entries from 'self_report_submissions' that have a submission timestamp older than the specified one.
+   *
+   * @param submissionDate The submission date up to which entries will be deleted.
+   */
+  @Modifying
+  @Query("DELETE FROM self_report_submissions WHERE submission_date<:threshold")
+  void deleteSrsOlderThan(final @Param("threshold") LocalDate submissionDate);
 }
