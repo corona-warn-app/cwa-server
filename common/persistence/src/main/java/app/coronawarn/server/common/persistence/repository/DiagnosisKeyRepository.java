@@ -99,9 +99,7 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
    * @return <code>true</code>, when insert into self_report_submissions was successful
    */
   @Modifying
-  @Query("INSERT INTO self_report_submissions "
-      + "(submission_type) "
-      + "VALUES (:submission_type) ")
+  @Query("INSERT INTO self_report_submissions (submission_type) VALUES (:submission_type)")
   boolean recordSrs(final @Param("submission_type") String submissionType);
 
   /**
@@ -118,7 +116,7 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
    * @param submissionDate The submission date up to which entries will be expired.
    * @return The number of expired keys.
    */
-  @Query("SELECT COUNT(*) FROM self_report_submissions WHERE submission_date<:threshold")
+  @Query("SELECT COUNT(*) FROM self_report_submissions WHERE submission_date <= :threshold")
   int countSrsOlderThan(final @Param("threshold") LocalDate submissionDate);
 
   /**
@@ -127,6 +125,6 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
    * @param submissionDate The submission date up to which entries will be deleted.
    */
   @Modifying
-  @Query("DELETE FROM self_report_submissions WHERE submission_date<:threshold")
+  @Query("DELETE FROM self_report_submissions WHERE submission_date <= :threshold")
   void deleteSrsOlderThan(final @Param("threshold") LocalDate submissionDate);
 }

@@ -66,6 +66,7 @@ public class RetentionPolicy implements ApplicationRunner {
   public void run(ApplicationArguments args) {
     try {
       diagnosisKeyService.applyRetentionPolicy(retentionDays);
+      diagnosisKeyService.applySrsRetentionPolicy(retentionDays /* FIXME - same amount? */);
       traceTimeIntervalWarningService.applyRetentionPolicy(retentionDays);
       s3RetentionPolicy.applyDiagnosisKeyDayRetentionPolicy(retentionDays);
       s3RetentionPolicy.applyDiagnosisKeyHourRetentionPolicy(hourFileRetentionDays);
