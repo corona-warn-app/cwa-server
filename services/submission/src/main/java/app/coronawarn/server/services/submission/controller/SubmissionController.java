@@ -3,6 +3,7 @@ package app.coronawarn.server.services.submission.controller;
 import static app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType.SUBMISSION_TYPE_HOST_WARNING_VALUE;
 import static app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType.SUBMISSION_TYPE_SRS_OTHER_VALUE;
 import static app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType.SUBMISSION_TYPE_SRS_SELF_TEST_VALUE;
+import static java.time.ZoneOffset.UTC;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
@@ -27,6 +28,7 @@ import app.coronawarn.server.services.submission.verification.TanVerifier;
 import feign.FeignException;
 import feign.RetryableException;
 import io.micrometer.core.annotation.Timed;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -116,6 +118,12 @@ public class SubmissionController {
     if (!isEmpty(otp)) {
       if (!validSrsType(exposureKeys.getSubmissionType().getNumber())) {
         return badRequest();
+      }
+      int maxSrsPerDay = 42; // FIXME
+      if (diagnosisKeyService.countTodaysSrs() > maxSrsPerDay) {
+        logger.warn("We reached the maximum number ({}) of allowed Self-Report-Submissions for today ({})!",
+            maxSrsPerDay, LocalDate.now(UTC));
+        return badRequest(); // FIXME
       }
       return buildRealDeferredResult(exposureKeys, otp, srsOtpVerifier);
     }
