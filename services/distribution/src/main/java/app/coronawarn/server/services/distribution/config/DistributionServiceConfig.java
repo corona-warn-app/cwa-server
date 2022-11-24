@@ -1233,7 +1233,15 @@ public class DistributionServiceConfig {
     private AndroidEventDrivenUserSurveyParameters androidEventDrivenUserSurveyParameters;
     private IosPrivacyPreservingAnalyticsParameters iosPrivacyPreservingAnalyticsParameters;
     private AndroidPrivacyPreservingAnalyticsParameters androidPrivacyPreservingAnalyticsParameters;
+    private AndroidSrsPpacParameters androidSrsPpacParameters;
     private DgcParameters dgcParameters;
+
+    @Min(1)
+    @Max(1000)
+    private int srsTimeSinceOnboardingInHours;
+    @Min(1)
+    @Max(1000)
+    private int srsTimeBetweenSubmissionsInDays;
 
     public IosEventDrivenUserSurveyParameters getIosEventDrivenUserSurveyParameters() {
       return iosEventDrivenUserSurveyParameters;
@@ -1310,6 +1318,30 @@ public class DistributionServiceConfig {
 
     public void setDgcParameters(DgcParameters dgcParameters) {
       this.dgcParameters = dgcParameters;
+    }
+
+    public int getSrsTimeBetweenSubmissionsInDays() {
+      return srsTimeBetweenSubmissionsInDays;
+    }
+
+    public int getSrsTimeSinceOnboardingInHours() {
+      return srsTimeSinceOnboardingInHours;
+    }
+
+    public void setSrsTimeSinceOnboardingInHours(final int srsTimeSinceOnboardingInHours) {
+      this.srsTimeSinceOnboardingInHours = srsTimeSinceOnboardingInHours;
+    }
+
+    public void setSrsTimeBetweenSubmissionsInDays(final int srsTimeBetweenSubmissionsInDays) {
+      this.srsTimeBetweenSubmissionsInDays = srsTimeBetweenSubmissionsInDays;
+    }
+
+    public AndroidSrsPpacParameters getAndroidSrsPpacParameters() {
+      return androidSrsPpacParameters;
+    }
+
+    public void setAndroidSrsPpacParameters(final AndroidSrsPpacParameters androidSrsPpacParameters) {
+      this.androidSrsPpacParameters = androidSrsPpacParameters;
     }
 
     public static class AndroidKeyDownloadParameters extends CommonKeyDownloadParameters {
@@ -1651,6 +1683,9 @@ public class DistributionServiceConfig {
       }
     }
 
+    public static class AndroidSrsPpacParameters extends AndroidPrivacyPreservingAnalyticsParameters {
+    }
+
     public static class DgcParameters {
 
       private DgcTestCertificateParameters dgcTestCertificateParameters;
@@ -1783,6 +1818,8 @@ public class DistributionServiceConfig {
         }
       }
     }
+
+
   }
 
   public static class DigitalGreenCertificate {

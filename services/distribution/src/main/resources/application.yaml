@@ -206,6 +206,13 @@ services:
         require-cts-profile-match: ${PPA_PPAC_REQUIRE_CTS_PROFILE_MATCH:false}
         require-evaluation-type-basic: ${PPA_PPAC_REQUIRE_EVALUATION_TYPE_BASIC:false}
         require-evaluation-type-hardware-backed: ${PPA_PPAC_REQUIRE_EVALUATION_TYPE_HARDWARE_BACKED:false}
+      srs-time-since-onboarding-in-hours: ${SRS_TIME_SINCE_ONBOARDING_IN_HOURS:48}
+      srs-time-between-submissions-in-days: ${SRS_TIME_BETWEEN_SUBMISSIONS_IN_DAYS:90}
+      android-srs-ppac-parameters:
+        require-basic-integrity: ${SRS_PPAC_REQUIRE_BASIC_INTEGRITY:false}
+        require-cts-profile-match: ${SRS_PPAC_REQUIRE_CTS_PROFILE_MATCH:false}
+        require-evaluation-type-basic: ${SRS_PPAC_REQUIRE_EVALUATION_TYPE_BASIC:false}
+        require-evaluation-type-hardware-backed: ${SRS_PPAC_REQUIRE_EVALUATION_TYPE_HARDWARE_BACKED:false}
     ios-qr-code-poster-template:
       published-archive-name: qr_code_poster_template_ios
       template: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_FILE:}

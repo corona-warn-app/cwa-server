@@ -163,7 +163,13 @@ services:
         require-cts-profile-match: false
         require-evaluation-type-basic: false
         require-evaluation-type-hardware-backed: false
-
+      srs-time-since-onboarding-in-hours: 48
+      srs-time-between-submissions-in-days: 90
+      android-srs-ppac-parameters:
+        require-basic-integrity: false
+        require-cts-profile-match: false
+        require-evaluation-type-basic: false
+        require-evaluation-type-hardware-backed: false
     ios-qr-code-poster-template:
       published-archive-name: qr_code_poster_template_ios
       template:
