@@ -8,6 +8,7 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Repo
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey.Builder;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import com.google.protobuf.ByteString;
@@ -164,6 +165,16 @@ public final class SubmissionPayloadMockData {
         .addAllVisitedCountries(visitedCountries)
         .setOrigin("DE")
         .setRequestPadding(ByteString.copyFrom("PaddingString".getBytes()))
+        .build();
+  }
+
+  public static SubmissionPayload buildSrsPayload(final SubmissionServiceConfig config, final SubmissionType type) {
+    return SubmissionPayload.newBuilder()
+        .addAllKeys(buildMultipleKeys(config))
+        .addAllVisitedCountries(List.of("DE"))
+        .setOrigin("DE")
+        .setRequestPadding(ByteString.copyFrom("PaddingString".getBytes()))
+        .setSubmissionType(type)
         .build();
   }
 

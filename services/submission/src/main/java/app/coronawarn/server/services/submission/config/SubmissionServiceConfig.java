@@ -60,6 +60,9 @@ public class SubmissionServiceConfig {
   @Min(1)
   @Max(144)
   private Integer minRollingPeriod;
+  @Min(1)
+  @Max(100000000)
+  private int maxSrsPerDay;
 
   /**
    * unencryptedCheckinsEnabled.
@@ -224,6 +227,14 @@ public class SubmissionServiceConfig {
 
   public void setUnencryptedCheckinsEnabled(Boolean unencryptedCheckinsEnabled) {
     this.unencryptedCheckinsEnabled = unencryptedCheckinsEnabled;
+  }
+
+  public int getMaxSrsPerDay() {
+    return maxSrsPerDay;
+  }
+
+  public void setMaxSrsPerDay(final int maxSrsPerDay) {
+    this.maxSrsPerDay = maxSrsPerDay;
   }
 
   public static class Payload {

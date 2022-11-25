@@ -3,8 +3,8 @@ package app.coronawarn.server.services.submission.controller;
 import static app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification.TEN_MINUTE_INTERVAL_DERIVATION;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.VALID_KEY_DATA_1;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.VALID_KEY_DATA_2;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeys;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildKeyWithFutureInterval;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeys;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeysWithoutDSOS;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeysWithoutDSOSAndTRL;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeysWithoutTRL;
@@ -16,6 +16,7 @@ import static app.coronawarn.server.services.submission.controller.SubmissionPay
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithTooLargePadding;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithVisitedCountries;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithoutOriginCountry;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildSrsPayload;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildTemporaryExposureKey;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.createRollingStartIntervalNumber;
 import static java.time.ZoneOffset.UTC;
@@ -48,6 +49,7 @@ import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import app.coronawarn.server.services.submission.checkins.EventCheckinDataValidatorTest;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
+import app.coronawarn.server.services.submission.verification.SrsOtpVerifier;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import com.google.protobuf.ByteString;
 import java.time.Instant;
@@ -95,9 +97,11 @@ class SubmissionControllerTest {
   @MockBean
   private FakeDelayManager fakeDelayManager;
 
-
   @MockBean
   private TanVerifier tanVerifier;
+
+  @MockBean
+  private SrsOtpVerifier srsOtpVerifier;
 
   @Autowired
   private RequestExecutor executor;
@@ -113,6 +117,7 @@ class SubmissionControllerTest {
   public void setUpMocks() {
     traceTimeIntervalWarningRepository.deleteAll();
     when(tanVerifier.verifyTan(anyString())).thenReturn(true);
+    when(srsOtpVerifier.verifyTan(anyString())).thenReturn(true);
     when(fakeDelayManager.getJitteredFakeDelay()).thenReturn(1000L);
   }
 
@@ -627,5 +632,19 @@ class SubmissionControllerTest {
 
   private static Stream<Arguments> validVisitedCountries() {
     return Stream.of(Arguments.of(List.of("DE")), Arguments.of(List.of("DE", "FR")));
+  }
+
+  /**
+   * @see SubmissionController#submitDiagnosisKey(SubmissionPayload, String, String)
+   */
+  @Test
+  void testForbidTooManySrsPerDay() {
+    ResponseEntity<Void> response = executor
+        .executeSrsPost(buildSrsPayload(config, SubmissionType.SUBMISSION_TYPE_SRS_SELF_TEST));
+    assertThat(response.getStatusCode()).isEqualTo(OK);
+    when(diagnosisKeyService.countTodaysSrs()).thenReturn(config.getMaxSrsPerDay());
+    response = executor
+        .executeSrsPost(buildSrsPayload(config, SubmissionType.SUBMISSION_TYPE_SRS_SELF_TEST));
+    assertThat(response.getStatusCode()).isEqualTo(FORBIDDEN);
   }
 }
