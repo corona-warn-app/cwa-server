@@ -98,10 +98,10 @@ services:
     app-versions:
       latest-ios: ${IOS_LATEST_VERSION:1.5.3}
       min-ios: ${IOS_MIN_VERSION:1.5.3}
-      latest-android: ${ANDROID_LATEST_VERSION:1.5.1}
-      min-android: ${ANDROID_MIN_VERSION:1.5.1}
-      min-android-version-code: ${ANDROID_MIN_VERSION_CODE:48}
-      latest-android-version-code: ${ANDROID_LATEST_VERSION_CODE:48}
+      latest-android: ${ANDROID_LATEST_VERSION:1.0.4}
+      min-android: ${ANDROID_MIN_VERSION:1.0.4}
+      min-android-version-code: ${ANDROID_MIN_VERSION_CODE:31}
+      latest-android-version-code: ${ANDROID_LATEST_VERSION_CODE:31}
     app-config-parameters:
       dgcParameters:
         testCertificateParameters:
