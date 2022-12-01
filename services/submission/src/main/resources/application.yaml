@@ -60,6 +60,9 @@ services:
     verification:
       base-url: ${VERIFICATION_BASE_URL:http://localhost:8004}
       path: /version/v1/tan/verify
+    srs-verify:
+      base-url: ${SRS_VERIFY_BASE_URL:https://localhost:8105}
+      path: /version/v1/srs
     monitoring:
       # The batch size (number of requests) to use for monitoring request count.
       batch-size: 5

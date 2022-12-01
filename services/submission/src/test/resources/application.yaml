@@ -47,6 +47,9 @@ services:
     verification:
       base-url: http://localhost:1234
       path: /version/v1/tan/verify
+    srs-verify:
+      base-url: http://localhost:1234
+      path: /version/v1/srs
     monitoring:
       batch-size: 5
     client:

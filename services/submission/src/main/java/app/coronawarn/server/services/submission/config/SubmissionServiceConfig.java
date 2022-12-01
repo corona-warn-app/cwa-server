@@ -52,6 +52,7 @@ public class SubmissionServiceConfig {
   private DataSize maximumRequestSize;
   private Payload payload;
   private Verification verification;
+  private Verification srsVerify;
   private Monitoring monitoring;
   private Client client;
   @Min(1)
@@ -306,7 +307,7 @@ public class SubmissionServiceConfig {
     return verification.getPath();
   }
 
-  private static class Verification {
+  static class Verification {
 
     @Pattern(regexp = URL_WITH_PORT_REGEX)
     private String baseUrl;
@@ -368,6 +369,22 @@ public class SubmissionServiceConfig {
 
   public void setClient(Client client) {
     this.client = client;
+  }
+
+  Verification getSrsVerify() {
+    return srsVerify;
+  }
+
+  void setSrsVerify(final Verification srsVerify) {
+    this.srsVerify = srsVerify;
+  }
+
+  public String getSrsVerifyBaseUrl() {
+    return getSrsVerify().getBaseUrl();
+  }
+
+  public String getSrsVerifyPath() {
+    return getSrsVerify().getPath();
   }
 
   public static class Client {
