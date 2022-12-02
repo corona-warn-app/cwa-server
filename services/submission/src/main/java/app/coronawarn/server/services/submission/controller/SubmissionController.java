@@ -3,6 +3,7 @@ package app.coronawarn.server.services.submission.controller;
 import static app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType.SUBMISSION_TYPE_HOST_WARNING_VALUE;
 import static app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType.SUBMISSION_TYPE_SRS_OTHER_VALUE;
 import static app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType.SUBMISSION_TYPE_SRS_SELF_TEST_VALUE;
+import static java.lang.String.valueOf;
 import static java.time.LocalDate.now;
 import static java.time.ZoneOffset.UTC;
 import static org.springframework.util.ObjectUtils.isEmpty;
@@ -37,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.util.StopWatch;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -59,6 +61,7 @@ public class SubmissionController {
   private static final Logger logger = LoggerFactory.getLogger(SubmissionController.class);
   public static final String CWA_FILTERED_CHECKINS_HEADER = "cwa-filtered-checkins";
   public static final String CWA_SAVED_CHECKINS_HEADER = "cwa-saved-checkins";
+  public static final String CWA_KEYS_TRUNCATED_HEADER = "cwa-keys-truncated";
 
   private final SubmissionMonitor submissionMonitor;
   private final DiagnosisKeyService diagnosisKeyService;
@@ -216,17 +219,18 @@ public class SubmissionController {
         submissionMonitor.incrementInvalidTanRequestCounter();
         deferredResult.setResult(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
       } else {
-        extractAndStoreDiagnosisKeys(submissionPayload);
+        final BodyBuilder response = ResponseEntity.ok();
+        extractAndStoreDiagnosisKeys(submissionPayload, response);
+
         CheckinsStorageResult checkinsStorageResult = eventCheckinFacade.extractAndStoreCheckins(submissionPayload);
 
         if (validSrsType(submissionPayload)) {
           diagnosisKeyService.recordSrs(submissionPayload.getSubmissionType());
         }
 
-        deferredResult.setResult(ResponseEntity.ok()
-            .header(CWA_FILTERED_CHECKINS_HEADER, String.valueOf(checkinsStorageResult.getNumberOfFilteredCheckins()))
-            .header(CWA_SAVED_CHECKINS_HEADER, String.valueOf(checkinsStorageResult.getNumberOfSavedCheckins()))
-            .build());
+        response.header(CWA_FILTERED_CHECKINS_HEADER, valueOf(checkinsStorageResult.getNumberOfFilteredCheckins()))
+            .header(CWA_SAVED_CHECKINS_HEADER, valueOf(checkinsStorageResult.getNumberOfSavedCheckins()));
+        deferredResult.setResult(response.build());
       }
     } catch (RetryableException e) {
       logger.error("Verification Service could not be reached after retry mechanism.", e);
@@ -243,9 +247,9 @@ public class SubmissionController {
     return deferredResult;
   }
 
-  private void extractAndStoreDiagnosisKeys(SubmissionPayload submissionPayload) {
+  private void extractAndStoreDiagnosisKeys(final SubmissionPayload submissionPayload, final BodyBuilder response) {
     final Collection<DiagnosisKey> diagnosisKeys = extractValidDiagnosisKeysFromPayload(
-        enhanceWithDefaultValuesIfMissing(submissionPayload));
+        enhanceWithDefaultValuesIfMissing(submissionPayload), response);
     for (final DiagnosisKey diagnosisKey : diagnosisKeys) {
       mapTrasmissionRiskValue(diagnosisKey);
     }
@@ -257,11 +261,11 @@ public class SubmissionController {
         trlDerivations.mapFromTrlSubmittedToTrlToStore(diagnosisKey.getTransmissionRiskLevel()));
   }
 
-  private Collection<DiagnosisKey> extractValidDiagnosisKeysFromPayload(SubmissionPayload submissionPayload) {
+  private Collection<DiagnosisKey> extractValidDiagnosisKeysFromPayload(final SubmissionPayload submissionPayload,
+      final BodyBuilder response) {
     final Collection<TemporaryExposureKey> protoBufferKeys = submissionPayload.getKeysList();
 
-    final boolean isOfficialSubmission = validSubmissionType(submissionPayload);
-    final Collection<DiagnosisKey> diagnosisKeys = protoBufferKeys.stream()
+    Collection<DiagnosisKey> diagnosisKeys = protoBufferKeys.stream()
         .filter(protoBufferKey -> rollingStartIntervalNumberValidator
             .isValid(protoBufferKey.getRollingStartIntervalNumber(), null))
         .map(protoBufferKey -> DiagnosisKey.builder()
@@ -272,11 +276,21 @@ public class SubmissionController {
                 submissionPayload.getOrigin(),
                 submissionPayload.getConsentToFederation())
             .withFieldNormalization(new SubmissionKeyNormalizer(submissionServiceConfig))
-            .build()
-        )
+            .build())
         .filter(diagnosisKey -> diagnosisKey.isYoungerThanRetentionThreshold(retentionDays))
-        .filter(diagnosisKey -> isOfficialSubmission || diagnosisKey.isYoungerThanRetentionThreshold(srsDays))
         .toList();
+
+    if (validSrsType(submissionPayload)) {
+      final Collection<DiagnosisKey> keys = diagnosisKeys.stream()
+          .filter(diagnosisKey -> diagnosisKey.isYoungerThanRetentionThreshold(srsDays)).toList();
+      if (keys.size() < diagnosisKeys.size()) {
+        response.header(CWA_KEYS_TRUNCATED_HEADER, valueOf(srsDays));
+        logger.warn(
+            "Not persisting '{}' self reported key(s), because they are older than '{}' days.",
+            diagnosisKeys.size() - keys.size(), srsDays);
+        diagnosisKeys = keys;
+      }
+    }
 
     if (protoBufferKeys.size() > diagnosisKeys.size()) {
       logger.warn("Not persisting {} one or more diagnosis key(s), as it is outdated beyond retention threshold or the "

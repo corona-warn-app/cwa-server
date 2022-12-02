@@ -1,6 +1,8 @@
 package app.coronawarn.server.services.submission.controller;
 
 import static app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification.TEN_MINUTE_INTERVAL_DERIVATION;
+import static app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType.SUBMISSION_TYPE_SRS_SELF_TEST;
+import static app.coronawarn.server.services.submission.controller.SubmissionController.CWA_KEYS_TRUNCATED_HEADER;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.VALID_KEY_DATA_1;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.VALID_KEY_DATA_2;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildKeyWithFutureInterval;
@@ -81,6 +83,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.test.annotation.DirtiesContext;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -639,13 +642,27 @@ class SubmissionControllerTest {
    * @see SubmissionController#submitDiagnosisKey(SubmissionPayload, String, String)
    */
   @Test
-  void testForbidTooManySrsPerDay() {
+  void testTooManySrsPerDay() {
     ResponseEntity<Void> response = executor
-        .executeSrsPost(buildSrsPayload(config, SubmissionType.SUBMISSION_TYPE_SRS_SELF_TEST));
+        .executeSrsPost(buildSrsPayload(config, SUBMISSION_TYPE_SRS_SELF_TEST));
     assertThat(response.getStatusCode()).isEqualTo(OK);
     when(diagnosisKeyService.countTodaysSrs()).thenReturn(config.getMaxSrsPerDay());
     response = executor
-        .executeSrsPost(buildSrsPayload(config, SubmissionType.SUBMISSION_TYPE_SRS_SELF_TEST));
+        .executeSrsPost(buildSrsPayload(config, SUBMISSION_TYPE_SRS_SELF_TEST));
     assertThat(response.getStatusCode()).isEqualTo(TOO_MANY_REQUESTS);
+  }
+
+  /**
+   * @see SubmissionController#extractValidDiagnosisKeysFromPayload(SubmissionPayload, BodyBuilder)
+   */
+  @Test
+  void testSrsKeysTruncated() {
+    final ResponseEntity<Void> response = executor.executeSrsPost(
+        // creates 3 keys around 14 days, which will be filtered and 3 more around the 'srsDays'
+        buildSrsPayload(config, SUBMISSION_TYPE_SRS_SELF_TEST));
+    assertThat(response.getStatusCode()).isEqualTo(OK);
+    assertThat(response.getHeaders().keySet()).contains(CWA_KEYS_TRUNCATED_HEADER);
+    assertThat(response.getHeaders().get(CWA_KEYS_TRUNCATED_HEADER))
+        .isEqualTo(List.of(String.valueOf(config.getSrsDays())));
   }
 }
