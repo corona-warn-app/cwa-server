@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.m2e.Maven2LaunchConfigurationType">
-    <intAttribute key="M2_COLORS" value="0"/>
     <booleanAttribute key="M2_DEBUG_OUTPUT" value="false"/>
     <stringAttribute key="M2_GOALS" value="spring-boot:run -Dspring-boot.run.fork=false"/>
     <booleanAttribute key="M2_NON_RECURSIVE" value="false"/>
@@ -14,30 +13,37 @@
     <stringAttribute key="M2_USER_SETTINGS" value=""/>
     <booleanAttribute key="M2_WORKSPACE_RESOLUTION" value="false"/>
     <stringAttribute key="bad_container_name" value="/submission/spring-boot"/>
-    <booleanAttribute key="org.eclipse.debug.core.ATTR_FORCE_SYSTEM_CONSOLE_ENCODING" value="false"/>
     <mapAttribute key="org.eclipse.debug.core.environmentVariables">
+        <mapEntry key="CWA_OBJECTSTORE_ACCESSKEY" value="accessKey1"/>
+        <mapEntry key="CWA_OBJECTSTORE_BUCKET" value="cwa"/>
+        <mapEntry key="CWA_OBJECTSTORE_ENDPOINT" value="http://localhost"/>
+        <mapEntry key="CWA_OBJECTSTORE_PORT" value="8003"/>
+        <mapEntry key="CWA_OBJECTSTORE_SECRETKEY" value="verySecretKey1"/>
         <mapEntry key="OBJECTSTORE_ACCESSKEY" value="accessKey1"/>
         <mapEntry key="OBJECTSTORE_SECRETKEY" value="verySecretKey1"/>
         <mapEntry key="POSTGRESQL_SERVICE_HOST" value="localhost"/>
         <mapEntry key="POSTGRESQL_SERVICE_PORT" value="8001"/>
         <mapEntry key="POSTGRES_DB" value="cwa"/>
+        <mapEntry key="POSTGRES_DISTRIBUTION_PASSWORD" value="local_setup_distribution"/>
+        <mapEntry key="POSTGRES_DISTRIBUTION_USER" value="local_setup_distribution"/>
         <mapEntry key="POSTGRES_FLYWAY_PASSWORD" value="local_setup_flyway"/>
         <mapEntry key="POSTGRES_FLYWAY_USER" value="local_setup_flyway"/>
         <mapEntry key="POSTGRES_PASSWORD" value="postgres"/>
-        <mapEntry key="POSTGRES_SUBMISSION_PASSWORD" value="local_setup_submission"/>
-        <mapEntry key="POSTGRES_SUBMISSION_USER" value="local_setup_submission"/>
         <mapEntry key="POSTGRES_USER" value="postgres"/>
         <mapEntry key="SECRET_PRIVATE" value="file:/secrets/private.pem"/>
-        <mapEntry key="SPRING_PROFILES_ACTIVE" value="disable-ssl-client-postgres"/>
-        <mapEntry key="SSL_SUBMISSION_KEYSTORE_PASSWORD" value="123456"/>
-        <mapEntry key="SSL_SUBMISSION_KEYSTORE_PATH" value="${file_uri:${project_loc:server}}/docker-compose-test-secrets/ssl.p12"/>
-        <mapEntry key="SSL_VERIFICATION_TRUSTSTORE_PASSWORD" value="123456"/>
-        <mapEntry key="SSL_VERIFICATION_TRUSTSTORE_PATH" value="${file_uri:${project_loc:server}}/docker-compose-test-secrets/contains_efgs_truststore.jks"/>
+        <mapEntry key="SPRING_PROFILES_ACTIVE" value="disable-ssl-client-postgres,signature-dev,revocation,dsc-rev-client-factory,fake-dcc-revocation"/>
+        <mapEntry key="STATISTICS_FILE_ACCESS_KEY_ID" value="fakeAccessKey"/>
+        <mapEntry key="STATISTICS_FILE_S3_BUCKET" value="obs-cwa-public-dev"/>
+        <mapEntry key="STATISTICS_FILE_S3_ENDPOINT" value="http://localhost:8013"/>
+        <mapEntry key="STATISTICS_FILE_SECRET_ACCESS_KEY" value="secretKey"/>
         <mapEntry key="SUPPORTED_COUNTRIES" value="DE"/>
+        <mapEntry key="VAULT_FILESIGNING_SECRET" value="${file_uri:${project_loc:server}}/docker-compose-test-secrets/private.pem"/>
     </mapAttribute>
+    <stringAttribute key="org.eclipse.debug.core.source_locator_id" value="org.eclipse.m2e.launching.MavenSourceLocator"/>
+    <stringAttribute key="org.eclipse.debug.core.source_locator_memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#13;&#10;&lt;sourceLookupDirector&gt;&#13;&#10;    &lt;sourceContainers duplicates=&quot;true&quot;&gt;&#13;&#10;        &lt;container memento=&quot;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot; standalone=&amp;quot;no&amp;quot;?&amp;gt;&amp;#13;&amp;#10;&amp;lt;default/&amp;gt;&amp;#13;&amp;#10;&quot; typeId=&quot;org.eclipse.debug.core.containerType.default&quot;/&gt;&#13;&#10;    &lt;/sourceContainers&gt;&#13;&#10;&lt;/sourceLookupDirector&gt;&#13;&#10;"/>
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_ATTR_USE_ARGFILE" value="false"/>
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES" value="true"/>
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_CLASSPATH_ONLY_JAR" value="false"/>
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>
-    <stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="${workspace_loc:/submission}"/>
+    <stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="${workspace_loc:/distribution}"/>
 </launchConfiguration>
