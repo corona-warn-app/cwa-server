@@ -30,8 +30,7 @@ import feign.FeignException;
 import feign.RetryableException;
 import io.micrometer.core.annotation.Timed;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Collection;
 import java.util.stream.IntStream;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -67,6 +66,7 @@ public class SubmissionController {
   private final EventTanVerifier eventTanVerifier;
   private final SrsOtpVerifier srsOtpVerifier;
   private final Integer retentionDays;
+  private final int srsDays;
   private final Integer randomKeyPaddingMultiplier;
   private final FakeDelayManager fakeDelayManager;
   private final SubmissionServiceConfig submissionServiceConfig;
@@ -86,6 +86,7 @@ public class SubmissionController {
     this.fakeDelayManager = fakeDelayManager;
     this.submissionServiceConfig = submissionServiceConfig;
     this.retentionDays = submissionServiceConfig.getRetentionDays();
+    this.srsDays = submissionServiceConfig.getSrsDays();
     this.randomKeyPaddingMultiplier = submissionServiceConfig.getRandomKeyPaddingMultiplier();
     this.eventCheckinFacade = eventCheckinFacade;
     this.trlDerivations = submissionServiceConfig.getTrlDerivations();
@@ -116,18 +117,18 @@ public class SubmissionController {
     }
 
     if (!isEmpty(otp)) {
-      if (!validSrsType(exposureKeys.getSubmissionType().getNumber())) {
+      if (!validSrsType(exposureKeys)) {
         return badRequest();
       }
       if (diagnosisKeyService.countTodaysSrs() >= submissionServiceConfig.getMaxSrsPerDay()) {
         logger.warn("We reached the maximum number ({}) of allowed Self-Report-Submissions for today ({})!",
             submissionServiceConfig.getMaxSrsPerDay(), now(UTC));
-        return forbidden();
+        return tooManyRequests();
       }
       return buildRealDeferredResult(exposureKeys, otp, srsOtpVerifier);
     }
 
-    if (!validSubmissionType(exposureKeys.getSubmissionType().getNumber())) {
+    if (!validSubmissionType(exposureKeys)) {
       return badRequest();
     }
 
@@ -140,27 +141,28 @@ public class SubmissionController {
    * Valid regular submission types: SUBMISSION_TYPE_PCR_TEST_VALUE, SUBMISSION_TYPE_RAPID_TEST_VALUE,
    * SUBMISSION_TYPE_HOST_WARNING_VALUE.
    * 
-   * @param submissionTypeValue int value of the enum
+   * @param payload uses {@link SubmissionPayload#getSubmissionType()} int value of the enum
    * @return <code>true</code> if it's ok.
    * 
    * @see SubmissionType
    */
-  private boolean validSubmissionType(int submissionTypeValue) {
-    return 0 <= submissionTypeValue && submissionTypeValue <= SUBMISSION_TYPE_HOST_WARNING_VALUE;
+  private boolean validSubmissionType(final SubmissionPayload payload) {
+    return 0 <= payload.getSubmissionType().getNumber()
+        && payload.getSubmissionType().getNumber() <= SUBMISSION_TYPE_HOST_WARNING_VALUE;
   }
 
   /**
    * Valid SRS types: SUBMISSION_TYPE_SRS_SELF_TEST, SUBMISSION_TYPE_SRS_RAT, SUBMISSION_TYPE_SRS_REGISTERED_PCR,
    * SUBMISSION_TYPE_SRS_UNREGISTERED_PCR, SUBMISSION_TYPE_SRS_RAPID_PCR, SUBMISSION_TYPE_SRS_OTHER.
    * 
-   * @param submissionTypeValue int value of the enum
+   * @param payload uses {@link SubmissionPayload#getSubmissionType()} int value of the enum
    * @return <code>true</code> if it's ok.
    * 
    * @see SubmissionType
    */
-  private boolean validSrsType(int submissionTypeValue) {
-    return SUBMISSION_TYPE_SRS_SELF_TEST_VALUE <= submissionTypeValue
-        && submissionTypeValue <= SUBMISSION_TYPE_SRS_OTHER_VALUE;
+  private boolean validSrsType(final SubmissionPayload payload) {
+    return SUBMISSION_TYPE_SRS_SELF_TEST_VALUE <= payload.getSubmissionType().getNumber()
+        && payload.getSubmissionType().getNumber() <= SUBMISSION_TYPE_SRS_OTHER_VALUE;
   }
 
   /**
@@ -172,8 +174,8 @@ public class SubmissionController {
     return new DeferredResult<>(null, () -> ResponseEntity.badRequest().build());
   }
 
-  private DeferredResult<ResponseEntity<Void>> forbidden() {
-    return new DeferredResult<>(null, () -> ResponseEntity.status(HttpStatus.FORBIDDEN).build());
+  private DeferredResult<ResponseEntity<Void>> tooManyRequests() {
+    return new DeferredResult<>(null, () -> ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build());
   }
 
   /**
@@ -217,7 +219,7 @@ public class SubmissionController {
         extractAndStoreDiagnosisKeys(submissionPayload);
         CheckinsStorageResult checkinsStorageResult = eventCheckinFacade.extractAndStoreCheckins(submissionPayload);
 
-        if (validSrsType(submissionPayload.getSubmissionType().getNumber())) {
+        if (validSrsType(submissionPayload)) {
           diagnosisKeyService.recordSrs(submissionPayload.getSubmissionType());
         }
 
@@ -242,9 +244,9 @@ public class SubmissionController {
   }
 
   private void extractAndStoreDiagnosisKeys(SubmissionPayload submissionPayload) {
-    List<DiagnosisKey> diagnosisKeys = extractValidDiagnosisKeysFromPayload(
+    final Collection<DiagnosisKey> diagnosisKeys = extractValidDiagnosisKeysFromPayload(
         enhanceWithDefaultValuesIfMissing(submissionPayload));
-    for (DiagnosisKey diagnosisKey : diagnosisKeys) {
+    for (final DiagnosisKey diagnosisKey : diagnosisKeys) {
       mapTrasmissionRiskValue(diagnosisKey);
     }
     diagnosisKeyService.saveDiagnosisKeys(padDiagnosisKeys(diagnosisKeys));
@@ -255,10 +257,11 @@ public class SubmissionController {
         trlDerivations.mapFromTrlSubmittedToTrlToStore(diagnosisKey.getTransmissionRiskLevel()));
   }
 
-  private List<DiagnosisKey> extractValidDiagnosisKeysFromPayload(SubmissionPayload submissionPayload) {
-    List<TemporaryExposureKey> protoBufferKeys = submissionPayload.getKeysList();
+  private Collection<DiagnosisKey> extractValidDiagnosisKeysFromPayload(SubmissionPayload submissionPayload) {
+    final Collection<TemporaryExposureKey> protoBufferKeys = submissionPayload.getKeysList();
 
-    List<DiagnosisKey> diagnosisKeys = protoBufferKeys.stream()
+    final boolean isOfficialSubmission = validSubmissionType(submissionPayload);
+    final Collection<DiagnosisKey> diagnosisKeys = protoBufferKeys.stream()
         .filter(protoBufferKey -> rollingStartIntervalNumberValidator
             .isValid(protoBufferKey.getRollingStartIntervalNumber(), null))
         .map(protoBufferKey -> DiagnosisKey.builder()
@@ -272,7 +275,8 @@ public class SubmissionController {
             .build()
         )
         .filter(diagnosisKey -> diagnosisKey.isYoungerThanRetentionThreshold(retentionDays))
-        .collect(Collectors.toList());
+        .filter(diagnosisKey -> isOfficialSubmission || diagnosisKey.isYoungerThanRetentionThreshold(srsDays))
+        .toList();
 
     if (protoBufferKeys.size() > diagnosisKeys.size()) {
       logger.warn("Not persisting {} one or more diagnosis key(s), as it is outdated beyond retention threshold or the "
@@ -300,8 +304,13 @@ public class SubmissionController {
     return StringUtils.defaultIfBlank(originCountry, submissionServiceConfig.getDefaultOriginCountry());
   }
 
-  private List<DiagnosisKey> padDiagnosisKeys(List<DiagnosisKey> diagnosisKeys) {
-    List<DiagnosisKey> paddedDiagnosisKeys = new ArrayList<>();
+  private Collection<DiagnosisKey> padDiagnosisKeys(final Collection<DiagnosisKey> diagnosisKeys) {
+    if (randomKeyPaddingMultiplier <= 1) {
+      // no padding required
+      return diagnosisKeys;
+    }
+    final Collection<DiagnosisKey> paddedDiagnosisKeys = new ArrayList<>(
+        diagnosisKeys.size() * randomKeyPaddingMultiplier);
     diagnosisKeys.forEach(diagnosisKey -> {
       paddedDiagnosisKeys.add(diagnosisKey);
       IntStream.range(1, randomKeyPaddingMultiplier)

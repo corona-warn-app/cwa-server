@@ -171,6 +171,12 @@ public final class SubmissionPayloadMockData {
   public static SubmissionPayload buildSrsPayload(final SubmissionServiceConfig config, final SubmissionType type) {
     return SubmissionPayload.newBuilder()
         .addAllKeys(buildMultipleKeys(config))
+        .addAllKeys(buildMultipleKeys(new SubmissionServiceConfig() {
+          @Override
+          public Integer getRetentionDays() {
+            return config.getSrsDays();
+          }
+        }))
         .addAllVisitedCountries(List.of("DE"))
         .setOrigin("DE")
         .setRequestPadding(ByteString.copyFrom("PaddingString".getBytes()))

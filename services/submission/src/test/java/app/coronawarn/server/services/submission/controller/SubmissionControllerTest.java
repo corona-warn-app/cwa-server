@@ -36,6 +36,7 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.TOO_MANY_REQUESTS;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
@@ -645,6 +646,6 @@ class SubmissionControllerTest {
     when(diagnosisKeyService.countTodaysSrs()).thenReturn(config.getMaxSrsPerDay());
     response = executor
         .executeSrsPost(buildSrsPayload(config, SubmissionType.SUBMISSION_TYPE_SRS_SELF_TEST));
-    assertThat(response.getStatusCode()).isEqualTo(FORBIDDEN);
+    assertThat(response.getStatusCode()).isEqualTo(TOO_MANY_REQUESTS);
   }
 }

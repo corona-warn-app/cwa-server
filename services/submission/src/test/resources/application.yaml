@@ -28,6 +28,7 @@ services:
     initial-fake-delay-milliseconds: 1
     fake-delay-moving-average-samples: 1
     retention-days: 14
+    srs-days: 7
     random-key-padding-multiplier: 10
     random-checkins-padding-multiplier: 1
     random-checkins-padding-pepper: 0efbb3d683b713857750eec4b042ca1a7c50b5e4

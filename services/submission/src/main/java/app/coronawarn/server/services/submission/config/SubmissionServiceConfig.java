@@ -35,6 +35,9 @@ public class SubmissionServiceConfig {
   @Min(7)
   @Max(28)
   private Integer retentionDays;
+  @Min(0)
+  @Max(28)
+  private int srsDays;
   @Min(1)
   @Max(25)
   private Integer randomKeyPaddingMultiplier;
@@ -102,6 +105,14 @@ public class SubmissionServiceConfig {
 
   public void setRetentionDays(Integer retentionDays) {
     this.retentionDays = retentionDays;
+  }
+
+  public int getSrsDays() {
+    return Math.min(srsDays, retentionDays);
+  }
+
+  public void setSrsDays(int srsDays) {
+    this.srsDays = srsDays;
   }
 
   public Integer getRandomKeyPaddingMultiplier() {
