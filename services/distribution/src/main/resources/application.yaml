@@ -22,6 +22,8 @@ services:
     output-file-name-v2: index-v2
     # The number of days to retain diagnosis keys and trace time warnings for both database persistency layer and files stored on the object store.
     retention-days: 14
+    # The number of days to keep 'submisson_type' records in 'self_report_submissions' table.
+    srs-type-statistics-days: ${SRS_TYPE_STATISTICS_DAYS:400}
     # The number of days for diagnosis keys (based upon submission timestamp) to publish on CDN.
     days-to-publish: ${DAYS_TO_PUBLISH:10}
     # The number of minutes that diagnosis keys must have been expired for (since the end of the rolling interval window) before they can be distributed.

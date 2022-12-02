@@ -45,6 +45,9 @@ public class DistributionServiceConfig {
   @Min(0)
   @Max(28)
   private Integer retentionDays;
+  @Min(0)
+  @Max(4000)
+  private int srsTypeStatisticsDays;
   @Min(120)
   @Max(720)
   private Integer expiryPolicyMinutes;
@@ -108,6 +111,14 @@ public class DistributionServiceConfig {
 
   public void setRetentionDays(Integer retentionDays) {
     this.retentionDays = retentionDays;
+  }
+
+  public int getSrsTypeStatisticsDays() {
+    return srsTypeStatisticsDays;
+  }
+
+  public void setSrsTypeStatisticsDays(final int srsTypeStatisticsDays) {
+    this.srsTypeStatisticsDays = srsTypeStatisticsDays;
   }
 
   public Integer getDaysToPublish() {
