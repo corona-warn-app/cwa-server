@@ -116,7 +116,6 @@ class SubmissionControllerTest {
   @Autowired
   private TraceTimeIntervalWarningRepository traceTimeIntervalWarningRepository;
 
-
   @BeforeEach
   public void setUpMocks() {
     traceTimeIntervalWarningRepository.deleteAll();
@@ -124,7 +123,6 @@ class SubmissionControllerTest {
     when(srsOtpVerifier.verifyTan(anyString())).thenReturn(true);
     when(fakeDelayManager.getJitteredFakeDelay()).thenReturn(1000L);
   }
-
 
   private void assertDSOSCorrectlyComputedFromTRL(final SubmissionServiceConfig config,
       final Collection<TemporaryExposureKey> submittedTEKs, final Collection<DiagnosisKey> diagnosisKeys) {
@@ -205,7 +203,6 @@ class SubmissionControllerTest {
             diagnosisKey -> temporaryExposureKey.getKeyData().equals(ByteString.copyFrom(diagnosisKey.getKeyData())))
         .findFirst().orElseThrow();
   }
-
 
   @ParameterizedTest
   @MethodSource("createIncompleteHeaders")
@@ -429,7 +426,7 @@ class SubmissionControllerTest {
 
     verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
     Collection<DiagnosisKey> savedDiagnosisKeys = argument.getValue();
-    int expectedNumberofSavedKeys = (submittedKeys.size()-1) * config.getRandomKeyPaddingMultiplier();
+    int expectedNumberofSavedKeys = (submittedKeys.size() - 1) * config.getRandomKeyPaddingMultiplier();
     assertThat(savedDiagnosisKeys).hasSize(expectedNumberofSavedKeys);
     assertThat(savedDiagnosisKeys.stream().anyMatch(diagnosisKey -> diagnosisKey.getRollingStartIntervalNumber() == futureKey.getRollingStartIntervalNumber()) == false);
   }
@@ -484,8 +481,8 @@ class SubmissionControllerTest {
 
     final List<CheckIn> checkins = List
         .of(CheckIn.newBuilder().setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast))
-                .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast))
-                .setTransmissionRiskLevel(1).setLocationId(EventCheckinDataValidatorTest.CORRECT_LOCATION_ID).build(),
+            .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast))
+            .setTransmissionRiskLevel(1).setLocationId(EventCheckinDataValidatorTest.CORRECT_LOCATION_ID).build(),
             CheckIn.newBuilder().setTransmissionRiskLevel(3)
                 .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInAllowedPeriod))
                 .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInAllowedPeriod) + 10)
@@ -609,7 +606,6 @@ class SubmissionControllerTest {
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
-
   public static SubmissionPayload buildPayloadWithInvalidKey() {
     final TemporaryExposureKey invalidKey = buildTemporaryExposureKey(VALID_KEY_DATA_1,
         createRollingStartIntervalNumber(2), 999, ReportType.CONFIRMED_TEST, 1);
@@ -661,8 +657,8 @@ class SubmissionControllerTest {
         // creates 3 keys around 14 days, which will be filtered and 3 more around the 'srsDays'
         buildSrsPayload(config, SUBMISSION_TYPE_SRS_SELF_TEST));
     assertThat(response.getStatusCode()).isEqualTo(OK);
-    assertThat(response.getHeaders().keySet()).contains(CWA_KEYS_TRUNCATED_HEADER);
-    assertThat(response.getHeaders().get(CWA_KEYS_TRUNCATED_HEADER))
-        .isEqualTo(List.of(String.valueOf(config.getSrsDays())));
+    assertThat(response.getHeaders()).containsKey(CWA_KEYS_TRUNCATED_HEADER);
+    assertThat(response.getHeaders()).containsEntry(CWA_KEYS_TRUNCATED_HEADER,
+        List.of(String.valueOf(config.getSrsDays())));
   }
 }
