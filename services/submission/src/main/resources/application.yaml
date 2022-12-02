@@ -105,7 +105,7 @@ management:
     health:
       group:
         readiness:
-          include: db, verificationService
+          include: db, verificationService, srsVerifyService
           show-details: always
   endpoints:
     web:

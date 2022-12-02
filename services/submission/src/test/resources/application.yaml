@@ -65,7 +65,7 @@ management:
     health:
       group:
         readiness:
-          include: db, verificationService
+          include: db, verificationService, srsVerifyService
   endpoints:
     web:
       exposure:

@@ -16,21 +16,21 @@ import org.springframework.stereotype.Component;
 @Component("srsVerifyService")
 public class SrsVerifyServiceHealthIndicator implements HealthIndicator {
 
-  private final SrsVerifyClient verificationServerClient;
+  private final SrsVerifyClient client;
 
-  SrsVerifyServiceHealthIndicator(final SrsVerifyClient verificationServerClient) {
-    this.verificationServerClient = verificationServerClient;
+  SrsVerifyServiceHealthIndicator(final SrsVerifyClient client) {
+    this.client = client;
   }
 
   @Override
   public Health health() {
     try {
-      verificationServerClient.verifyOtp(Otp.of(Tan.of("00000000-0000-0000-0000-000000000000")));
+      client.verifyOtp(Otp.of(Tan.of("00000000-0000-0000-0000-000000000000")));
     } catch (final FeignException.NotFound e) {
       // expected
     } catch (final Exception e) {
       // http status code is neither 2xx nor 404
-      return Health.down().build();
+      return Health.down(e).build();
     }
     return Health.up().build();
   }

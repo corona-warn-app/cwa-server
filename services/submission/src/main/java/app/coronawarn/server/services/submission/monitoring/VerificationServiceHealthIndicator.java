@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.submission.monitoring;
 
 import app.coronawarn.server.services.submission.verification.Tan;
@@ -30,12 +28,10 @@ public class VerificationServiceHealthIndicator implements HealthIndicator {
       verificationServerClient.verifyTan(Tan.of("00000000-0000-0000-0000-000000000000"));
     } catch (FeignException.NotFound e) {
       // expected
-      return Health.up().build();
     } catch (Exception e) {
       // http status code is neither 2xx nor 404
-      return Health.down().build();
+      return Health.down(e).build();
     }
     return Health.up().build();
   }
-
 }
