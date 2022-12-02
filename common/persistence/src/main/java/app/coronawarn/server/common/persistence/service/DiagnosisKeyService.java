@@ -13,8 +13,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
@@ -88,9 +86,9 @@ public class DiagnosisKeyService {
    *
    * @return ValidDiagnosisKeyFilter
    */
-  public List<DiagnosisKey> getDiagnosisKeys() {
-    final List<DiagnosisKey> diagnosisKeys = createStreamFromIterator(
-        keyRepository.findAll(Sort.by(Direction.ASC, "submissionTimestamp")).iterator()).collect(Collectors.toList());
+  public Collection<DiagnosisKey> getDiagnosisKeys() {
+    final Collection<DiagnosisKey> diagnosisKeys = createStreamFromIterator(
+        keyRepository.findAll(Sort.by(Direction.ASC, "submissionTimestamp")).iterator()).toList();
     return validationFilter.filter(diagnosisKeys);
   }
 
@@ -101,8 +99,8 @@ public class DiagnosisKeyService {
    * @param daysToFetch time in days, that should be published
    * @return List of {@link DiagnosisKey}s filtered by {@link #validationFilter}.
    */
-  public List<DiagnosisKey> getDiagnosisKeysWithMinTrl(final int minTrl, final int daysToFetch) {
-    final List<DiagnosisKey> diagnosisKeys = keyRepository.findAllWithTrlGreaterThanOrEqual(minTrl,
+  public Collection<DiagnosisKey> getDiagnosisKeysWithMinTrl(final int minTrl, final int daysToFetch) {
+    final Collection<DiagnosisKey> diagnosisKeys = keyRepository.findAllWithTrlGreaterThanOrEqual(minTrl,
         daysToSeconds(daysToFetch));
     return validationFilter.filter(diagnosisKeys);
   }

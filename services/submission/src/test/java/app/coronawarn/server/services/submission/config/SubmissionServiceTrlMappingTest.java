@@ -12,6 +12,7 @@ import app.coronawarn.server.common.persistence.domain.config.TrlDerivations;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.services.submission.controller.RequestExecutor;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,10 +55,10 @@ class SubmissionServiceTrlMappingTest {
   void checkTrlMappingDerivation() {
     // buildMultipleKeys(config) creates keys with TRL 3, 6, 8.
     // The mappings for these values can be found in test/resources(3, 6, 8)
-    List<Integer> expectedTrlValues = List.of(3, 6, 8);
+    Collection<Integer> expectedTrlValues = List.of(3, 6, 8);
 
     final ResponseEntity<Void> actResponse = executor.executePost(buildPayload(buildMultipleKeys(config)));
-    List<DiagnosisKey> diagnosisKeyList = diagnosisKeyService.getDiagnosisKeys();
+    final Collection<DiagnosisKey> diagnosisKeyList = diagnosisKeyService.getDiagnosisKeys();
     diagnosisKeyList.forEach(diagnosisKey -> {
       assertThat(expectedTrlValues.contains(diagnosisKey.getTransmissionRiskLevel())).isTrue();
     });
@@ -73,6 +74,4 @@ class SubmissionServiceTrlMappingTest {
     assertThat(config.getTrlDerivations()).isNotNull();
     assertThat(config.getTrlDerivations().getTrlMapping()).hasSize(4);
   }
-
-
 }

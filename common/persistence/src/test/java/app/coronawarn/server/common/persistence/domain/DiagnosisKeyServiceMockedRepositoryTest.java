@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.common.persistence.domain;
 
 import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServiceTestHelper.assertDiagnosisKeysEqual;
@@ -12,7 +10,7 @@ import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
+import java.util.Collection;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +44,7 @@ class DiagnosisKeyServiceMockedRepositoryTest {
 
     mockInvalidKeyInDb(list(invalidKey1, invalidKey2));
 
-    List<DiagnosisKey> actualKeys = diagnosisKeyService.getDiagnosisKeys();
+    Collection<DiagnosisKey> actualKeys = diagnosisKeyService.getDiagnosisKeys();
     assertThat(actualKeys).isEmpty();
   }
 
@@ -62,13 +60,13 @@ class DiagnosisKeyServiceMockedRepositoryTest {
 
     mockInvalidKeyInDb(expKeys);
 
-    List<DiagnosisKey> actualKeys = diagnosisKeyService.getDiagnosisKeys();
+    Collection<DiagnosisKey> actualKeys = diagnosisKeyService.getDiagnosisKeys();
     expKeys.remove(invalidKey1);
     expKeys.remove(invalidKey2);
     assertDiagnosisKeysEqual(expKeys, actualKeys);
   }
 
-  private void mockInvalidKeyInDb(List<DiagnosisKey> keys) {
+  private void mockInvalidKeyInDb(final Collection<DiagnosisKey> keys) {
     when(diagnosisKeyRepository.findAll(Sort.by(Direction.ASC, "submissionTimestamp"))).thenReturn(keys);
   }
 
