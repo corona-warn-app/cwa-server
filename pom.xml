@@ -71,7 +71,7 @@
     <test-containers.version>1.17.6</test-containers.version>
     <postgresql.version>42.5.1</postgresql.version>
     <wiremock.version>2.35.0</wiremock.version>
-    <httpclient.version>4.5.13</httpclient.version>
+    <httpclient.version>4.5.14</httpclient.version>
     <junit.version>4.13.2</junit.version>
     <tomcat.version>9.0.69</tomcat.version>
     <findify-s3mock.version>0.2.6</findify-s3mock.version>
