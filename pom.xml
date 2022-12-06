@@ -64,7 +64,7 @@
     <slf4j.version>1.7.36</slf4j.version>
     <feign.version>12.1</feign.version>
     <commons-math3.version>3.6.1</commons-math3.version>
-    <bouncycastle.version>1.70</bouncycastle.version>
+    <bouncycastle.version>1.72</bouncycastle.version>
     <awssdk-s3.version>2.18.6</awssdk-s3.version>
     <io-netty.version>4.1.85.Final</io-netty.version>
     <guava.version>31.1-jre</guava.version>
@@ -243,7 +243,7 @@
       </dependency>
       <dependency>
         <groupId>org.bouncycastle</groupId>
-        <artifactId>bcpkix-jdk15on</artifactId>
+        <artifactId>bcpkix-jdk18on</artifactId>
         <version>${bouncycastle.version}</version>
       </dependency>
       <dependency>
