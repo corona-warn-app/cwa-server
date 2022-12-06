@@ -57,7 +57,7 @@
     <spring-security.version>5.7.5</spring-security.version>
     <protobuf.version>3.21.9</protobuf.version>
     <json-simple.version>1.1.1</json-simple.version>
-    <everit-json.version>1.5.1</everit-json.version>
+    <everit-json-schema.version>1.14.1</everit-json-schema.version>
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
     <commons-io.version>2.11.0</commons-io.version>
     <log4j.version>2.19.0</log4j.version>
@@ -262,9 +262,9 @@
         <version>${spring-retry.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.everit.json</groupId>
-        <artifactId>org.everit.json.schema</artifactId>
-        <version>${everit-json.version}</version>
+        <groupId>com.github.erosb</groupId>
+        <artifactId>everit-json-schema</artifactId>
+        <version>${everit-json-schema.version}</version>
       </dependency>
       <dependency>
         <groupId>org.json</groupId>
