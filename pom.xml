@@ -74,6 +74,7 @@
     <wiremock.version>2.35.0</wiremock.version>
     <httpclient.version>4.5.14</httpclient.version>
     <junit.version>4.13.2</junit.version>
+    <jupiter.version>5.9.1</jupiter.version>
     <tomcat.version>9.0.69</tomcat.version>
     <findify-s3mock.version>0.2.6</findify-s3mock.version>
     <checkstyle.version>10.5.0</checkstyle.version>
@@ -344,6 +345,11 @@
         <artifactId>junit</artifactId>
         <version>${junit.version}</version>
         <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <version>${jupiter.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomcat.embed</groupId>
