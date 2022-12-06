@@ -128,6 +128,9 @@ public class SubmissionController {
             submissionServiceConfig.getMaxSrsPerDay(), now(UTC));
         return tooManyRequests();
       }
+      submissionMonitor.incrementRequestCounter();
+      submissionMonitor.incrementRealRequestCounter();
+      submissionMonitor.incrementSelfReportSubmissions();
       return buildRealDeferredResult(exposureKeys, otp, srsOtpVerifier);
     }
 

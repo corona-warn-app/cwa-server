@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.submission.monitoring;
 
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
@@ -25,6 +23,7 @@ public class SubmissionMonitor {
   private BatchCounter fakeRequests;
   private BatchCounter invalidTanRequests;
   private BatchCounter submissionOnBehalfRequests;
+  private BatchCounter srsRequests;
 
   /**
    * Constructor for {@link SubmissionMonitor}. Initializes all counters to 0 upon being called.
@@ -57,6 +56,7 @@ public class SubmissionMonitor {
     fakeRequests = new BatchCounter(meterRegistry, batchSize, "fake");
     invalidTanRequests = new BatchCounter(meterRegistry, batchSize, "invalidTan");
     submissionOnBehalfRequests = new BatchCounter(meterRegistry, batchSize, "submissionOnBehalf");
+    srsRequests = new BatchCounter(meterRegistry, batchSize, "selfReports");
   }
 
   /**
@@ -90,5 +90,9 @@ public class SubmissionMonitor {
 
   public void incrementSubmissionOnBehalfCounter() {
     submissionOnBehalfRequests.increment();
+  }
+
+  public void incrementSelfReportSubmissions() {
+    srsRequests.increment();
   }
 }
