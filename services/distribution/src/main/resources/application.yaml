@@ -120,7 +120,7 @@ services:
       endpoint: ${STATISTICS_FILE_S3_ENDPOINT:}
       bucket: ${STATISTICS_FILE_S3_BUCKET:obs-cwa-public-dev}
       pandemic-radar-url: ${STATISTICS_PANDEMIC_RADAR_URL:https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Situationsberichte/COVID-19-Trends/COVID-19-Trends.html?__blob=publicationFile#/home}
-      pandemic-radar-bmg-url: ${STATISTICS_PANDEMIC_RADAR_BMG_URL:https://corona-pandemieradar.de/}
+      pandemic-radar-bmg-url: ${STATISTICS_PANDEMIC_RADAR_BMG_URL:https://corona-pandemieradar.de/:lang}
 
     app-features:
       - label: unencrypted-checkins-enabled

@@ -77,7 +77,7 @@ services:
       endpoint: https://localhost
       bucket: ${STATS_S3_BUCKET:obs-cwa-public-dev}
       pandemic-radar-url: https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Situationsberichte/COVID-19-Trends/COVID-19-Trends.html?__blob=publicationFile#/home
-      pandemic-radar-bmg-url: https://corona-pandemieradar.de/
+      pandemic-radar-bmg-url: https://corona-pandemieradar.de/:lang
 
     app-features:
       - label: unencrypted-checkins-enabled
