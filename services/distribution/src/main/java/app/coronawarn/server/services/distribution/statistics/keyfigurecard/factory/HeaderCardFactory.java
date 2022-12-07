@@ -13,14 +13,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.springframework.util.ObjectUtils;
 
 public abstract class HeaderCardFactory {
 
   protected DistributionServiceConfig config;
 
-  public HeaderCardFactory(final DistributionServiceConfig config) {
+  protected HeaderCardFactory(final DistributionServiceConfig config) {
     this.config = config;
   }
 
@@ -53,9 +52,7 @@ public abstract class HeaderCardFactory {
   }
 
   private void throwIfNullFieldsFound(StatisticsJsonStringObject stats) {
-    var nullFieldsOrZeroOrLessThanZero = getRequiredFieldValues(stats).stream()
-        .filter(Optional::isEmpty)
-        .collect(Collectors.toList());
+    var nullFieldsOrZeroOrLessThanZero = getRequiredFieldValues(stats).stream().filter(Optional::isEmpty).toList();
     if (!nullFieldsOrZeroOrLessThanZero.isEmpty()) {
       throw new MissingPropertyException(this.getCardId());
     }
@@ -77,9 +74,5 @@ public abstract class HeaderCardFactory {
    */
   protected List<Optional<Object>> getRequiredFieldValues(StatisticsJsonStringObject stats) {
     return Collections.emptyList();
-  }
-
-  public void setConfig(final DistributionServiceConfig config) {
-    this.config = config;
   }
 }
