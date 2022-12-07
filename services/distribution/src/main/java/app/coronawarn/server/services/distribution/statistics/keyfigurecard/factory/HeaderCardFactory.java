@@ -20,6 +20,10 @@ public abstract class HeaderCardFactory {
 
   protected DistributionServiceConfig config;
 
+  public HeaderCardFactory(final DistributionServiceConfig config) {
+    this.config = config;
+  }
+
   /**
    * Create KeyFigureCard object. Calls the children method `buildKeyFigureCard` for card specific properties. This
    * method adds the generic CardHeader that all KeyFigureCards must have.

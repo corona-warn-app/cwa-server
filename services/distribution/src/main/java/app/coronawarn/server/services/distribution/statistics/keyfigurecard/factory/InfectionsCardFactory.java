@@ -10,6 +10,7 @@ import static app.coronawarn.server.services.distribution.statistics.keyfigureca
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard.Builder;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStringObject;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.ValueTrendCalculator;
 import java.util.List;
@@ -18,6 +19,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class InfectionsCardFactory extends HeaderCardFactory {
+
+  public InfectionsCardFactory(final DistributionServiceConfig config) {
+    super(config);
+  }
 
   private static final Logger logger = LoggerFactory.getLogger(InfectionsCardFactory.class);
 
