@@ -36,6 +36,8 @@ import java.util.stream.IntStream;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.ResponseEntity.BodyBuilder;
@@ -62,6 +64,7 @@ public class SubmissionController {
   public static final String CWA_FILTERED_CHECKINS_HEADER = "cwa-filtered-checkins";
   public static final String CWA_SAVED_CHECKINS_HEADER = "cwa-saved-checkins";
   public static final String CWA_KEYS_TRUNCATED_HEADER = "cwa-keys-truncated";
+  public static final Marker SECURITY = MarkerFactory.getMarker("SECURITY");
 
   private final SubmissionMonitor submissionMonitor;
   private final DiagnosisKeyService diagnosisKeyService;

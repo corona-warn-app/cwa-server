@@ -1,5 +1,7 @@
 package app.coronawarn.server.services.submission.verification;
 
+import static app.coronawarn.server.services.submission.controller.SubmissionController.SECURITY;
+
 import feign.FeignException;
 import java.util.List;
 import java.util.Optional;

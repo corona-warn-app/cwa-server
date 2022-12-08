@@ -1,13 +1,13 @@
 package app.coronawarn.server.services.submission.checkins;
 
+import static app.coronawarn.server.services.submission.controller.SubmissionController.SECURITY;
+
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.common.protocols.internal.pt.CheckInProtectedReport;
 import java.util.List;
 import javax.validation.ConstraintValidatorContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
@@ -19,9 +19,7 @@ public class EventCheckInProtectedReportsValidator {
   public static final int MAC_LENGTH = 32;
   public static final int ENCRYPTED_CHECK_IN_RECORD_LENGTH = 16;
 
-
   private static final Logger logger = LoggerFactory.getLogger(EventCheckInProtectedReportsValidator.class);
-  private static final Marker SECURITY = MarkerFactory.getMarker("SECURITY");
 
   /**
    * Given the submission payload, it verifies whether user event checkInProtectedReports data is aligned with the
