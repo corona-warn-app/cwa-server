@@ -123,7 +123,7 @@ public class SubmissionController {
     }
 
     if (!isEmpty(otp)) {
-      if (!validSrsType(exposureKeys)) {
+      if (!isSelfReport(exposureKeys)) {
         return badRequest();
       }
       if (diagnosisKeyService.countTodaysSrs() >= submissionServiceConfig.getMaxSrsPerDay()) {
@@ -169,7 +169,7 @@ public class SubmissionController {
    * 
    * @see SubmissionType
    */
-  private boolean validSrsType(final SubmissionPayload payload) {
+  private boolean isSelfReport(final SubmissionPayload payload) {
     return SUBMISSION_TYPE_SRS_SELF_TEST_VALUE <= payload.getSubmissionType().getNumber()
         && payload.getSubmissionType().getNumber() <= SUBMISSION_TYPE_SRS_OTHER_VALUE;
   }
@@ -214,8 +214,8 @@ public class SubmissionController {
    * @param tan               A tan for diagnosis verification.
    * @return DeferredResult.
    */
-  private DeferredResult<ResponseEntity<Void>> buildRealDeferredResult(SubmissionPayload submissionPayload,
-      String tan, TanVerificationService tanVerifier) {
+  private DeferredResult<ResponseEntity<Void>> buildRealDeferredResult(final SubmissionPayload submissionPayload,
+      final String tan, final TanVerificationService tanVerifier) {
     DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
 
     StopWatch stopWatch = new StopWatch();
@@ -230,7 +230,7 @@ public class SubmissionController {
 
         CheckinsStorageResult checkinsStorageResult = eventCheckinFacade.extractAndStoreCheckins(submissionPayload);
 
-        if (validSrsType(submissionPayload)) {
+        if (isSelfReport(submissionPayload)) {
           diagnosisKeyService.recordSrs(submissionPayload.getSubmissionType());
         }
 
@@ -244,6 +244,10 @@ public class SubmissionController {
     } catch (FeignException e) {
       logger.error("Verification Service could not be reached.", e);
       deferredResult.setErrorResult(e);
+    } catch (DiagnosisKeyExistsAlreadyException e) {
+      logger.warn(SECURITY, "Self-Report contains already persisted keys - {}",
+          new PrintableSubmissionPayload(submissionPayload));
+      deferredResult.setErrorResult(ResponseEntity.badRequest());
     } catch (Exception e) {
       deferredResult.setErrorResult(e);
     } finally {
@@ -253,9 +257,15 @@ public class SubmissionController {
     return deferredResult;
   }
 
-  private void extractAndStoreDiagnosisKeys(final SubmissionPayload submissionPayload, final BodyBuilder response) {
+  private void extractAndStoreDiagnosisKeys(final SubmissionPayload submissionPayload, final BodyBuilder response)
+      throws DiagnosisKeyExistsAlreadyException {
     final Collection<DiagnosisKey> diagnosisKeys = extractValidDiagnosisKeysFromPayload(
         enhanceWithDefaultValuesIfMissing(submissionPayload), response);
+
+    if (isSelfReport(submissionPayload) && diagnosisKeyService.exists(diagnosisKeys)) {
+      throw new DiagnosisKeyExistsAlreadyException();
+    }
+
     for (final DiagnosisKey diagnosisKey : diagnosisKeys) {
       mapTrasmissionRiskValue(diagnosisKey);
     }
@@ -286,7 +296,7 @@ public class SubmissionController {
         .filter(diagnosisKey -> diagnosisKey.isYoungerThanRetentionThreshold(retentionDays))
         .toList();
 
-    if (validSrsType(submissionPayload)) {
+    if (isSelfReport(submissionPayload)) {
       final Collection<DiagnosisKey> keys = diagnosisKeys.stream()
           .filter(diagnosisKey -> diagnosisKey.isYoungerThanRetentionThreshold(srsDays)).toList();
       if (keys.size() < diagnosisKeys.size()) {
