@@ -1,6 +1,7 @@
 package app.coronawarn.server.common.persistence.service;
 
 import static app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionTimestampValidator.SECONDS_PER_HOUR;
+import static java.time.LocalDateTime.ofInstant;
 import static java.time.ZoneOffset.UTC;
 import static org.springframework.data.util.StreamUtils.createStreamFromIterator;
 
@@ -11,7 +12,7 @@ import app.coronawarn.server.common.protocols.internal.SubmissionPayload.Submiss
 import io.micrometer.core.annotation.Timed;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,11 +36,7 @@ public class DiagnosisKeyService {
     if (daysToRetain < 0) {
       throw new IllegalArgumentException("Number of days to retain must be greater or equal to 0.");
     }
-
-    return LocalDateTime
-        .ofInstant(Instant.now(), UTC)
-        .minusDays(daysToRetain)
-        .toEpochSecond(UTC) / SECONDS_PER_HOUR;
+    return ofInstant(Instant.now(), UTC).minusDays(daysToRetain).toEpochSecond(UTC) / SECONDS_PER_HOUR;
   }
 
   private final DiagnosisKeyRepository keyRepository;
@@ -58,27 +55,50 @@ public class DiagnosisKeyService {
    * @param daysToRetain the number of days until which diagnosis keys will be retained.
    * @throws IllegalArgumentException if {@code daysToRetain} is negative.
    */
+  @Timed
   @Transactional
   public void applyRetentionPolicy(final int daysToRetain) {
     final long threshold = daysToSeconds(daysToRetain);
     final int numberOfDeletions = keyRepository.countOlderThan(threshold);
-    logger.info("Deleting {} diagnosis key(s) with a submission timestamp older than {} day(s) ago.",
-        numberOfDeletions, daysToRetain);
+    logger.info("Deleting {} diagnosis key(s) with a submission timestamp older than {} day(s) ago.", numberOfDeletions,
+        daysToRetain);
     keyRepository.deleteOlderThan(threshold);
   }
 
   /**
    * Delete entries from 'self_report_submissions', which are older than given days.
-   * 
+   *
    * @param retentionDays - How many days should be kept in DB?
    */
+  @Timed
   @Transactional
   public void applySrsRetentionPolicy(final int retentionDays) {
     final LocalDate retentionDate = LocalDate.now(UTC).minusDays(retentionDays);
     final int numberOfDeletions = keyRepository.countSrsOlderThan(retentionDate);
-    logger.info("Deleting {} SRS with a submission date older than {} day(s) ago.",
-        numberOfDeletions, retentionDays);
+    logger.info("Deleting {} SRS with a submission date older than {} day(s) ago.", numberOfDeletions, retentionDays);
     keyRepository.deleteSrsOlderThan(retentionDate);
+  }
+
+  @Timed
+  @Transactional
+  public int countTodaysSrs() {
+    return keyRepository.countTodaysSrs();
+  }
+
+  /**
+   * Check if any of the key data is already stored in the DB, regardless of submission type.
+   *
+   * @param keys to be checked
+   * @return <code>true</code> if one or more keys are already persisted.
+   */
+  @Timed
+  @Transactional
+  public boolean exists(final Collection<DiagnosisKey> keys) {
+    final Collection<byte[]> data = new ArrayList<>(keys.size());
+    for (final DiagnosisKey key : keys) {
+      data.add(key.getKeyData());
+    }
+    return keyRepository.exists(data);
   }
 
   /**
@@ -86,6 +106,8 @@ public class DiagnosisKeyService {
    *
    * @return ValidDiagnosisKeyFilter
    */
+  @Timed
+  @Transactional
   public Collection<DiagnosisKey> getDiagnosisKeys() {
     final Collection<DiagnosisKey> diagnosisKeys = createStreamFromIterator(
         keyRepository.findAll(Sort.by(Direction.ASC, "submissionTimestamp")).iterator()).toList();
@@ -99,6 +121,8 @@ public class DiagnosisKeyService {
    * @param daysToFetch time in days, that should be published
    * @return List of {@link DiagnosisKey}s filtered by {@link #validationFilter}.
    */
+  @Timed
+  @Transactional
   public Collection<DiagnosisKey> getDiagnosisKeysWithMinTrl(final int minTrl, final int daysToFetch) {
     final Collection<DiagnosisKey> diagnosisKeys = keyRepository.findAllWithTrlGreaterThanOrEqual(minTrl,
         daysToSeconds(daysToFetch));
@@ -109,12 +133,6 @@ public class DiagnosisKeyService {
   @Transactional
   public boolean recordSrs(final SubmissionType submissionType) {
     return keyRepository.recordSrs(submissionType.name());
-  }
-
-  @Timed
-  @Transactional
-  public int countTodaysSrs() {
-    return keyRepository.countTodaysSrs();
   }
 
   /**
@@ -131,13 +149,10 @@ public class DiagnosisKeyService {
   @Transactional
   public int saveDiagnosisKeys(final Collection<DiagnosisKey> diagnosisKeys) {
     int numberOfInsertedKeys = 0;
-
     for (final DiagnosisKey diagnosisKey : diagnosisKeys) {
-
       if (keyRepository.exists(diagnosisKey.getKeyData(), SubmissionType.SUBMISSION_TYPE_PCR_TEST.name())) {
         continue;
       }
-
       final boolean keyInsertedSuccessfully = keyRepository.saveDoNothingOnConflict(
           diagnosisKey.getKeyData(), diagnosisKey.getRollingStartIntervalNumber(), diagnosisKey.getRollingPeriod(),
           diagnosisKey.getSubmissionTimestamp(), diagnosisKey.getTransmissionRiskLevel(),
@@ -149,13 +164,11 @@ public class DiagnosisKeyService {
         numberOfInsertedKeys++;
       }
     }
-
     final int conflictingKeys = diagnosisKeys.size() - numberOfInsertedKeys;
     if (conflictingKeys > 0) {
       logger.warn("{} out of {} diagnosis keys conflicted with existing database entries and were ignored.",
           conflictingKeys, diagnosisKeys.size());
     }
-
     return numberOfInsertedKeys;
   }
 }
