@@ -20,6 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 @Component
 public class DiagnosisKeyService {
@@ -94,6 +95,9 @@ public class DiagnosisKeyService {
   @Timed
   @Transactional
   public boolean exists(final Collection<DiagnosisKey> keys) {
+    if (ObjectUtils.isEmpty(keys)) {
+      return false;
+    }
     final Collection<byte[]> data = new ArrayList<>(keys.size());
     for (final DiagnosisKey key : keys) {
       data.add(key.getKeyData());
