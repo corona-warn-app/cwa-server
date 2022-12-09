@@ -23,10 +23,16 @@
 
   <dependencies>
     <dependency>
-      <!-- The cloud bootstrap starter is needed due to a breaking change implemented in Spring Cloud 2020.0.0 which turns off the Bootstrap 
-        context (used throughout the services for vault config) by default -->
+      <!-- The cloud bootstrap starter is needed due to a breaking change implemented in Spring Cloud 2020.0.0 which turns
+        off the Bootstrap context (used throughout the services for vault config) by default -->
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-bootstrap</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.bouncycastle</groupId>
+          <artifactId>bcpkix-jdk15on</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework.cloud</groupId>
