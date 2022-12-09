@@ -249,6 +249,7 @@ public class SubmissionController {
           new PrintableSubmissionPayload(payload));
       return badRequest();
     } catch (Exception e) {
+      logger.error(e.getLocalizedMessage(), e);
       deferredResult.setErrorResult(e);
     } finally {
       stopWatch.stop();
