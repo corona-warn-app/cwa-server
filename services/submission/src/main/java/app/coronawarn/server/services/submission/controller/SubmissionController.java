@@ -210,11 +210,11 @@ public class SubmissionController {
   /**
    * Saves the checkins and, if needed, filters them.
    *
-   * @param submissionPayload Type protobuf.
+   * @param payload Type protobuf.
    * @param tan               A tan for diagnosis verification.
    * @return DeferredResult.
    */
-  private DeferredResult<ResponseEntity<Void>> buildRealDeferredResult(final SubmissionPayload submissionPayload,
+  private DeferredResult<ResponseEntity<Void>> buildRealDeferredResult(final SubmissionPayload payload,
       final String tan, final TanVerificationService tanVerifier) {
     DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
 
@@ -226,12 +226,12 @@ public class SubmissionController {
         deferredResult.setResult(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
       } else {
         final BodyBuilder response = ResponseEntity.ok();
-        extractAndStoreDiagnosisKeys(submissionPayload, response);
+        extractAndStoreDiagnosisKeys(payload, response);
 
-        CheckinsStorageResult checkinsStorageResult = eventCheckinFacade.extractAndStoreCheckins(submissionPayload);
+        CheckinsStorageResult checkinsStorageResult = eventCheckinFacade.extractAndStoreCheckins(payload);
 
-        if (isSelfReport(submissionPayload)) {
-          diagnosisKeyService.recordSrs(submissionPayload.getSubmissionType());
+        if (isSelfReport(payload)) {
+          diagnosisKeyService.recordSrs(payload.getSubmissionType());
         }
 
         response.header(CWA_FILTERED_CHECKINS_HEADER, valueOf(checkinsStorageResult.getNumberOfFilteredCheckins()))
@@ -244,10 +244,10 @@ public class SubmissionController {
     } catch (FeignException e) {
       logger.error("Verification Service could not be reached.", e);
       deferredResult.setErrorResult(e);
-    } catch (DiagnosisKeyExistsAlreadyException e) {
+    } catch (final DiagnosisKeyExistsAlreadyException e) {
       logger.warn(SECURITY, "Self-Report contains already persisted keys - {}",
-          new PrintableSubmissionPayload(submissionPayload));
-      deferredResult.setErrorResult(ResponseEntity.badRequest());
+          new PrintableSubmissionPayload(payload));
+      return badRequest();
     } catch (Exception e) {
       deferredResult.setErrorResult(e);
     } finally {

@@ -21,6 +21,8 @@ import static app.coronawarn.server.services.submission.controller.SubmissionPay
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildSrsPayload;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildTemporaryExposureKey;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.createRollingStartIntervalNumber;
+import static java.lang.String.valueOf;
+import static java.time.LocalDateTime.ofInstant;
 import static java.time.ZoneOffset.UTC;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -56,7 +58,6 @@ import app.coronawarn.server.services.submission.verification.SrsOtpVerifier;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import com.google.protobuf.ByteString;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -434,8 +435,8 @@ class SubmissionControllerTest {
   @Test
   void testCheckinDataIsFilteredForFutureEvents() {
     final Instant thisInstant = Instant.now();
-    final long eventCheckinInTheFuture = LocalDateTime.ofInstant(thisInstant, UTC).plusMinutes(11).toEpochSecond(UTC);
-    final long eventCheckoutInTheFuture = LocalDateTime.ofInstant(thisInstant, UTC).plusMinutes(20)
+    final long eventCheckinInTheFuture = ofInstant(thisInstant, UTC).plusMinutes(11).toEpochSecond(UTC);
+    final long eventCheckoutInTheFuture = ofInstant(thisInstant, UTC).plusMinutes(20)
         .toEpochSecond(UTC);
 
     final List<CheckIn> checkins = List
@@ -452,9 +453,9 @@ class SubmissionControllerTest {
   void testCheckinDataIsFilteredForOldEvents() {
     final Integer daysInThePast = config.getAcceptedEventDateThresholdDays() + 1;
     final Instant thisInstant = Instant.now();
-    final long eventCheckoutInThePast = LocalDateTime.ofInstant(thisInstant, UTC).minusDays(daysInThePast)
+    final long eventCheckoutInThePast = ofInstant(thisInstant, UTC).minusDays(daysInThePast)
         .toEpochSecond(UTC);
-    final long eventCheckinInThePast = LocalDateTime.ofInstant(thisInstant, UTC).minusDays(daysInThePast + 1)
+    final long eventCheckinInThePast = ofInstant(thisInstant, UTC).minusDays(daysInThePast + 1)
         .toEpochSecond(UTC);
 
     final List<CheckIn> checkins = List
@@ -471,12 +472,12 @@ class SubmissionControllerTest {
   void testCheckinDataHeadersAreCorrectlyFilled() {
     final Integer daysInThePast = config.getAcceptedEventDateThresholdDays() + 1;
     final Instant thisInstant = Instant.now();
-    final long eventCheckoutInThePast = LocalDateTime.ofInstant(thisInstant, UTC).minusDays(daysInThePast)
+    final long eventCheckoutInThePast = ofInstant(thisInstant, UTC).minusDays(daysInThePast)
         .toEpochSecond(UTC);
-    final long eventCheckinInThePast = LocalDateTime.ofInstant(thisInstant, UTC).minusDays(daysInThePast + 1)
+    final long eventCheckinInThePast = ofInstant(thisInstant, UTC).minusDays(daysInThePast + 1)
         .toEpochSecond(UTC);
 
-    final long eventCheckinInAllowedPeriod = LocalDateTime.ofInstant(Instant.now(), UTC).minusDays(10)
+    final long eventCheckinInAllowedPeriod = ofInstant(Instant.now(), UTC).minusDays(10)
         .toEpochSecond(UTC);
 
     final List<CheckIn> checkins = List
@@ -496,7 +497,7 @@ class SubmissionControllerTest {
 
   @Test
   void testCheckinDataIsFilteredForTransmissionRiskLevel() {
-    final long eventCheckinInThePast = LocalDateTime.ofInstant(Instant.now(), UTC).minusDays(10).toEpochSecond(UTC);
+    final long eventCheckinInThePast = ofInstant(Instant.now(), UTC).minusDays(10).toEpochSecond(UTC);
 
     // both trls below are mapped to zero in the persistence/trl-value-mapping.yaml
     final List<CheckIn> invalidCheckinData = List.of(
@@ -573,7 +574,7 @@ class SubmissionControllerTest {
   @Test
   void testValidCheckinData() {
 
-    final long eventCheckinInThePast = LocalDateTime.ofInstant(Instant.now(), UTC).minusDays(9).toEpochSecond(UTC);
+    final long eventCheckinInThePast = ofInstant(Instant.now(), UTC).minusDays(9).toEpochSecond(UTC);
 
     final List<CheckIn> validCheckinData = List.of(
         CheckIn.newBuilder().setTransmissionRiskLevel(3)
@@ -658,7 +659,18 @@ class SubmissionControllerTest {
         buildSrsPayload(config, SUBMISSION_TYPE_SRS_SELF_TEST));
     assertThat(response.getStatusCode()).isEqualTo(OK);
     assertThat(response.getHeaders()).containsKey(CWA_KEYS_TRUNCATED_HEADER);
-    assertThat(response.getHeaders()).containsEntry(CWA_KEYS_TRUNCATED_HEADER,
-        List.of(String.valueOf(config.getSrsDays())));
+    assertThat(response.getHeaders()).containsEntry(CWA_KEYS_TRUNCATED_HEADER, List.of(valueOf(config.getSrsDays())));
+  }
+
+  /**
+   * @see SubmissionController#extractAndStoreDiagnosisKeys(SubmissionPayload, BodyBuilder)
+   */
+  @Test
+  void testSrsKeysSendTwice() {
+    // fake existing keys
+    when(diagnosisKeyService.exists(any())).thenReturn(true);
+    // send again
+    ResponseEntity<Void> response = executor.executeSrsPost(buildSrsPayload(config, SUBMISSION_TYPE_SRS_SELF_TEST));
+    assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 }
