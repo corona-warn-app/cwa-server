@@ -1,5 +1,7 @@
 package app.coronawarn.server.services.submission.verification;
 
+import static org.springframework.util.ObjectUtils.isEmpty;
+
 import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +23,18 @@ public class SrsOtpVerifier extends TanVerificationService {
     this.client = client;
   }
 
+  boolean isOk(final ResponseEntity<SrsOtpRedemptionResponse> response) {
+    if (isEmpty(response) || isEmpty(response.getStatusCode()) || !response.getStatusCode().is2xxSuccessful()) {
+      return false;
+    }
+    if (isEmpty(response.getBody())) {
+      logger.error("SRS OTP response body is null, but status code is: {}!?! - '{}'", response.getStatusCode(),
+          response);
+      return true;
+    }
+    return OtpState.VALID.equals(response.getBody().getState());
+  }
+
   @Override
   boolean verifyWithVerificationService(final Tan tan) {
     try {
@@ -28,7 +42,7 @@ public class SrsOtpVerifier extends TanVerificationService {
 
       final ResponseEntity<SrsOtpRedemptionResponse> result = client.verifyOtp(Otp.of(tan));
       logger.info("Received response from SRS-verify: {}", result);
-      if (result.getStatusCode().is2xxSuccessful() && OtpState.VALID.equals(result.getBody().getState())) {
+      if (isOk(result)) {
         return true;
       }
       logger.warn("SRS-verify reponse: '{}'", result.getBody());
