@@ -9,9 +9,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.I_AM_A_TEAPOT;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -31,6 +34,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
 @SpringBootTest
@@ -138,5 +143,22 @@ class SrsVerifierTest {
     assertEquals("/version/v1/srs", path);
     randomUuid = UUID.randomUUID().toString();
     srsVerifyMockServer.resetAll();
+  }
+
+  @Test
+  void testIsOk() {
+    final SrsOtpVerifier fixture = new SrsOtpVerifier(null);
+    assertFalse(fixture.isOk(null));
+    assertFalse(fixture.isOk(new ResponseEntity<SrsOtpRedemptionResponse>(I_AM_A_TEAPOT) {
+      @Override
+      public HttpStatus getStatusCode() {
+        return null;
+      }
+    }));
+    assertFalse(fixture.isOk(ResponseEntity.notFound().build()));
+    assertTrue(fixture.isOk(ResponseEntity.noContent().build()));
+    assertTrue(fixture.isOk(ResponseEntity.ok(new SrsOtpRedemptionResponse(null, OtpState.VALID, false))));
+    assertFalse(fixture.isOk(ResponseEntity.ok(new SrsOtpRedemptionResponse(null, OtpState.REDEEMED, false))));
+    assertFalse(fixture.isOk(ResponseEntity.ok(new SrsOtpRedemptionResponse(null, OtpState.EXPIRED, false))));
   }
 }
