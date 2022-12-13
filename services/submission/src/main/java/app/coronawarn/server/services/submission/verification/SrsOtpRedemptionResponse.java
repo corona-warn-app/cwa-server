@@ -25,11 +25,12 @@ public class SrsOtpRedemptionResponse {
    * @throws IOException when there is an issue with {@link ObjectMapper} or {@link JsonParser#readValueAs(Class)}
    */
   public SrsOtpRedemptionResponse(final String json) throws IOException {
-    final SrsOtpRedemptionResponse me = new ObjectMapper().createParser(json)
-        .readValueAs(SrsOtpRedemptionResponse.class);
-    otp = me.otp;
-    state = me.state;
-    strongClientIntegrityCheck = me.strongClientIntegrityCheck;
+    try (final JsonParser parser = new ObjectMapper().createParser(json)) {
+      final SrsOtpRedemptionResponse me = parser.readValueAs(SrsOtpRedemptionResponse.class);
+      otp = me.otp;
+      state = me.state;
+      strongClientIntegrityCheck = me.strongClientIntegrityCheck;
+    }
   }
 
   /**
