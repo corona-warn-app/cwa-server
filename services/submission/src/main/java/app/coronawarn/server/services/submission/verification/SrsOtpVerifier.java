@@ -26,13 +26,15 @@ public class SrsOtpVerifier extends TanVerificationService {
     try {
       logger.debug("Calling SRS OPT verification Service ...");
 
-      final ResponseEntity<Void> result = client.verifyOtp(Otp.of(tan));
-      logger.debug("Received response from SRS-verify: {}", result);
-
-      return true;
+      final ResponseEntity<SrsOtpRedemptionResponse> result = client.verifyOtp(Otp.of(tan));
+      logger.info("Received response from SRS-verify: {}", result);
+      if (result.getStatusCode().is2xxSuccessful() && OtpState.VALID.equals(result.getBody().getState())) {
+        return true;
+      }
+      logger.warn("SRS-verify reponse: '{}'", result.getBody());
     } catch (final FeignException.NotFound e) {
       logger.warn("SRS OTP verification service reported: NotFound", e);
-      return false;
     }
+    return false;
   }
 }

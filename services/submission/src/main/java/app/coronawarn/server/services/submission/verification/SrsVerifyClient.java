@@ -22,5 +22,5 @@ public interface SrsVerifyClient {
    */
   @Timed
   @PostMapping(value = "${services.submission.srs-verify.path}", consumes = MediaType.APPLICATION_JSON_VALUE)
-  ResponseEntity<Void> verifyOtp(final Otp otp);
+  ResponseEntity<SrsOtpRedemptionResponse> verifyOtp(final Otp otp);
 }
