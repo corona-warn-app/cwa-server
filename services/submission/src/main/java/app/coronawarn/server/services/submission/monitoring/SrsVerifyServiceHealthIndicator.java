@@ -4,6 +4,8 @@ import app.coronawarn.server.services.submission.verification.Otp;
 import app.coronawarn.server.services.submission.verification.SrsVerifyClient;
 import app.coronawarn.server.services.submission.verification.Tan;
 import feign.FeignException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.stereotype.Component;
@@ -15,6 +17,8 @@ import org.springframework.stereotype.Component;
  */
 @Component("srsVerifyService")
 public class SrsVerifyServiceHealthIndicator implements HealthIndicator {
+
+  private static final Logger logger = LoggerFactory.getLogger(SrsVerifyServiceHealthIndicator.class);
 
   private final SrsVerifyClient client;
 
@@ -28,8 +32,10 @@ public class SrsVerifyServiceHealthIndicator implements HealthIndicator {
       client.verifyOtp(Otp.of(Tan.of("00000000-0000-0000-0000-000000000000")));
     } catch (final FeignException.NotFound e) {
       // expected
+      logger.info(e.getLocalizedMessage());
     } catch (final Exception e) {
       // http status code is neither 2xx nor 404
+      logger.error(e.getLocalizedMessage(), e);
       return Health.down(e).build();
     }
     return Health.up().build();
