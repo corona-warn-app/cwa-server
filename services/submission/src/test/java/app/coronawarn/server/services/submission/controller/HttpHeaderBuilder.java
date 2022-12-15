@@ -2,6 +2,7 @@ package app.coronawarn.server.services.submission.controller;
 
 import static org.springframework.http.MediaType.valueOf;
 
+import java.util.UUID;
 import org.springframework.http.HttpHeaders;
 
 public class HttpHeaderBuilder {
@@ -27,7 +28,7 @@ public class HttpHeaderBuilder {
   }
 
   public HttpHeaderBuilder cwaOtp() {
-    headers.set("cwa-otp", "OTP ok");
+    headers.set("cwa-otp", UUID.randomUUID().toString());
     return this;
   }
 

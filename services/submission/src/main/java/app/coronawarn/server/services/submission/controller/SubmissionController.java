@@ -32,6 +32,7 @@ import feign.RetryableException;
 import io.micrometer.core.annotation.Timed;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.UUID;
 import java.util.stream.IntStream;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -123,7 +124,7 @@ public class SubmissionController {
     }
 
     if (!isEmpty(otp)) {
-      if (!isSelfReport(exposureKeys)) {
+      if (!isSelfReport(exposureKeys) || !isUuid(otp)) {
         return badRequest();
       }
       if (diagnosisKeyService.countTodaysSrs() >= submissionServiceConfig.getMaxSrsPerDay()) {
@@ -155,7 +156,7 @@ public class SubmissionController {
    * 
    * @see SubmissionType
    */
-  private boolean validSubmissionType(final SubmissionPayload payload) {
+  public static boolean validSubmissionType(final SubmissionPayload payload) {
     return 0 <= payload.getSubmissionType().getNumber()
         && payload.getSubmissionType().getNumber() <= SUBMISSION_TYPE_HOST_WARNING_VALUE;
   }
@@ -169,9 +170,26 @@ public class SubmissionController {
    * 
    * @see SubmissionType
    */
-  private boolean isSelfReport(final SubmissionPayload payload) {
+  public static boolean isSelfReport(final SubmissionPayload payload) {
     return SUBMISSION_TYPE_SRS_SELF_TEST_VALUE <= payload.getSubmissionType().getNumber()
         && payload.getSubmissionType().getNumber() <= SUBMISSION_TYPE_SRS_OTHER_VALUE;
+  }
+
+  /**
+   * {@link UUID} syntax check of given string.
+   * 
+   * @param otp to be checked for valid {@link UUID} syntax.
+   * @return <code>true</code> if and only if {@link UUID#fromString(String)} doesn't throw
+   *         {@link IllegalArgumentException} for the given otp.
+   */
+  public static boolean isUuid(final String otp) {
+    try {
+      UUID.fromString(otp);
+      return true;
+    } catch (final IllegalArgumentException e) {
+      logger.warn(SECURITY, "OTP error ({})", e.getMessage());
+      return false;
+    }
   }
 
   /**
@@ -179,11 +197,11 @@ public class SubmissionController {
    * 
    * @return {@link HttpStatus#BAD_REQUEST}
    */
-  private DeferredResult<ResponseEntity<Void>> badRequest() {
+  public static DeferredResult<ResponseEntity<Void>> badRequest() {
     return new DeferredResult<>(null, () -> ResponseEntity.badRequest().build());
   }
 
-  private DeferredResult<ResponseEntity<Void>> tooManyRequests() {
+  public static DeferredResult<ResponseEntity<Void>> tooManyRequests() {
     return new DeferredResult<>(null, () -> ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build());
   }
 
@@ -216,7 +234,7 @@ public class SubmissionController {
    */
   private DeferredResult<ResponseEntity<Void>> buildRealDeferredResult(final SubmissionPayload payload,
       final String tan, final TanVerificationService tanVerifier) {
-    DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
+    final DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
 
     StopWatch stopWatch = new StopWatch();
     stopWatch.start();
