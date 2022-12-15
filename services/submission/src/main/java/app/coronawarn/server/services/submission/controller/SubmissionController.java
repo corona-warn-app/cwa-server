@@ -201,6 +201,10 @@ public class SubmissionController {
     return new DeferredResult<>(null, () -> ResponseEntity.badRequest().build());
   }
 
+  public static DeferredResult<ResponseEntity<Void>> badRequest(final String errorDetails) {
+    return new DeferredResult<>(null, () -> ResponseEntity.badRequest().header("cwa-error-code", errorDetails).build());
+  }
+
   public static DeferredResult<ResponseEntity<Void>> tooManyRequests() {
     return new DeferredResult<>(null, () -> ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build());
   }
@@ -265,7 +269,7 @@ public class SubmissionController {
     } catch (final DiagnosisKeyExistsAlreadyException e) {
       logger.warn(SECURITY, "Self-Report contains already persisted keys - {}",
           new PrintableSubmissionPayload(payload));
-      return badRequest();
+      return badRequest("KEYS_ALREADY_EXIST");
     } catch (Exception e) {
       logger.error(e.getLocalizedMessage(), e);
       deferredResult.setErrorResult(e);
