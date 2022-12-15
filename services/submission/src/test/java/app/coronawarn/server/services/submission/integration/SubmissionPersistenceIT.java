@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -462,7 +463,7 @@ class SubmissionPersistenceIT {
   void testSrsOtpAuth(final SubmissionType type) {
     final List<TemporaryExposureKey> validKeys = createValidTemporaryExposureKeys(1);
     final HttpHeaders headers = headers();
-    headers.add("cwa-otp", "bar");
+    headers.add("cwa-otp", UUID.randomUUID().toString());
 
     final SubmissionPayload validSubmissionPayload = buildSubmissionPayload(List.of("DE"), "DE", true, validKeys, type);
 
