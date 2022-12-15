@@ -65,11 +65,9 @@ class DiagnosisKeyRepositoryTest {
   @EnumSource(value = SubmissionType.class, names = { "SUBMISSION_TYPE_SRS_.*" }, mode = Mode.MATCH_ANY)
   void recordSrsTest(final SubmissionType type) {
     assertTrue(repository.recordSrs(type.name()));
-    assertEquals(1, repository.countTodaysSrs());
     final LocalDate tomorrow = LocalDate.now().plusDays(1);
     assertEquals(1, repository.countSrsOlderThan(tomorrow));
     repository.deleteSrsOlderThan(tomorrow);
-    assertEquals(0, repository.countTodaysSrs());
     assertEquals(0, repository.countSrsOlderThan(tomorrow));
   }
 

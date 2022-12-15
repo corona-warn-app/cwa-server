@@ -45,8 +45,8 @@ services:
     min-rolling-period: ${MIN_ROLLING_PERIOD:1}
     # The flag for unencrypted checkins used by the EventCheckinFacade.
     unencrypted-checkins-enabled: ${UNENCRYPTED_CHECKINS_ENABLED:false}
-    # To prevent a potential overload of the distribution and the clients, we'll allow only this amount of self reports per day
-    max-srs-per-day: ${MAX_SRS_PER_DAY:1000000}
+    # To prevent a potential overload of the distribution and the clients, we'll allow only this amount of keys per day
+    max-keys-per-day: ${MAX_KEYS_PER_DAY:1000000}
     payload:
       # The maximum number of keys accepted for any submission.
       max-number-of-keys: ${MAX_NUMBER_OF_KEYS:14}

@@ -127,9 +127,9 @@ public class SubmissionController {
       if (!isSelfReport(exposureKeys) || !isUuid(otp)) {
         return badRequest();
       }
-      if (diagnosisKeyService.countTodaysSrs() >= submissionServiceConfig.getMaxSrsPerDay()) {
+      if (diagnosisKeyService.countTodaysDiagnosisKeys() >= submissionServiceConfig.getMaxKeysPerDay()) {
         logger.warn("We reached the maximum number ({}) of allowed Self-Report-Submissions for today ({})!",
-            submissionServiceConfig.getMaxSrsPerDay(), now(UTC));
+            submissionServiceConfig.getMaxKeysPerDay(), now(UTC));
         return tooManyRequests();
       }
       submissionMonitor.incrementRequestCounter();

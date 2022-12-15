@@ -38,7 +38,7 @@ services:
     max-rolling-period: 144
     min-rolling-period: 1
     unencrypted-checkins-enabled: true
-    max-srs-per-day: 10
+    max-keys-per-day: 10
     payload:
       max-number-of-keys: 100
       supported-countries: DE,FR,IT

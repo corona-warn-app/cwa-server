@@ -115,12 +115,13 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
   boolean recordSrs(final @Param("submission_type") String submissionType);
 
   /**
-   * Counts all entries of 'self_report_submissions' for today.
+   * Counts all entries that have a submission timestamp newer or equal than the specified one.
    *
-   * @return The number of submitted self reports for today.
+   * @param submissionTimestamp The submission timestamp.
+   * @return The number of keys.
    */
-  @Query("SELECT COUNT(*) FROM self_report_submissions WHERE submission_date = CURRENT_DATE")
-  int countTodaysSrs();
+  @Query("SELECT COUNT(*) FROM diagnosis_key WHERE submission_timestamp >= :threshold")
+  int countNewerThan(final @Param("threshold") long submissionTimestamp);
 
   /**
    * Counts all entries of 'self_report_submissions' that have a submission date older than the specified one.

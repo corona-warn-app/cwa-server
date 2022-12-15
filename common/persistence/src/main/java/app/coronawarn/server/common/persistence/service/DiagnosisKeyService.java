@@ -1,6 +1,7 @@
 package app.coronawarn.server.common.persistence.service;
 
 import static app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionTimestampValidator.SECONDS_PER_HOUR;
+import static java.time.LocalDate.now;
 import static java.time.LocalDateTime.ofInstant;
 import static java.time.ZoneOffset.UTC;
 import static org.springframework.data.util.StreamUtils.createStreamFromIterator;
@@ -12,6 +13,7 @@ import app.coronawarn.server.common.protocols.internal.SubmissionPayload.Submiss
 import io.micrometer.core.annotation.Timed;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.slf4j.Logger;
@@ -74,7 +76,7 @@ public class DiagnosisKeyService {
   @Timed
   @Transactional
   public void applySrsRetentionPolicy(final int retentionDays) {
-    final LocalDate retentionDate = LocalDate.now(UTC).minusDays(retentionDays);
+    final LocalDate retentionDate = now(UTC).minusDays(retentionDays);
     final int numberOfDeletions = keyRepository.countSrsOlderThan(retentionDate);
     logger.info("Deleting {} SRS with a submission date older than {} day(s) ago.", numberOfDeletions, retentionDays);
     keyRepository.deleteSrsOlderThan(retentionDate);
@@ -82,8 +84,9 @@ public class DiagnosisKeyService {
 
   @Timed
   @Transactional
-  public int countTodaysSrs() {
-    return keyRepository.countTodaysSrs();
+  public int countTodaysDiagnosisKeys() {
+    final long midnightEpochSecond = now(UTC).toEpochSecond(LocalTime.MIDNIGHT, UTC);
+    return keyRepository.countNewerThan(midnightEpochSecond);
   }
 
   /**
