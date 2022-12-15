@@ -1,5 +1,7 @@
 package app.coronawarn.server.services.submission.controller;
 
+import static org.springframework.http.HttpMethod.POST;
+
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import java.net.URI;
@@ -23,13 +25,7 @@ public class RequestExecutor {
 
   private static final URI SUBMISSION_ON_BEHALF_URL = URI.create("/version/v1/submission-on-behalf");
 
-  private final TestRestTemplate testRestTemplate;
-
-  public RequestExecutor(final TestRestTemplate testRestTemplate) {
-    this.testRestTemplate = testRestTemplate;
-  }
-
-  private HttpHeaders buildDefaultHeader() {
+  public static HttpHeaders buildDefaultHeader() {
     return HttpHeaderBuilder.builder()
         .contentTypeProtoBuf()
         .cwaAuth()
@@ -37,7 +33,7 @@ public class RequestExecutor {
         .build();
   }
 
-  private HttpHeaders buildSrsHeader() {
+  public static HttpHeaders buildSrsHeader() {
     return HttpHeaderBuilder.builder()
         .contentTypeProtoBuf()
         .cwaOtp()
@@ -45,8 +41,14 @@ public class RequestExecutor {
         .build();
   }
 
+  private final TestRestTemplate rest;
+
+  public RequestExecutor(final TestRestTemplate testRestTemplate) {
+    rest = testRestTemplate;
+  }
+
   public ResponseEntity<Void> execute(final HttpMethod method, final RequestEntity<SubmissionPayload> requestEntity) {
-    return testRestTemplate.exchange(SUBMISSION_URL, method, requestEntity, Void.class);
+    return rest.exchange(SUBMISSION_URL, method, requestEntity, Void.class);
   }
 
   public ResponseEntity<Void> executePost(final Collection<TemporaryExposureKey> keys) {
@@ -65,17 +67,17 @@ public class RequestExecutor {
     return executePost(body, buildDefaultHeader());
   }
 
+  public ResponseEntity<Void> executePost(final SubmissionPayload body, final HttpHeaders headers) {
+    return execute(POST, new RequestEntity<>(body, headers, POST, SUBMISSION_URL));
+  }
+
   public ResponseEntity<Void> executeSrsPost(final SubmissionPayload body) {
     return executePost(body, buildSrsHeader());
   }
 
-  public ResponseEntity<Void> executePost(final SubmissionPayload body, final HttpHeaders headers) {
-    return execute(HttpMethod.POST, new RequestEntity<>(body, headers, HttpMethod.POST, SUBMISSION_URL));
-  }
-
   public ResponseEntity<Void> executeSubmissionOnBehalf(final HttpMethod method,
       final RequestEntity<SubmissionPayload> requestEntity) {
-    return testRestTemplate.exchange(SUBMISSION_ON_BEHALF_URL, method, requestEntity, Void.class);
+    return rest.exchange(SUBMISSION_ON_BEHALF_URL, method, requestEntity, Void.class);
   }
 
   public ResponseEntity<Void> executeSubmissionOnBehalf(final SubmissionPayload body) {
@@ -83,7 +85,6 @@ public class RequestExecutor {
   }
 
   public ResponseEntity<Void> executeSubmissionOnBehalf(final SubmissionPayload body, final HttpHeaders headers) {
-    return executeSubmissionOnBehalf(HttpMethod.POST,
-        new RequestEntity<>(body, headers, HttpMethod.POST, SUBMISSION_ON_BEHALF_URL));
+    return executeSubmissionOnBehalf(POST, new RequestEntity<>(body, headers, POST, SUBMISSION_ON_BEHALF_URL));
   }
 }
