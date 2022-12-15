@@ -4,10 +4,12 @@ import app.coronawarn.server.common.federation.client.hostname.HostnameVerifierP
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.Client.Ssl;
 import feign.Client;
+import feign.Retryer;
 import feign.httpclient.ApacheHttpClient;
 import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLContext;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.ssl.SSLContextBuilder;
@@ -80,5 +82,14 @@ public class CloudFeignClientProvider {
   @Bean
   public ApacheHttpClientConnectionManagerFactory createConnectionManager() {
     return new DefaultApacheHttpClientConnectionManagerFactory();
+  }
+
+  @Bean
+  public Retryer retryer() {
+    // FIXME make it configurable
+    long retryPeriod = TimeUnit.SECONDS.toMillis(1);
+    long maxRetryPeriod = TimeUnit.SECONDS.toMillis(10);
+    int maxAttempts = 10;
+    return new Retryer.Default(retryPeriod, maxRetryPeriod, maxAttempts);
   }
 }
