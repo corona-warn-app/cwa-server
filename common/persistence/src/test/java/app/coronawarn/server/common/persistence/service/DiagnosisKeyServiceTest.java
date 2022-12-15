@@ -4,15 +4,18 @@ import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServi
 import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServiceTestHelper.assertDiagnosisKeysEqual;
 import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServiceTestHelper.buildDiagnosisKeyForDateTime;
 import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServiceTestHelper.buildDiagnosisKeyForSubmissionTimestamp;
+import static app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType.SUBMISSION_TYPE_PCR_TEST;
+import static app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType.SUBMISSION_TYPE_RAPID_TEST;
+import static app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType.SUBMISSION_TYPE_SRS_OTHER;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.assertj.core.util.Lists.list;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
@@ -27,6 +30,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
@@ -55,10 +59,10 @@ class DiagnosisKeyServiceTest {
   @Test
   void testSaveAndRetrieve() {
     var expKeys = List.of(
-        DiagnosisKeyServiceTestHelper.generateRandomDiagnosisKey(false, 1, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
-        DiagnosisKeyServiceTestHelper.generateRandomDiagnosisKey(false, 1, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
-        DiagnosisKeyServiceTestHelper.generateRandomDiagnosisKey(true, 1, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
-        DiagnosisKeyServiceTestHelper.generateRandomDiagnosisKey(true, 1, SubmissionType.SUBMISSION_TYPE_RAPID_TEST)
+        DiagnosisKeyServiceTestHelper.generateRandomDiagnosisKey(false, 1, SUBMISSION_TYPE_PCR_TEST),
+        DiagnosisKeyServiceTestHelper.generateRandomDiagnosisKey(false, 1, SUBMISSION_TYPE_RAPID_TEST),
+        DiagnosisKeyServiceTestHelper.generateRandomDiagnosisKey(true, 1, SUBMISSION_TYPE_PCR_TEST),
+        DiagnosisKeyServiceTestHelper.generateRandomDiagnosisKey(true, 1, SUBMISSION_TYPE_RAPID_TEST)
     );
 
     diagnosisKeyService.saveDiagnosisKeys(expKeys);
@@ -72,23 +76,23 @@ class DiagnosisKeyServiceTest {
   void testSaveAndRetrieveKeysFilteredByTrl() {
     var filterOutKeysBasedOnTrl = List.of(
         DiagnosisKeyServiceTestHelper.generateRandomDiagnosisKeyWithSpecifiedTrl(false, daysToSeconds(1),
-            SubmissionType.SUBMISSION_TYPE_PCR_TEST, 1),
+            SUBMISSION_TYPE_PCR_TEST, 1),
         DiagnosisKeyServiceTestHelper.generateRandomDiagnosisKeyWithSpecifiedTrl(false, daysToSeconds(1),
-            SubmissionType.SUBMISSION_TYPE_RAPID_TEST, 2)
+            SUBMISSION_TYPE_RAPID_TEST, 2)
         );
 
     var expKeys = List.of(
         DiagnosisKeyServiceTestHelper.generateRandomDiagnosisKeyWithSpecifiedTrl(true, daysToSeconds(1),
-            SubmissionType.SUBMISSION_TYPE_PCR_TEST, 3),
+            SUBMISSION_TYPE_PCR_TEST, 3),
         DiagnosisKeyServiceTestHelper.generateRandomDiagnosisKeyWithSpecifiedTrl(true, daysToSeconds(1),
-            SubmissionType.SUBMISSION_TYPE_RAPID_TEST, 4)
+            SUBMISSION_TYPE_RAPID_TEST, 4)
         );
 
     var oldKeys = List.of(
         DiagnosisKeyServiceTestHelper.generateRandomDiagnosisKeyWithSpecifiedTrl(true, daysToSeconds(42),
-            SubmissionType.SUBMISSION_TYPE_PCR_TEST, 3),
+            SUBMISSION_TYPE_PCR_TEST, 3),
         DiagnosisKeyServiceTestHelper.generateRandomDiagnosisKeyWithSpecifiedTrl(true, daysToSeconds(42),
-            SubmissionType.SUBMISSION_TYPE_RAPID_TEST, 4)
+            SUBMISSION_TYPE_RAPID_TEST, 4)
         );
 
     diagnosisKeyService.saveDiagnosisKeys(filterOutKeysBasedOnTrl);
@@ -207,9 +211,9 @@ class DiagnosisKeyServiceTest {
   @Test
   void insertsPcrTestDiagnosisKeysWhenRapidTestIsPresent() {
     DiagnosisKey pcrKey = DiagnosisKeyServiceTestHelper
-        .generateRandomDiagnosisKey(true, 1, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
+        .generateRandomDiagnosisKey(true, 1, SUBMISSION_TYPE_PCR_TEST);
     DiagnosisKey rapidKey = DiagnosisKey.builder()
-        .withKeyDataAndSubmissionType(pcrKey.getKeyData(), SubmissionType.SUBMISSION_TYPE_RAPID_TEST)
+        .withKeyDataAndSubmissionType(pcrKey.getKeyData(), SUBMISSION_TYPE_RAPID_TEST)
         .withRollingStartIntervalNumber(pcrKey.getRollingStartIntervalNumber())
         .withTransmissionRiskLevel(pcrKey.getTransmissionRiskLevel())
         .withConsentToFederation(pcrKey.isConsentToFederation())
@@ -235,9 +239,14 @@ class DiagnosisKeyServiceTest {
   @Test
   void ignoresRapidTestDiagnosisKeysWhenPcrTestIsPresent() {
     DiagnosisKey pcrKey = DiagnosisKeyServiceTestHelper
-        .generateRandomDiagnosisKey(true, 1, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
-    DiagnosisKey rapidKey = DiagnosisKey.builder()
-        .withKeyDataAndSubmissionType(pcrKey.getKeyData(), SubmissionType.SUBMISSION_TYPE_RAPID_TEST)
+        .generateRandomDiagnosisKey(true, 1, SUBMISSION_TYPE_PCR_TEST);
+    Collection<DiagnosisKey> storedKeys;
+    diagnosisKeyService.saveDiagnosisKeys(List.of(pcrKey));
+    storedKeys = diagnosisKeyService.getDiagnosisKeys();
+    assertEquals(1, storedKeys.size());
+    assertTrue(storedKeys.contains(pcrKey));
+    final DiagnosisKey rapidKey = DiagnosisKey.builder()
+        .withKeyDataAndSubmissionType(pcrKey.getKeyData(), SUBMISSION_TYPE_RAPID_TEST)
         .withRollingStartIntervalNumber(pcrKey.getRollingStartIntervalNumber())
         .withTransmissionRiskLevel(pcrKey.getTransmissionRiskLevel())
         .withConsentToFederation(pcrKey.isConsentToFederation())
@@ -248,15 +257,32 @@ class DiagnosisKeyServiceTest {
         .withSubmissionTimestamp(pcrKey.getSubmissionTimestamp())
         .withVisitedCountries(pcrKey.getVisitedCountries())
         .build();
-    Collection<DiagnosisKey> storedKeys;
-    diagnosisKeyService.saveDiagnosisKeys(List.of(pcrKey));
-    storedKeys = diagnosisKeyService.getDiagnosisKeys();
-    assertEquals(1, storedKeys.size());
-    assertTrue(storedKeys.contains(pcrKey));
     diagnosisKeyService.saveDiagnosisKeys(List.of(rapidKey));
     storedKeys = diagnosisKeyService.getDiagnosisKeys();
     assertEquals(1, storedKeys.size());
     assertTrue(storedKeys.contains(pcrKey));
     assertFalse(storedKeys.contains(rapidKey));
+  }
+
+  @ParameterizedTest
+  @EnumSource(value = SubmissionType.class)
+  void recordSrsTest(final SubmissionType type) {
+    diagnosisKeyService.recordSrs(type);
+  }
+
+  /**
+   * record 3 self reports for today, remove all older than yesterday, check that the ones from today are still there,
+   * delete also from today, finally check that there are 0 for today.
+   */
+  @Test
+  void srsTests() {
+    diagnosisKeyService.recordSrs(SUBMISSION_TYPE_SRS_OTHER);
+    diagnosisKeyService.recordSrs(SUBMISSION_TYPE_SRS_OTHER);
+    diagnosisKeyService.recordSrs(SUBMISSION_TYPE_SRS_OTHER);
+    assertEquals(3, diagnosisKeyService.countTodaysSrs());
+    diagnosisKeyService.applySrsRetentionPolicy(1);
+    assertEquals(3, diagnosisKeyService.countTodaysSrs());
+    diagnosisKeyService.applySrsRetentionPolicy(0);
+    assertEquals(0, diagnosisKeyService.countTodaysSrs());
   }
 }

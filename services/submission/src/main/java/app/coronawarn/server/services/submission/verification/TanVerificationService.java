@@ -2,16 +2,12 @@ package app.coronawarn.server.services.submission.verification;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 import org.springframework.web.client.RestClientException;
 
 public abstract class TanVerificationService {
 
   public static final String CWA_TELETAN_TYPE_RESPONSE_HEADER = "X-CWA-TELETAN-TYPE";
   public static final String CWA_TELETAN_TYPE_EVENT = "EVENT";
-  protected static final Marker SECURITY = MarkerFactory.getMarker("SECURITY");
-
 
   private static final Logger logger = LoggerFactory.getLogger(TanVerificationService.class);
   final VerificationServerClient verificationServerClient;

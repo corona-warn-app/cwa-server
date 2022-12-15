@@ -35,6 +35,9 @@ public class SubmissionServiceConfig {
   @Min(7)
   @Max(28)
   private Integer retentionDays;
+  @Min(0)
+  @Max(28)
+  private int srsDays;
   @Min(1)
   @Max(25)
   private Integer randomKeyPaddingMultiplier;
@@ -52,6 +55,7 @@ public class SubmissionServiceConfig {
   private DataSize maximumRequestSize;
   private Payload payload;
   private Verification verification;
+  private Verification srsVerify;
   private Monitoring monitoring;
   private Client client;
   @Min(1)
@@ -60,6 +64,9 @@ public class SubmissionServiceConfig {
   @Min(1)
   @Max(144)
   private Integer minRollingPeriod;
+  @Min(1)
+  @Max(100000000)
+  private int maxSrsPerDay;
 
   /**
    * unencryptedCheckinsEnabled.
@@ -98,6 +105,14 @@ public class SubmissionServiceConfig {
 
   public void setRetentionDays(Integer retentionDays) {
     this.retentionDays = retentionDays;
+  }
+
+  public int getSrsDays() {
+    return Math.min(srsDays, retentionDays);
+  }
+
+  public void setSrsDays(int srsDays) {
+    this.srsDays = srsDays;
   }
 
   public Integer getRandomKeyPaddingMultiplier() {
@@ -226,6 +241,14 @@ public class SubmissionServiceConfig {
     this.unencryptedCheckinsEnabled = unencryptedCheckinsEnabled;
   }
 
+  public int getMaxSrsPerDay() {
+    return maxSrsPerDay;
+  }
+
+  public void setMaxSrsPerDay(final int maxSrsPerDay) {
+    this.maxSrsPerDay = maxSrsPerDay;
+  }
+
   public static class Payload {
 
     @Min(7)
@@ -295,7 +318,7 @@ public class SubmissionServiceConfig {
     return verification.getPath();
   }
 
-  private static class Verification {
+  static class Verification {
 
     @Pattern(regexp = URL_WITH_PORT_REGEX)
     private String baseUrl;
@@ -357,6 +380,22 @@ public class SubmissionServiceConfig {
 
   public void setClient(Client client) {
     this.client = client;
+  }
+
+  Verification getSrsVerify() {
+    return srsVerify;
+  }
+
+  void setSrsVerify(final Verification srsVerify) {
+    this.srsVerify = srsVerify;
+  }
+
+  public String getSrsVerifyBaseUrl() {
+    return getSrsVerify().getBaseUrl();
+  }
+
+  public String getSrsVerifyPath() {
+    return getSrsVerify().getPath();
   }
 
   public static class Client {

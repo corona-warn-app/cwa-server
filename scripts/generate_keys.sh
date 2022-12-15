@@ -58,7 +58,7 @@ self_sign_certificate_request()
   echo "########### self_sign_certificate_request for $1 with $2"
   openssl x509                                \
     -req                                      \
-    -days 365                                 \
+    -days 3654                                \
     -in "$1"                                  \
     -signkey "$2"                             \
     -extfile ../domainnames.conf              \
@@ -72,12 +72,12 @@ self_sign_certificate_request()
 self_sign_efgs_signing_certificate()
 {
   echo "########### self_sign_efgs_signing_certificate for $1 with $2"
-  openssl req -x509 -new \
-    -days 365 \
-    -key "$1" \
-    -extensions v3_req \
-    -subj "$2" \
-    -nodes \
+  openssl req -x509 -new    \
+    -days 3654              \
+    -key "$1"               \
+    -extensions v3_req      \
+    -subj "$2"              \
+    -nodes                  \
     -out "$3"
 }
 

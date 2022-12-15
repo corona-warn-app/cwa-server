@@ -20,6 +20,8 @@ services:
     fake-delay-moving-average-samples: 10
     # The retention threshold for acceptable diagnosis keys during submission.
     retention-days: 14
+    # How many days in the past are keys of a self reported submission allowed.
+    srs-days: ${MAX_NUMBER_OF_DAYS_FOR_SRS:14}
     # The number of keys to save to the DB for every real submitted key.
     # Example: If the 'random-key-padding-multiplier' is set to 10, and 5 keys are being submitted,
     # then the 5 real submitted keys will be saved to the DB, plus an additional 45 keys with
@@ -43,6 +45,8 @@ services:
     min-rolling-period: ${MIN_ROLLING_PERIOD:1}
     # The flag for unencrypted checkins used by the EventCheckinFacade.
     unencrypted-checkins-enabled: ${UNENCRYPTED_CHECKINS_ENABLED:false}
+    # To prevent a potential overload of the distribution and the clients, we'll allow only this amount of self reports per day
+    max-srs-per-day: ${MAX_SRS_PER_DAY:1000000}
     payload:
       # The maximum number of keys accepted for any submission.
       max-number-of-keys: ${MAX_NUMBER_OF_KEYS:14}
@@ -58,6 +62,9 @@ services:
     verification:
       base-url: ${VERIFICATION_BASE_URL:http://localhost:8004}
       path: /version/v1/tan/verify
+    srs-verify:
+      base-url: ${SRS_VERIFY_BASE_URL:https://localhost:8105}
+      path: /version/v1/srs
     monitoring:
       # The batch size (number of requests) to use for monitoring request count.
       batch-size: 5
@@ -100,7 +107,7 @@ management:
     health:
       group:
         readiness:
-          include: db, verificationService
+          include: db, verificationService, srsVerifyService
           show-details: always
   endpoints:
     web:

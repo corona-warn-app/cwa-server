@@ -1,11 +1,20 @@
 package app.coronawarn.server.services.submission.controller;
 
+import static app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType.SUBMISSION_TYPE_HOST_WARNING_VALUE;
+import static app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType.SUBMISSION_TYPE_SRS_OTHER_VALUE;
+import static app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType.SUBMISSION_TYPE_SRS_SELF_TEST_VALUE;
+import static java.lang.String.valueOf;
+import static java.time.LocalDate.now;
+import static java.time.ZoneOffset.UTC;
+import static org.springframework.util.ObjectUtils.isEmpty;
+
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.config.TrlDerivations;
 import app.coronawarn.server.common.persistence.domain.validation.ValidRollingStartIntervalNumberValidator;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.common.shared.util.HashUtils;
 import app.coronawarn.server.services.submission.checkins.EventCheckinFacade;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
@@ -15,20 +24,23 @@ import app.coronawarn.server.services.submission.validation.PrintableSubmissionP
 import app.coronawarn.server.services.submission.validation.ValidSubmissionOnBehalfPayload;
 import app.coronawarn.server.services.submission.validation.ValidSubmissionPayload;
 import app.coronawarn.server.services.submission.verification.EventTanVerifier;
+import app.coronawarn.server.services.submission.verification.SrsOtpVerifier;
 import app.coronawarn.server.services.submission.verification.TanVerificationService;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import feign.FeignException;
 import feign.RetryableException;
 import io.micrometer.core.annotation.Timed;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Collection;
 import java.util.stream.IntStream;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.util.StopWatch;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -51,12 +63,16 @@ public class SubmissionController {
   private static final Logger logger = LoggerFactory.getLogger(SubmissionController.class);
   public static final String CWA_FILTERED_CHECKINS_HEADER = "cwa-filtered-checkins";
   public static final String CWA_SAVED_CHECKINS_HEADER = "cwa-saved-checkins";
+  public static final String CWA_KEYS_TRUNCATED_HEADER = "cwa-keys-truncated";
+  public static final Marker SECURITY = MarkerFactory.getMarker("SECURITY");
 
   private final SubmissionMonitor submissionMonitor;
   private final DiagnosisKeyService diagnosisKeyService;
   private final TanVerifier tanVerifier;
   private final EventTanVerifier eventTanVerifier;
+  private final SrsOtpVerifier srsOtpVerifier;
   private final Integer retentionDays;
+  private final int srsDays;
   private final Integer randomKeyPaddingMultiplier;
   private final FakeDelayManager fakeDelayManager;
   private final SubmissionServiceConfig submissionServiceConfig;
@@ -65,16 +81,18 @@ public class SubmissionController {
   private final ValidRollingStartIntervalNumberValidator rollingStartIntervalNumberValidator;
 
   SubmissionController(DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier,
-      EventTanVerifier eventTanVerifier, FakeDelayManager fakeDelayManager,
+      EventTanVerifier eventTanVerifier, final SrsOtpVerifier srsOtpVerifier, FakeDelayManager fakeDelayManager,
       SubmissionServiceConfig submissionServiceConfig, SubmissionMonitor submissionMonitor,
       EventCheckinFacade eventCheckinFacade) {
     this.diagnosisKeyService = diagnosisKeyService;
     this.tanVerifier = tanVerifier;
     this.eventTanVerifier = eventTanVerifier;
+    this.srsOtpVerifier = srsOtpVerifier;
     this.submissionMonitor = submissionMonitor;
     this.fakeDelayManager = fakeDelayManager;
     this.submissionServiceConfig = submissionServiceConfig;
     this.retentionDays = submissionServiceConfig.getRetentionDays();
+    this.srsDays = submissionServiceConfig.getSrsDays();
     this.randomKeyPaddingMultiplier = submissionServiceConfig.getRandomKeyPaddingMultiplier();
     this.eventCheckinFacade = eventCheckinFacade;
     this.trlDerivations = submissionServiceConfig.getTrlDerivations();
@@ -88,14 +106,85 @@ public class SubmissionController {
    * @param tan          A tan for diagnosis verification.
    * @return An empty response body.
    */
-  @PostMapping(value = SUBMISSION_ROUTE, headers = {"cwa-fake=0"})
+  @PostMapping(value = SUBMISSION_ROUTE, headers = { "cwa-fake=0" })
   @Timed(description = "Time spent handling submission.")
   public DeferredResult<ResponseEntity<Void>> submitDiagnosisKey(
       @ValidSubmissionPayload @RequestBody SubmissionPayload exposureKeys,
-      @RequestHeader("cwa-authorization") String tan) {
+      @RequestHeader(name = "cwa-authorization", required = false) String tan,
+      @RequestHeader(name = "cwa-otp", required = false) String otp) {
+
+    if (isEmpty(tan) && isEmpty(otp)) {
+      logger.warn("'cwa-authorization' and 'cwa-otp' header missing!");
+      return badRequest();
+    }
+    if (!isEmpty(tan) && !isEmpty(otp)) {
+      logger.warn("'cwa-authorization' and 'cwa-otp' header provided!");
+      return badRequest();
+    }
+
+    if (!isEmpty(otp)) {
+      if (!isSelfReport(exposureKeys)) {
+        return badRequest();
+      }
+      if (diagnosisKeyService.countTodaysSrs() >= submissionServiceConfig.getMaxSrsPerDay()) {
+        logger.warn("We reached the maximum number ({}) of allowed Self-Report-Submissions for today ({})!",
+            submissionServiceConfig.getMaxSrsPerDay(), now(UTC));
+        return tooManyRequests();
+      }
+      submissionMonitor.incrementRequestCounter();
+      submissionMonitor.incrementRealRequestCounter();
+      submissionMonitor.incrementSelfReportSubmissions();
+      return buildRealDeferredResult(exposureKeys, otp, srsOtpVerifier);
+    }
+
+    if (!validSubmissionType(exposureKeys)) {
+      return badRequest();
+    }
+
     submissionMonitor.incrementRequestCounter();
     submissionMonitor.incrementRealRequestCounter();
     return buildRealDeferredResult(exposureKeys, tan, tanVerifier);
+  }
+
+  /**
+   * Valid regular submission types: SUBMISSION_TYPE_PCR_TEST_VALUE, SUBMISSION_TYPE_RAPID_TEST_VALUE,
+   * SUBMISSION_TYPE_HOST_WARNING_VALUE.
+   * 
+   * @param payload uses {@link SubmissionPayload#getSubmissionType()} int value of the enum
+   * @return <code>true</code> if it's ok.
+   * 
+   * @see SubmissionType
+   */
+  private boolean validSubmissionType(final SubmissionPayload payload) {
+    return 0 <= payload.getSubmissionType().getNumber()
+        && payload.getSubmissionType().getNumber() <= SUBMISSION_TYPE_HOST_WARNING_VALUE;
+  }
+
+  /**
+   * Valid SRS types: SUBMISSION_TYPE_SRS_SELF_TEST, SUBMISSION_TYPE_SRS_RAT, SUBMISSION_TYPE_SRS_REGISTERED_PCR,
+   * SUBMISSION_TYPE_SRS_UNREGISTERED_PCR, SUBMISSION_TYPE_SRS_RAPID_PCR, SUBMISSION_TYPE_SRS_OTHER.
+   * 
+   * @param payload uses {@link SubmissionPayload#getSubmissionType()} int value of the enum
+   * @return <code>true</code> if it's ok.
+   * 
+   * @see SubmissionType
+   */
+  private boolean isSelfReport(final SubmissionPayload payload) {
+    return SUBMISSION_TYPE_SRS_SELF_TEST_VALUE <= payload.getSubmissionType().getNumber()
+        && payload.getSubmissionType().getNumber() <= SUBMISSION_TYPE_SRS_OTHER_VALUE;
+  }
+
+  /**
+   * {@link ResponseEntity#badRequest()} wrapped into {@link DeferredResult}.
+   * 
+   * @return {@link HttpStatus#BAD_REQUEST}
+   */
+  private DeferredResult<ResponseEntity<Void>> badRequest() {
+    return new DeferredResult<>(null, () -> ResponseEntity.badRequest().build());
+  }
+
+  private DeferredResult<ResponseEntity<Void>> tooManyRequests() {
+    return new DeferredResult<>(null, () -> ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build());
   }
 
   /**
@@ -107,7 +196,7 @@ public class SubmissionController {
    * @param tan               A tan for diagnosis verification.
    * @return An empty response body.
    */
-  @PostMapping(value = SUBMISSION_ON_BEHALF_ROUTE, headers = {"cwa-fake=0"})
+  @PostMapping(value = SUBMISSION_ON_BEHALF_ROUTE, headers = { "cwa-fake=0" })
   @Timed(description = "Time spent handling submission.")
   public DeferredResult<ResponseEntity<Void>> submissionOnBehalf(
       @ValidSubmissionOnBehalfPayload @RequestBody SubmissionPayload submissionPayload,
@@ -121,12 +210,12 @@ public class SubmissionController {
   /**
    * Saves the checkins and, if needed, filters them.
    *
-   * @param submissionPayload Type protobuf.
+   * @param payload Type protobuf.
    * @param tan               A tan for diagnosis verification.
    * @return DeferredResult.
    */
-  private DeferredResult<ResponseEntity<Void>> buildRealDeferredResult(SubmissionPayload submissionPayload,
-      String tan, TanVerificationService tanVerifier) {
+  private DeferredResult<ResponseEntity<Void>> buildRealDeferredResult(final SubmissionPayload payload,
+      final String tan, final TanVerificationService tanVerifier) {
     DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
 
     StopWatch stopWatch = new StopWatch();
@@ -136,13 +225,18 @@ public class SubmissionController {
         submissionMonitor.incrementInvalidTanRequestCounter();
         deferredResult.setResult(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
       } else {
-        extractAndStoreDiagnosisKeys(submissionPayload);
-        CheckinsStorageResult checkinsStorageResult = eventCheckinFacade.extractAndStoreCheckins(submissionPayload);
+        final BodyBuilder response = ResponseEntity.ok();
+        extractAndStoreDiagnosisKeys(payload, response);
 
-        deferredResult.setResult(ResponseEntity.ok()
-            .header(CWA_FILTERED_CHECKINS_HEADER, String.valueOf(checkinsStorageResult.getNumberOfFilteredCheckins()))
-            .header(CWA_SAVED_CHECKINS_HEADER, String.valueOf(checkinsStorageResult.getNumberOfSavedCheckins()))
-            .build());
+        CheckinsStorageResult checkinsStorageResult = eventCheckinFacade.extractAndStoreCheckins(payload);
+
+        if (isSelfReport(payload)) {
+          diagnosisKeyService.recordSrs(payload.getSubmissionType());
+        }
+
+        response.header(CWA_FILTERED_CHECKINS_HEADER, valueOf(checkinsStorageResult.getNumberOfFilteredCheckins()))
+            .header(CWA_SAVED_CHECKINS_HEADER, valueOf(checkinsStorageResult.getNumberOfSavedCheckins()));
+        deferredResult.setResult(response.build());
       }
     } catch (RetryableException e) {
       logger.error("Verification Service could not be reached after retry mechanism.", e);
@@ -150,7 +244,12 @@ public class SubmissionController {
     } catch (FeignException e) {
       logger.error("Verification Service could not be reached.", e);
       deferredResult.setErrorResult(e);
+    } catch (final DiagnosisKeyExistsAlreadyException e) {
+      logger.warn(SECURITY, "Self-Report contains already persisted keys - {}",
+          new PrintableSubmissionPayload(payload));
+      return badRequest();
     } catch (Exception e) {
+      logger.error(e.getLocalizedMessage(), e);
       deferredResult.setErrorResult(e);
     } finally {
       stopWatch.stop();
@@ -159,10 +258,16 @@ public class SubmissionController {
     return deferredResult;
   }
 
-  private void extractAndStoreDiagnosisKeys(SubmissionPayload submissionPayload) {
-    List<DiagnosisKey> diagnosisKeys = extractValidDiagnosisKeysFromPayload(
-        enhanceWithDefaultValuesIfMissing(submissionPayload));
-    for (DiagnosisKey diagnosisKey : diagnosisKeys) {
+  private void extractAndStoreDiagnosisKeys(final SubmissionPayload submissionPayload, final BodyBuilder response)
+      throws DiagnosisKeyExistsAlreadyException {
+    final Collection<DiagnosisKey> diagnosisKeys = extractValidDiagnosisKeysFromPayload(
+        enhanceWithDefaultValuesIfMissing(submissionPayload), response);
+
+    if (isSelfReport(submissionPayload) && diagnosisKeyService.exists(diagnosisKeys)) {
+      throw new DiagnosisKeyExistsAlreadyException();
+    }
+
+    for (final DiagnosisKey diagnosisKey : diagnosisKeys) {
       mapTrasmissionRiskValue(diagnosisKey);
     }
     diagnosisKeyService.saveDiagnosisKeys(padDiagnosisKeys(diagnosisKeys));
@@ -173,10 +278,11 @@ public class SubmissionController {
         trlDerivations.mapFromTrlSubmittedToTrlToStore(diagnosisKey.getTransmissionRiskLevel()));
   }
 
-  private List<DiagnosisKey> extractValidDiagnosisKeysFromPayload(SubmissionPayload submissionPayload) {
-    List<TemporaryExposureKey> protoBufferKeys = submissionPayload.getKeysList();
+  private Collection<DiagnosisKey> extractValidDiagnosisKeysFromPayload(final SubmissionPayload submissionPayload,
+      final BodyBuilder response) {
+    final Collection<TemporaryExposureKey> protoBufferKeys = submissionPayload.getKeysList();
 
-    List<DiagnosisKey> diagnosisKeys = protoBufferKeys.stream()
+    Collection<DiagnosisKey> diagnosisKeys = protoBufferKeys.stream()
         .filter(protoBufferKey -> rollingStartIntervalNumberValidator
             .isValid(protoBufferKey.getRollingStartIntervalNumber(), null))
         .map(protoBufferKey -> DiagnosisKey.builder()
@@ -187,14 +293,25 @@ public class SubmissionController {
                 submissionPayload.getOrigin(),
                 submissionPayload.getConsentToFederation())
             .withFieldNormalization(new SubmissionKeyNormalizer(submissionServiceConfig))
-            .build()
-        )
+            .build())
         .filter(diagnosisKey -> diagnosisKey.isYoungerThanRetentionThreshold(retentionDays))
-        .collect(Collectors.toList());
+        .toList();
+
+    if (isSelfReport(submissionPayload)) {
+      final Collection<DiagnosisKey> keys = diagnosisKeys.stream()
+          .filter(diagnosisKey -> diagnosisKey.isYoungerThanRetentionThreshold(srsDays)).toList();
+      if (keys.size() < diagnosisKeys.size()) {
+        response.header(CWA_KEYS_TRUNCATED_HEADER, valueOf(srsDays));
+        logger.warn(
+            "Not persisting '{}' self reported key(s), because they are older than '{}' days.",
+            diagnosisKeys.size() - keys.size(), srsDays);
+        diagnosisKeys = keys;
+      }
+    }
 
     if (protoBufferKeys.size() > diagnosisKeys.size()) {
       logger.warn("Not persisting {} one or more diagnosis key(s), as it is outdated beyond retention threshold or the "
-              + "RollingStartIntervalNumber is in the future. Payload: {}",
+          + "RollingStartIntervalNumber is in the future. Payload: {}",
           protoBufferKeys.size() - diagnosisKeys.size(),
           new PrintableSubmissionPayload(submissionPayload));
     }
@@ -218,8 +335,13 @@ public class SubmissionController {
     return StringUtils.defaultIfBlank(originCountry, submissionServiceConfig.getDefaultOriginCountry());
   }
 
-  private List<DiagnosisKey> padDiagnosisKeys(List<DiagnosisKey> diagnosisKeys) {
-    List<DiagnosisKey> paddedDiagnosisKeys = new ArrayList<>();
+  private Collection<DiagnosisKey> padDiagnosisKeys(final Collection<DiagnosisKey> diagnosisKeys) {
+    if (randomKeyPaddingMultiplier <= 1) {
+      // no padding required
+      return diagnosisKeys;
+    }
+    final Collection<DiagnosisKey> paddedDiagnosisKeys = new ArrayList<>(
+        diagnosisKeys.size() * randomKeyPaddingMultiplier);
     diagnosisKeys.forEach(diagnosisKey -> {
       paddedDiagnosisKeys.add(diagnosisKey);
       IntStream.range(1, randomKeyPaddingMultiplier)

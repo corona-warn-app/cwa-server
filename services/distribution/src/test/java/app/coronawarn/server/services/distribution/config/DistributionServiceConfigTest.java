@@ -2,12 +2,15 @@ package app.coronawarn.server.services.distribution.config;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.services.distribution.assembly.appconfig.ApplicationConfigurationPublicationConfig;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.AndroidExposureDetectionParameters;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.AndroidKeyDownloadParameters;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.AndroidSrsPpacParameters;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.IosExposureDetectionParameters;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppVersions;
 import java.util.List;
@@ -232,6 +235,21 @@ class DistributionServiceConfigTest {
     void failsOnInvalidSupportedCountries() {
       String[] cclAllowList = distributionServiceConfig.getDigitalGreenCertificate().getCclAllowList();
       assertThat(List.of(cclAllowList)).hasSize(2);
+    }
+  }
+
+  @Nested
+  class SrsParameterTest {
+    @Test
+    void androidSrsParameterTest() {
+      final AppConfigParameters app = distributionServiceConfig.getAppConfigParameters();
+      assertEquals(48, app.getSrsTimeSinceOnboardingInHours());
+      assertEquals(90, app.getSrsTimeBetweenSubmissionsInDays());
+      AndroidSrsPpacParameters srs = app.getAndroidSrsPpacParameters();
+      assertFalse(srs.getRequireBasicIntegrity());
+      assertFalse(srs.getRequireCtsProfileMatch());
+      assertFalse(srs.getRequireEvaluationTypeBasic());
+      assertFalse(srs.getRequireEvaluationTypeHardwareBacked());
     }
   }
 

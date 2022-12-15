@@ -1,26 +1,33 @@
-
-
 package app.coronawarn.server.services.submission.controller;
 
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import static org.springframework.http.MediaType.valueOf;
 
+import org.springframework.http.HttpHeaders;
 
 public class HttpHeaderBuilder {
-
-  private final HttpHeaders headers = new HttpHeaders();
 
   public static HttpHeaderBuilder builder() {
     return new HttpHeaderBuilder();
   }
 
+  private final HttpHeaders headers = new HttpHeaders();
+
+  public HttpHeaders build() {
+    return headers;
+  }
+
   public HttpHeaderBuilder contentTypeProtoBuf() {
-    headers.setContentType(MediaType.valueOf("application/x-protobuf"));
+    headers.setContentType(valueOf("application/x-protobuf"));
     return this;
   }
 
   public HttpHeaderBuilder cwaAuth() {
     headers.set("cwa-authorization", "TAN okTan");
+    return this;
+  }
+
+  public HttpHeaderBuilder cwaOtp() {
+    headers.set("cwa-otp", "OTP ok");
     return this;
   }
 
@@ -32,9 +39,5 @@ public class HttpHeaderBuilder {
   public HttpHeaderBuilder withoutCwaFake() {
     headers.set("cwa-fake", "0");
     return this;
-  }
-
-  public HttpHeaders build() {
-    return headers;
   }
 }

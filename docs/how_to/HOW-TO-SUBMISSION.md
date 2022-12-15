@@ -28,11 +28,11 @@ Content-Type              | `application/x-protobuf`
 * Send the following request via Curl (replace `<path/to/payload.bin>`with the actual path to the payload on your machine):
 
 ```bash
-curl --location --request POST 'http://localhost:8080/version/v1/diagnosis-keys' \
+curl -k --location --request POST 'https://localhost:8080/version/v1/diagnosis-keys' \
 --header 'CWA-Authorization: edc07f08-a1aa-11ea-bb37-0242ac130002' \
 --header 'CWA-Fake: 0' \
 --header 'Content-Type: application/x-protobuf' \
---data-binary '<path/to/payload.bin>'
+--data-binary 'services/submission/src/test/resources/payload/mobile-client-payload.pb'
 ```
 
 ## Generating a Payload

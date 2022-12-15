@@ -1,6 +1,8 @@
 package app.coronawarn.server.common.persistence.repository;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
@@ -23,6 +25,17 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
       + "WHERE key_data=:key_data "
       + "AND submission_type=:submission_type")
   boolean exists(@Param("key_data") byte[] keyData, @Param("submission_type") String submissionType);
+
+  /**
+   * Returns whether or not at least one of diagnosis keys with the specified key data exists in the DB.
+   *
+   * @param keyData The key data to search for
+   * @return whether or not a diagnosis key with the specified key data and submission type exists in the DB
+   */
+  @Query("SELECT CAST(CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END AS BIT) "
+      + "FROM diagnosis_key "
+      + "WHERE key_data in (:key_data)")
+  boolean exists(@Param("key_data") Collection<byte[]> keyData);
 
   /**
    * Counts all entries that have a submission timestamp older than the specified one.
@@ -90,4 +103,40 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
       + " ORDER BY submission_timestamp")
   List<DiagnosisKey> findAllWithTrlGreaterThanOrEqual(final @Param("minTrl") int minTrl,
       @Param("threshold") long submissionTimestamp);
+
+  /**
+   * For each Self-Reported-Submission, we'll create one record to get a glimpse on what's going on.
+   * 
+   * @param submissionType - depending on what the client has chosen
+   * @return <code>true</code>, when insert into self_report_submissions was successful
+   */
+  @Modifying
+  @Query("INSERT INTO self_report_submissions (submission_type) VALUES (:submission_type)")
+  boolean recordSrs(final @Param("submission_type") String submissionType);
+
+  /**
+   * Counts all entries of 'self_report_submissions' for today.
+   *
+   * @return The number of submitted self reports for today.
+   */
+  @Query("SELECT COUNT(*) FROM self_report_submissions WHERE submission_date = CURRENT_DATE")
+  int countTodaysSrs();
+
+  /**
+   * Counts all entries of 'self_report_submissions' that have a submission date older than the specified one.
+   *
+   * @param submissionDate The submission date up to which entries will be expired.
+   * @return The number of expired keys.
+   */
+  @Query("SELECT COUNT(*) FROM self_report_submissions WHERE submission_date <= :threshold")
+  int countSrsOlderThan(final @Param("threshold") LocalDate submissionDate);
+
+  /**
+   * Deletes all entries from 'self_report_submissions' that have a submission timestamp older than the specified one.
+   *
+   * @param submissionDate The submission date up to which entries will be deleted.
+   */
+  @Modifying
+  @Query("DELETE FROM self_report_submissions WHERE submission_date <= :threshold")
+  void deleteSrsOlderThan(final @Param("threshold") LocalDate submissionDate);
 }

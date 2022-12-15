@@ -1,5 +1,7 @@
 package app.coronawarn.server.services.submission.checkins;
 
+import static app.coronawarn.server.services.submission.controller.SubmissionController.SECURITY;
+
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
@@ -7,8 +9,6 @@ import java.util.List;
 import javax.validation.ConstraintValidatorContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
@@ -22,7 +22,6 @@ import org.springframework.util.ObjectUtils;
 public class EventCheckinDataValidator {
 
   private static final Logger logger = LoggerFactory.getLogger(EventCheckinDataValidator.class);
-  private static final Marker SECURITY = MarkerFactory.getMarker("SECURITY");
 
   /**
    * Given the submission payload, it verifies whether user event checkin data is aligned with the application
