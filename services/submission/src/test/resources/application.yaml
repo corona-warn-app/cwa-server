@@ -60,6 +60,13 @@ services:
         key-store-password: 123456
         trust-store: ../../docker-compose-test-secrets/contains_efgs_truststore.jks
         trust-store-password: 123456
+    feign-retry:
+      # feign retry waiting time in milliseconds
+      period: ${FEIGN_RETRY_PERIOD:500}
+      # feign total maximum wait time in seconds before feign.RetryableException
+      max-period: ${FEIGN_RETRY_MAX_PERIOD:10}
+      # feign max retry attemps, when reached feign.RetryableException is thrown
+      max-attempts: ${FEIGN_RETRY_MAX_ATTEMPTS:10}
 
 management:
   endpoint:

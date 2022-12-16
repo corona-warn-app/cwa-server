@@ -20,7 +20,7 @@ services:
     fake-delay-moving-average-samples: 10
     # The retention threshold for acceptable diagnosis keys during submission.
     retention-days: 14
-    # How many days in the past are keys of a self reported submission allowed.
+    # How many days in the past are keys of a self reported submission allowed. Only if it's smaller then 'retention-days' it will have an effect.
     srs-days: ${MAX_NUMBER_OF_DAYS_FOR_SRS:14}
     # The number of keys to save to the DB for every real submitted key.
     # Example: If the 'random-key-padding-multiplier' is set to 10, and 5 keys are being submitted,
@@ -75,6 +75,13 @@ services:
         key-store-password: ${SSL_SUBMISSION_KEYSTORE_PASSWORD}
         trust-store: ${SSL_VERIFICATION_TRUSTSTORE_PATH}
         trust-store-password: ${SSL_VERIFICATION_TRUSTSTORE_PASSWORD}
+    feign-retry:
+      # feign retry waiting time in milliseconds
+      period: ${FEIGN_RETRY_PERIOD:500}
+      # feign total maximum wait time in seconds before feign.RetryableException
+      max-period: ${FEIGN_RETRY_MAX_PERIOD:10}
+      # feign max retry attemps, when reached feign.RetryableException is thrown
+      max-attempts: ${FEIGN_RETRY_MAX_ATTEMPTS:10}
 
 spring:
   lifecycle:
