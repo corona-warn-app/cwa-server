@@ -456,8 +456,9 @@ class SubmissionControllerTest {
     final Collection<DiagnosisKey> savedDiagnosisKeys = argument.getValue();
     final int expectedNumberofSavedKeys = (submittedKeys.size() - 1) * config.getRandomKeyPaddingMultiplier();
     assertThat(savedDiagnosisKeys).hasSize(expectedNumberofSavedKeys);
-    assertThat(!savedDiagnosisKeys.stream().anyMatch(diagnosisKey -> diagnosisKey
-        .getRollingStartIntervalNumber() == futureKey.getRollingStartIntervalNumber()));
+    assertThat(savedDiagnosisKeys.stream().anyMatch(
+        diagnosisKey -> diagnosisKey.getRollingStartIntervalNumber() == futureKey.getRollingStartIntervalNumber()))
+            .isFalse();
   }
 
   @Test
