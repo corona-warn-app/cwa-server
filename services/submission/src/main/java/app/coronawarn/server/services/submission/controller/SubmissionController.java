@@ -6,6 +6,9 @@ import static app.coronawarn.server.common.protocols.internal.SubmissionPayload.
 import static java.lang.String.valueOf;
 import static java.time.LocalDate.now;
 import static java.time.ZoneOffset.UTC;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.TOO_MANY_REQUESTS;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
@@ -39,7 +42,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.util.StopWatch;
@@ -201,12 +203,8 @@ public class SubmissionController {
     return new DeferredResult<>(null, () -> ResponseEntity.badRequest().build());
   }
 
-  public static DeferredResult<ResponseEntity<Void>> badRequest(final String errorDetails) {
-    return new DeferredResult<>(null, () -> ResponseEntity.badRequest().header("cwa-error-code", errorDetails).build());
-  }
-
   public static DeferredResult<ResponseEntity<Void>> tooManyRequests() {
-    return new DeferredResult<>(null, () -> ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build());
+    return new DeferredResult<>(null, () -> ResponseEntity.status(TOO_MANY_REQUESTS).build());
   }
 
   /**
@@ -245,7 +243,7 @@ public class SubmissionController {
     try {
       if (!tanVerifier.verifyTan(tan)) {
         submissionMonitor.incrementInvalidTanRequestCounter();
-        deferredResult.setResult(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
+        deferredResult.setResult(ResponseEntity.status(FORBIDDEN).build());
       } else {
         final BodyBuilder response = ResponseEntity.ok();
         extractAndStoreDiagnosisKeys(payload, response);
@@ -260,17 +258,18 @@ public class SubmissionController {
             .header(CWA_SAVED_CHECKINS_HEADER, valueOf(checkinsStorageResult.getNumberOfSavedCheckins()));
         deferredResult.setResult(response.build());
       }
-    } catch (RetryableException e) {
+    } catch (final RetryableException e) {
       logger.error("Verification Service could not be reached after retry mechanism.", e);
       deferredResult.setErrorResult(e);
-    } catch (FeignException e) {
+    } catch (final FeignException e) {
       logger.error("Verification Service could not be reached.", e);
       deferredResult.setErrorResult(e);
     } catch (final DiagnosisKeyExistsAlreadyException e) {
       logger.warn(SECURITY, "Self-Report contains already persisted keys - {}",
           new PrintableSubmissionPayload(payload));
-      return badRequest("KEYS_ALREADY_EXIST");
-    } catch (Exception e) {
+      deferredResult
+          .setResult(ResponseEntity.status(BAD_REQUEST).header("cwa-error-code", "KEYS_ALREADY_EXIST").build());
+    } catch (final Exception e) {
       logger.error(e.getLocalizedMessage(), e);
       deferredResult.setErrorResult(e);
     } finally {
