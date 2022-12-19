@@ -241,12 +241,22 @@ public class SubmissionController {
     StopWatch stopWatch = new StopWatch();
     stopWatch.start();
     try {
+      final BodyBuilder response = ResponseEntity.ok();
+      final Collection<DiagnosisKey> diagnosisKeys = extractValidDiagnosisKeysFromPayload(
+          enhanceWithDefaultValuesIfMissing(payload), response);
+
+      if (isSelfReport(payload) && diagnosisKeyService.exists(diagnosisKeys)) {
+        logger.warn(SECURITY, "Self-Report contains already persisted keys - {}",
+            new PrintableSubmissionPayload(payload));
+        deferredResult
+            .setResult(ResponseEntity.status(BAD_REQUEST).header("cwa-error-code", "KEYS_ALREADY_EXIST").build());
+      }
+
       if (!tanVerifier.verifyTan(tan)) {
         submissionMonitor.incrementInvalidTanRequestCounter();
         deferredResult.setResult(ResponseEntity.status(FORBIDDEN).build());
       } else {
-        final BodyBuilder response = ResponseEntity.ok();
-        extractAndStoreDiagnosisKeys(payload, response);
+        saveDiagnosisKeys(diagnosisKeys);
 
         CheckinsStorageResult checkinsStorageResult = eventCheckinFacade.extractAndStoreCheckins(payload);
 
@@ -264,11 +274,6 @@ public class SubmissionController {
     } catch (final FeignException e) {
       logger.error("Verification Service could not be reached.", e);
       deferredResult.setErrorResult(e);
-    } catch (final DiagnosisKeyExistsAlreadyException e) {
-      logger.warn(SECURITY, "Self-Report contains already persisted keys - {}",
-          new PrintableSubmissionPayload(payload));
-      deferredResult
-          .setResult(ResponseEntity.status(BAD_REQUEST).header("cwa-error-code", "KEYS_ALREADY_EXIST").build());
     } catch (final Exception e) {
       logger.error(e.getLocalizedMessage(), e);
       deferredResult.setErrorResult(e);
@@ -279,24 +284,12 @@ public class SubmissionController {
     return deferredResult;
   }
 
-  private void extractAndStoreDiagnosisKeys(final SubmissionPayload submissionPayload, final BodyBuilder response)
-      throws DiagnosisKeyExistsAlreadyException {
-    final Collection<DiagnosisKey> diagnosisKeys = extractValidDiagnosisKeysFromPayload(
-        enhanceWithDefaultValuesIfMissing(submissionPayload), response);
-
-    if (isSelfReport(submissionPayload) && diagnosisKeyService.exists(diagnosisKeys)) {
-      throw new DiagnosisKeyExistsAlreadyException();
-    }
-
-    for (final DiagnosisKey diagnosisKey : diagnosisKeys) {
-      mapTrasmissionRiskValue(diagnosisKey);
+  private void saveDiagnosisKeys(final Collection<DiagnosisKey> diagnosisKeys) {
+    for (final DiagnosisKey key : diagnosisKeys) {
+      // TRL mapping
+      key.setTransmissionRiskLevel(trlDerivations.mapFromTrlSubmittedToTrlToStore(key.getTransmissionRiskLevel()));
     }
     diagnosisKeyService.saveDiagnosisKeys(padDiagnosisKeys(diagnosisKeys));
-  }
-
-  private void mapTrasmissionRiskValue(DiagnosisKey diagnosisKey) {
-    diagnosisKey.setTransmissionRiskLevel(
-        trlDerivations.mapFromTrlSubmittedToTrlToStore(diagnosisKey.getTransmissionRiskLevel()));
   }
 
   private Collection<DiagnosisKey> extractValidDiagnosisKeysFromPayload(final SubmissionPayload submissionPayload,
