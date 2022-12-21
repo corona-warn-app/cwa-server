@@ -8,11 +8,16 @@ import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.Trend;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.TrendSemantic;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard.Builder;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStringObject;
 import java.util.List;
 import java.util.Optional;
 
 public class FirstVaccinationCardFactory extends HeaderCardFactory {
+
+  public FirstVaccinationCardFactory(final DistributionServiceConfig config) {
+    super(config);
+  }
 
   @Override
   protected int getCardId() {

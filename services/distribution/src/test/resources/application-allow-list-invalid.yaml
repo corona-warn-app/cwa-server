@@ -224,7 +224,7 @@ spring:
     mixed: true
   datasource:
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
-    url: jdbc:tc:postgresql:11.8:///cwa?TC_TMPFS=/testtmpfs:rw?TC_INITSCRIPT=file:src/test/java/V0__init_db.sql
+    url: jdbc:tc:postgresql:11.5:///cwa?TC_TMPFS=/testtmpfs:rw?TC_INITSCRIPT=file:src/test/java/V0__init_db.sql
   test:
     database:
       # Use datasource as defined above.

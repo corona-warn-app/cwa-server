@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.submission.validation;
 
+import static app.coronawarn.server.services.submission.controller.SubmissionController.SECURITY;
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
@@ -17,8 +18,6 @@ import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 
 @SuppressWarnings("deprecation")
 @Target(PARAMETER)
@@ -58,7 +57,6 @@ public @interface ValidSubmissionOnBehalfPayload {
     private final EventCheckinDataValidator eventCheckInValidator;
     private final EventCheckInProtectedReportsValidator eventCheckInProtectedReportsValidator;
     private static final Logger logger = LoggerFactory.getLogger(ValidSubmissionOnBehalfPayload.class);
-    private static final Marker SECURITY = MarkerFactory.getMarker("SECURITY");
 
     public ValidSubmissionOnBehalfPayloadValidator(EventCheckinDataValidator eventCheckinValidator,
         EventCheckInProtectedReportsValidator eventCheckInProtectedReportsValidator) {

@@ -1,9 +1,13 @@
 package app.coronawarn.server.services.submission.verification;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 import app.coronawarn.server.common.federation.client.hostname.HostnameVerifierProvider;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.Client.Ssl;
+import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.FeignRetry;
 import feign.Client;
+import feign.Retryer;
 import feign.httpclient.ApacheHttpClient;
 import java.io.File;
 import java.io.IOException;
@@ -28,39 +32,36 @@ public class CloudFeignClientProvider {
   private final File trustStore;
   private final String trustStorePassword;
 
+  private final FeignRetry retry;
+
   private final HostnameVerifierProvider hostnameVerifierProvider;
 
   /**
    * Creates a {@link CloudFeignClientProvider} that provides feign clients with fixed key and trust material.
    *
-   * @param config config attributes of {@link SubmissionServiceConfig}
+   * @param config                   config attributes of {@link SubmissionServiceConfig}
    * @param hostnameVerifierProvider provider {@link SubmissionServiceConfig}
    */
-  public CloudFeignClientProvider(SubmissionServiceConfig config, HostnameVerifierProvider hostnameVerifierProvider) {
-    Ssl sslConfig = config.getClient().getSsl();
-    this.keyStore = sslConfig.getKeyStore();
-    this.keyStorePassword = sslConfig.getKeyStorePassword();
-    this.keyPassword = sslConfig.getKeyPassword();
-    this.trustStore = sslConfig.getTrustStore();
-    this.trustStorePassword = sslConfig.getTrustStorePassword();
-    this.connectionPoolSize = config.getConnectionPoolSize();
+  public CloudFeignClientProvider(final SubmissionServiceConfig config,
+      final HostnameVerifierProvider hostnameVerifierProvider) {
+    final Ssl sslConfig = config.getClient().getSsl();
+    keyStore = sslConfig.getKeyStore();
+    keyStorePassword = sslConfig.getKeyStorePassword();
+    keyPassword = sslConfig.getKeyPassword();
+    trustStore = sslConfig.getTrustStore();
+    trustStorePassword = sslConfig.getTrustStorePassword();
+    connectionPoolSize = config.getConnectionPoolSize();
     this.hostnameVerifierProvider = hostnameVerifierProvider;
+    retry = config.getFeignRetry();
+  }
+
+  @Bean
+  public ApacheHttpClientConnectionManagerFactory createConnectionManager() {
+    return new DefaultApacheHttpClientConnectionManagerFactory();
   }
 
   public Client createFeignClient() {
     return new ApacheHttpClient(createHttpClientFactory().createBuilder().build());
-  }
-
-  private SSLContext getSslContext() {
-    try {
-      return SSLContextBuilder
-          .create()
-          .loadKeyMaterial(this.keyStore, this.keyStorePassword.toCharArray(), this.keyPassword.toCharArray())
-          .loadTrustMaterial(this.trustStore, this.trustStorePassword.toCharArray())
-          .build();
-    } catch (IOException | GeneralSecurityException e) {
-      throw new RuntimeException(e);
-    }
   }
 
   /**
@@ -71,14 +72,31 @@ public class CloudFeignClientProvider {
   @Bean
   public ApacheHttpClientFactory createHttpClientFactory() {
     return new DefaultApacheHttpClientFactory(HttpClientBuilder.create()
-        .setMaxConnPerRoute(this.connectionPoolSize)
-        .setMaxConnTotal(this.connectionPoolSize)
+        .setMaxConnPerRoute(connectionPoolSize)
+        .setMaxConnTotal(connectionPoolSize)
         .setSSLContext(getSslContext())
         .setSSLHostnameVerifier(hostnameVerifierProvider.createHostnameVerifier()));
   }
 
+  private SSLContext getSslContext() {
+    try {
+      return SSLContextBuilder
+          .create()
+          .loadKeyMaterial(keyStore, keyStorePassword.toCharArray(), keyPassword.toCharArray())
+          .loadTrustMaterial(trustStore, trustStorePassword.toCharArray())
+          .build();
+    } catch (final IOException | GeneralSecurityException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  /**
+   * Creates new {@link Retryer} with {@link #retry} values.
+   * 
+   * @return {@link Retryer} with {@link #retry} values.
+   */
   @Bean
-  public ApacheHttpClientConnectionManagerFactory createConnectionManager() {
-    return new DefaultApacheHttpClientConnectionManagerFactory();
+  public Retryer retryer() {
+    return new Retryer.Default(retry.getPeriod(), SECONDS.toMillis(retry.getMaxPeriod()), retry.getMaxAttempts());
   }
 }

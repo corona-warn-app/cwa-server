@@ -22,6 +22,8 @@ services:
     output-file-name-v2: index-v2
     # The number of days to retain diagnosis keys and trace time warnings for both database persistency layer and files stored on the object store.
     retention-days: 14
+    # The number of days to keep 'submisson_type' records in 'self_report_submissions' table.
+    srs-type-statistics-days: ${SRS_TYPE_STATISTICS_DAYS:400}
     # The number of days for diagnosis keys (based upon submission timestamp) to publish on CDN.
     days-to-publish: ${DAYS_TO_PUBLISH:10}
     # The number of minutes that diagnosis keys must have been expired for (since the end of the rolling interval window) before they can be distributed.
@@ -38,7 +40,7 @@ services:
     eu-package-name: EUR
     # Indicates whether the shifting and expiry policies are applied to all supported countries during distribution.
     apply-policies-for-all-countries: false
-    card-id-sequence: ${STATS_CARD_ID_SEQUENCE:[12,999,10,2,8,9,1,3,4,5,6,11,7]}
+    card-id-sequence: ${STATS_CARD_ID_SEQUENCE:[13,12,999,10,2,8,9,1,3,4,5,6,11,7]}
     # Local paths, that are used during the export creation.
     connection-pool-size: 200
     default-archive-name: export.bin
@@ -118,6 +120,7 @@ services:
       endpoint: ${STATISTICS_FILE_S3_ENDPOINT:}
       bucket: ${STATISTICS_FILE_S3_BUCKET:obs-cwa-public-dev}
       pandemic-radar-url: ${STATISTICS_PANDEMIC_RADAR_URL:https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Situationsberichte/COVID-19-Trends/COVID-19-Trends.html?__blob=publicationFile#/home}
+      pandemic-radar-bmg-url: ${STATISTICS_PANDEMIC_RADAR_BMG_URL:https://corona-pandemieradar.de/:lang}
 
     app-features:
       - label: unencrypted-checkins-enabled
@@ -206,6 +209,13 @@ services:
         require-cts-profile-match: ${PPA_PPAC_REQUIRE_CTS_PROFILE_MATCH:false}
         require-evaluation-type-basic: ${PPA_PPAC_REQUIRE_EVALUATION_TYPE_BASIC:false}
         require-evaluation-type-hardware-backed: ${PPA_PPAC_REQUIRE_EVALUATION_TYPE_HARDWARE_BACKED:false}
+      srs-time-since-onboarding-in-hours: ${SRS_TIME_SINCE_ONBOARDING_IN_HOURS:48}
+      srs-time-between-submissions-in-days: ${SRS_TIME_BETWEEN_SUBMISSIONS_IN_DAYS:90}
+      android-srs-ppac-parameters:
+        require-basic-integrity: ${SRS_PPAC_REQUIRE_BASIC_INTEGRITY:false}
+        require-cts-profile-match: ${SRS_PPAC_REQUIRE_CTS_PROFILE_MATCH:false}
+        require-evaluation-type-basic: ${SRS_PPAC_REQUIRE_EVALUATION_TYPE_BASIC:false}
+        require-evaluation-type-hardware-backed: ${SRS_PPAC_REQUIRE_EVALUATION_TYPE_HARDWARE_BACKED:false}
     ios-qr-code-poster-template:
       published-archive-name: qr_code_poster_template_ios
       template: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_FILE:}

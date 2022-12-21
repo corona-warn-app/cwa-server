@@ -10,35 +10,36 @@ import java.util.List;
 
 public class PrintableSubmissionPayload {
 
-  private final String origin;
-  private final ProtocolStringList visitedCountries;
-  private final boolean consentToFederation;
-  private final ByteString padding;
-  private final List<TemporaryExposureKey> keys;
-
-  static final String ORIGIN_MESSAGE = " payload origin: ";
-  static final String VISITED_COUNTRIES_MESSAGE = " visited_countries: ";
   static final String CONSENT_MESSAGE = " consent_to_federation: ";
+  static final String ORIGIN_MESSAGE = " payload origin: ";
   static final String PADDING_MESSAGE = " with padding_size: ";
+  static final String VISITED_COUNTRIES_MESSAGE = " visited_countries: ";
+  private final boolean consentToFederation;
+  private final List<TemporaryExposureKey> keys;
+  private final String origin;
+  private final ByteString padding;
+  private final String submissionType;
+  private final ProtocolStringList visitedCountries;
 
   /**
    * Creates a printable Version of SubmissionPayload the logger can work with.
-   * 
+   *
    * @param submissionPayload SubmissionPayload which shall be made printable
    */
-  public PrintableSubmissionPayload(SubmissionPayload submissionPayload) {
+  public PrintableSubmissionPayload(final SubmissionPayload submissionPayload) {
     origin = submissionPayload.getOrigin();
     visitedCountries = submissionPayload.getVisitedCountriesList();
     consentToFederation = submissionPayload.getConsentToFederation();
     padding = submissionPayload.getRequestPadding();
     keys = submissionPayload.getKeysList();
+    submissionType = submissionPayload.getSubmissionType().name();
   }
 
   @Override
   public String toString() {
-    StringBuilder stringBuilder = new StringBuilder();
-
+    final StringBuilder stringBuilder = new StringBuilder();
     stringBuilder
+        .append("submission type: ").append(submissionType)
         .append(ORIGIN_MESSAGE).append(origin)
         .append(VISITED_COUNTRIES_MESSAGE).append(visitedCountries)
         .append(CONSENT_MESSAGE).append(consentToFederation)
@@ -48,7 +49,7 @@ public class PrintableSubmissionPayload {
     } else {
       stringBuilder.append(" " + keys.size() + " keys: ");
     }
-    for (TemporaryExposureKey key : keys) {
+    for (final TemporaryExposureKey key : keys) {
       stringBuilder
           .append("{")
           .append("data: HIDDEN")
@@ -60,5 +61,4 @@ public class PrintableSubmissionPayload {
     }
     return stringBuilder.toString();
   }
-
 }

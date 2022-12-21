@@ -1,10 +1,13 @@
 package app.coronawarn.server.services.submission.controller;
 
 import static app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification.TEN_MINUTE_INTERVAL_DERIVATION;
+import static app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType.SUBMISSION_TYPE_SRS_SELF_TEST;
+import static app.coronawarn.server.services.submission.controller.RequestExecutor.buildSrsHeader;
+import static app.coronawarn.server.services.submission.controller.SubmissionController.CWA_KEYS_TRUNCATED_HEADER;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.VALID_KEY_DATA_1;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.VALID_KEY_DATA_2;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeys;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildKeyWithFutureInterval;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeys;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeysWithoutDSOS;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeysWithoutDSOSAndTRL;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeysWithoutTRL;
@@ -16,8 +19,11 @@ import static app.coronawarn.server.services.submission.controller.SubmissionPay
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithTooLargePadding;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithVisitedCountries;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithoutOriginCountry;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildSrsPayload;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildTemporaryExposureKey;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.createRollingStartIntervalNumber;
+import static java.lang.String.valueOf;
+import static java.time.LocalDateTime.ofInstant;
 import static java.time.ZoneOffset.UTC;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,6 +41,7 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.TOO_MANY_REQUESTS;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
@@ -48,10 +55,10 @@ import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import app.coronawarn.server.services.submission.checkins.EventCheckinDataValidatorTest;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
+import app.coronawarn.server.services.submission.verification.SrsOtpVerifier;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import com.google.protobuf.ByteString;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -77,7 +84,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.test.annotation.DirtiesContext;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -85,6 +92,34 @@ import org.springframework.test.annotation.DirtiesContext;
 @TestInstance(Lifecycle.PER_CLASS)
 @SuppressWarnings({ "unchecked", "deprecation" })
 class SubmissionControllerTest {
+
+  public static SubmissionPayload buildPayloadWithInvalidKey() {
+    final TemporaryExposureKey invalidKey = buildTemporaryExposureKey(VALID_KEY_DATA_1,
+        createRollingStartIntervalNumber(2), 999, ReportType.CONFIRMED_TEST, 1);
+    return buildPayload(invalidKey);
+  }
+
+  private static Stream<Arguments> createDeniedHttpMethods() {
+    return Arrays.stream(HttpMethod.values()).filter(method -> method != HttpMethod.POST)
+        .filter(method -> method != HttpMethod.PATCH) /* not supported by Rest Template */
+        .map(Arguments::of);
+  }
+
+  private static Stream<Arguments> createIncompleteHeaders() {
+    return Stream.of(Arguments.of(HttpHeaderBuilder.builder().build()),
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().build()),
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().withoutCwaFake().build()),
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().cwaAuth().build()));
+  }
+
+  private static Stream<Arguments> invalidVisitedCountries() {
+    return Stream.of(Arguments.of(List.of("")), Arguments.of(List.of("D")), Arguments.of(List.of("FRE")),
+        Arguments.of(List.of("DE", "XX")), Arguments.of(List.of("DE", "FRE")));
+  }
+
+  private static Stream<Arguments> validVisitedCountries() {
+    return Stream.of(Arguments.of(List.of("DE")), Arguments.of(List.of("DE", "FR")));
+  }
 
   @MockBean
   private DiagnosisKeyService diagnosisKeyService;
@@ -95,9 +130,11 @@ class SubmissionControllerTest {
   @MockBean
   private FakeDelayManager fakeDelayManager;
 
-
   @MockBean
   private TanVerifier tanVerifier;
+
+  @MockBean
+  private SrsOtpVerifier srsOtpVerifier;
 
   @Autowired
   private RequestExecutor executor;
@@ -107,15 +144,6 @@ class SubmissionControllerTest {
 
   @Autowired
   private TraceTimeIntervalWarningRepository traceTimeIntervalWarningRepository;
-
-
-  @BeforeEach
-  public void setUpMocks() {
-    traceTimeIntervalWarningRepository.deleteAll();
-    when(tanVerifier.verifyTan(anyString())).thenReturn(true);
-    when(fakeDelayManager.getJitteredFakeDelay()).thenReturn(1000L);
-  }
-
 
   private void assertDSOSCorrectlyComputedFromTRL(final SubmissionServiceConfig config,
       final Collection<TemporaryExposureKey> submittedTEKs, final Collection<DiagnosisKey> diagnosisKeys) {
@@ -168,7 +196,7 @@ class SubmissionControllerTest {
 
   private void assertTraceWarningsHaveBeenSaved(final int numberOfExpectedWarningsSaved) {
     final List<TraceTimeIntervalWarning> storedTimeIntervalWarnings = StreamSupport
-        .stream(traceTimeIntervalWarningRepository.findAll().spliterator(), false).collect(Collectors.toList());
+        .stream(traceTimeIntervalWarningRepository.findAll().spliterator(), false).toList();
     assertEquals(numberOfExpectedWarningsSaved, storedTimeIntervalWarnings.size());
   }
 
@@ -183,34 +211,19 @@ class SubmissionControllerTest {
     });
   }
 
-  private TemporaryExposureKey createOutdatedKey() {
-    return TemporaryExposureKey.newBuilder().setKeyData(ByteString.copyFromUtf8(VALID_KEY_DATA_2))
-        .setRollingStartIntervalNumber(createRollingStartIntervalNumber(config.getRetentionDays() + 1))
-        .setRollingPeriod(DiagnosisKey.MAX_ROLLING_PERIOD).setTransmissionRiskLevel(5).build();
-  }
-
-  private DiagnosisKey findDiagnosisKeyMatch(final TemporaryExposureKey temporaryExposureKey,
-      final Collection<DiagnosisKey> diagnosisKeys) {
-    return diagnosisKeys.stream()
-        .filter(
-            diagnosisKey -> temporaryExposureKey.getKeyData().equals(ByteString.copyFrom(diagnosisKey.getKeyData())))
-        .findFirst().orElseThrow();
-  }
-
-
   @ParameterizedTest
   @MethodSource("createIncompleteHeaders")
   void badRequestIfCwaHeadersMissing(final HttpHeaders headers) {
-    final ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithOneKey(), headers);
+    final var response = executor.executePost(buildPayloadWithOneKey(), headers);
 
     verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
-    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+    assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
   @Test
   void check400ResponseStatusForInvalidKeys() {
-    final ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithInvalidKey());
-    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+    final var response = executor.executePost(buildPayloadWithInvalidKey());
+    assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
   /**
@@ -224,7 +237,6 @@ class SubmissionControllerTest {
   void checkDSOSIsPersistedForKeysWithTRLOnly() {
     final Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeysWithoutDSOS(config);
     final ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
-
     final SubmissionPayload submissionPayload = buildPayload(submittedKeys);
     executor.executePost(submissionPayload);
 
@@ -244,7 +256,7 @@ class SubmissionControllerTest {
   void checkErrorIsThrownWhenKeysAreMissingDSOSAndTRL() {
     final Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeysWithoutDSOSAndTRL(config);
     final SubmissionPayload submissionPayload = buildPayload(submittedKeys);
-    final ResponseEntity<Void> response = executor.executePost(submissionPayload);
+    final var response = executor.executePost(submissionPayload);
     assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
@@ -286,14 +298,14 @@ class SubmissionControllerTest {
 
   @Test
   void checkResponseStatusForValidParameters() {
-    final ResponseEntity<Void> actResponse = executor.executePost(buildPayload(buildMultipleKeys(config)));
-    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+    final var response = executor.executePost(buildPayload(buildMultipleKeys(config)));
+    assertThat(response.getStatusCode()).isEqualTo(OK);
   }
 
   @Test
   void checkResponseStatusForValidParametersWithPadding() {
-    final ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithPadding(buildMultipleKeys(config)));
-    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+    final var response = executor.executePost(buildPayloadWithPadding(buildMultipleKeys(config)));
+    assertThat(response.getStatusCode()).isEqualTo(OK);
   }
 
   @Test
@@ -330,15 +342,29 @@ class SubmissionControllerTest {
     assertTRLCorrectlyComputedFromDSOS(config, submittedKeys, values);
   }
 
+  private TemporaryExposureKey createOutdatedKey() {
+    return TemporaryExposureKey.newBuilder().setKeyData(ByteString.copyFromUtf8(VALID_KEY_DATA_2))
+        .setRollingStartIntervalNumber(createRollingStartIntervalNumber(config.getRetentionDays() + 1))
+        .setRollingPeriod(DiagnosisKey.MAX_ROLLING_PERIOD).setTransmissionRiskLevel(5).build();
+  }
+
+  private DiagnosisKey findDiagnosisKeyMatch(final TemporaryExposureKey temporaryExposureKey,
+      final Collection<DiagnosisKey> diagnosisKeys) {
+    return diagnosisKeys.stream()
+        .filter(
+            diagnosisKey -> temporaryExposureKey.getKeyData().equals(ByteString.copyFrom(diagnosisKey.getKeyData())))
+        .findFirst().orElseThrow();
+  }
+
   @Test
   void invalidTanHandling() {
     when(tanVerifier.verifyTan(anyString())).thenReturn(false);
 
-    final ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithOneKey());
+    final var response = executor.executePost(buildPayloadWithOneKey());
 
     verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
     verify(fakeDelayManager, times(1)).updateFakeRequestDelay(anyLong());
-    assertThat(actResponse.getStatusCode()).isEqualTo(FORBIDDEN);
+    assertThat(response.getStatusCode()).isEqualTo(FORBIDDEN);
   }
 
   @Test
@@ -354,6 +380,14 @@ class SubmissionControllerTest {
     verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
     submittedKeys.remove(outdatedKey);
     assertSubmissionPayloadKeysCorrespondToEachOther(submittedKeys, argument.getValue(), submissionPayload);
+  }
+
+  @BeforeEach
+  public void setUpMocks() {
+    traceTimeIntervalWarningRepository.deleteAll();
+    when(tanVerifier.verifyTan(anyString())).thenReturn(true);
+    when(srsOtpVerifier.verifyTan(anyString())).thenReturn(true);
+    when(fakeDelayManager.getJitteredFakeDelay()).thenReturn(1000L);
   }
 
   @Test
@@ -408,9 +442,9 @@ class SubmissionControllerTest {
 
   @Test
   void submmissionPayloadWithInvalidIntervalItemsIsFilteredCorrectly() {
-    int daysIntoTheFuture = 5;
+    final int daysIntoTheFuture = 5;
     final Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeys(config);
-    TemporaryExposureKey futureKey = buildKeyWithFutureInterval(daysIntoTheFuture);
+    final TemporaryExposureKey futureKey = buildKeyWithFutureInterval(daysIntoTheFuture);
     submittedKeys.add(futureKey);
     final ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
 
@@ -419,26 +453,50 @@ class SubmissionControllerTest {
     executor.executePost(submissionPayload);
 
     verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
-    Collection<DiagnosisKey> savedDiagnosisKeys = argument.getValue();
-    int expectedNumberofSavedKeys = (submittedKeys.size()-1) * config.getRandomKeyPaddingMultiplier();
+    final Collection<DiagnosisKey> savedDiagnosisKeys = argument.getValue();
+    final int expectedNumberofSavedKeys = (submittedKeys.size() - 1) * config.getRandomKeyPaddingMultiplier();
     assertThat(savedDiagnosisKeys).hasSize(expectedNumberofSavedKeys);
-    assertThat(savedDiagnosisKeys.stream().anyMatch(diagnosisKey -> diagnosisKey.getRollingStartIntervalNumber() == futureKey.getRollingStartIntervalNumber()) == false);
+    assertThat(savedDiagnosisKeys.stream().anyMatch(
+        diagnosisKey -> diagnosisKey.getRollingStartIntervalNumber() == futureKey.getRollingStartIntervalNumber()))
+            .isFalse();
+  }
+
+  @Test
+  void testCheckinDataHeadersAreCorrectlyFilled() {
+    final Integer daysInThePast = config.getAcceptedEventDateThresholdDays() + 1;
+    final Instant thisInstant = Instant.now();
+    final long eventCheckoutInThePast = ofInstant(thisInstant, UTC).minusDays(daysInThePast).toEpochSecond(UTC);
+    final long eventCheckinInThePast = ofInstant(thisInstant, UTC).minusDays(daysInThePast + 1).toEpochSecond(UTC);
+    final long eventCheckinInAllowedPeriod = ofInstant(Instant.now(), UTC).minusDays(10).toEpochSecond(UTC);
+
+    final List<CheckIn> checkins = List
+        .of(CheckIn.newBuilder().setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast))
+            .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast))
+            .setTransmissionRiskLevel(1).setLocationId(EventCheckinDataValidatorTest.CORRECT_LOCATION_ID).build(),
+            CheckIn.newBuilder().setTransmissionRiskLevel(3)
+                .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInAllowedPeriod))
+                .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInAllowedPeriod) + 10)
+                .setLocationId(EventCheckinDataValidatorTest.CORRECT_LOCATION_ID).build());
+
+    final var response = executor.executePost(buildPayloadWithCheckinData(checkins));
+    assertThat(response.getStatusCode()).isEqualTo(OK);
+    assertThat(response.getHeaders().get("cwa-filtered-checkins")).contains("1", Index.atIndex(0));
+    assertThat(response.getHeaders().get("cwa-saved-checkins")).contains("2", Index.atIndex(0));
   }
 
   @Test
   void testCheckinDataIsFilteredForFutureEvents() {
     final Instant thisInstant = Instant.now();
-    final long eventCheckinInTheFuture = LocalDateTime.ofInstant(thisInstant, UTC).plusMinutes(11).toEpochSecond(UTC);
-    final long eventCheckoutInTheFuture = LocalDateTime.ofInstant(thisInstant, UTC).plusMinutes(20)
-        .toEpochSecond(UTC);
+    final long eventCheckinInTheFuture = ofInstant(thisInstant, UTC).plusMinutes(11).toEpochSecond(UTC);
+    final long eventCheckoutInTheFuture = ofInstant(thisInstant, UTC).plusMinutes(20).toEpochSecond(UTC);
 
     final List<CheckIn> checkins = List
         .of(CheckIn.newBuilder().setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheFuture))
             .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInTheFuture))
             .setTransmissionRiskLevel(3).setLocationId(EventCheckinDataValidatorTest.CORRECT_LOCATION_ID).build());
 
-    final ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithCheckinData(checkins));
-    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+    final var response = executor.executePost(buildPayloadWithCheckinData(checkins));
+    assertThat(response.getStatusCode()).isEqualTo(OK);
     assertTraceWarningsHaveBeenSaved(0);
   }
 
@@ -446,51 +504,22 @@ class SubmissionControllerTest {
   void testCheckinDataIsFilteredForOldEvents() {
     final Integer daysInThePast = config.getAcceptedEventDateThresholdDays() + 1;
     final Instant thisInstant = Instant.now();
-    final long eventCheckoutInThePast = LocalDateTime.ofInstant(thisInstant, UTC).minusDays(daysInThePast)
-        .toEpochSecond(UTC);
-    final long eventCheckinInThePast = LocalDateTime.ofInstant(thisInstant, UTC).minusDays(daysInThePast + 1)
-        .toEpochSecond(UTC);
+    final long eventCheckoutInThePast = ofInstant(thisInstant, UTC).minusDays(daysInThePast).toEpochSecond(UTC);
+    final long eventCheckinInThePast = ofInstant(thisInstant, UTC).minusDays(daysInThePast + 1).toEpochSecond(UTC);
 
     final List<CheckIn> checkins = List
         .of(CheckIn.newBuilder().setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast))
             .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast))
             .setTransmissionRiskLevel(1).setLocationId(EventCheckinDataValidatorTest.CORRECT_LOCATION_ID).build());
 
-    final ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithCheckinData(checkins));
-    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+    final var response = executor.executePost(buildPayloadWithCheckinData(checkins));
+    assertThat(response.getStatusCode()).isEqualTo(OK);
     assertTraceWarningsHaveBeenSaved(0);
   }
 
   @Test
-  void testCheckinDataHeadersAreCorrectlyFilled() {
-    final Integer daysInThePast = config.getAcceptedEventDateThresholdDays() + 1;
-    final Instant thisInstant = Instant.now();
-    final long eventCheckoutInThePast = LocalDateTime.ofInstant(thisInstant, UTC).minusDays(daysInThePast)
-        .toEpochSecond(UTC);
-    final long eventCheckinInThePast = LocalDateTime.ofInstant(thisInstant, UTC).minusDays(daysInThePast + 1)
-        .toEpochSecond(UTC);
-
-    final long eventCheckinInAllowedPeriod = LocalDateTime.ofInstant(Instant.now(), UTC).minusDays(10)
-        .toEpochSecond(UTC);
-
-    final List<CheckIn> checkins = List
-        .of(CheckIn.newBuilder().setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast))
-                .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast))
-                .setTransmissionRiskLevel(1).setLocationId(EventCheckinDataValidatorTest.CORRECT_LOCATION_ID).build(),
-            CheckIn.newBuilder().setTransmissionRiskLevel(3)
-                .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInAllowedPeriod))
-                .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInAllowedPeriod) + 10)
-                .setLocationId(EventCheckinDataValidatorTest.CORRECT_LOCATION_ID).build());
-
-    final ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithCheckinData(checkins));
-    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
-    assertThat(actResponse.getHeaders().get("cwa-filtered-checkins")).contains("1", Index.atIndex(0));
-    assertThat(actResponse.getHeaders().get("cwa-saved-checkins")).contains("2", Index.atIndex(0));
-  }
-
-  @Test
   void testCheckinDataIsFilteredForTransmissionRiskLevel() {
-    final long eventCheckinInThePast = LocalDateTime.ofInstant(Instant.now(), UTC).minusDays(10).toEpochSecond(UTC);
+    final long eventCheckinInThePast = ofInstant(Instant.now(), UTC).minusDays(10).toEpochSecond(UTC);
 
     // both trls below are mapped to zero in the persistence/trl-value-mapping.yaml
     final List<CheckIn> invalidCheckinData = List.of(
@@ -503,16 +532,15 @@ class SubmissionControllerTest {
             .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast) + 22)
             .setLocationId(EventCheckinDataValidatorTest.CORRECT_LOCATION_ID).build());
 
-    final ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithCheckinData(invalidCheckinData));
-    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+    final var response = executor.executePost(buildPayloadWithCheckinData(invalidCheckinData));
+    assertThat(response.getStatusCode()).isEqualTo(OK);
     assertTraceWarningsHaveBeenSaved(0);
   }
 
   @Test
   void testEmptyOriginCountrySubmissionPayload() {
-    final ResponseEntity<Void> actResponse = executor
-        .executePost(buildPayloadForOriginCountry(buildMultipleKeys(config), ""));
-    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+    final var response = executor.executePost(buildPayloadForOriginCountry(buildMultipleKeys(config), ""));
+    assertThat(response.getStatusCode()).isEqualTo(OK);
   }
 
   @Test
@@ -520,23 +548,21 @@ class SubmissionControllerTest {
     final List<CheckIn> invalidCheckinData = List.of(
         CheckIn.newBuilder().setTransmissionRiskLevel(2).setStartIntervalNumber(4).setEndIntervalNumber(3).build());
 
-    final ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithCheckinData(invalidCheckinData));
-    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+    final var response = executor.executePost(buildPayloadWithCheckinData(invalidCheckinData));
+    assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
     assertTraceWarningsHaveBeenSaved(0);
   }
 
   @Test
   void testInvalidOriginCountrySubmissionPayload() {
-    final ResponseEntity<Void> actResponse = executor
-        .executePost(buildPayloadForOriginCountry(buildMultipleKeys(config), "IT"));
-    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+    final var response = executor.executePost(buildPayloadForOriginCountry(buildMultipleKeys(config), "IT"));
+    assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
   @Test
   void testInvalidPaddingSubmissionPayload() {
-    final ResponseEntity<Void> actResponse = executor
-        .executePost(buildPayloadWithTooLargePadding(config, buildMultipleKeys(config)));
-    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+    final var response = executor.executePost(buildPayloadWithTooLargePadding(config, buildMultipleKeys(config)));
+    assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
   @Test
@@ -545,29 +571,72 @@ class SubmissionControllerTest {
         CheckIn.newBuilder().setTransmissionRiskLevel(0).setStartIntervalNumber(1).setEndIntervalNumber(2).build(),
         CheckIn.newBuilder().setTransmissionRiskLevel(4).setStartIntervalNumber(1).setEndIntervalNumber(1).build());
 
-    final ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithCheckinData(invalidCheckinData));
-    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+    final var response = executor.executePost(buildPayloadWithCheckinData(invalidCheckinData));
+    assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
     assertTraceWarningsHaveBeenSaved(0);
   }
 
   @ParameterizedTest
   @MethodSource("invalidVisitedCountries")
   void testInvalidVisitedCountriesSubmissionPayload(final List<String> visitedCountries) {
-    final ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithVisitedCountries(visitedCountries));
-    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+    final var response = executor.executePost(buildPayloadWithVisitedCountries(visitedCountries));
+    assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
   @Test
   void testMissingOriginCountrySubmissionPayload() {
-    final ResponseEntity<Void> actResponse = executor
-        .executePost(buildPayloadWithoutOriginCountry(buildMultipleKeys(config)));
-    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+    final var response = executor.executePost(buildPayloadWithoutOriginCountry(buildMultipleKeys(config)));
+    assertThat(response.getStatusCode()).isEqualTo(OK);
+  }
+
+  /**
+   * @see SubmissionController#extractAndStoreDiagnosisKeys(SubmissionPayload, BodyBuilder)
+   */
+  @Test
+  void testSrsKeysSendTwice() {
+    // fake existing keys
+    when(diagnosisKeyService.exists(any())).thenReturn(true);
+    // send again
+    final var response = executor.executeSrsPost(buildSrsPayload(config, SUBMISSION_TYPE_SRS_SELF_TEST));
+    assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
+  }
+
+  /**
+   * @see SubmissionController#extractValidDiagnosisKeysFromPayload(SubmissionPayload, BodyBuilder)
+   */
+  @Test
+  void testSrsKeysTruncated() {
+    final var response = executor.executeSrsPost(
+        // creates 3 keys around 14 days, which will be filtered and 3 more around the 'srsDays'
+        buildSrsPayload(config, SUBMISSION_TYPE_SRS_SELF_TEST));
+    assertThat(response.getStatusCode()).isEqualTo(OK);
+    assertThat(response.getHeaders()).containsKey(CWA_KEYS_TRUNCATED_HEADER);
+    assertThat(response.getHeaders()).containsEntry(CWA_KEYS_TRUNCATED_HEADER, List.of(valueOf(config.getSrsDays())));
+  }
+
+  /**
+   * @see SubmissionController#submitDiagnosisKey(SubmissionPayload, String, String)
+   */
+  @Test
+  void testTooManySrsPerDay() {
+    var response = executor.executeSrsPost(buildSrsPayload(config, SUBMISSION_TYPE_SRS_SELF_TEST));
+    assertThat(response.getStatusCode()).isEqualTo(OK);
+    when(diagnosisKeyService.countTodaysDiagnosisKeys()).thenReturn(config.getMaxKeysPerDay());
+    response = executor.executeSrsPost(buildSrsPayload(config, SUBMISSION_TYPE_SRS_SELF_TEST));
+    assertThat(response.getStatusCode()).isEqualTo(TOO_MANY_REQUESTS);
+  }
+
+  @Test
+  void testInvalidOtp() {
+    final HttpHeaders headers = buildSrsHeader();
+    headers.set("cwa-otp", "this isn't an UUID");
+    var response = executor.executePost(buildSrsPayload(config, SUBMISSION_TYPE_SRS_SELF_TEST), headers);
+    assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
   @Test
   void testValidCheckinData() {
-
-    final long eventCheckinInThePast = LocalDateTime.ofInstant(Instant.now(), UTC).minusDays(9).toEpochSecond(UTC);
+    final long eventCheckinInThePast = ofInstant(Instant.now(), UTC).minusDays(9).toEpochSecond(UTC);
 
     final List<CheckIn> validCheckinData = List.of(
         CheckIn.newBuilder().setTransmissionRiskLevel(3)
@@ -587,45 +656,16 @@ class SubmissionControllerTest {
             .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast) + 22)
             .setLocationId(EventCheckinDataValidatorTest.CORRECT_LOCATION_ID).build());
 
-    final ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithCheckinData(validCheckinData));
-    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
-    assertTraceWarningsHaveBeenSaved(validCheckinData.size()
-        + validCheckinData.size() * config.getRandomCheckinsPaddingMultiplier());
+    final var response = executor.executePost(buildPayloadWithCheckinData(validCheckinData));
+    assertThat(response.getStatusCode()).isEqualTo(OK);
+    assertTraceWarningsHaveBeenSaved(
+        validCheckinData.size() + validCheckinData.size() * config.getRandomCheckinsPaddingMultiplier());
   }
 
   @ParameterizedTest
   @MethodSource("validVisitedCountries")
   void testValidVisitedCountriesSubmissionPayload(final List<String> visitedCountries) {
-    final ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithVisitedCountries(visitedCountries));
-    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
-  }
-
-
-  public static SubmissionPayload buildPayloadWithInvalidKey() {
-    final TemporaryExposureKey invalidKey = buildTemporaryExposureKey(VALID_KEY_DATA_1,
-        createRollingStartIntervalNumber(2), 999, ReportType.CONFIRMED_TEST, 1);
-    return buildPayload(invalidKey);
-  }
-
-  private static Stream<Arguments> createDeniedHttpMethods() {
-    return Arrays.stream(HttpMethod.values()).filter(method -> method != HttpMethod.POST)
-        .filter(method -> method != HttpMethod.PATCH) /* not supported by Rest Template */
-        .map(Arguments::of);
-  }
-
-  private static Stream<Arguments> createIncompleteHeaders() {
-    return Stream.of(Arguments.of(HttpHeaderBuilder.builder().build()),
-        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().build()),
-        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().withoutCwaFake().build()),
-        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().cwaAuth().build()));
-  }
-
-  private static Stream<Arguments> invalidVisitedCountries() {
-    return Stream.of(Arguments.of(List.of("")), Arguments.of(List.of("D")), Arguments.of(List.of("FRE")),
-        Arguments.of(List.of("DE", "XX")), Arguments.of(List.of("DE", "FRE")));
-  }
-
-  private static Stream<Arguments> validVisitedCountries() {
-    return Stream.of(Arguments.of(List.of("DE")), Arguments.of(List.of("DE", "FR")));
+    final var response = executor.executePost(buildPayloadWithVisitedCountries(visitedCountries));
+    assertThat(response.getStatusCode()).isEqualTo(OK);
   }
 }
