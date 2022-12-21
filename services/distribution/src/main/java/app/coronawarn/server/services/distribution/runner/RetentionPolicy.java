@@ -31,6 +31,8 @@ public class RetentionPolicy implements ApplicationRunner {
 
   private final Integer retentionDays;
 
+  private final int srsTypeStatisticsDays;
+
   private final S3RetentionPolicy s3RetentionPolicy;
 
   private final Integer hourFileRetentionDays;
@@ -57,6 +59,7 @@ public class RetentionPolicy implements ApplicationRunner {
     this.traceTimeIntervalWarningService = traceTimeIntervalWarningService;
     this.applicationContext = applicationContext;
     this.retentionDays = distributionServiceConfig.getRetentionDays();
+    this.srsTypeStatisticsDays = distributionServiceConfig.getSrsTypeStatisticsDays();
     this.hourFileRetentionDays = distributionServiceConfig.getObjectStore().getHourFileRetentionDays();
     this.s3RetentionPolicy = s3RetentionPolicy;
     this.statisticsDownloadService = statisticsDownloadService;
@@ -66,6 +69,7 @@ public class RetentionPolicy implements ApplicationRunner {
   public void run(ApplicationArguments args) {
     try {
       diagnosisKeyService.applyRetentionPolicy(retentionDays);
+      diagnosisKeyService.applySrsRetentionPolicy(srsTypeStatisticsDays);
       traceTimeIntervalWarningService.applyRetentionPolicy(retentionDays);
       s3RetentionPolicy.applyDiagnosisKeyDayRetentionPolicy(retentionDays);
       s3RetentionPolicy.applyDiagnosisKeyHourRetentionPolicy(hourFileRetentionDays);

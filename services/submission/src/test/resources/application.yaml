@@ -19,7 +19,7 @@ spring:
     mixed: true
   datasource:
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
-    url: jdbc:tc:postgresql:11.8:///databasename?TC_TMPFS=/testtmpfs:rw?TC_INITSCRIPT=file:src/test/java/V0__init_db.sql
+    url: jdbc:tc:postgresql:11.5:///databasename?TC_TMPFS=/testtmpfs:rw?TC_INITSCRIPT=file:src/test/java/V0__init_db.sql
   test:
     database:
       replace: none
@@ -28,6 +28,7 @@ services:
     initial-fake-delay-milliseconds: 1
     fake-delay-moving-average-samples: 1
     retention-days: 14
+    srs-days: 7
     random-key-padding-multiplier: 10
     random-checkins-padding-multiplier: 1
     random-checkins-padding-pepper: 0efbb3d683b713857750eec4b042ca1a7c50b5e4
@@ -37,6 +38,7 @@ services:
     max-rolling-period: 144
     min-rolling-period: 1
     unencrypted-checkins-enabled: true
+    max-keys-per-day: 10
     payload:
       max-number-of-keys: 100
       supported-countries: DE,FR,IT
@@ -46,6 +48,9 @@ services:
     verification:
       base-url: http://localhost:1234
       path: /version/v1/tan/verify
+    srs-verify:
+      base-url: http://localhost:1234
+      path: /version/v1/srs
     monitoring:
       batch-size: 5
     client:
@@ -55,13 +60,20 @@ services:
         key-store-password: 123456
         trust-store: ../../docker-compose-test-secrets/contains_efgs_truststore.jks
         trust-store-password: 123456
+    feign-retry:
+      # feign retry waiting time in milliseconds
+      period: ${FEIGN_RETRY_PERIOD:500}
+      # feign total maximum wait time in seconds before feign.RetryableException
+      max-period: ${FEIGN_RETRY_MAX_PERIOD:10}
+      # feign max retry attemps, when reached feign.RetryableException is thrown
+      max-attempts: ${FEIGN_RETRY_MAX_ATTEMPTS:10}
 
 management:
   endpoint:
     health:
       group:
         readiness:
-          include: db, verificationService
+          include: db, verificationService, srsVerifyService
   endpoints:
     web:
       exposure:

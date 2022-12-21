@@ -56,6 +56,8 @@ class RetentionPolicyRunnerTest {
         .applyRetentionPolicy(distributionServiceConfig.getRetentionDays());
     verify(diagnosisKeyService, times(1))
         .applyRetentionPolicy(distributionServiceConfig.getRetentionDays());
+    verify(diagnosisKeyService, times(1))
+        .applySrsRetentionPolicy(distributionServiceConfig.getSrsTypeStatisticsDays());
     verify(traceTimeIntervalWarningService, times(1))
         .applyRetentionPolicy(distributionServiceConfig.getRetentionDays());
     verify(s3RetentionPolicy, times(1))

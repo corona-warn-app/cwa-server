@@ -11,6 +11,7 @@ services:
     output-file-name: index
     output-file-name-v2: index-v2
     retention-days: 14
+    srs-type-statistics-days: 400
     expiry-policy-minutes: 120
     shifting-policy-threshold: 5
     maximum-number-of-keys-per-bundle: 600000
@@ -75,7 +76,8 @@ services:
       secret-key: secretKey
       endpoint: https://localhost
       bucket: ${STATS_S3_BUCKET:obs-cwa-public-dev}
-      pandemic-radar-url: ${STATISTICS_PANDEMIC_RADAR_URL:https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Situationsberichte/COVID-19-Trends/COVID-19-Trends.html?__blob=publicationFile#/home}
+      pandemic-radar-url: https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Situationsberichte/COVID-19-Trends/COVID-19-Trends.html?__blob=publicationFile#/home
+      pandemic-radar-bmg-url: https://corona-pandemieradar.de/:lang
 
     app-features:
       - label: unencrypted-checkins-enabled
@@ -163,7 +165,13 @@ services:
         require-cts-profile-match: false
         require-evaluation-type-basic: false
         require-evaluation-type-hardware-backed: false
-
+      srs-time-since-onboarding-in-hours: 48
+      srs-time-between-submissions-in-days: 90
+      android-srs-ppac-parameters:
+        require-basic-integrity: false
+        require-cts-profile-match: false
+        require-evaluation-type-basic: false
+        require-evaluation-type-hardware-backed: false
     ios-qr-code-poster-template:
       published-archive-name: qr_code_poster_template_ios
       template:
@@ -256,7 +264,7 @@ spring:
     mixed: true
   datasource:
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
-    url: jdbc:tc:postgresql:11.8:///cwa?TC_TMPFS=/testtmpfs:rw?TC_INITSCRIPT=file:src/test/java/V0__init_db.sql
+    url: jdbc:tc:postgresql:11.5:///cwa?TC_TMPFS=/testtmpfs:rw?TC_INITSCRIPT=file:src/test/java/V0__init_db.sql
   test:
     database:
       # Use datasource as defined above.

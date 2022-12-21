@@ -1,12 +1,7 @@
-
-
 package app.coronawarn.server.common.persistence.service.common;
-
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 import javax.validation.ConstraintViolation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,15 +13,13 @@ public class ValidDiagnosisKeyFilter {
   private static final Logger logger = LoggerFactory.getLogger(ValidDiagnosisKeyFilter.class);
 
   /**
-   * Rerturns a subset of diagnosis keys from the given list which have
-   * passed the default entity validation.
+   * Returns a subset of diagnosis keys from the given list which have passed the default entity validation.
    *
    * @param diagnosisKeys list of DiagnosisKey
    * @return list of valid DiagnosisKey
    */
-  public List<DiagnosisKey> filter(List<DiagnosisKey> diagnosisKeys) {
-    List<DiagnosisKey> validDiagnosisKeys =
-        diagnosisKeys.stream().filter(this::isDiagnosisKeyValid).collect(Collectors.toList());
+  public Collection<DiagnosisKey> filter(final Collection<DiagnosisKey> diagnosisKeys) {
+    Collection<DiagnosisKey> validDiagnosisKeys = diagnosisKeys.stream().filter(this::isDiagnosisKeyValid).toList();
 
     int numberOfDiscardedKeys = diagnosisKeys.size() - validDiagnosisKeys.size();
     logger.info("Retrieved {} diagnosis key(s). Discarded {} diagnosis key(s) from the result as invalid.",
@@ -42,16 +35,13 @@ public class ValidDiagnosisKeyFilter {
    * @return boolean value to indicate if the DiagnosisKey is valid
    */
   public boolean isDiagnosisKeyValid(DiagnosisKey diagnosisKey) {
-    Collection<ConstraintViolation<DiagnosisKey>> violations = diagnosisKey.validate();
+    final Collection<ConstraintViolation<DiagnosisKey>> violations = diagnosisKey.validate();
     boolean isValid = violations.isEmpty();
 
     if (!isValid) {
-      List<String> violationMessages =
-          violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toList());
+      final Collection<String> violationMessages = violations.stream().map(ConstraintViolation::getMessage).toList();
       logger.warn("Validation failed for diagnosis key from database. Violations: {}", violationMessages);
     }
-
     return isValid;
   }
-
 }

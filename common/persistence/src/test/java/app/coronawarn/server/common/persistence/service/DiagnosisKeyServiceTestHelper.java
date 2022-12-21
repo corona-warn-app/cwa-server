@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.common.persistence.service;
 
 import static app.coronawarn.server.common.persistence.domain.DiagnosisKey.ROLLING_PERIOD_MINUTES_INTERVAL;
@@ -16,7 +14,8 @@ import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -25,15 +24,13 @@ public class DiagnosisKeyServiceTestHelper {
 
   private static final Random random = new Random();
 
-  public static void assertDiagnosisKeysEqual(List<DiagnosisKey> expKeys,
-      List<DiagnosisKey> actKeys) {
+  public static void assertDiagnosisKeysEqual(Collection<DiagnosisKey> expKeys, Collection<DiagnosisKey> actKeys) {
     assertThat(actKeys).withFailMessage("Cardinality mismatch").hasSameSizeAs(expKeys);
 
-    for (int i = 0; i < expKeys.size(); i++) {
-      var expKey = expKeys.get(i);
-      var actKey = actKeys.get(i);
-
-      assertDiagnosisKeysEqual(expKey, actKey);
+    final Iterator<DiagnosisKey> expIt = expKeys.iterator();
+    final Iterator<DiagnosisKey> actIt = actKeys.iterator();
+    for (; expIt.hasNext() && actIt.hasNext();) {
+      assertDiagnosisKeysEqual(expIt.next(), actIt.next());
     }
   }
 
