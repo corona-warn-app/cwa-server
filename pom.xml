@@ -72,6 +72,7 @@
     <test-containers.version>1.17.6</test-containers.version>
     <postgresql.version>42.5.1</postgresql.version>
     <wiremock.version>2.35.0</wiremock.version>
+    <httpclient.version>4.5.14</httpclient.version>
     <junit.version>4.13.2</junit.version>
     <jupiter.version>5.9.1</jupiter.version>
     <tomcat.version>9.0.70</tomcat.version>
@@ -197,11 +198,6 @@
         <version>${spring-vault-core.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-starter-vault-config</artifactId>
-        <version>${spring-cloud-starter-vault-config.version}</version>
-      </dependency>
-      <dependency>
         <groupId>com.google.protobuf</groupId>
         <artifactId>protobuf-java</artifactId>
         <version>${protobuf.version}</version>
@@ -291,6 +287,11 @@
         <artifactId>guava</artifactId>
         <version>${guava.version}</version>
         <scope>runtime</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient</artifactId>
+        <version>${httpclient.version}</version>
       </dependency>
       <dependency>
         <groupId>com.vdurmont</groupId>
