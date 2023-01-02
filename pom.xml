@@ -77,7 +77,7 @@
     <jupiter.version>5.9.1</jupiter.version>
     <tomcat.version>9.0.70</tomcat.version>
     <findify-s3mock.version>0.2.6</findify-s3mock.version>
-    <checkstyle.version>10.5.0</checkstyle.version>
+    <checkstyle.version>10.6.0</checkstyle.version>
     <semver4j.version>3.1.0</semver4j.version>
     <upokecenter-cbor.version>4.5.2</upokecenter-cbor.version>
     <snakeyaml.version>1.33</snakeyaml.version>
