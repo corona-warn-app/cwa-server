@@ -1,13 +1,16 @@
 package app.coronawarn.server.services.distribution.assembly.component;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.persistence.domain.RevocationEntry;
+import app.coronawarn.server.common.persistence.domain.RevocationEtag;
 import app.coronawarn.server.common.persistence.service.DccRevocationListService;
 import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
@@ -17,12 +20,14 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dcc.DccRevocationListToProtobufMapping;
+import app.coronawarn.server.services.distribution.dcc.FetchDccListException;
 import app.coronawarn.server.services.distribution.dcc.TestDccRevocationClient;
 import app.coronawarn.server.services.distribution.dcc.decode.DccRevocationListDecoder;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.Rule;
@@ -30,6 +35,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
@@ -145,11 +151,17 @@ class DccRevocationListStructureProviderTest {
   @Test
   void coverFetchDccRevocationList() {
     underTest.fetchDccRevocationList();
+    //final RevocationEtag etag = new RevocationEtag("chunk", dccRevocationClient.getETag());
+    //Optional<List<RevocationEntry>> dccRevocationList = dccRevocationClient.getDccRevocationList();
+    //Mockito.verify(dccRevocationListService, Mockito.times(1)).store(dccRevocationList.get());
+    //Mockito.verify(dccRevocationListService, Mockito.times(1)).store(etag);
   }
 
   @Test
   void coverFetchDccRevocationListException() throws Exception {
     doThrow(RuntimeException.class).when(dccRevocationListService).store(anyList());
     underTest.fetchDccRevocationList();
+    assertThatThrownBy(() -> dccRevocationListService.store(anyList()))
+        .isExactlyInstanceOf(RuntimeException.class);
   }
 }

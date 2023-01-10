@@ -91,16 +91,19 @@ class DiagnosisKeyTest {
   @Test
   void testSetTransmissionRiskLevel() {
     diagnosisKey.setTransmissionRiskLevel(0);
+    assertThat(diagnosisKey.getTransmissionRiskLevel()).isEqualTo(0);
   }
 
   @Test
   void testSetReportType() {
     diagnosisKey.setReportType(null);
+    assertThat(diagnosisKey.getReportType()).isEqualTo(null);
   }
 
   @Test
   void testSetDaysSinceOnsetOfSymptoms() {
     diagnosisKey.setDaysSinceOnsetOfSymptoms(0);
+    assertThat(diagnosisKey.getDaysSinceOnsetOfSymptoms()).isEqualTo(0);
   }
 
   @Test
