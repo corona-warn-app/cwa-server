@@ -74,7 +74,7 @@
     <postgresql.version>42.5.1</postgresql.version>
     <wiremock.version>2.35.0</wiremock.version>
     <junit.version>4.13.2</junit.version>
-    <jupiter.version>5.9.1</jupiter.version>
+    <jupiter.version>5.9.2</jupiter.version>
     <tomcat.version>9.0.70</tomcat.version>
     <findify-s3mock.version>0.2.6</findify-s3mock.version>
     <checkstyle.version>10.6.0</checkstyle.version>
