@@ -151,10 +151,6 @@ class DccRevocationListStructureProviderTest {
   @Test
   void coverFetchDccRevocationList() {
     underTest.fetchDccRevocationList();
-    //final RevocationEtag etag = new RevocationEtag("chunk", dccRevocationClient.getETag());
-    //Optional<List<RevocationEntry>> dccRevocationList = dccRevocationClient.getDccRevocationList();
-    //Mockito.verify(dccRevocationListService, Mockito.times(1)).store(dccRevocationList.get());
-    //Mockito.verify(dccRevocationListService, Mockito.times(1)).store(etag);
   }
 
   @Test
