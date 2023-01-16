@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration>
+<Configuration status="WARN" shutdownHook="disable">
   <Properties>
-    <Property name="LOG_EXCEPTION_CONVERSION_WORD">%xwEx</Property>
-    <Property name="CONSOLE_LOG_PATTERN">%d{yyyy-MM-dd'T'HH:mm:ssZ} %-5level %t %c{1.}[%pid]: %m%n${sys:LOG_EXCEPTION_CONVERSION_WORD}</Property>
+    <Property name="CONSOLE_LOG_PATTERN">%d{yyyy-MM-dd'T'HH:mm:ssZ} %-5level %t %c{1.}[%pid]: %enc{%maxLen{%m}{100000}}{CRLF} %exception{10}{separator(\u2028)} %n</Property>
   </Properties>
   <Appenders>
     <Console name="Console" target="SYSTEM_OUT" follow="true">
@@ -10,7 +9,13 @@
     </Console>
   </Appenders>
   <Loggers>
-    <Root level="OFF">
+    <Logger name="org.apache.catalina.startup.DigesterFactory" level="error" />
+    <Logger name="org.apache.catalina.util.LifecycleBase" level="error" />
+    <Logger name="org.apache.coyote.http11.Http11NioProtocol" level="warn" />
+    <Logger name="org.apache.sshd.common.util.SecurityUtils" level="warn"/>
+    <Logger name="org.apache.tomcat.util.net.NioSelectorPool" level="warn" />
+    <Logger name="org.hibernate.validator.internal.util.Version" level="warn" />
+    <Root level="info">
       <AppenderRef ref="Console" />
     </Root>
   </Loggers>
