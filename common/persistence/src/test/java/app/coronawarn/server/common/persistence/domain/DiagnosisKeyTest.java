@@ -4,9 +4,9 @@ import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
@@ -91,16 +91,19 @@ class DiagnosisKeyTest {
   @Test
   void testSetTransmissionRiskLevel() {
     diagnosisKey.setTransmissionRiskLevel(0);
+    assertThat(diagnosisKey.getTransmissionRiskLevel()).isEqualTo(0);
   }
 
   @Test
   void testSetReportType() {
     diagnosisKey.setReportType(null);
+    assertThat(diagnosisKey.getReportType()).isEqualTo(null);
   }
 
   @Test
   void testSetDaysSinceOnsetOfSymptoms() {
     diagnosisKey.setDaysSinceOnsetOfSymptoms(0);
+    assertThat(diagnosisKey.getDaysSinceOnsetOfSymptoms()).isEqualTo(0);
   }
 
   @Test
