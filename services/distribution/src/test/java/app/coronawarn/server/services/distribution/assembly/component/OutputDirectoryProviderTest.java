@@ -1,6 +1,7 @@
 package app.coronawarn.server.services.distribution.assembly.component;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.io.IOException;
@@ -25,6 +26,8 @@ class OutputDirectoryProviderTest {
   void testClear() throws IOException {
     OutputDirectoryProvider p = new OutputDirectoryProvider(mockConf);
     p.clear();
+    java.io.File outputDirectory = p.getFileOnDisk();
+    assertEquals(outputDirectory.listFiles().length, 0);
   }
 
   @Test

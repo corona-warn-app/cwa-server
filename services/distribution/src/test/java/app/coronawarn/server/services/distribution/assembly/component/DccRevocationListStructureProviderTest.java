@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.distribution.assembly.component;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -151,5 +152,7 @@ class DccRevocationListStructureProviderTest {
   void coverFetchDccRevocationListException() throws Exception {
     doThrow(RuntimeException.class).when(dccRevocationListService).store(anyList());
     underTest.fetchDccRevocationList();
+    assertThatThrownBy(() -> dccRevocationListService.store(anyList()))
+        .isExactlyInstanceOf(RuntimeException.class);
   }
 }
