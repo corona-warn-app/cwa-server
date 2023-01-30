@@ -1,7 +1,7 @@
 package app.coronawarn.server.services.distribution.assembly.component;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.io.IOException;
