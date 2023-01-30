@@ -53,8 +53,7 @@
     <spring-cloud.version>2021.0.5</spring-cloud.version>
     <!-- If you update spring-cloud, see if it references the correct spring-vault-core version again, then remove the following: -->
     <spring-retry.version>2.0.0</spring-retry.version>
-    <spring-vault-core.version>3.0.0</spring-vault-core.version>
-    <spring-cloud-starter-vault-config.version>4.0.0</spring-cloud-starter-vault-config.version>
+    <spring-vault-core.version>2.3.2</spring-vault-core.version>
     <spring-security.version>5.7.5</spring-security.version>
     <protobuf.version>3.21.9</protobuf.version>
     <json-simple.version>1.1.1</json-simple.version>
@@ -67,15 +66,16 @@
     <commons-math3.version>3.6.1</commons-math3.version>
     <bouncycastle.version>1.72</bouncycastle.version>
     <awssdk-s3.version>2.19.0</awssdk-s3.version>
-    <io-netty.version>4.1.86.Final</io-netty.version>
+    <io-netty.version>4.1.87.Final</io-netty.version>
     <guava.version>31.1-jre</guava.version>
-    <jackson.version>2.14.1</jackson.version>
+    <jackson.version>2.14.2</jackson.version>
     <test-containers.version>1.17.6</test-containers.version>
     <postgresql.version>42.5.1</postgresql.version>
     <wiremock.version>2.35.0</wiremock.version>
+    <httpclient.version>4.5.14</httpclient.version>
     <junit.version>4.13.2</junit.version>
-    <jupiter.version>5.9.1</jupiter.version>
-    <tomcat.version>9.0.70</tomcat.version>
+    <jupiter.version>5.9.2</jupiter.version>
+    <tomcat.version>9.0.71</tomcat.version>
     <findify-s3mock.version>0.2.6</findify-s3mock.version>
     <checkstyle.version>10.6.0</checkstyle.version>
     <semver4j.version>3.1.0</semver4j.version>
@@ -198,11 +198,6 @@
         <version>${spring-vault-core.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-starter-vault-config</artifactId>
-        <version>${spring-cloud-starter-vault-config.version}</version>
-      </dependency>
-      <dependency>
         <groupId>com.google.protobuf</groupId>
         <artifactId>protobuf-java</artifactId>
         <version>${protobuf.version}</version>
@@ -292,6 +287,11 @@
         <artifactId>guava</artifactId>
         <version>${guava.version}</version>
         <scope>runtime</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient</artifactId>
+        <version>${httpclient.version}</version>
       </dependency>
       <dependency>
         <groupId>com.vdurmont</groupId>
@@ -444,7 +444,7 @@
       <plugins>
         <plugin>
           <artifactId>maven-checkstyle-plugin</artifactId>
-          <version>3.2.0</version>
+          <version>3.2.1</version>
           <executions>
             <execution>
               <id>validate</id>
@@ -527,7 +527,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>3.0.0-M7</version>
+          <version>3.0.0-M8</version>
           <executions>
             <execution>
               <configuration>
@@ -576,7 +576,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-project-info-reports-plugin</artifactId>
-          <version>3.4.1</version>
+          <version>3.4.2</version>
         </plugin>
         <plugin>
           <artifactId>maven-site-plugin</artifactId>
@@ -584,7 +584,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.0.0-M7</version>
+          <version>3.0.0-M8</version>
           <configuration>
             <forkedProcessExitTimeoutInSeconds>60</forkedProcessExitTimeoutInSeconds>
             <excludedGroups>s3-integration</excludedGroups>
@@ -605,7 +605,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-surefire-report-plugin</artifactId>
-          <version>3.0.0-M7</version>
+          <version>3.0.0-M8</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
