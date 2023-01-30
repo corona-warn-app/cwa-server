@@ -1,6 +1,7 @@
 package app.coronawarn.server.services.distribution.assembly.component;
 
 import static java.util.Collections.emptyList;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.doThrow;
@@ -54,6 +55,8 @@ class DccRevocationListStructureProviderExceptionTests {
   void coverFetchDccRevocationListFetchDccListException() throws Exception {
     doThrow(FetchDccListException.class).when(dccRevocationClient).getETag();
     underTest.fetchDccRevocationList();
+    assertThatThrownBy(() -> dccRevocationClient.getETag())
+        .isExactlyInstanceOf(FetchDccListException.class);
   }
 
   @Test
@@ -61,17 +64,24 @@ class DccRevocationListStructureProviderExceptionTests {
     doThrow(RuntimeException.class).when(dccRevocationListToProtobufMapping)
         .constructProtobufMappingChunkList(anyList());
     underTest.getDccRevocationKidTypeChunk(emptyList());
+    assertThatThrownBy(() -> dccRevocationListToProtobufMapping.constructProtobufMappingChunkList(anyList()))
+        .isExactlyInstanceOf(RuntimeException.class);
+
   }
 
   @Test
   void coverProtobufMappingKidList() throws Exception {
     doThrow(RuntimeException.class).when(dccRevocationListToProtobufMapping).constructProtobufMappingKidList(anyMap());
     underTest.getDccRevocationDirectory();
+    assertThatThrownBy(() -> dccRevocationListToProtobufMapping.constructProtobufMappingKidList(anyMap()))
+        .isExactlyInstanceOf(RuntimeException.class);
   }
 
   @Test
   void coverProtobufMappingKidType() throws Exception {
     doThrow(RuntimeException.class).when(dccRevocationListToProtobufMapping).constructProtobufMappingKidType(anyList());
     underTest.getDccRevocationKidTypeArchive(emptyList());
+    assertThatThrownBy(() -> dccRevocationListToProtobufMapping.constructProtobufMappingKidType(anyList()))
+        .isExactlyInstanceOf(RuntimeException.class);
   }
 }
