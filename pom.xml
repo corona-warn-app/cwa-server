@@ -53,7 +53,7 @@
     <spring-cloud.version>2021.0.5</spring-cloud.version>
     <!-- If you update spring-cloud, see if it references the correct spring-vault-core version again, then remove the following: -->
     <spring-vault-core.version>2.3.2</spring-vault-core.version>
-    <spring-retry.version>1.3.4</spring-retry.version>
+    <spring-retry.version>2.0.0</spring-retry.version>
     <spring-security.version>5.7.6</spring-security.version>
     <protobuf.version>3.21.9</protobuf.version>
     <json-simple.version>1.1.1</json-simple.version>
