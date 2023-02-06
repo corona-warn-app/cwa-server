@@ -11,9 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
+import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
@@ -21,11 +21,10 @@ import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
 
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
-  private static final String CALLBACK_ROUTE =
-      "/version/v1" + CallbackController.CALLBACK_ROUTE;
+  private static final String CALLBACK_ROUTE = "/version/v1" + CallbackController.CALLBACK_ROUTE;
   private static final String ACTUATOR_ROUTE = "/actuator";
   private static final String HEALTH_ROUTE = ACTUATOR_ROUTE + "/health";
   private static final String PROMETHEUS_ROUTE = ACTUATOR_ROUTE + "/prometheus";
@@ -48,26 +47,25 @@ public class SecurityConfig {
   }
 
   /**
-   * Security Filter Chain bean is configured here because it is encouraged a more component-based approach.
-   * Before this we used to extend WebSecurityConfigurerAdapter (now deprecated) and Override the configure method.
+   * Security Filter Chain bean is configured here because it is encouraged a more component-based approach. Before this
+   * we used to extend WebSecurityConfigurerAdapter (now deprecated) and Override the configure method.
    *
    * @return newly configured http bean
    */
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry expressionInterceptUrlRegistry
-        = http.authorizeRequests();
-    expressionInterceptUrlRegistry
-        .mvcMatchers(HttpMethod.GET, CALLBACK_ROUTE).authenticated().and().x509()
+    AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry registry = http
+        .authorizeHttpRequests();
+    registry
+        .requestMatchers(HttpMethod.GET, CALLBACK_ROUTE).authenticated().and().x509()
         .userDetailsService(userDetailsService());
-    expressionInterceptUrlRegistry
-        .mvcMatchers(HttpMethod.GET, HEALTH_ROUTE, PROMETHEUS_ROUTE, READINESS_ROUTE, LIVENESS_ROUTE).permitAll();
-    expressionInterceptUrlRegistry
+    registry
+        .requestMatchers(HttpMethod.GET, HEALTH_ROUTE, PROMETHEUS_ROUTE, READINESS_ROUTE, LIVENESS_ROUTE).permitAll();
+    registry
         .anyRequest().denyAll();
     http.headers().contentSecurityPolicy("default-src 'self'");
     return http.build();
   }
-
 
   /**
    * The UserDetailsService will check if the CN of the client certificate matches the expected CN defined in the
@@ -81,11 +79,10 @@ public class SecurityConfig {
       if (username.equals(callbackServiceConfig.getCertCn())) {
         return new User(username, "", emptyList());
       }
-      String exceptionMsg =
-          "The client certificate CN '"
-              + username
-              + "' does not match the expected CN: '"
-              + callbackServiceConfig.getCertCn() + "'.";
+      String exceptionMsg = "The client certificate CN '"
+          + username
+          + "' does not match the expected CN: '"
+          + callbackServiceConfig.getCertCn() + "'.";
       logger.warn(exceptionMsg);
       throw new CertificateCnMismatchException(exceptionMsg);
     };
