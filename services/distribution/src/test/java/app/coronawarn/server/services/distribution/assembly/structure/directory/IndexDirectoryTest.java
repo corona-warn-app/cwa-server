@@ -9,7 +9,6 @@ import app.coronawarn.server.common.shared.functional.Formatter;
 import app.coronawarn.server.common.shared.functional.IndexFunction;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;

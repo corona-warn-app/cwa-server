@@ -5,12 +5,10 @@ import static app.coronawarn.server.services.distribution.dgc.DigitalGreenCertif
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.fail;
 
-import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dgc.client.JsonSchemaMappingLookup;
+import app.coronawarn.server.services.distribution.dgc.client.JsonValidationService;
 import java.io.IOException;
 import java.io.InputStream;
-import app.coronawarn.server.services.distribution.dgc.client.JsonValidationService;
-import app.coronawarn.server.services.distribution.dgc.dsc.DigitalCovidValidationCertificateToProtobufMapping;
 import org.everit.json.schema.ValidationException;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;

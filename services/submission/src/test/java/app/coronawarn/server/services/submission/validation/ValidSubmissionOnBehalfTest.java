@@ -1,6 +1,5 @@
 package app.coronawarn.server.services.submission.validation;
 
-import static app.coronawarn.server.services.submission.validation.ValidSubmissionOnBehalfPayload.ValidSubmissionOnBehalfPayloadValidator;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -12,11 +11,12 @@ import app.coronawarn.server.common.protocols.internal.pt.CheckInProtectedReport
 import app.coronawarn.server.services.submission.checkins.EventCheckInProtectedReportsValidator;
 import app.coronawarn.server.services.submission.checkins.EventCheckinDataValidator;
 import app.coronawarn.server.services.submission.integration.DataHelpers;
+import app.coronawarn.server.services.submission.validation.ValidSubmissionOnBehalfPayload.ValidSubmissionOnBehalfPayloadValidator;
+import jakarta.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidatorContext.ConstraintViolationBuilder;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import javax.validation.ConstraintValidatorContext;
-import javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;

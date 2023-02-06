@@ -4,8 +4,8 @@ import static app.coronawarn.server.services.submission.controller.SubmissionCon
 
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.common.protocols.internal.pt.CheckInProtectedReport;
+import jakarta.validation.ConstraintValidatorContext;
 import java.util.List;
-import javax.validation.ConstraintValidatorContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

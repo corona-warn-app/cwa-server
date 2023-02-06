@@ -1,5 +1,12 @@
 package app.coronawarn.server.services.submission.integration;
 
+import static app.coronawarn.server.services.submission.integration.DataHelpers.buildDefaultCheckIn;
+import static app.coronawarn.server.services.submission.integration.DataHelpers.buildDefaultEncryptedCheckIn;
+import static app.coronawarn.server.services.submission.integration.DataHelpers.createValidTemporaryExposureKeys;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
@@ -7,6 +14,11 @@ import app.coronawarn.server.common.protocols.internal.pt.CheckInProtectedReport
 import app.coronawarn.server.services.submission.controller.RequestExecutor;
 import app.coronawarn.server.services.submission.verification.VerificationServerClient;
 import feign.FeignException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -20,16 +32,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-import java.util.stream.Stream;
-
-import static app.coronawarn.server.services.submission.integration.DataHelpers.*;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class SubmissionOnBehalfIT {

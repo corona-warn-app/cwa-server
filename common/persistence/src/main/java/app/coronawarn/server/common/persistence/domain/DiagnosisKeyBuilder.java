@@ -12,6 +12,7 @@ import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyExc
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
+import jakarta.validation.ConstraintViolation;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.HashSet;
@@ -19,7 +20,6 @@ import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.validation.ConstraintViolation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

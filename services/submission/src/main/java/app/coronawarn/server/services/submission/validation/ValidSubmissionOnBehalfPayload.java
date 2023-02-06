@@ -9,13 +9,13 @@ import app.coronawarn.server.common.protocols.internal.SubmissionPayload.Submiss
 import app.coronawarn.server.services.submission.checkins.EventCheckInProtectedReportsValidator;
 import app.coronawarn.server.services.submission.checkins.EventCheckinDataValidator;
 import app.coronawarn.server.services.submission.validation.ValidSubmissionOnBehalfPayload.ValidSubmissionOnBehalfPayloadValidator;
+import jakarta.validation.Constraint;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+import jakarta.validation.Payload;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.util.stream.Stream;
-import javax.validation.Constraint;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-import javax.validation.Payload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

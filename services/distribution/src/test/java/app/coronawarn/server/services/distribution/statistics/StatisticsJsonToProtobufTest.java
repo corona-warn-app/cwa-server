@@ -1,6 +1,13 @@
 package app.coronawarn.server.services.distribution.statistics;
 
-import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.*;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.EMPTY_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.FIRST_VACCINATION_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.FULLY_VACCINATED_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.INCIDENCE_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.INFECTIONS_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.JOINED_INCIDENCE_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.KEY_SUBMISSION_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.Cards.VACCINATION_DOSES_CARD;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;

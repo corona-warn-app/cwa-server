@@ -4,7 +4,6 @@ import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDate;
-
 import org.junit.jupiter.api.Test;
 
 class BatchDownloadExceptionTest {

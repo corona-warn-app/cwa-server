@@ -1,9 +1,9 @@
 package app.coronawarn.server.common.persistence.domain.validation;
 
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import java.time.Instant;
 import java.util.concurrent.TimeUnit;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 
 public class ValidSubmissionTimestampValidator
     implements ConstraintValidator<ValidSubmissionTimestamp, Integer> {

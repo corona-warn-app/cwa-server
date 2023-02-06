@@ -7,7 +7,6 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 
 import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
-
 import java.io.File;
 import org.junit.jupiter.api.Test;
 

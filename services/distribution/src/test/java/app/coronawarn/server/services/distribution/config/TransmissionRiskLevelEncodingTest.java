@@ -1,12 +1,16 @@
 package app.coronawarn.server.services.distribution.config;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.springframework.validation.BindingResult;
-import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 
 class TransmissionRiskLevelEncodingTest {
 

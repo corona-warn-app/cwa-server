@@ -1,8 +1,8 @@
 package app.coronawarn.server.common.persistence.domain.validation;
 
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import java.util.Set;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 
 public class ValidCountriesValidator implements ConstraintValidator<ValidCountries, Set<String>> {
 

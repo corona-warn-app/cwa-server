@@ -5,8 +5,8 @@ import static app.coronawarn.server.common.protocols.internal.SubmissionPayload.
 import app.coronawarn.server.common.persistence.domain.CheckInProtectedReports;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 /**
  * Validation applied onto the 'submission_type' column at 'diagnosis_key' table.

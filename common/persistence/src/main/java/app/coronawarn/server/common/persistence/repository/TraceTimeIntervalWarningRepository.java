@@ -3,6 +3,7 @@ package app.coronawarn.server.common.persistence.repository;
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Repository;
 @Deprecated(since = "2.8", forRemoval = false)
 @Repository
 public interface TraceTimeIntervalWarningRepository
-    extends PagingAndSortingRepository<TraceTimeIntervalWarning, Long> {
+    extends PagingAndSortingRepository<TraceTimeIntervalWarning, Long>, CrudRepository<TraceTimeIntervalWarning, Long> {
 
   @Modifying
   @Query("INSERT INTO trace_time_interval_warning (trace_location_id, start_interval_number,"

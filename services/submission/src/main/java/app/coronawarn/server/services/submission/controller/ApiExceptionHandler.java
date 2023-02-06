@@ -4,7 +4,7 @@ package app.coronawarn.server.services.submission.controller;
 
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import com.google.protobuf.InvalidProtocolBufferException;
-import javax.validation.ConstraintViolationException;
+import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

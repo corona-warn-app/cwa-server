@@ -6,12 +6,14 @@ import java.util.Collection;
 import java.util.List;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface DiagnosisKeyRepository extends PagingAndSortingRepository<DiagnosisKey, Long> {
+public interface DiagnosisKeyRepository
+    extends PagingAndSortingRepository<DiagnosisKey, Long>, CrudRepository<DiagnosisKey, Long> {
 
   /**
    * Returns whether or not a diagnosis key with the specified key data and submission type exists in the DB.

@@ -1,14 +1,20 @@
 package app.coronawarn.server.services.submission.controller;
 
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.VALID_KEY_DATA_1;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.VALID_KEY_DATA_2;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.VALID_KEY_DATA_3;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildTemporaryExposureKey;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildTemporaryExposureKeyWithFlexibleRollingPeriod;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.createRollingStartIntervalNumber;
+
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
+import java.util.List;
+import java.util.stream.Stream;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import java.util.List;
-import java.util.stream.Stream;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.*;
 
 public class TEKDatasetGeneration {
 

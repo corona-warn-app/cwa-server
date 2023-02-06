@@ -1,12 +1,11 @@
 package app.coronawarn.server.services.distribution.dgc.integration;
 
 import app.coronawarn.server.services.distribution.dgc.client.signature.DccSignatureValidator;
-import org.mockito.Mock;
+import java.io.IOException;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
-import java.io.IOException;
 
 @TestConfiguration
 public class SignatureValidationMockConfiguration {

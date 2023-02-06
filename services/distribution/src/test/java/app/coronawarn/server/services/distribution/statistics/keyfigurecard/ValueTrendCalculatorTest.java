@@ -1,9 +1,10 @@
 package app.coronawarn.server.services.distribution.statistics.keyfigurecard;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.Trend;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.TrendSemantic;
 import org.junit.jupiter.api.Test;
-import static org.assertj.core.api.Assertions.assertThat;
 
 class ValueTrendCalculatorTest {
 

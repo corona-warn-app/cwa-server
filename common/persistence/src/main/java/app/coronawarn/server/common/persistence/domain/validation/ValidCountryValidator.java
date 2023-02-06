@@ -2,8 +2,8 @@ package app.coronawarn.server.common.persistence.domain.validation;
 
 import static app.coronawarn.server.common.persistence.domain.validation.CountryValidator.isValidCountryCode;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class ValidCountryValidator implements ConstraintValidator<ValidCountry, String> {
 

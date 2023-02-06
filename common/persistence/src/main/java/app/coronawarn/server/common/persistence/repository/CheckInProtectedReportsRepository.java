@@ -3,12 +3,14 @@ package app.coronawarn.server.common.persistence.repository;
 import app.coronawarn.server.common.persistence.domain.CheckInProtectedReports;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CheckInProtectedReportsRepository extends PagingAndSortingRepository<CheckInProtectedReports, Long> {
+public interface CheckInProtectedReportsRepository
+    extends PagingAndSortingRepository<CheckInProtectedReports, Long>, CrudRepository<CheckInProtectedReports, Long> {
 
   @Modifying
   @Query("INSERT INTO check_in_protected_reports (trace_location_id_hash, initialization_vector,"

@@ -1,8 +1,8 @@
 package app.coronawarn.server.common.persistence.service.common;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import jakarta.validation.ConstraintViolation;
 import java.util.Collection;
-import javax.validation.ConstraintViolation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

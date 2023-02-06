@@ -1,7 +1,7 @@
 package app.coronawarn.server.services.callback.controller;
 
+import jakarta.validation.ConstraintViolationException;
 import java.text.ParseException;
-import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeMismatchException;

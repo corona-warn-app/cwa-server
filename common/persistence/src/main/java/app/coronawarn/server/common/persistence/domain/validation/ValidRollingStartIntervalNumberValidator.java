@@ -2,9 +2,9 @@
 
 package app.coronawarn.server.common.persistence.domain.validation;
 
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import java.time.Instant;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 
 public class ValidRollingStartIntervalNumberValidator
     implements ConstraintValidator<ValidRollingStartIntervalNumber, Integer> {
