@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.download;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -13,7 +11,7 @@ import static org.mockito.Mockito.mock;
 import app.coronawarn.server.common.federation.client.CloudFederationFeignHttpClientProvider;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import com.github.tomakehurst.wiremock.WireMockServer;
-import feign.httpclient.ApacheHttpClient;
+import feign.hc5.ApacheHttp5Client;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -138,7 +136,6 @@ class FederationGatewayDownloadServiceTest {
     assertDownloadResponseMatches(expResponse);
   }
 
-
   @Test
   void testDownloadBatchNotAuthenticated() {
     SERVER.stubFor(
@@ -178,7 +175,7 @@ class FederationGatewayDownloadServiceTest {
 
   @Test
   void testFederationFeignClientConfigurationCreated() {
-    assertThat(feignClientProvider.createFeignClient()).isInstanceOf(ApacheHttpClient.class);
+    assertThat(feignClientProvider.createFeignClient()).isInstanceOf(ApacheHttp5Client.class);
   }
 
   void assertDownloadResponseMatches(BatchDownloadResponse expResponse) throws Exception {

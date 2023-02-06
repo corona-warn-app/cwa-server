@@ -1,4 +1,3 @@
-
 package app.coronawarn.server.services.submission.verification;
 
 import feign.Client;

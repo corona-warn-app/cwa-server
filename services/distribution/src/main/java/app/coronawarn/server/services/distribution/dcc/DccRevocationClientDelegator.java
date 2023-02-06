@@ -5,7 +5,6 @@ import feign.Request;
 import feign.Request.Options;
 import feign.Response;
 import feign.Response.Body;
-import feign.httpclient.ApacheHttpClient;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import org.slf4j.Logger;
@@ -15,23 +14,22 @@ public class DccRevocationClientDelegator implements Client {
 
   private static final Logger logger = LoggerFactory.getLogger(DccRevocationClientDelegator.class);
 
-  private final ApacheHttpClient apacheHttpClient;
+  private final Client feignClient;
 
-  public DccRevocationClientDelegator(final ApacheHttpClient apacheHttpClient) {
-    this.apacheHttpClient = apacheHttpClient;
+  public DccRevocationClientDelegator(final Client feignClient) {
+    this.feignClient = feignClient;
   }
 
   @Override
   public Response execute(final Request request, final Options options) throws IOException {
-    final Response response = apacheHttpClient.execute(request, options);
+    final Response response = feignClient.execute(request, options);
 
     // in case of http HEAD the response is NULL!
     final Body body = response.body();
     if (body != null) {
       return response;
-    } else {
-      logger.info("response body is null for '{}'", request);
     }
+    logger.info("response body is null for '{}'", request);
 
     return Response.builder()
         .status(response.status())

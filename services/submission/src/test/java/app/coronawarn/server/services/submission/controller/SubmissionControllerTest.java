@@ -28,6 +28,7 @@ import static java.time.ZoneOffset.UTC;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -84,6 +85,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -280,10 +282,10 @@ class SubmissionControllerTest {
     // METHOD_NOT_ALLOWED is the result of TRACE calls (disabled by default in tomcat)
     final List<HttpStatus> allowedErrors = Arrays.asList(INTERNAL_SERVER_ERROR, FORBIDDEN, METHOD_NOT_ALLOWED);
 
-    final HttpStatus actStatus = executor.execute(deniedHttpMethod, null).getStatusCode();
+    final HttpStatusCode actStatus = executor.execute(deniedHttpMethod, null).getStatusCode();
 
-    assertThat(allowedErrors).withFailMessage(deniedHttpMethod + " resulted in unexpected status: " + actStatus)
-        .contains(actStatus);
+    assertThat(allowedErrors).withFailMessage(deniedHttpMethod + " resulted in unexpected status: " + actStatus);
+    assertTrue(actStatus.isError());
   }
 
   @Test

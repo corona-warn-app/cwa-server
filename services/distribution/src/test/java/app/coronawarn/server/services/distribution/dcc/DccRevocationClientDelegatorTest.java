@@ -13,7 +13,7 @@ import feign.Request.HttpMethod;
 import feign.Request.Options;
 import feign.RequestTemplate;
 import feign.Response;
-import feign.httpclient.ApacheHttpClient;
+import feign.hc5.ApacheHttp5Client;
 import java.util.Collections;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +21,7 @@ class DccRevocationClientDelegatorTest {
 
   @Test
   void nullBodyShouldBeTurnedIntoEmptyString() throws Exception {
-    final ApacheHttpClient client = mock(ApacheHttpClient.class);
+    final ApacheHttp5Client client = mock(ApacheHttp5Client.class);
     final Request request = Request.create(HttpMethod.GET, "http://localhost", Collections.emptyMap(), Body.empty(),
         (RequestTemplate) null);
     final Response mockResponse = Response.builder().request(request).body((Response.Body) null).build();
@@ -34,7 +34,7 @@ class DccRevocationClientDelegatorTest {
 
   @Test
   void responseIsNotChangedIfBodyIsNotNull() throws Exception {
-    final ApacheHttpClient client = mock(ApacheHttpClient.class);
+    final ApacheHttp5Client client = mock(ApacheHttp5Client.class);
     final Request request = Request.create(HttpMethod.GET, "http://localhost", Collections.emptyMap(), Body.empty(),
         (RequestTemplate) null);
     final Response mockResponse = Response.builder().request(request).body("foo".getBytes()).build();
@@ -47,7 +47,7 @@ class DccRevocationClientDelegatorTest {
 
   @Test
   void testDccRevocationClientDelegator() {
-    final DccRevocationClientDelegator fixture = new DccRevocationClientDelegator(new ApacheHttpClient());
+    final DccRevocationClientDelegator fixture = new DccRevocationClientDelegator(new ApacheHttp5Client());
     assertNotNull(fixture);
   }
 }

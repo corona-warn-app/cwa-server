@@ -4,7 +4,6 @@ import feign.Client;
 import feign.Request;
 import feign.Request.Options;
 import feign.Response;
-import feign.httpclient.ApacheHttpClient;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
@@ -13,19 +12,20 @@ public class DccFeignDelegator implements Client {
 
   public static final String X_SIGNATURE = "X-SIGNATURE";
 
-  private final ApacheHttpClient apacheHttpClient;
+  private final Client feignClient;
+
   private final DccSignatureValidator dccSignatureValidator;
 
-  public DccFeignDelegator(ApacheHttpClient apacheHttpClient, DccSignatureValidator dccSignatureValidator) {
-    this.apacheHttpClient = apacheHttpClient;
+  public DccFeignDelegator(final Client feignClient, final DccSignatureValidator dccSignatureValidator) {
+    this.feignClient = feignClient;
     this.dccSignatureValidator = dccSignatureValidator;
   }
 
   @Override
-  public Response execute(Request request, Options options) throws IOException {
-    Response response = apacheHttpClient.execute(request, options);
-    String body = new String(response.body().asInputStream().readAllBytes(), StandardCharsets.UTF_8);
-    String signature = getSignature(response, request.url());
+  public Response execute(final Request request, final Options options) throws IOException {
+    final Response response = feignClient.execute(request, options);
+    final String body = new String(response.body().asInputStream().readAllBytes(), StandardCharsets.UTF_8);
+    final String signature = getSignature(response, request.url());
 
     dccSignatureValidator.checkSignature(signature, body);
 
@@ -41,18 +41,16 @@ public class DccFeignDelegator implements Client {
   /**
    * Get the signature from the HTTP response headers.
    *
-   * @param response - response.
+   * @param response   - response.
    * @param requestUrl - request url.
    * @return - signature found on 'x-signature' headers key.
    * @throws IOException - thrown if 'x-signature' header is missing.
    */
-  private String getSignature(Response response, String requestUrl) throws IOException {
-    Collection<String> header = response.headers().get(X_SIGNATURE);
+  private String getSignature(final Response response, final String requestUrl) throws IOException {
+    final Collection<String> header = response.headers().get(X_SIGNATURE);
     if (header == null || header.isEmpty()) {
       throw new IOException(X_SIGNATURE + " header is missing from the response of: " + requestUrl);
     }
     return header.iterator().next();
   }
-
-
 }

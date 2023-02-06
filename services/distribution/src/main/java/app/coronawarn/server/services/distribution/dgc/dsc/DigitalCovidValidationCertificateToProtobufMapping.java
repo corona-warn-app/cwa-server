@@ -34,11 +34,16 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.io.HttpClientConnectionManager;
+import org.apache.hc.client5.http.socket.LayeredConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactoryBuilder;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.ssl.TLS;
 import org.bouncycastle.util.encoders.Hex;
 import org.everit.json.schema.ValidationException;
 import org.json.JSONException;
@@ -176,6 +181,20 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
         .build());
   }
 
+  private HttpClientConnectionManager getConnectionManager(final String fingerPrintToCompare) {
+    return PoolingHttpClientConnectionManagerBuilder.create()
+        .setSSLSocketFactory(getSslSocketFactory(fingerPrintToCompare))
+        .build();
+  }
+
+  private LayeredConnectionSocketFactory getSslSocketFactory(final String fingerPrintToCompare) {
+    final SSLConnectionSocketFactoryBuilder builder = SSLConnectionSocketFactoryBuilder.create()
+        .setTlsVersions(TLS.V_1_3, TLS.V_1_2);
+    // builder.setSslContext(getSslContext(getKeyStore(), getKeyStorePassword()));
+    builder.setHostnameVerifier((hostname, session) -> validateHostname(session, fingerPrintToCompare));
+    return builder.build();
+  }
+
   private boolean matches(final Certificate cert, final String fingerPrintToCompare) {
     Optional<String> fingerprint = Optional.empty();
     try {
@@ -210,9 +229,7 @@ public class DigitalCovidValidationCertificateToProtobufMapping {
   private ServiceProviderDto validateFingerprint(final String serviceProviderAllowlistEndpoint,
       final String fingerPrintToCompare, final ObjectMapper objectMapper) {
     try (CloseableHttpClient httpClient = HttpClients.custom()
-        .setSSLHostnameVerifier((hostname, session) -> validateHostname(
-            session,
-            fingerPrintToCompare))
+        .setConnectionManager(getConnectionManager(fingerPrintToCompare))
         .build()) {
       final HttpGet getMethod = new HttpGet(serviceProviderAllowlistEndpoint);
       return buildServiceProviderDto(httpClient, getMethod, objectMapper);

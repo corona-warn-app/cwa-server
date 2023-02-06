@@ -1,7 +1,7 @@
 package app.coronawarn.server.common.federation.client.hostname;
 
 import javax.net.ssl.HostnameVerifier;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;

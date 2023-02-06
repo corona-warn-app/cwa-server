@@ -1,7 +1,7 @@
 package app.coronawarn.server.common.federation.client.hostname;
 
 import javax.net.ssl.HostnameVerifier;
-import org.apache.http.conn.ssl.DefaultHostnameVerifier;
+import org.apache.hc.client5.http.ssl.DefaultHostnameVerifier;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
