@@ -72,7 +72,6 @@
     <test-containers.version>1.17.6</test-containers.version>
     <postgresql.version>42.5.3</postgresql.version>
     <wiremock.version>2.35.0</wiremock.version>
-    <httpclient.version>4.5.14</httpclient.version>
     <junit.version>4.13.2</junit.version>
     <jupiter.version>5.9.2</jupiter.version>
     <tomcat.version>9.0.71</tomcat.version>
@@ -209,7 +208,7 @@
       </dependency>
       <dependency>
         <groupId>io.github.openfeign</groupId>
-        <artifactId>feign-httpclient</artifactId>
+        <artifactId>feign-hc5</artifactId>
         <version>${feign.version}</version>
       </dependency>
       <dependency>
@@ -287,11 +286,6 @@
         <artifactId>guava</artifactId>
         <version>${guava.version}</version>
         <scope>runtime</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.httpcomponents</groupId>
-        <artifactId>httpclient</artifactId>
-        <version>${httpclient.version}</version>
       </dependency>
       <dependency>
         <groupId>com.vdurmont</groupId>
