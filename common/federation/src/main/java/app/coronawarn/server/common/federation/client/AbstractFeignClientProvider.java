@@ -94,7 +94,7 @@ public abstract class AbstractFeignClientProvider {
   }
 
   public String getKeyPassword() {
-    return keyPassword;
+    return keyPassword == null ? keyStorePassword : keyPassword;
   }
 
   public File getKeyStore() {
