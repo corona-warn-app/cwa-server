@@ -152,10 +152,10 @@ public class SubmissionController {
   /**
    * Valid regular submission types: SUBMISSION_TYPE_PCR_TEST_VALUE, SUBMISSION_TYPE_RAPID_TEST_VALUE,
    * SUBMISSION_TYPE_HOST_WARNING_VALUE.
-   *
+   * 
    * @param payload uses {@link SubmissionPayload#getSubmissionType()} int value of the enum
    * @return <code>true</code> if it's ok.
-   *
+   * 
    * @see SubmissionType
    */
   public static boolean validSubmissionType(final SubmissionPayload payload) {
@@ -166,10 +166,10 @@ public class SubmissionController {
   /**
    * Valid SRS types: SUBMISSION_TYPE_SRS_SELF_TEST, SUBMISSION_TYPE_SRS_RAT, SUBMISSION_TYPE_SRS_REGISTERED_PCR,
    * SUBMISSION_TYPE_SRS_UNREGISTERED_PCR, SUBMISSION_TYPE_SRS_RAPID_PCR, SUBMISSION_TYPE_SRS_OTHER.
-   *
+   * 
    * @param payload uses {@link SubmissionPayload#getSubmissionType()} int value of the enum
    * @return <code>true</code> if it's ok.
-   *
+   * 
    * @see SubmissionType
    */
   public static boolean isSelfReport(final SubmissionPayload payload) {
@@ -179,7 +179,7 @@ public class SubmissionController {
 
   /**
    * {@link UUID} syntax check of given string.
-   *
+   * 
    * @param otp to be checked for valid {@link UUID} syntax.
    * @return <code>true</code> if and only if {@link UUID#fromString(String)} doesn't throw
    *         {@link IllegalArgumentException} for the given otp.
@@ -196,7 +196,7 @@ public class SubmissionController {
 
   /**
    * {@link ResponseEntity#badRequest()} wrapped into {@link DeferredResult}.
-   *
+   * 
    * @return {@link HttpStatus#BAD_REQUEST}
    */
   public static DeferredResult<ResponseEntity<Void>> badRequest() {
