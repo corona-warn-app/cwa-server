@@ -15,17 +15,4 @@
     <start-class>app.coronawarn.server.services.download.Application</start-class>
   </properties>
 
-  <dependencies>
-    <!-- test scope only -->
-    <dependency>
-      <groupId>com.github.tomakehurst</groupId>
-      <artifactId>wiremock-jre8</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.testcontainers</groupId>
-      <artifactId>postgresql</artifactId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-
 </project>
