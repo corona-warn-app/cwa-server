@@ -131,7 +131,6 @@ public abstract class AbstractFeignClientProvider {
    * @param httpClientProperties other client properties.
    * @return new HttpClientConnectionManager
    */
-  @Bean
   public HttpClientConnectionManager hc5ConnectionManager(final FeignHttpClientProperties httpClientProperties) {
     return PoolingHttpClientConnectionManagerBuilder.create()
         .setSSLSocketFactory(sslConnectionSocketFactory())
