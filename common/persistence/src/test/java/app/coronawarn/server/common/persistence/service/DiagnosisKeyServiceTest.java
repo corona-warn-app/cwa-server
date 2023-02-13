@@ -24,7 +24,10 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -274,5 +277,29 @@ class DiagnosisKeyServiceTest {
     final var actKeys = service.getDiagnosisKeys();
 
     assertDiagnosisKeysEqual(expKeys, actKeys);
+  }
+
+  @Test
+  void testCountTodaysDiagnosisKeyWithKeysFromToday() {
+    //midnight today in hours since epoch
+    long midnightToday = now(UTC).toEpochSecond(LocalTime.MIDNIGHT, UTC) / 3600;
+
+    final var expKeys = list(buildDiagnosisKeyForSubmissionTimestamp(midnightToday));
+    service.saveDiagnosisKeys(expKeys);
+    int countOnDb = service.countTodaysDiagnosisKeys();
+    assertEquals(expKeys.size(), countOnDb);
+  }
+
+  @Test
+  void testCountTodaysDiagnosisKeysWithNoKeysFromToday() {
+    //1 hour before today in hours since epoch
+    long midnightToday = now(UTC).toEpochSecond(LocalTime.MIDNIGHT, UTC) / 3600;
+    long oneHourBeforeToday = midnightToday - 1;
+
+    final var expKeys = list(buildDiagnosisKeyForSubmissionTimestamp(oneHourBeforeToday));
+    service.saveDiagnosisKeys(expKeys);
+    int countOnDb = service.countTodaysDiagnosisKeys();
+    //there should not be an entry for today now
+    assertEquals(0, countOnDb);
   }
 }

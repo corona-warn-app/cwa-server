@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
@@ -85,8 +86,8 @@ public class DiagnosisKeyService {
   @Timed
   @Transactional
   public int countTodaysDiagnosisKeys() {
-    final long midnightEpochSecond = now(UTC).toEpochSecond(LocalTime.MIDNIGHT, UTC);
-    return keyRepository.countNewerThan(midnightEpochSecond);
+    final long midnightEpochHours = now(UTC).toEpochSecond(LocalTime.MIDNIGHT, UTC) / TimeUnit.HOURS.toSeconds(1);
+    return keyRepository.countNewerThan(midnightEpochHours);
   }
 
   /**
