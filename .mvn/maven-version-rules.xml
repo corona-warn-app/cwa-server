@@ -30,5 +30,39 @@
         <ignoreVersion type="regex">(?i).*jre.*</ignoreVersion>
       </ignoreVersions>
     </rule>
+
+    <rule groupId="com.google.protobuf" comparisonMethod="maven">
+      <ignoreVersions>
+        <ignoreVersion type="regex">3\.22\.0</ignoreVersion>
+      </ignoreVersions>
+    </rule>
+
+    <!-- spring 3 -->
+    <rule groupId="org.springframework.boot" comparisonMethod="maven">
+      <ignoreVersions>
+        <ignoreVersion type="regex">3\..*</ignoreVersion>
+      </ignoreVersions>
+    </rule>
+    <rule groupId="org.springframework.cloud" comparisonMethod="maven">
+      <ignoreVersions>
+        <ignoreVersion type="regex">2022\..*</ignoreVersion>
+      </ignoreVersions>
+    </rule>
+    <rule groupId="org.springframework.vault" comparisonMethod="maven">
+      <ignoreVersions>
+        <ignoreVersion type="regex">3\..*</ignoreVersion>
+      </ignoreVersions>
+    </rule>
+    <rule groupId="org.springframework.security" comparisonMethod="maven">
+      <ignoreVersions>
+        <ignoreVersion type="regex">6\..*</ignoreVersion>
+      </ignoreVersions>
+    </rule>
+    <rule groupId="org.springframework.retry" comparisonMethod="maven">
+      <ignoreVersions>
+        <ignoreVersion type="regex">6\..*</ignoreVersion>
+      </ignoreVersions>
+    </rule>
+
   </rules>
 </ruleset>
