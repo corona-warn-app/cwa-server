@@ -48,7 +48,7 @@
     <sonar.coverage.exclusions>**/distribution/runner/RevRetentionPolicy*</sonar.coverage.exclusions>
 
     <!-- https://spring.io/projects/spring-boot -->
-    <spring-boot.version>2.7.8</spring-boot.version>
+    <spring-boot.version>2.7.9</spring-boot.version>
     <!-- https://spring.io/projects/spring-cloud#release-trains -->
     <spring-cloud.version>2021.0.5</spring-cloud.version>
     <!-- If you update spring-cloud, see if it references the correct spring-vault-core version again, then remove the following: -->
@@ -64,6 +64,7 @@
     <slf4j.version>2.0.6</slf4j.version>
     <feign.version>12.1</feign.version>
     <commons-math3.version>3.6.1</commons-math3.version>
+    <commons-fileupload.version>1.5<commons-fileupload.version>
     <bouncycastle.version>1.72</bouncycastle.version>
     <awssdk-s3.version>2.20.10</awssdk-s3.version>
     <io-netty.version>4.1.89.Final</io-netty.version>
@@ -241,6 +242,11 @@
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-math3</artifactId>
         <version>${commons-math3.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-fileupload</groupId>
+        <artifactId>commons-fileupload</artifactId>
+        <version>${commons-fileupload.version}</version>
       </dependency>
       <dependency>
         <groupId>org.bouncycastle</groupId>
@@ -559,7 +565,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.4.1</version>
+          <version>3.5.0</version>
           <configuration>
             <bottom>
               <![CDATA[
