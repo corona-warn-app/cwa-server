@@ -60,8 +60,8 @@
     <everit-json-schema.version>1.14.1</everit-json-schema.version>
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
     <commons-io.version>2.11.0</commons-io.version>
-    <log4j.version>2.19.0</log4j.version>
     <slf4j.version>2.0.6</slf4j.version>
+    <log4j.version>2.20.0</log4j.version>
     <feign.version>12.1</feign.version>
     <commons-math3.version>3.6.1</commons-math3.version>
     <bouncycastle.version>1.72</bouncycastle.version>
@@ -70,8 +70,8 @@
     <guava.version>31.1-jre</guava.version>
     <jackson.version>2.14.2</jackson.version>
     <test-containers.version>1.17.6</test-containers.version>
-    <postgresql.version>42.5.3</postgresql.version>
     <wiremock.version>3.0.0-beta-2</wiremock.version>
+    <postgresql.version>42.5.4</postgresql.version>
     <junit.version>4.13.2</junit.version>
     <jupiter.version>5.9.2</jupiter.version>
     <tomcat.version>10.1.5</tomcat.version>
@@ -553,7 +553,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.4.1</version>
+          <version>3.5.0</version>
           <configuration>
             <bottom>
               <![CDATA[

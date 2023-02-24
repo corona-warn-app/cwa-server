@@ -85,8 +85,8 @@ public class DiagnosisKeyService {
   @Timed
   @Transactional
   public int countTodaysDiagnosisKeys() {
-    final long midnightEpochSecond = now(UTC).toEpochSecond(LocalTime.MIDNIGHT, UTC);
-    return keyRepository.countNewerThan(midnightEpochSecond);
+    final long midnightEpochHours = now(UTC).toEpochSecond(LocalTime.MIDNIGHT, UTC) / SECONDS_PER_HOUR;
+    return keyRepository.countNewerThan(midnightEpochHours);
   }
 
   /**
