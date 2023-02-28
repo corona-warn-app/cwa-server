@@ -82,7 +82,7 @@
     <semver4j.version>3.1.0</semver4j.version>
     <upokecenter-cbor.version>4.5.2</upokecenter-cbor.version>
     <snakeyaml.version>1.33</snakeyaml.version>
-    <json.version>20220924</json.version>
+    <json.version>20230227</json.version>
   </properties>
 
   <dependencyManagement>
