@@ -66,7 +66,7 @@
     <commons-math3.version>3.6.1</commons-math3.version>
     <commons-fileupload.version>1.5</commons-fileupload.version>
     <bouncycastle.version>1.72</bouncycastle.version>
-    <awssdk-s3.version>2.20.10</awssdk-s3.version>
+    <awssdk-s3.version>2.20.13</awssdk-s3.version>
     <io-netty.version>4.1.89.Final</io-netty.version>
     <guava.version>31.1-jre</guava.version>
     <jackson.version>2.14.2</jackson.version>
@@ -76,7 +76,7 @@
     <httpclient.version>4.5.14</httpclient.version>
     <junit.version>4.13.2</junit.version>
     <jupiter.version>5.9.2</jupiter.version>
-    <tomcat.version>9.0.71</tomcat.version>
+    <tomcat.version>9.0.72</tomcat.version>
     <findify-s3mock.version>0.2.6</findify-s3mock.version>
     <checkstyle.version>10.8.0</checkstyle.version>
     <semver4j.version>3.1.0</semver4j.version>
@@ -470,7 +470,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.10.1</version>
+          <version>3.11.0</version>
           <configuration>
             <compilerArgs>
               <arg>-Xlint:all</arg>
@@ -484,7 +484,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-dependency-plugin</artifactId>
-          <version>3.3.0</version>
+          <version>3.5.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
@@ -508,7 +508,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-enforcer-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.2.1</version>
           <executions>
             <execution>
               <id>Project Structure Checks</id>
@@ -616,7 +616,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>versions-maven-plugin</artifactId>
-          <version>2.14.2</version>
+          <version>2.15.0</version>
           <configuration>
             <rulesUri>file:///${session.executionRootDirectory}/.mvn/maven-version-rules.xml</rulesUri>
           </configuration>
