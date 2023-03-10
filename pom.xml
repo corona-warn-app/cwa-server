@@ -717,7 +717,6 @@
         <configuration>
           <configLocation>codestyle/checkstyle.xml</configLocation>
           <excludes>**/module-info.java,**/target/**/*,**/protocols/**/*</excludes>
-          <encoding>UTF-8</encoding>
           <consoleOutput>true</consoleOutput>
           <failsOnError>true</failsOnError>
           <violationSeverity>warning</violationSeverity>
