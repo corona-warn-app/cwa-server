@@ -67,7 +67,7 @@
     <commons-fileupload.version>1.5</commons-fileupload.version>
     <bouncycastle.version>1.72</bouncycastle.version>
     <awssdk-s3.version>2.20.13</awssdk-s3.version>
-    <io-netty.version>4.1.89.Final</io-netty.version>
+    <io-netty.version>4.1.90.Final</io-netty.version>
     <guava.version>31.1-jre</guava.version>
     <jackson.version>2.14.2</jackson.version>
     <test-containers.version>1.17.6</test-containers.version>
@@ -78,7 +78,7 @@
     <jupiter.version>5.9.2</jupiter.version>
     <tomcat.version>9.0.73</tomcat.version>
     <findify-s3mock.version>0.2.6</findify-s3mock.version>
-    <checkstyle.version>10.8.0</checkstyle.version>
+    <checkstyle.version>10.8.1</checkstyle.version>
     <semver4j.version>3.1.0</semver4j.version>
     <upokecenter-cbor.version>4.5.2</upokecenter-cbor.version>
     <snakeyaml.version>1.33</snakeyaml.version>
@@ -595,7 +595,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.0.0-M9</version>
+          <version>3.0.0</version>
           <configuration>
             <forkedProcessExitTimeoutInSeconds>60</forkedProcessExitTimeoutInSeconds>
             <excludedGroups>s3-integration</excludedGroups>
@@ -616,7 +616,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-surefire-report-plugin</artifactId>
-          <version>3.0.0-M9</version>
+          <version>3.0.0</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
