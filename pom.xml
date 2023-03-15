@@ -57,7 +57,7 @@
     <spring-security.version>5.8.2</spring-security.version>
     <protobuf.version>3.21.9</protobuf.version><!-- DO NOT UPGRADE, later versions made it impossible to merge yaml configs -->
     <json-simple.version>1.1.1</json-simple.version>
-    <everit-json-schema.version>1.14.1</everit-json-schema.version>
+    <everit-json-schema.version>1.14.2</everit-json-schema.version>
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
     <commons-io.version>2.11.0</commons-io.version>
     <log4j.version>2.20.0</log4j.version>
