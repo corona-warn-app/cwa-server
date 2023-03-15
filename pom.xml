@@ -47,40 +47,41 @@
     <sonar.projectKey>${sonar.organization}_cwa-${project.artifactId}</sonar.projectKey>
     <sonar.coverage.exclusions>**/distribution/runner/RevRetentionPolicy*</sonar.coverage.exclusions>
 
+    <awssdk-s3.version>2.20.13</awssdk-s3.version>
+    <bouncycastle.version>1.72</bouncycastle.version>
+    <checkstyle.version>10.8.1</checkstyle.version>
+    <commons-beanutils.version>1.9.4</commons-beanutils.version>
+    <commons-fileupload.version>1.5</commons-fileupload.version>
+    <commons-io.version>2.11.0</commons-io.version>
+    <commons-math3.version>3.6.1</commons-math3.version>
+    <everit-json-schema.version>1.14.2</everit-json-schema.version>
+    <feign.version>12.2</feign.version>
+    <findify-s3mock.version>0.2.6</findify-s3mock.version>
+    <guava.version>31.1-jre</guava.version>
+    <io-netty.version>4.1.90.Final</io-netty.version>
+    <jackson.version>2.14.2</jackson.version>
+    <json-simple.version>1.1.1</json-simple.version>
+    <json.version>20230227</json.version>
+    <junit.version>4.13.2</junit.version>
+    <jupiter.version>5.9.2</jupiter.version>
+    <log4j.version>2.20.0</log4j.version>
+    <postgresql.version>42.5.4</postgresql.version>
+    <protobuf.version>3.21.9</protobuf.version><!-- DO NOT UPGRADE, later versions made it impossible to merge yaml configs -->
+    <semver4j.version>3.1.0</semver4j.version>
+    <slf4j.version>2.0.6</slf4j.version>
+    <snakeyaml.version>1.33</snakeyaml.version>
     <!-- https://spring.io/projects/spring-boot -->
     <spring-boot.version>3.0.2</spring-boot.version>
     <!-- https://spring.io/projects/spring-cloud#release-trains -->
     <spring-cloud.version>2022.0.1</spring-cloud.version>
-    <!-- If you update spring-cloud, see if it references the correct spring-vault-core version again, then remove the following: -->
-    <spring-vault-core.version>3.0.0</spring-vault-core.version>
     <spring-retry.version>2.0.0</spring-retry.version>
     <spring-security.version>6.0.1</spring-security.version>
-    <protobuf.version>3.21.12</protobuf.version>
-    <json-simple.version>1.1.1</json-simple.version>
-    <everit-json-schema.version>1.14.1</everit-json-schema.version>
-    <commons-beanutils.version>1.9.4</commons-beanutils.version>
-    <commons-io.version>2.11.0</commons-io.version>
-    <slf4j.version>2.0.6</slf4j.version>
-    <log4j.version>2.20.0</log4j.version>
-    <feign.version>12.1</feign.version>
-    <commons-math3.version>3.6.1</commons-math3.version>
-    <bouncycastle.version>1.72</bouncycastle.version>
-    <awssdk-s3.version>2.19.31</awssdk-s3.version>
-    <io-netty.version>4.1.87.Final</io-netty.version>
-    <guava.version>31.1-jre</guava.version>
-    <jackson.version>2.14.2</jackson.version>
+    <!-- If you update spring-cloud, see if it references the correct spring-vault-core version again, then remove the following: -->
+    <spring-vault-core.version>3.0.0</spring-vault-core.version>
     <test-containers.version>1.17.6</test-containers.version>
-    <wiremock.version>3.0.0-beta-2</wiremock.version>
-    <postgresql.version>42.5.4</postgresql.version>
-    <junit.version>4.13.2</junit.version>
-    <jupiter.version>5.9.2</jupiter.version>
     <tomcat.version>10.1.5</tomcat.version>
-    <findify-s3mock.version>0.2.6</findify-s3mock.version>
-    <checkstyle.version>10.7.0</checkstyle.version>
-    <semver4j.version>3.1.0</semver4j.version>
     <upokecenter-cbor.version>4.5.2</upokecenter-cbor.version>
-    <snakeyaml.version>1.33</snakeyaml.version>
-    <json.version>20220924</json.version>
+    <wiremock.version>3.0.0-beta-2</wiremock.version>
   </properties>
 
   <dependencyManagement>
@@ -242,6 +243,11 @@
         <version>${commons-math3.version}</version>
       </dependency>
       <dependency>
+        <groupId>commons-fileupload</groupId>
+        <artifactId>commons-fileupload</artifactId>
+        <version>${commons-fileupload.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.bouncycastle</groupId>
         <artifactId>bcpkix-jdk18on</artifactId>
         <version>${bouncycastle.version}</version>
@@ -304,6 +310,12 @@
         <scope>runtime</scope>
       </dependency>
       <!-- test scope only -->
+      <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-test</artifactId>
+        <version>${spring-security.version}</version>
+        <scope>test</scope>
+      </dependency>
       <dependency>
         <groupId>org.testcontainers</groupId>
         <artifactId>testcontainers</artifactId>
@@ -458,7 +470,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.10.1</version>
+          <version>3.11.0</version>
           <configuration>
             <compilerArgs>
               <arg>-Xlint:all</arg>
@@ -472,7 +484,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-dependency-plugin</artifactId>
-          <version>3.3.0</version>
+          <version>3.5.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
@@ -480,7 +492,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-deploy-plugin</artifactId>
-          <version>3.0.0</version>
+          <version>3.1.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-install-plugin</artifactId>
@@ -496,7 +508,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-enforcer-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.2.1</version>
           <executions>
             <execution>
               <id>Project Structure Checks</id>
@@ -521,7 +533,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>3.0.0-M8</version>
+          <version>3.0.0-M9</version>
           <executions>
             <execution>
               <configuration>
@@ -530,7 +542,6 @@
                   <include>**/*IT.java</include>
                   <include>**/*IntegrationTest.java</include>
                 </includes>
-                <classesdirectory>${project.build.outputDirectory}</classesdirectory>
                 <additionalClasspathElements>
                   <additionalClasspathElement>${basedir}/target/classes</additionalClasspathElement>
                 </additionalClasspathElements>
@@ -578,7 +589,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.0.0-M8</version>
+          <version>3.0.0</version>
           <configuration>
             <forkedProcessExitTimeoutInSeconds>60</forkedProcessExitTimeoutInSeconds>
             <excludedGroups>s3-integration</excludedGroups>
@@ -599,12 +610,12 @@
         </plugin>
         <plugin>
           <artifactId>maven-surefire-report-plugin</artifactId>
-          <version>3.0.0-M8</version>
+          <version>3.0.0</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>versions-maven-plugin</artifactId>
-          <version>2.14.2</version>
+          <version>2.15.0</version>
           <configuration>
             <rulesUri>file:///${session.executionRootDirectory}/.mvn/maven-version-rules.xml</rulesUri>
           </configuration>
@@ -706,7 +717,6 @@
         <configuration>
           <configLocation>codestyle/checkstyle.xml</configLocation>
           <excludes>**/module-info.java,**/target/**/*,**/protocols/**/*</excludes>
-          <encoding>UTF-8</encoding>
           <consoleOutput>true</consoleOutput>
           <failsOnError>true</failsOnError>
           <violationSeverity>warning</violationSeverity>

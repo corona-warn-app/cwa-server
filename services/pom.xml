@@ -16,9 +16,11 @@
   <modules>
     <module>distribution</module>
     <module>submission</module>
+    <!-- EFGS modules aren't needed anymore
     <module>callback</module>
     <module>download</module>
     <module>upload</module>
+    -->
   </modules>
 
   <dependencies>

@@ -250,11 +250,13 @@ public class SubmissionController {
             new PrintableSubmissionPayload(payload));
         deferredResult
             .setResult(ResponseEntity.status(BAD_REQUEST).header("cwa-error-code", "KEYS_ALREADY_EXIST").build());
+        return deferredResult;
       }
 
       if (!tanVerifier.verifyTan(tan)) {
         submissionMonitor.incrementInvalidTanRequestCounter();
         deferredResult.setResult(ResponseEntity.status(FORBIDDEN).build());
+        return deferredResult;
       } else {
         saveDiagnosisKeys(diagnosisKeys);
 
