@@ -34,6 +34,12 @@
     <rule groupId="com.google.protobuf" comparisonMethod="maven">
       <ignoreVersions>
         <ignoreVersion type="regex">3\.22\.0</ignoreVersion>
+        <ignoreVersion type="regex">3\.21\.1.*</ignoreVersion>
+      </ignoreVersions>
+    </rule>
+    <rule groupId="org.yaml" artifactId="snakeyaml" comparisonMethod="maven">
+      <ignoreVersions>
+        <ignoreVersion type="regex">2\..*</ignoreVersion>
       </ignoreVersions>
     </rule>
 
@@ -60,7 +66,7 @@
     </rule>
     <rule groupId="org.springframework.retry" comparisonMethod="maven">
       <ignoreVersions>
-        <ignoreVersion type="regex">6\..*</ignoreVersion>
+        <ignoreVersion type="regex">2\..*</ignoreVersion>
       </ignoreVersions>
     </rule>
 
