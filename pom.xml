@@ -65,7 +65,7 @@
     <feign.version>12.3</feign.version>
     <commons-math3.version>3.6.1</commons-math3.version>
     <commons-fileupload.version>1.5</commons-fileupload.version>
-    <bouncycastle.version>1.72</bouncycastle.version>
+    <bouncycastle.version>1.73</bouncycastle.version>
     <awssdk-s3.version>2.20.13</awssdk-s3.version>
     <io-netty.version>4.1.91.Final</io-netty.version>
     <guava.version>31.1-jre</guava.version>
