@@ -67,7 +67,7 @@
     <commons-fileupload.version>1.5</commons-fileupload.version>
     <bouncycastle.version>1.73</bouncycastle.version>
     <awssdk-s3.version>2.20.13</awssdk-s3.version>
-    <io-netty.version>4.1.91.Final</io-netty.version>
+    <io-netty.version>4.1.92.Final</io-netty.version>
     <guava.version>31.1-jre</guava.version>
     <jackson.version>2.15.0</jackson.version>
     <test-containers.version>1.18.0</test-containers.version>
