@@ -5,7 +5,7 @@ updates:
     directory: "/"
     schedule:
       # Check for updates once a day. This can be changed later on to `weekly` if desired.
-      interval: "daily"
+      interval: "monthly"
     # Add reviewers
     reviewers:
       - "corona-warn-app/cwa-server-codeowners"
